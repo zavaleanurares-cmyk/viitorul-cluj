@@ -1,0 +1,861 @@
+{
+  "source": "Gym Visual (https://gymvisual.com)",
+  "checked_on": "2026-10-07",
+  "items": [
+    {
+      "slug": "izometrie-ischiogambieri-calcai-in-sol",
+      "match": "none",
+      "product_name": null,
+      "gif_url": null,
+      "illustration_url": null,
+      "video_url": null,
+      "note": "Lipsă. Căutat: «isometric», «static», «heel», «hamstring», «hamstring curl». Nu am găsit animație cu apăsarea călcâiului în sol din culcat pe spate. Singurul produs apropiat ca idee, «Sitting Isometric Hamstring Curl Hold with Exercise Ball (female)» (https://gymvisual.com/animated-gifs/25429-sitting-isometric-hamstring-curl-hold-with-exercise-ball-female.html), se face din așezat, cu minge — altă poziție, nu îl recomand."
+    },
+    {
+      "slug": "pod-izometric-ischiogambieri",
+      "match": "close",
+      "product_name": "Straight Leg Glute Bridge (female)",
+      "gif_url": "https://gymvisual.com/animated-gifs/17883-straight-leg-glute-bridge-female.html",
+      "illustration_url": null,
+      "video_url": null,
+      "note": "Variantă feminină; animația arată ridicări repetate, nu menținere. De verificat pe pagina produsului: că genunchii sunt aproape întinși și călcâiele pe sol. Alternativă masculină, cu călcâiele pe bancă și genunchii mai îndoiți: «Glute Bridge Two Legs on Bench» (https://gymvisual.com/animated-gifs/5513-glute-bridge-two-legs-on-bench.html)."
+    },
+    {
+      "slug": "podul-fesier",
+      "match": "exact",
+      "product_name": "Low Glute Bridge on floor",
+      "gif_url": "https://gymvisual.com/animated-gifs/6570-low-glute-bridge-on-floor.html",
+      "illustration_url": "https://gymvisual.com/illustrations/6550-low-glute-bridge-on-floor.html",
+      "video_url": null,
+      "note": null
+    },
+    {
+      "slug": "pod-fesier-pe-un-picior",
+      "match": "exact",
+      "product_name": "Glute Bridge One Leg on Floor (bent knee)",
+      "gif_url": "https://gymvisual.com/animated-gifs/5516-glute-bridge-one-leg-on-floor-bent-knee.html",
+      "illustration_url": "https://gymvisual.com/illustrations/5511-glute-bridge-one-leg-on-floor-bent-knee.html",
+      "video_url": "https://gymvisual.com/videos/15706-glute-bridge-one-leg-on-floor-bent-knee-female.html",
+      "note": "Piciorul liber este îndoit; există și varianta cu piciorul liber întins: «Glute Bridge One Leg on Floor (straight leg)» (https://gymvisual.com/animated-gifs/5515-glute-bridge-one-leg-on-floor-straight-leg.html). Clipul video disponibil este varianta feminină."
+    },
+    {
+      "slug": "slider-curl-ischiogambieri",
+      "match": "exact",
+      "product_name": "Sliding Floor Bridge Curl on Towel",
+      "gif_url": "https://gymvisual.com/animated-gifs/8452-sliding-floor-bridge-curl-on-towel.html",
+      "illustration_url": "https://gymvisual.com/illustrations/7743-sliding-floor-bridge-curl-on-towel.html",
+      "video_url": "https://gymvisual.com/videos/7649-sliding-floor-bridge-curl-on-towel.html",
+      "note": "Cu prosop în loc de discuri de alunecare — varianta este descrisă și la noi."
+    },
+    {
+      "slug": "nordic-hamstring",
+      "match": "exact",
+      "product_name": "Nordic Hamstring Curl (male)",
+      "gif_url": "https://gymvisual.com/animated-gifs/18424-nordic-hamstring-curl-male.html",
+      "illustration_url": "https://gymvisual.com/illustrations/18416-nordic-hamstring-curl-male.html",
+      "video_url": "https://gymvisual.com/videos/18430-nordic-hamstring-curl-male.html",
+      "note": null
+    },
+    {
+      "slug": "indreptare-romaneasca-pe-un-picior",
+      "match": "exact",
+      "product_name": "Dumbbell Single Leg Deadlift",
+      "gif_url": "https://gymvisual.com/animated-gifs/3769-dumbbell-single-leg-deadlift.html",
+      "illustration_url": "https://gymvisual.com/illustrations/3728-dumbbell-single-leg-deadlift.html",
+      "video_url": "https://gymvisual.com/videos/5135-dumbbell-single-leg-deadlift.html",
+      "note": "De verificat pe pagina produsului: că gantera este ținută în mâna opusă piciorului de sprijin."
+    },
+    {
+      "slug": "diver",
+      "match": "close",
+      "product_name": "Single Leg Bodyweight Deadlift with Arm and Leg Extended (female)",
+      "gif_url": "https://gymvisual.com/animated-gifs/6734-single-leg-bodyweight-deadlift-with-arm-and-leg-extended-female.html",
+      "illustration_url": "https://gymvisual.com/illustrations/6407-single-leg-bodyweight-deadlift-with-arm-and-leg-extended-female.html",
+      "video_url": "https://gymvisual.com/videos/12526-single-leg-bodyweight-deadlift-with-arm-and-leg-extended-female.html",
+      "note": "Variantă feminină; piciorul liber este întins în spate, nu îndoit ca în descrierea noastră. Alternativă masculină, fără brațele întinse înainte: «Bodyweight Single Leg Deadlift» (https://gymvisual.com/animated-gifs/12973-bodyweight-single-leg-deadlift.html)."
+    },
+    {
+      "slug": "intindere-ischiogambieri-culcat",
+      "match": "exact",
+      "product_name": "Hamstrings Lying Stretch",
+      "gif_url": "https://gymvisual.com/animated-gifs/3174-hamstrings-lying-stretch.html",
+      "illustration_url": "https://gymvisual.com/illustrations/2857-hamstrings-lying-stretch.html",
+      "video_url": "https://gymvisual.com/videos/18273-hamstrings-lying-stretch-female.html",
+      "note": "De verificat pe pagina produsului: că întinderea se face din culcat pe spate, cu mâinile pe coapsă. Clipul video disponibil este varianta feminină."
+    },
+    {
+      "slug": "strangere-minge-izometric-adductori",
+      "match": "exact",
+      "product_name": "Ball Assisted Lying Bent Knee Isometric Hip Adduction (female)",
+      "gif_url": "https://gymvisual.com/animated-gifs/25082-ball-assisted-lying-bent-knee-isometric-hip-adduction-female.html",
+      "illustration_url": "https://gymvisual.com/illustrations/25517-ball-assisted-lying-bent-knee-isometric-hip-adduction-female.html",
+      "video_url": null,
+      "note": "Doar variantă feminină. Nu am găsit clip video cu același nume."
+    },
+    {
+      "slug": "copenhagen-nivel-1",
+      "match": "close",
+      "product_name": "Side Plank Hip Adduction (bent knee)",
+      "gif_url": "https://gymvisual.com/animated-gifs/8432-side-plank-hip-adduction-bent-knee.html",
+      "illustration_url": "https://gymvisual.com/illustrations/7706-side-plank-hip-adduction-bent-knee.html",
+      "video_url": "https://gymvisual.com/videos/12541-side-plank-hip-adduction-bent-knee.html",
+      "note": "Același produs ca la nivelul 2 (sprijin pe genunchi, pe bancă); animația arată ridicări și coborâri, nu menținerea izometrică. Se cumpără o singură dată."
+    },
+    {
+      "slug": "copenhagen-nivel-2",
+      "match": "exact",
+      "product_name": "Side Plank Hip Adduction (bent knee)",
+      "gif_url": "https://gymvisual.com/animated-gifs/8432-side-plank-hip-adduction-bent-knee.html",
+      "illustration_url": "https://gymvisual.com/illustrations/7706-side-plank-hip-adduction-bent-knee.html",
+      "video_url": "https://gymvisual.com/videos/12541-side-plank-hip-adduction-bent-knee.html",
+      "note": "De verificat pe pagina produsului: că genunchiul de sus este sprijinit pe bancă (numele produsului nu menționează banca)."
+    },
+    {
+      "slug": "copenhagen-nivel-3",
+      "match": "exact",
+      "product_name": "Side Plank Hip Adduction",
+      "gif_url": "https://gymvisual.com/animated-gifs/3811-side-plank-hip-adduction.html",
+      "illustration_url": "https://gymvisual.com/illustrations/3803-side-plank-hip-adduction.html",
+      "video_url": "https://gymvisual.com/videos/5139-side-plank-hip-adduction.html",
+      "note": "Stil disponibil doar «Basic grey» (fără «Full color»). De verificat pe pagina produsului: că glezna de sus este sprijinită pe bancă."
+    },
+    {
+      "slug": "adductie-cu-banda-in-picioare",
+      "match": "exact",
+      "product_name": "Band hip adduction (male)",
+      "gif_url": "https://gymvisual.com/animated-gifs/10096-band-hip-adduction-male.html",
+      "illustration_url": "https://gymvisual.com/illustrations/9347-band-hip-adduction-male.html",
+      "video_url": "https://gymvisual.com/videos/9338-band-hip-adduction-male.html",
+      "note": "De verificat pe pagina produsului: că mișcarea se face din picioare, cu banda prinsă de gleznă."
+    },
+    {
+      "slug": "adductie-decubit-lateral",
+      "match": "exact",
+      "product_name": "Side Lying Hip Adduction (male)",
+      "gif_url": "https://gymvisual.com/animated-gifs/7986-side-lying-hip-adduction-male.html",
+      "illustration_url": "https://gymvisual.com/illustrations/7985-side-lying-hip-adduction-male.html",
+      "video_url": "https://gymvisual.com/videos/9128-side-lying-hip-adduction-male.html",
+      "note": null
+    },
+    {
+      "slug": "fandare-laterala",
+      "match": "exact",
+      "product_name": "Side Lunge",
+      "gif_url": "https://gymvisual.com/animated-gifs/6497-side-lunge.html",
+      "illustration_url": "https://gymvisual.com/illustrations/7273-side-lunge.html",
+      "video_url": "https://gymvisual.com/videos/9050-side-lunge.html",
+      "note": null
+    },
+    {
+      "slug": "intindere-adductori-in-genunchi",
+      "match": "close",
+      "product_name": "Kneeling Face Down Adductor Stretch",
+      "gif_url": "https://gymvisual.com/animated-gifs/4606-kneeling-face-down-adductor-stretch.html",
+      "illustration_url": "https://gymvisual.com/illustrations/3953-kneeling-face-down-adductor-stretch.html",
+      "video_url": null,
+      "note": "Aceeași poziție (în genunchi, cu genunchii depărtați), dar ca întindere menținută, fără legănarea înainte-înapoi. Fără clip video."
+    },
+    {
+      "slug": "pompe-de-glezna",
+      "match": "close",
+      "product_name": "Ankle - Dorsal Flexion",
+      "gif_url": "https://gymvisual.com/animated-gifs/6800-ankle-dorsal-flexion.html",
+      "illustration_url": "https://gymvisual.com/illustrations/11058-ankle-dorsal-flexion-articulations.html",
+      "video_url": "https://gymvisual.com/videos/6125-ankle-dorsal-flexion.html",
+      "note": "Animație de tip «mișcare articulară» (doar glezna), nu exercițiul cu pacientul întins; arată flexia dorsală. Perechea ei, flexia plantară: «Ankle - Plantar Flexion» (https://gymvisual.com/animated-gifs/11983-ankle-plantar-flexion.html). Există și un clip video «Sitting Ankle Dorsi Flexion (female)» (https://gymvisual.com/videos/21967-sitting-ankle-dorsi-flexion-female.html)."
+    },
+    {
+      "slug": "alfabetul-cu-glezna",
+      "match": "close",
+      "product_name": "Ankle Circles",
+      "gif_url": "https://gymvisual.com/animated-gifs/3138-ankle-circles.html",
+      "illustration_url": "https://gymvisual.com/illustrations/2819-ankle-circles.html",
+      "video_url": "https://gymvisual.com/videos/18073-ankle-circles.html",
+      "note": "Cercuri cu glezna, nu litere — aceeași idee de mobilizare în toate direcțiile."
+    },
+    {
+      "slug": "eversie-glezna-cu-banda",
+      "match": "exact",
+      "product_name": "Resistance Band Seated Eversion Foot (male)",
+      "gif_url": "https://gymvisual.com/animated-gifs/19994-resistance-band-seated-eversion-foot-male.html",
+      "illustration_url": "https://gymvisual.com/illustrations/20020-resistance-band-seated-eversion-foot-male.html",
+      "video_url": "https://gymvisual.com/videos/19929-resistance-band-seated-eversion-foot-male.html",
+      "note": null
+    },
+    {
+      "slug": "inversie-glezna-cu-banda",
+      "match": "exact",
+      "product_name": "Resistance Band Seated Inversion Foot (male)",
+      "gif_url": "https://gymvisual.com/animated-gifs/19995-resistance-band-seated-inversion-foot-male.html",
+      "illustration_url": "https://gymvisual.com/illustrations/20021-resistance-band-seated-inversion-foot-male.html",
+      "video_url": "https://gymvisual.com/videos/19930-resistance-band-seated-inversion-foot-male.html",
+      "note": null
+    },
+    {
+      "slug": "dorsiflexie-glezna-cu-banda",
+      "match": "exact",
+      "product_name": "Resistance Band Sitting Floor Ankle Dorsi Flexion (female)",
+      "gif_url": "https://gymvisual.com/animated-gifs/25146-resistance-band-sitting-floor-ankle-dorsi-flexion-female.html",
+      "illustration_url": "https://gymvisual.com/illustrations/25520-resistance-band-sitting-floor-ankle-dorsi-flexion-female.html",
+      "video_url": "https://gymvisual.com/videos/21968-resistance-band-sitting-floor-ankle-dorsi-flexion-female.html",
+      "note": "Doar variantă feminină."
+    },
+    {
+      "slug": "ridicari-pe-varfuri-doua-picioare",
+      "match": "exact",
+      "product_name": "Bodyweight Standing Calf Raise",
+      "gif_url": "https://gymvisual.com/animated-gifs/3143-bodyweight-standing-calf-raise.html",
+      "illustration_url": "https://gymvisual.com/illustrations/2824-bodyweight-standing-calf-raise.html",
+      "video_url": "https://gymvisual.com/videos/8104-bodyweight-standing-calf-raise.html",
+      "note": null
+    },
+    {
+      "slug": "ridicari-pe-varfuri-un-picior",
+      "match": "exact",
+      "product_name": "Standing Single Leg Calf Raise (On a staircase)",
+      "gif_url": "https://gymvisual.com/animated-gifs/12400-standing-single-leg-calf-raise-on-a-staircase.html",
+      "illustration_url": "https://gymvisual.com/illustrations/11172-standing-single-leg-calf-raise-on-a-staircase.html",
+      "video_url": null,
+      "note": "Pe treaptă. Fără clip video cu același nume."
+    },
+    {
+      "slug": "echilibru-unipodal-sol",
+      "match": "close",
+      "product_name": "Balance Pad Single Leg Balance (male)",
+      "gif_url": "https://gymvisual.com/animated-gifs/23375-balance-pad-single-leg-balance-male.html",
+      "illustration_url": "https://gymvisual.com/illustrations/23421-balance-pad-single-leg-balance-male.html",
+      "video_url": "https://gymvisual.com/videos/23442-balance-pad-single-leg-balance-male.html",
+      "note": "Nu am găsit animație de echilibru pe un picior direct pe sol; aceasta este pe o pernă de echilibru (alt echipament). Dacă diferența deranjează, se filmează."
+    },
+    {
+      "slug": "echilibru-unipodal-placa",
+      "match": "exact",
+      "product_name": "Balance Board Single Leg Balance (male)",
+      "gif_url": "https://gymvisual.com/animated-gifs/23374-balance-board-single-leg-balance-male.html",
+      "illustration_url": "https://gymvisual.com/illustrations/23420-balance-board-single-leg-balance-male.html",
+      "video_url": "https://gymvisual.com/videos/23441-balance-board-single-leg-balance-male.html",
+      "note": null
+    },
+    {
+      "slug": "saritura-cu-aterizare-controlata",
+      "match": "exact",
+      "product_name": "Box Jump Drop 2 Foot Land (male)",
+      "gif_url": "https://gymvisual.com/animated-gifs/23015-box-jump-drop-2-foot-land-male.html",
+      "illustration_url": "https://gymvisual.com/illustrations/23171-box-jump-drop-2-foot-land-male.html",
+      "video_url": "https://gymvisual.com/videos/22200-box-jump-drop-2-foot-land-male.html",
+      "note": "Varianta cu coborâre de pe cutie și aterizare pe două picioare."
+    },
+    {
+      "slug": "aterizare-unipodala",
+      "match": "close",
+      "product_name": "Box Jump Down with 1 Leg Stabilization",
+      "gif_url": "https://gymvisual.com/animated-gifs/3144-box-jump-down-with-1-leg-stabilization.html",
+      "illustration_url": "https://gymvisual.com/illustrations/2825-box-jump-down-with-one-leg-stabilization.html",
+      "video_url": null,
+      "note": "Aterizare pe un picior după coborâre de pe cutie, nu după un salt scurt înainte de pe sol. Fără clip video."
+    },
+    {
+      "slug": "sarituri-laterale-unipodale",
+      "match": "exact",
+      "product_name": "Lateral Bound (male)",
+      "gif_url": "https://gymvisual.com/animated-gifs/8308-lateral-bound-male.html",
+      "illustration_url": "https://gymvisual.com/illustrations/7364-lateral-bound-male.html",
+      "video_url": null,
+      "note": "De verificat pe pagina produsului: că săritura se oprește la aterizare. Alternativă: «Skater Hops» (https://gymvisual.com/animated-gifs/7528-skater-hops.html). Fără clip video."
+    },
+    {
+      "slug": "coborari-excentrice-pe-treapta",
+      "match": "close",
+      "product_name": "Calf Raise from Deficit with Chair Supported",
+      "gif_url": "https://gymvisual.com/animated-gifs/8398-calf-raise-from-deficit-with-chair-supported.html",
+      "illustration_url": "https://gymvisual.com/illustrations/7567-calf-raise-from-deficit-with-chair-supported.html",
+      "video_url": "https://gymvisual.com/videos/25753-single-leg-calf-raise-from-deficit-with-chair-supported-male.html",
+      "note": "Ridicări pe vârfuri pe treaptă, cu sprijin, pe ambele picioare — nu arată protocolul «urci pe două, cobori lent pe unul». Mai aproape este clipul video «Single Leg Calf Raise from Deficit with Chair Supported (male)», trecut la video."
+    },
+    {
+      "slug": "coborari-excentrice-genunchi-indoit",
+      "match": "close",
+      "product_name": "Standing Bent Knee Calf Raise with a Chair Support (female)",
+      "gif_url": "https://gymvisual.com/animated-gifs/20755-standing-bent-knee-calf-raise-with-a-chair-support-female.html",
+      "illustration_url": "https://gymvisual.com/illustrations/20828-standing-bent-knee-calf-raise-with-a-chair-support-female.html",
+      "video_url": "https://gymvisual.com/videos/20758-standing-bent-knee-calf-raise-with-a-chair-support-female.html",
+      "note": "Variantă feminină; ridicări pe vârfuri cu genunchii îndoiți, pe sol, cu sprijin — fără treaptă și fără coborârea lentă pe un picior."
+    },
+    {
+      "slug": "izometrie-gamba-pe-varfuri",
+      "match": "exact",
+      "product_name": "Standing Isometric Hold Calf Raise (female)",
+      "gif_url": "https://gymvisual.com/animated-gifs/20602-standing-isometric-hold-calf-raise-female.html",
+      "illustration_url": "https://gymvisual.com/illustrations/20708-standing-isometric-hold-calf-raise-female.html",
+      "video_url": "https://gymvisual.com/videos/22391-bodyweight-isometric-calf-raise-hold-male.html",
+      "note": "GIF și ilustrație doar în variantă feminină; clipul video trecut aici este varianta masculină («Bodyweight Isometric Calf Raise Hold (male)»)."
+    },
+    {
+      "slug": "intindere-gamba-la-perete",
+      "match": "exact",
+      "product_name": "Calf Stretch With Hands Against Wall",
+      "gif_url": "https://gymvisual.com/animated-gifs/3147-calf-stretch-with-hands-against-wall.html",
+      "illustration_url": "https://gymvisual.com/illustrations/2828-calf-stretch-with-hands-against-wall.html",
+      "video_url": "https://gymvisual.com/videos/11203-calf-stretch-with-hands-against-wall.html",
+      "note": null
+    },
+    {
+      "slug": "intindere-solear-la-perete",
+      "match": "exact",
+      "product_name": "Leaning Heel Back Achilles Stretch",
+      "gif_url": "https://gymvisual.com/animated-gifs/4719-leaning-heel-back-achilles-stretch.html",
+      "illustration_url": "https://gymvisual.com/illustrations/4810-leaning-heel-back-achilles-stretch.html",
+      "video_url": null,
+      "note": "Întindere la perete cu genunchiul din spate îndoit (denumită «Achilles stretch» în catalog). Fără clip video."
+    },
+    {
+      "slug": "contractie-izometrica-cvadriceps",
+      "match": "exact",
+      "product_name": "Static Quadriceps Contraction (Isometric) (female)",
+      "gif_url": "https://gymvisual.com/animated-gifs/25151-static-quadriceps-contraction-isometric-female.html",
+      "illustration_url": "https://gymvisual.com/illustrations/25536-static-quadriceps-contraction-isometric-female.html",
+      "video_url": "https://gymvisual.com/videos/25411-static-quadriceps-contraction-isometric-male.html",
+      "note": "GIF și ilustrație doar în variantă feminină; clipul video există și în variantă masculină (trecut la video). De verificat pe pagina produsului: dacă apare prosopul rulat sub genunchi."
+    },
+    {
+      "slug": "ridicarea-piciorului-intins",
+      "match": "exact",
+      "product_name": "Lying Single Leg Raise (male)",
+      "gif_url": "https://gymvisual.com/animated-gifs/23894-lying-single-leg-raise-male.html",
+      "illustration_url": "https://gymvisual.com/illustrations/23939-lying-single-leg-raise-male.html",
+      "video_url": "https://gymvisual.com/videos/23830-lying-single-leg-raise-male.html",
+      "note": null
+    },
+    {
+      "slug": "alunecarea-calcaiului",
+      "match": "exact",
+      "product_name": "Lying Supine Heel Slide (male)",
+      "gif_url": "https://gymvisual.com/animated-gifs/25143-lying-supine-heel-slide-male.html",
+      "illustration_url": "https://gymvisual.com/illustrations/25511-lying-supine-heel-slide-male.html",
+      "video_url": "https://gymvisual.com/videos/22029-lying-supine-heel-slide-male.html",
+      "note": null
+    },
+    {
+      "slug": "extensie-terminala-genunchi-cu-banda",
+      "match": "close",
+      "product_name": "Resistance Band Standing Single Leg Knee Extension (male)",
+      "gif_url": "https://gymvisual.com/animated-gifs/23019-resistance-band-standing-single-leg-knee-extension-male.html",
+      "illustration_url": "https://gymvisual.com/illustrations/23175-resistance-band-standing-single-leg-knee-extension-male.html",
+      "video_url": "https://gymvisual.com/videos/23051-resistance-band-standing-single-leg-knee-extension-male.html",
+      "note": "Probabil exactă, dar numele nu spune unde este prinsă banda. De verificat pe pagina produsului: că banda trece prin spatele genunchiului (extensie terminală), nu pe gleznă."
+    },
+    {
+      "slug": "genuflexiune-la-perete",
+      "match": "exact",
+      "product_name": "Sit (wall)",
+      "gif_url": "https://gymvisual.com/animated-gifs/4417-sit-wall.html",
+      "illustration_url": "https://gymvisual.com/illustrations/754-sit-wall.html",
+      "video_url": "https://gymvisual.com/videos/9003-sit-wall.html",
+      "note": null
+    },
+    {
+      "slug": "step-down",
+      "match": "exact",
+      "product_name": "Bodyweight Patrick Step from StepBox (female)",
+      "gif_url": "https://gymvisual.com/animated-gifs/20976-bodyweight-patrick-step-from-stepbox-female.html",
+      "illustration_url": "https://gymvisual.com/illustrations/21049-bodyweight-patrick-step-from-stepbox-female.html",
+      "video_url": "https://gymvisual.com/videos/25258-bodyweight-step-down-male.html",
+      "note": "GIF și ilustrație doar în variantă feminină («Patrick step»: coborâre de pe treaptă cu atingerea solului cu călcâiul, în față). Clipul video trecut aici este «Bodyweight Step Down (male)»."
+    },
+    {
+      "slug": "genuflexiune-pe-un-picior-la-cutie",
+      "match": "exact",
+      "product_name": "Pistol Squat to Box",
+      "gif_url": "https://gymvisual.com/animated-gifs/6509-pistol-squat-to-box.html",
+      "illustration_url": "https://gymvisual.com/illustrations/7284-pistol-squat-to-box.html",
+      "video_url": "https://gymvisual.com/videos/13815-pistol-squat-to-box.html",
+      "note": "De verificat pe pagina produsului: că piciorul liber e ținut în față și că doar se atinge cutia."
+    },
+    {
+      "slug": "fandare-inainte",
+      "match": "exact",
+      "product_name": "Forward Lunge (male)",
+      "gif_url": "https://gymvisual.com/animated-gifs/7606-forward-lunge-male.html",
+      "illustration_url": "https://gymvisual.com/illustrations/7605-forward-lunge-male.html",
+      "video_url": "https://gymvisual.com/videos/9006-forward-lunge-male.html",
+      "note": null
+    },
+    {
+      "slug": "fandari-in-mers",
+      "match": "exact",
+      "product_name": "Walking Lunge Male",
+      "gif_url": "https://gymvisual.com/animated-gifs/3207-walking-lunge-male.html",
+      "illustration_url": "https://gymvisual.com/illustrations/3006-walking-lunge.html",
+      "video_url": "https://gymvisual.com/videos/2963-walking-lunge.html",
+      "note": null
+    },
+    {
+      "slug": "spanish-squat",
+      "match": "none",
+      "product_name": null,
+      "gif_url": null,
+      "illustration_url": null,
+      "video_url": null,
+      "note": "Lipsă. Căutat: «spanish», «band squat», «resistance band squat». Produsele găsite («Band squat», «Resistance Band Squat», «Resistance Band Full Squat») sunt, după nume, genuflexiuni obișnuite cu bandă; niciunul nu menționează banda în spatele genunchilor."
+    },
+    {
+      "slug": "genuflexiune",
+      "match": "exact",
+      "product_name": "Air Squat (VERSION 2)",
+      "gif_url": "https://gymvisual.com/animated-gifs/10894-air-squat-version-2.html",
+      "illustration_url": "https://gymvisual.com/illustrations/12609-air-squat-version-2.html",
+      "video_url": null,
+      "note": "Fără clip video cu același nume."
+    },
+    {
+      "slug": "scoica",
+      "match": "exact",
+      "product_name": "Side Lying Clam",
+      "gif_url": "https://gymvisual.com/animated-gifs/5495-side-lying-clam.html",
+      "illustration_url": "https://gymvisual.com/illustrations/5470-side-lying-clam.html",
+      "video_url": "https://gymvisual.com/videos/12515-side-lying-clam.html",
+      "note": "Fără bandă. Cu minibandă: «Resistance Band Clam» (https://gymvisual.com/animated-gifs/4745-resistance-band-clam.html)."
+    },
+    {
+      "slug": "mers-lateral-cu-mini-banda",
+      "match": "exact",
+      "product_name": "Resistance Band Lateral Walk (male)",
+      "gif_url": "https://gymvisual.com/animated-gifs/16841-resistance-band-lateral-walk-male.html",
+      "illustration_url": "https://gymvisual.com/illustrations/16739-resistance-band-lateral-walk-male.html",
+      "video_url": "https://gymvisual.com/videos/16535-resistance-band-lateral-walk-male.html",
+      "note": null
+    },
+    {
+      "slug": "hip-thrust",
+      "match": "exact",
+      "product_name": "Barbell Hip Thrust",
+      "gif_url": "https://gymvisual.com/animated-gifs/2520-barbell-hip-thrust.html",
+      "illustration_url": "https://gymvisual.com/illustrations/1205-barbell-hip-thrust.html",
+      "video_url": "https://gymvisual.com/videos/6660-barbell-hip-thrust.html",
+      "note": null
+    },
+    {
+      "slug": "abductie-decubit-lateral",
+      "match": "exact",
+      "product_name": "Side Hip Abduction",
+      "gif_url": "https://gymvisual.com/animated-gifs/2198-side-hip-abduction.html",
+      "illustration_url": "https://gymvisual.com/illustrations/730-side-hip-abduction.html",
+      "video_url": "https://gymvisual.com/videos/12462-side-hip-abduction.html",
+      "note": "Alternative cu aceeași mișcare: «Side Lying Leg Raise» (https://gymvisual.com/animated-gifs/10118-side-lying-leg-raise.html)."
+    },
+    {
+      "slug": "fire-hydrant",
+      "match": "exact",
+      "product_name": "Bent Leg Side Kick (kneeling) (male)",
+      "gif_url": "https://gymvisual.com/animated-gifs/8250-bent-leg-side-kick-kneeling-male.html",
+      "illustration_url": "https://gymvisual.com/illustrations/7299-bent-leg-side-kick-kneeling-male.html",
+      "video_url": "https://gymvisual.com/videos/11666-bent-leg-side-kick-kneeling-male.html",
+      "note": null
+    },
+    {
+      "slug": "plansa",
+      "match": "exact",
+      "product_name": "Front Plank (male)",
+      "gif_url": "https://gymvisual.com/animated-gifs/4401-front-plank-male.html",
+      "illustration_url": "https://gymvisual.com/illustrations/483-front-plank.html",
+      "video_url": "https://gymvisual.com/videos/1398-front-plank-male.html",
+      "note": "Există două ilustrații numite «Front Plank» (id 483 și 485); de ales cea masculină."
+    },
+    {
+      "slug": "plansa-cu-ridicare-de-picior",
+      "match": "exact",
+      "product_name": "Front Plank with Leg Lift (male)",
+      "gif_url": "https://gymvisual.com/animated-gifs/8455-front-plank-with-leg-lift-male.html",
+      "illustration_url": "https://gymvisual.com/illustrations/7746-front-plank-with-leg-lift-male.html",
+      "video_url": "https://gymvisual.com/videos/12543-front-plank-with-leg-lift-male.html",
+      "note": null
+    },
+    {
+      "slug": "plansa-laterala",
+      "match": "exact",
+      "product_name": "Side Plank (male)",
+      "gif_url": "https://gymvisual.com/animated-gifs/4414-side-plank-male.html",
+      "illustration_url": "https://gymvisual.com/illustrations/735-side-plank.html",
+      "video_url": "https://gymvisual.com/videos/5081-side-plank-male.html",
+      "note": null
+    },
+    {
+      "slug": "plansa-laterala-cu-ridicari-de-bazin",
+      "match": "close",
+      "product_name": "Side Bridge",
+      "gif_url": "https://gymvisual.com/animated-gifs/2194-side-bridge.html",
+      "illustration_url": "https://gymvisual.com/illustrations/726-side-bridge.html",
+      "video_url": "https://gymvisual.com/videos/1002-side-bridge.html",
+      "note": "De verificat pe pagina produsului: că animația arată coborârea și ridicarea bazinului (numele «Side Bridge» nu o spune). Dacă este statică, exercițiul rămâne fără imagine sau se filmează."
+    },
+    {
+      "slug": "dead-bug",
+      "match": "exact",
+      "product_name": "Dead Bug",
+      "gif_url": "https://gymvisual.com/animated-gifs/1769-dead-bug.html",
+      "illustration_url": "https://gymvisual.com/illustrations/296-dead-bug.html",
+      "video_url": "https://gymvisual.com/videos/11189-dead-bug.html",
+      "note": null
+    },
+    {
+      "slug": "bird-dog",
+      "match": "exact",
+      "product_name": "Bird Dog male",
+      "gif_url": "https://gymvisual.com/animated-gifs/2686-bird-dog-male.html",
+      "illustration_url": "https://gymvisual.com/illustrations/1458-bird-dog-male.html",
+      "video_url": "https://gymvisual.com/videos/10761-bird-dog-male.html",
+      "note": "Există și «Bird Dog» fără mențiune de gen (https://gymvisual.com/animated-gifs/4395-bird-dog.html)."
+    },
+    {
+      "slug": "pallof-press",
+      "match": "exact",
+      "product_name": "Band horizontal Pallof Press",
+      "gif_url": "https://gymvisual.com/animated-gifs/2451-band-horizontal-pallof-press.html",
+      "illustration_url": "https://gymvisual.com/illustrations/1119-band-horizontal-pallof-press.html",
+      "video_url": "https://gymvisual.com/videos/9299-band-horizontal-pallof-press.html",
+      "note": null
+    },
+    {
+      "slug": "cat-cow",
+      "match": "exact",
+      "product_name": "Cat Cow Stretch",
+      "gif_url": "https://gymvisual.com/animated-gifs/12303-cat-cow-stretch.html",
+      "illustration_url": "https://gymvisual.com/illustrations/12600-cat-cow-stretch.html",
+      "video_url": "https://gymvisual.com/videos/12881-cat-cow-stretch.html",
+      "note": null
+    },
+    {
+      "slug": "extensii-mckenzie",
+      "match": "close",
+      "product_name": "Cobra Yoga Pose",
+      "gif_url": "https://gymvisual.com/animated-gifs/4465-cobra-yoga-pose.html",
+      "illustration_url": "https://gymvisual.com/illustrations/3012-cobra-yoga-pose.html",
+      "video_url": "https://gymvisual.com/videos/9301-cobra-yoga-pose.html",
+      "note": "Poziția «cobra» din yoga: aceeași ridicare a pieptului din culcat pe burtă, cu bazinul pe sol, dar prezentată ca poziție, nu ca repetări. Pentru treapta ușoară (pe antebrațe) există «Sphinx» (https://gymvisual.com/animated-gifs/3132-sphinx.html)."
+    },
+    {
+      "slug": "genunchi-la-piept",
+      "match": "exact",
+      "product_name": "Lying Knee To Chest Stretch",
+      "gif_url": "https://gymvisual.com/animated-gifs/4513-lying-knee-to-chest-stretch.html",
+      "illustration_url": "https://gymvisual.com/illustrations/3897-lying-knee-to-chest-stretch.html",
+      "video_url": "https://gymvisual.com/videos/12485-lying-knee-to-chest-stretch.html",
+      "note": "De verificat pe pagina produsului: dacă se aduce un genunchi sau ambii."
+    },
+    {
+      "slug": "bascularea-bazinului",
+      "match": "exact",
+      "product_name": "Pelvic Tilt",
+      "gif_url": "https://gymvisual.com/animated-gifs/6653-pelvic-tilt.html",
+      "illustration_url": "https://gymvisual.com/illustrations/6643-pelvic-tilt.html",
+      "video_url": "https://gymvisual.com/videos/11667-pelvic-tilt.html",
+      "note": null
+    },
+    {
+      "slug": "rotatie-externa-umar-cu-banda",
+      "match": "exact",
+      "product_name": "Band standing external shoulder rotation",
+      "gif_url": "https://gymvisual.com/animated-gifs/2396-band-standing-external-shoulder-rotation.html",
+      "illustration_url": "https://gymvisual.com/illustrations/1059-band-standing-external-shoulder-rotation.html",
+      "video_url": "https://gymvisual.com/videos/20738-resistance-band-standing-shoulder-external-rotation-male.html",
+      "note": "Clipul video trecut aici are alt nume: «Resistance Band Standing Shoulder External Rotation (male)»."
+    },
+    {
+      "slug": "ytw",
+      "match": "close",
+      "product_name": "Lying Prone Y Raise",
+      "gif_url": "https://gymvisual.com/animated-gifs/18420-lying-prone-y-raise.html",
+      "illustration_url": "https://gymvisual.com/illustrations/18412-lying-prone-y-raise.html",
+      "video_url": "https://gymvisual.com/videos/15888-lying-prone-y-raise.html",
+      "note": "Nu există un singur produs cu toată secvența Y-T-W. GIF-ul principal arată doar Y; pentru T și W se adaugă «Floor T Raise (male)» (https://gymvisual.com/animated-gifs/8331-floor-t-raise-male.html) și «Floor W Raise (male)» (https://gymvisual.com/animated-gifs/25154-floor-w-raise-male.html). Aplicația afișează o singură imagine pe exercițiu, deci ori se alege una, ori se filmează secvența."
+    },
+    {
+      "slug": "flotari-plus",
+      "match": "exact",
+      "product_name": "Scapula Push-Up",
+      "gif_url": "https://gymvisual.com/animated-gifs/6577-scapula-push-up.html",
+      "illustration_url": "https://gymvisual.com/illustrations/6558-scapula-push-up.html",
+      "video_url": "https://gymvisual.com/videos/12530-scapula-push-up.html",
+      "note": null
+    },
+    {
+      "slug": "intindere-flexori-sold",
+      "match": "exact",
+      "product_name": "Kneeling Hip Flexor Stretch",
+      "gif_url": "https://gymvisual.com/animated-gifs/4424-kneeling-hip-flexor-stretch.html",
+      "illustration_url": "https://gymvisual.com/illustrations/1197-kneeling-hip-flexor-stretch.html",
+      "video_url": "https://gymvisual.com/videos/11198-kneeling-hip-flexor-stretch.html",
+      "note": null
+    },
+    {
+      "slug": "mobilitate-90-90",
+      "match": "close",
+      "product_name": "Dynamic 90-90 Hip Twist",
+      "gif_url": null,
+      "illustration_url": "https://gymvisual.com/illustrations/10560-dynamic-90-90-hip-twist.html",
+      "video_url": null,
+      "note": "Fără GIF și fără video: există doar ilustrație statică."
+    },
+    {
+      "slug": "rotatie-toracica-patrupedie",
+      "match": "exact",
+      "product_name": "Kneeling T Spine Mobility",
+      "gif_url": "https://gymvisual.com/animated-gifs/9863-kneeling-t-spine-mobility.html",
+      "illustration_url": "https://gymvisual.com/illustrations/7768-kneeling-t-spine-mobility.html",
+      "video_url": "https://gymvisual.com/videos/14464-kneeling-t-spine-mobility.html",
+      "note": "De verificat pe pagina produsului: că mâna este la ceafă și că se rotește cotul spre tavan. Alternativă (feminină): «Kneeling Thoracic Rotation (female)» (https://gymvisual.com/animated-gifs/25420-kneeling-thoracic-rotation-female.html)."
+    },
+    {
+      "slug": "dorsiflexie-glezna-la-perete",
+      "match": "close",
+      "product_name": "Kneeling Heel Down Achilles Stretch",
+      "gif_url": "https://gymvisual.com/animated-gifs/4597-kneeling-heel-down-achilles-stretch.html",
+      "illustration_url": "https://gymvisual.com/illustrations/3943-kneeling-heel-down-achilles-stretch.html",
+      "video_url": "https://gymvisual.com/videos/21966-standing-ankle-dorsi-flexion-against-wall-female.html",
+      "note": "GIF-ul arată aceeași mișcare a gleznei (genunchiul peste vârf, călcâiul pe sol), dar din sprijin pe un genunchi, fără perete. Exercițiul exact există doar ca video, în variantă feminină: «Standing Ankle Dorsi Flexion against Wall (female)» (trecut la video)."
+    },
+    {
+      "slug": "worlds-greatest-stretch",
+      "match": "exact",
+      "product_name": "Worlds Greatest Stretch",
+      "gif_url": "https://gymvisual.com/animated-gifs/13857-worlds-greatest-stretch.html",
+      "illustration_url": "https://gymvisual.com/illustrations/13847-worlds-greatest-stretch.html",
+      "video_url": "https://gymvisual.com/videos/10746-worlds-greatest-stretch.html",
+      "note": "Există și o a doua variantă, «World Greatest Stretch» (https://gymvisual.com/animated-gifs/3468-world-greatest-stretch.html)."
+    },
+    {
+      "slug": "intindere-piriform",
+      "match": "exact",
+      "product_name": "Lying Glute Stretch",
+      "gif_url": "https://gymvisual.com/animated-gifs/4427-lying-glute-stretch.html",
+      "illustration_url": "https://gymvisual.com/illustrations/1200-lying-glute-stretch.html",
+      "video_url": "https://gymvisual.com/videos/18367-lying-glute-stretch-male.html",
+      "note": "De verificat pe pagina produsului: că este poziția «cifra 4» din culcat pe spate."
+    },
+    {
+      "slug": "intindere-cvadriceps-culcat-lateral",
+      "match": "exact",
+      "product_name": "Lying (side) Quadriceps Stretch",
+      "gif_url": "https://gymvisual.com/animated-gifs/2109-lying-side-quadriceps-stretch.html",
+      "illustration_url": "https://gymvisual.com/illustrations/633-lying-side-quadriceps-stretch.html",
+      "video_url": "https://gymvisual.com/videos/12456-lying-side-quadriceps-stretch.html",
+      "note": null
+    },
+    {
+      "slug": "a-skip",
+      "match": "exact",
+      "product_name": "High Knee Skips (male)",
+      "gif_url": "https://gymvisual.com/animated-gifs/8304-high-knee-skips-male.html",
+      "illustration_url": "https://gymvisual.com/illustrations/7360-high-knee-skips-male.html",
+      "video_url": "https://gymvisual.com/videos/7443-high-knee-skips-male.html",
+      "note": null
+    },
+    {
+      "slug": "mers-pe-calcaie",
+      "match": "exact",
+      "product_name": "Heel Walk (male)",
+      "gif_url": "https://gymvisual.com/animated-gifs/23485-heel-walk-male.html",
+      "illustration_url": "https://gymvisual.com/illustrations/23532-heel-walk-male.html",
+      "video_url": "https://gymvisual.com/videos/22395-heel-walk-male.html",
+      "note": null
+    },
+    {
+      "slug": "mers-pe-varfuri",
+      "match": "exact",
+      "product_name": "Toe Walk",
+      "gif_url": "https://gymvisual.com/animated-gifs/10991-toe-walk.html",
+      "illustration_url": "https://gymvisual.com/illustrations/12681-toe-walk.html",
+      "video_url": "https://gymvisual.com/videos/14498-toe-walk.html",
+      "note": null
+    },
+    {
+      "slug": "fandare-cu-rotatie",
+      "match": "exact",
+      "product_name": "Lunge with Twist",
+      "gif_url": "https://gymvisual.com/animated-gifs/3659-lunge-with-twist.html",
+      "illustration_url": "https://gymvisual.com/illustrations/3624-lunge-with-twist.html",
+      "video_url": "https://gymvisual.com/videos/11631-lunge-with-twist.html",
+      "note": null
+    },
+    {
+      "slug": "pasi-laterali",
+      "match": "close",
+      "product_name": "Shuffle",
+      "gif_url": "https://gymvisual.com/animated-gifs/9715-shuffle.html",
+      "illustration_url": "https://gymvisual.com/illustrations/10288-shuffle.html",
+      "video_url": "https://gymvisual.com/videos/18837-sideward-shuffle-male.html",
+      "note": "Stil disponibil doar «Basic grey». Numele «Shuffle» nu spune direcția. De verificat pe pagina produsului: că deplasarea este laterală, în poziție joasă. Clipul video trecut aici este «Sideward Shuffle (male)»."
+    },
+    {
+      "slug": "rulou-cvadriceps",
+      "match": "exact",
+      "product_name": "Roll Rectus Femoris",
+      "gif_url": "https://gymvisual.com/animated-gifs/4272-roll-rectus-femoris.html",
+      "illustration_url": "https://gymvisual.com/illustrations/4262-roll-rectus-femoris.html",
+      "video_url": "https://gymvisual.com/videos/11642-roll-rectus-femoris.html",
+      "note": null
+    },
+    {
+      "slug": "rulou-ischiogambieri",
+      "match": "exact",
+      "product_name": "Roll Hamstrings Sitting on Floor",
+      "gif_url": "https://gymvisual.com/animated-gifs/4271-roll-hamstrings-sitting-on-floor.html",
+      "illustration_url": "https://gymvisual.com/illustrations/4261-roll-hamstrings-sitting-on-floor.html",
+      "video_url": null,
+      "note": "Fără clip video în variantă masculină."
+    },
+    {
+      "slug": "rulou-gamba",
+      "match": "exact",
+      "product_name": "Roll Calves",
+      "gif_url": "https://gymvisual.com/animated-gifs/4274-roll-calves.html",
+      "illustration_url": "https://gymvisual.com/illustrations/4264-roll-calves.html",
+      "video_url": "https://gymvisual.com/videos/15495-roll-calves-male.html",
+      "note": null
+    },
+    {
+      "slug": "rulou-banda-iliotibiala-fesieri",
+      "match": "close",
+      "product_name": "Roll Quadriceps (Vastus Lateralis) Lying on Floor",
+      "gif_url": "https://gymvisual.com/animated-gifs/13131-roll-quadriceps-vastus-lateralis-lying-on-floor.html",
+      "illustration_url": "https://gymvisual.com/illustrations/13101-roll-quadriceps-vastus-lateralis-lying-on-floor.html",
+      "video_url": null,
+      "note": "Acoperă doar a doua parte a exercițiului (exteriorul coapsei). Pentru fesieri: «Roll Glutes Sitting on Floor» (https://gymvisual.com/animated-gifs/13128-roll-glutes-sitting-on-floor.html). Fără clip video."
+    },
+    {
+      "slug": "alergare-usoara",
+      "match": "close",
+      "product_name": "Run",
+      "gif_url": "https://gymvisual.com/animated-gifs/4183-run.html",
+      "illustration_url": "https://gymvisual.com/illustrations/705-run.html",
+      "video_url": "https://gymvisual.com/videos/8712-run.html",
+      "note": "Alergare generică, fără conuri și fără întoarcere. Variantă pe loc: «Place Jog (male)» (https://gymvisual.com/animated-gifs/23355-place-jog-male.html)."
+    },
+    {
+      "slug": "deschideri-de-sold",
+      "match": "close",
+      "product_name": "Gate Openers (beginner) (female)",
+      "gif_url": null,
+      "illustration_url": null,
+      "video_url": "https://gymvisual.com/videos/18844-gate-openers-beginner-female.html",
+      "note": "Fără GIF și fără ilustrație: doar video, în variantă feminină. De verificat pe pagina produsului: că mișcarea este genunchi sus, apoi spre exterior."
+    },
+    {
+      "slug": "inchideri-de-sold",
+      "match": "close",
+      "product_name": "Gates Close (male)",
+      "gif_url": null,
+      "illustration_url": null,
+      "video_url": "https://gymvisual.com/videos/22998-gates-close-male.html",
+      "note": "Fără GIF și fără ilustrație: doar video. De verificat pe pagina produsului: că mișcarea este din exterior spre interior."
+    },
+    {
+      "slug": "sarituri-verticale",
+      "match": "exact",
+      "product_name": "Jump Squat",
+      "gif_url": "https://gymvisual.com/animated-gifs/2012-jump-squat.html",
+      "illustration_url": "https://gymvisual.com/illustrations/534-jump-squat.html",
+      "video_url": "https://gymvisual.com/videos/1399-jump-squat.html",
+      "note": "De verificat pe pagina produsului: poziția brațelor (la noi, mâinile pe șolduri). Alternativă cu mâinile la ceafă: «Prisoner Jump Squat (male)» (https://gymvisual.com/animated-gifs/10170-prisoner-jump-squat-male.html)."
+    },
+    {
+      "slug": "alergare-cu-schimbari-de-directie",
+      "match": "none",
+      "product_name": null,
+      "gif_url": null,
+      "illustration_url": null,
+      "video_url": null,
+      "note": "Lipsă. Căutat: «zigzag», «sprint», «run», «shuffle». Am găsit doar «ZigZag Hopes» (sărituri) și «High Hurdle Jump to Sprint and Cut (male)» (cu gard), care sunt alte exerciții."
+    },
+    {
+      "slug": "pendulari-de-brat",
+      "match": "exact",
+      "product_name": "Bent Over Shoulder Pendulum (female)",
+      "gif_url": "https://gymvisual.com/animated-gifs/16102-bent-over-shoulder-pendulum-female.html",
+      "illustration_url": "https://gymvisual.com/illustrations/16107-bent-over-shoulder-pendulum-female.html",
+      "video_url": "https://gymvisual.com/videos/24723-bent-over-shoulder-pendulum-male.html",
+      "note": "GIF și ilustrație doar în variantă feminină; clipul video trecut aici este varianta masculină."
+    },
+    {
+      "slug": "rotatie-externa-umar-culcat-lateral",
+      "match": "exact",
+      "product_name": "Dumbbell lying external shoulder rotation",
+      "gif_url": "https://gymvisual.com/animated-gifs/2344-dumbbell-lying-external-shoulder-rotation.html",
+      "illustration_url": "https://gymvisual.com/illustrations/884-dumbbell-lying-external-shoulder-rotation.html",
+      "video_url": "https://gymvisual.com/videos/19363-dumbbell-lying-external-shoulder-rotation-male.html",
+      "note": null
+    },
+    {
+      "slug": "tractiuni-spre-fata-cu-banda",
+      "match": "exact",
+      "product_name": "Band Face Pull (male)",
+      "gif_url": "https://gymvisual.com/animated-gifs/14120-band-face-pull-male.html",
+      "illustration_url": "https://gymvisual.com/illustrations/14034-band-face-pull-male.html",
+      "video_url": "https://gymvisual.com/videos/14080-band-face-pull-male.html",
+      "note": null
+    },
+    {
+      "slug": "plansa-cu-atingerea-umerilor",
+      "match": "exact",
+      "product_name": "Shoulder Tap",
+      "gif_url": "https://gymvisual.com/animated-gifs/8518-shoulder-tap.html",
+      "illustration_url": "https://gymvisual.com/illustrations/8517-shoulder-tap.html",
+      "video_url": "https://gymvisual.com/videos/8628-shoulder-tap.html",
+      "note": null
+    },
+    {
+      "slug": "alergare-in-jurul-partenerului",
+      "match": "none",
+      "product_name": null,
+      "gif_url": null,
+      "illustration_url": null,
+      "video_url": null,
+      "note": "Lipsă. Căutat: «partner», «shuffle», «run». Un candidat care merită privit înainte de a renunța: «Partner Shuffle (male)» (https://gymvisual.com/animated-gifs/15262-partner-shuffle-male.html) — după nume, pași laterali în doi; nu am putut confirma că arată ocolirea."
+    },
+    {
+      "slug": "alergare-cu-contact-de-umar",
+      "match": "none",
+      "product_name": null,
+      "gif_url": null,
+      "illustration_url": null,
+      "video_url": null,
+      "note": "Lipsă. Căutat: «partner», «jump», «hop». Nimic cu doi jucători care sar și se ating umăr la umăr."
+    },
+    {
+      "slug": "alergare-rapida-inainte-inapoi",
+      "match": "close",
+      "product_name": "Forward Backward Shuffle (male)",
+      "gif_url": "https://gymvisual.com/animated-gifs/25426-forward-backward-shuffle-male.html",
+      "illustration_url": "https://gymvisual.com/illustrations/25508-forward-backward-shuffle-male.html",
+      "video_url": "https://gymvisual.com/videos/20507-forward-backward-shuffle-male.html",
+      "note": "De verificat pe pagina produsului: că animația arată deplasare înainte, apoi cu spatele. Alternativă doar pentru partea cu spatele: «Backwards Run» (https://gymvisual.com/animated-gifs/9716-backwards-run.html)."
+    },
+    {
+      "slug": "alergare-cu-accelerare",
+      "match": "close",
+      "product_name": "Sprint",
+      "gif_url": "https://gymvisual.com/animated-gifs/21566-sprint.html",
+      "illustration_url": "https://gymvisual.com/illustrations/21598-sprint.html",
+      "video_url": "https://gymvisual.com/videos/11929-sprint.html",
+      "note": "Sprint generic; la noi este alergare la 75–80% din viteza maximă."
+    },
+    {
+      "slug": "pasi-sariti",
+      "match": "none",
+      "product_name": null,
+      "gif_url": null,
+      "illustration_url": null,
+      "video_url": null,
+      "note": "Lipsă. Căutat: «bound», «bounding», «leap», «skip», «hop». «Lateral Bound» este lateral, iar «High Knee Skips» este folosit la A-skip."
+    },
+    {
+      "slug": "genuflexiune-cu-ridicare-pe-varfuri",
+      "match": "close",
+      "product_name": "Dumbbell Goblet Squat with Calf Raise",
+      "gif_url": "https://gymvisual.com/animated-gifs/24463-dumbbell-goblet-squat-with-calf-raise.html",
+      "illustration_url": "https://gymvisual.com/illustrations/24567-dumbbell-goblet-squat-with-calf-raise.html",
+      "video_url": "https://gymvisual.com/videos/17967-dumbbell-goblet-squat-with-calf-raise.html",
+      "note": "Aceeași mișcare (genuflexiune, apoi ridicare pe vârfuri), dar cu o ganteră ținută la piept. Nu am găsit varianta fără greutate."
+    }
+  ]
+}
