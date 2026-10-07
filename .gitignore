@@ -1,0 +1,13 @@
+node_modules
+.next
+.env
+.env.*
+!.env.example
+data/private
+tools/local-stack/.data
+tools/local-stack/bin
+*.log
+.netlify
+.DS_Store
+tsconfig.tsbuildinfo
+conturi-demo.local.md

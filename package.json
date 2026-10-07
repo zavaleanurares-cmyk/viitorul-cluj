@@ -1,0 +1,27 @@
+{
+  "name": "platforma-medicala-club",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w web",
+    "build": "npm run build -w web",
+    "lint": "npm run lint -w web",
+    "typecheck": "npm run typecheck -w web && npm run typecheck -w @club/shared",
+    "test": "npm run test -w @club/shared",
+    "stack:start": "node tools/local-stack/start.mjs",
+    "db:seed-demo": "node scripts/seed-demo.mjs",
+    "test:rls": "node scripts/test-rls.mjs",
+    "db:migrate": "node scripts/migrate.mjs",
+    "db:types": "node scripts/gen-types.mjs"
+  },
+  "devDependencies": {
+    "embedded-postgres": "^18.4.0-beta.17",
+    "pg": "^8.23.1",
+    "tsx": "^4.23.15"
+  },
+  "type": "module"
+}
