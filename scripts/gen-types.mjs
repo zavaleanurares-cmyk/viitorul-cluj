@@ -1,5 +1,5 @@
 // Generează packages/shared/src/database.types.ts din schema bazei de date (DATABASE_URL).
-// Echivalent cu `supabase gen types typescript`, pentru medii fără Docker.
+// Formatul este cel așteptat de constructorul de interogări (@supabase/postgrest-js).
 import pg from "pg";
 import fs from "node:fs";
 import path from "node:path";

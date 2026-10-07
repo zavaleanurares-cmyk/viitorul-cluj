@@ -6,17 +6,30 @@ Citește tot fișierul înainte să scrii cod. Regulile de aici țin modulele co
 
 ```
 packages/shared/src/        tipuri, etichete, reguli de domeniu, parsere de import, interogări comune (web + nativ)
-db/migrations/        schema, RLS, triggere, RPC (sursa de adevăr pentru permisiuni)
+packages/db/src/            conexiunea la Postgres, clientul de date (sub RLS), autentificarea (utilizatori, sesiuni, linkuri)
+packages/seed/src/          date inițiale (club, bibliotecă, club demonstrativ)
+db/migrations/              schema, RLS, triggere, RPC (sursa de adevăr pentru permisiuni)
 apps/web/src/
   app/(auth)/               autentificare, parolă uitată
-  app/(setup)/              parolă inițială, consimțământ
+  app/(setup)/              alegerea parolei, consimțământ
   app/(app)/                zona autentificată — fiecare modul are directoarele lui de rute
+  app/api/files/            servirea și încărcarea fișierelor private
   components/ui/            componente comune (NU le modifica; vezi lista de mai jos)
   components/charts/        grafice comune
   components/<modul>/       componentele modulului tău
-  lib/                      sesiune, acțiuni, storage, temă
+  lib/                      sesiune, acțiuni, fișiere, temă
   messages/ro/<modul>.ts    TOATE textele vizibile ale modulului tău
 ```
+
+## Stack (important — s-a schimbat față de specificația inițială)
+
+**Nu folosim Supabase.** Baza de date este Postgres simplu (Neon în producție, Postgres local în dezvoltare).
+- **Date:** `db` din sesiune este un client `PostgrestClient` (`@supabase/postgrest-js` — doar constructorul de interogări: `db.from("players").select("id, groups(name)").eq(...)`, `db.rpc(...)`). Interogările NU pleacă prin rețea către un API: sunt traduse în SQL și executate în proces, într-o tranzacție în care rolul Postgres este `authenticated` și `app_auth.uid()` este utilizatorul curent. Row Level Security se aplică la fel ca înainte.
+  - Există: `select` cu relații imbricate (`rel(...)`, `rel!inner(...)`, `alias:rel!constrangere(...)`), `eq/neq/gt/gte/lt/lte/like/ilike/is/in/contains/overlaps/not/or`, `order` (și pe relații cu `referencedTable`), `limit`, `range`, `single`, `maybeSingle`, `{ count: "exact", head: true }`, `insert / upsert / update / delete` cu `.select()`, `rpc`.
+  - NU există: `db.auth`, `db.storage`, `db.channel` (realtime), `textSearch`, relații many-to-many prin tabel de legătură într-un singur `select` (fă două niveluri: `a(b(c))`). Dacă două tabele au mai multe chei străine între ele (ex. `referrals` → `profiles`), indică relația: `profiles!referrals_partner_user_id_fkey(full_name)`.
+- **Autentificare:** proprie (`@club/db`): e-mail + parolă, sesiune în cookie httpOnly. Conturile se creează doar de către preparator; activarea și resetarea parolei se fac prin linkuri de unică folosință `/auth/link?t=…`.
+- **Fișiere:** depozit privat (Vercel Blob în producție, disc local în dezvoltare). Vezi secțiunea „Fișiere”.
+- **Găzduire:** Vercel. Sarcini programate: Vercel Cron → `/api/cron`.
 
 ## Next.js 16 — diferențe care contează
 
@@ -31,11 +44,12 @@ apps/web/src/
 // pagină (componentă server)
 import { requireRole, requireCapability, requireSession, visibleGroups } from "@/lib/auth";
 const { db, ctx } = await requireRole("physio");          // sau requireCapability("viewMedicalFile")
-// db  = client Supabase al utilizatorului (RLS activ) — tipizat cu Database din @club/shared
+// db  = clientul de date al utilizatorului (RLS activ) — tipizat cu Database din @club/shared
 // ctx = { userId, profile, role, club, settings, today, groups, statuses, staffGroupIds, player }
 ```
 
-- **RLS este ultima linie de apărare; nu o ocoli.** `createAdminClient()` (cheie de serviciu) se folosește doar la crearea conturilor și în `/api/cron`.
+- **RLS este ultima linie de apărare; nu o ocoli.** `createServiceDb()` din `@club/db` (rulează ca proprietar al tabelelor, fără RLS) se folosește doar la crearea conturilor și în `/api/cron`, după ce ai verificat explicit rolul apelantului.
+- Funcțiile de cont din `@club/db` (doar pe server): `createUser`, `findUserByEmail`, `getUser`, `setPassword`, `setUserDisabled`, `setUserEmail`, `deleteUser`, `createOneTimeToken(userId, "invite" | "recovery", ore)`, `deleteUserSessions`. Trimiterea e-mailurilor: `sendEmail` din `@/lib/email` (întoarce false dacă e-mailul nu e configurat — atunci afișează linkul ca să poată fi copiat).
 - Nu filtra pe grupă „de mână" ca măsură de securitate: baza de date o face. Filtrele din UI sunt doar pentru comoditate.
 - Roluri: `owner` (patron: doar agregate, prin RPC `club_overview`), `sporting_director` (fișa sumară, citire), `physio` (tot), `coach` (grupele lui, doar citire), `player` (pagina lui), `medical_partner` (cazurile trimise).
 - La afișarea datelor medicale ale unui jucător de către staff, jurnalizează citirea:
@@ -49,7 +63,7 @@ const { db, ctx } = await requireRole("physio");          // sau requireCapabili
 - Tipuri: `Tables<"players">`, `TablesInsert<…>`, `Enums<"app_role">` din `@club/shared`.
 - Etichete în română pentru valorile din baza de date: `packages/shared/src/labels.ts` (`label(INJURY_TYPES, x)`), zone: `zoneLabel`, `describeZone`, `BODY_ZONES`; date: `formatDate`, `formatDateShort`, `formatDateTime`, `relativeDay`, `plural`, `addDays`, `weekStart`, `weekDates`.
 - Operațiuni atomice există ca RPC: `save_daily_plan`, `copy_daily_plan`, `save_program`, `assign_program`, `import_*`, `club_overview`, `group_test_averages`, `export_player_data`, `anonymize_player`, `refresh_daily_alerts`, `update_my_profile`, `set_my_photo`, `log_event`. Semnăturile sunt în `packages/shared/src/database.types.ts`.
-- Schimbări de schemă: doar dacă sunt cu adevărat necesare. Fișier nou `db/migrations/202610071<NN>00_<modul>_<ce>.sql` (nu edita migrările existente), apoi `npm run db:migrate && npm run db:types` din rădăcină. Orice tabel nou are RLS și politici; orice funcție nouă are `revoke execute … from public, anon` + `grant` explicit.
+- Schimbări de schemă: doar dacă sunt cu adevărat necesare. Fișier nou `db/migrations/202610071<NN>00_<modul>_<ce>.sql` (nu edita migrările existente), apoi `npm run db:migrate && npm run db:types` din rădăcină **și repornirea nu e necesară, dar metadatele se recitesc doar la repornirea procesului** — după o migrare, atinge (`touch`) `apps/web/next.config.ts` ca serverul de dezvoltare să repornească. Orice tabel nou are RLS și politici; orice funcție nouă are `revoke execute … from public, anon` + `grant execute … to authenticated, service_role`. În SQL, utilizatorul curent este `app_auth.uid()`.
 
 ## Acțiuni de server
 
@@ -82,7 +96,32 @@ const save = useAction(saveNote, { onSuccess: () => setOpen(false) });   // toas
 ```
 
 - Acțiunile primesc obiecte simple (nu `FormData`) și le validează cu zod 4 (`z.uuid()`, `z.email()`, `z.iso.date()`).
-- Fișierele se încarcă din browser direct în storage (`createClient()` din `@/lib/supabase/client`), apoi o acțiune scrie rândul din tabel. Bucketuri private: `medical` (`<player_id>/<fișier>`), `exercise-media` (`<club_id>/<fișier>`), `avatars` (`<player_id>/<fișier>`), `branding` (`<club_id>/<fișier>`). Citirea: `signedUrl(db, bucket, path)` din `@/lib/storage` (linkuri cu expirare).
+
+## Fișiere
+
+Căi: `medical/<player_id>/<fișier>`, `exercise-media/<club_id>/<fișier>`, `avatars/<player_id>/<fișier>`, `branding/<club_id>/<fișier>`. În tabele se păstrează doar partea de după bucket (ex. `medical_documents.storage_path = "<player_id>/<uuid>-raport.pdf"`). Segmentele căii: doar litere, cifre, `.`, `_`, `-`.
+
+```tsx
+// client: încărcare (dreptul de scriere se verifică pe server, prin funcția SQL file_access)
+import { uploadFile, safeFileName } from "@/lib/upload";
+const path = `${playerId}/${crypto.randomUUID()}-${safeFileName(file.name)}`;
+const res = await uploadFile("medical", path, file, { onProgress: (p) => setProgress(p) });
+if (!res.ok) return toast(res.error, "error");
+await saveDocument.run({ playerId, path, title, mime: file.type, size: file.size });   // acțiunea scrie rândul din tabel
+```
+
+```ts
+// server
+import { fileUrl, deleteFiles, safeFileName } from "@/lib/storage";
+fileUrl("medical", doc.storage_path)                       // "/api/files/medical/…": se pune în href / src; accesul se verifică la fiecare cerere
+fileUrl("medical", doc.storage_path, { download: true })   // forțează descărcarea
+await deleteFiles(db, "medical", [doc.storage_path]);      // șterge doar ce are voie utilizatorul; întoarce câte a șters
+import { canAccess } from "@/lib/files";                   // canAccess(db, bucket, path, "read" | "write" | "delete")
+```
+
+- Nu există linkuri semnate de generat: `fileUrl` este tot ce trebuie (`signedUrl(db, bucket, path)` există doar pentru compatibilitate și întoarce aceeași adresă). Descărcările din `medical` sunt jurnalizate automat de rută.
+- Limite: `medical` 25 MB (PDF, JPG, PNG, WEBP, HEIC, ZIP), `exercise-media` 100 MB (MP4, WEBM, MOV, imagini), `avatars` 5 MB (JPG, PNG, WEBP), `branding` 2 MB (PNG, WEBP, JPG).
+- Un document medical poate fi citit doar dacă există rândul lui în `medical_documents` și acel rând este vizibil utilizatorului — deci scrie rândul imediat după încărcare, iar la ștergere șterge întâi fișierul (`deleteFiles`), apoi rândul.
 
 ## Interfață
 
@@ -139,7 +178,7 @@ npx eslint apps/web/src/<fișierele tale>  # fără erori (din apps/web: npx esl
 ```
 
 Serverul de dezvoltare rulează deja pe `http://localhost:3000` (NU porni altul, NU rula `next build`, NU rula `npm install`).
-Baza de date locală rulează deja; variabilele sunt în `tools/local-stack/.data/env` (`DATABASE_URL` pentru `psql`).
+Baza de date locală rulează deja; `DATABASE_URL` este în `tools/local-stack/.data/env` (`. tools/local-stack/.data/env && psql "$DATABASE_URL"`). Conexiunea este a proprietarului tabelelor (ocolește RLS) — bună pentru a inspecta date, nu pentru a testa permisiuni.
 
 Capturi de ecran / verificare în browser (Playwright, Chromium la `/opt/pw-browsers/chromium`):
 
@@ -159,6 +198,6 @@ Verifică și negativul: intră cu un rol care NU ar trebui să vadă pagina și
 
 ## Ce predai
 
-1. Codul, în directoarele modulului tău. Nu modifica fișierele altor module sau cele comune (`components/ui`, `components/charts`, `lib`, `messages/index.ts`, `messages/ro/index.ts`, `app/(app)/layout.tsx`, `packages/shared`, migrările existente). Dacă un fișier comun are un defect care te blochează, repară-l minimal și spune explicit în raport.
+1. Codul, în directoarele modulului tău. Nu modifica fișierele altor module sau cele comune (`components/ui`, `components/charts`, `lib`, `messages/index.ts`, `messages/ro/index.ts`, `app/(app)/layout.tsx`, `app/api/files`, `packages/*`, migrările existente). Dacă un fișier comun are un defect care te blochează, repară-l minimal și spune explicit în raport.
 2. `docs/decizii/<modul>.md`: presupunerile și deciziile luate, ce a rămas nefăcut și de ce (scurt, pe puncte, în română).
 3. Raportul final: ce ai construit (rute), ce ai verificat efectiv și cum, ce nu merge sau a rămas pe dinafară. Fii exact: „nu am verificat X" este un răspuns bun; „totul merge" fără probă nu este.
