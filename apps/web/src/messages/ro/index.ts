@@ -11,5 +11,6 @@ import { dashboard } from "./dashboard";
 import { admin } from "./admin";
 import { reports } from "./reports";
 import { partner } from "./partner";
+import { notifications } from "./notifications";
 
-export const ro = { common, auth, player, players, library, planning, wellness, physical, imports, dashboard, admin, reports, partner } as const;
+export const ro = { common, auth, player, players, library, planning, wellness, physical, imports, dashboard, admin, reports, partner, notifications } as const;

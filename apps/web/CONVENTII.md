@@ -177,7 +177,8 @@ npx tsc --noEmit -p apps/web            # fără erori
 npx eslint apps/web/src/<fișierele tale>  # fără erori (din apps/web: npx eslint src/...)
 ```
 
-Serverul de dezvoltare rulează deja pe `http://localhost:3000` (NU porni altul, NU rula `next build`, NU rula `npm install`).
+Serverul de dezvoltare rulează deja pe `http://localhost:3000` (NU porni altul, NU rula `next build`). Dacă ai nevoie de o bibliotecă nouă, spune în raport; nu rula `npm install` decât dacă este indispensabil și atunci doar `npm i -w web <pachet>`, o singură dată.
+Mașina are 2 nuclee: rulează o singură instanță de browser o dată și nu lăsa procese pornite.
 Baza de date locală rulează deja; `DATABASE_URL` este în `tools/local-stack/.data/env` (`. tools/local-stack/.data/env && psql "$DATABASE_URL"`). Conexiunea este a proprietarului tabelelor (ocolește RLS) — bună pentru a inspecta date, nu pentru a testa permisiuni.
 
 Capturi de ecran / verificare în browser (Playwright, Chromium la `/opt/pw-browsers/chromium`):
