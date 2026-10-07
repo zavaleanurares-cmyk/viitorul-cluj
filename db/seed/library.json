@@ -137,7 +137,7 @@
     {
       "slug": "nordic-hamstring",
       "name": "Nordic (coborâre excentrică pentru ischiogambieri)",
-      "description": "Exercițiul de bază pentru prevenirea leziunilor de ischiogambieri. Se face după antrenament sau în ședința de forță, nu înaintea sprinturilor.",
+      "description": "Exercițiul de bază pentru prevenirea leziunilor de ischiogambieri. De regulă se face după antrenament sau în ședința de forță; în încălzire, doar în volum mic.",
       "steps": [
         "Așază-te în genunchi pe o saltea; un coleg îți ține ferm gleznele sau le fixezi sub un suport.",
         "Ține corpul drept de la genunchi până la umeri, cu șoldurile împinse înainte.",
@@ -243,7 +243,7 @@
     {
       "slug": "strangere-minge-izometric-adductori",
       "name": "Strângerea mingii între genunchi (izometric)",
-      "description": "Activează adductorii fără mișcare. Folosit la începutul recuperării zonei inghinale și ca test rapid de durere înaintea antrenamentului.",
+      "description": "Activează adductorii fără mișcare. Folosit la începutul recuperării zonei inghinale și ca verificare rapidă a zonei înaintea antrenamentului.",
       "steps": [
         "Întinde-te pe spate, cu genunchii îndoiți și tălpile pe sol.",
         "Pune o minge între genunchi.",
@@ -271,7 +271,7 @@
     {
       "slug": "copenhagen-nivel-1",
       "name": "Copenhagen — nivelul 1 (sprijin pe genunchi, izometric)",
-      "description": "Prima treaptă a exercițiului Copenhagen pentru adductori: pârghie scurtă, fără mișcare.",
+      "description": "Prima treaptă a exercițiului Copenhagen pentru adductori: sprijin pe genunchi (pârghie scurtă), fără mișcare.",
       "steps": [
         "Întinde-te pe o parte, cu antebrațul pe sol, sub umăr.",
         "Sprijină partea interioară a genunchiului de sus pe o bancă; un coleg poate ține piciorul în locul băncii.",
@@ -300,7 +300,7 @@
     {
       "slug": "copenhagen-nivel-2",
       "name": "Copenhagen — nivelul 2 (sprijin pe genunchi, dinamic)",
-      "description": "A doua treaptă: aceeași poziție cu pârghie scurtă, dar cu ridicări și coborâri controlate.",
+      "description": "A doua treaptă: aceeași poziție, cu sprijin pe genunchi, dar cu ridicări și coborâri controlate.",
       "steps": [
         "Ia poziția de la nivelul 1: antebraț pe sol, genunchiul de sus sprijinit pe bancă.",
         "Ridică bazinul și adu piciorul de jos lângă cel de sus.",
@@ -402,7 +402,7 @@
         "mat"
       ],
       "level": "beginner",
-      "contraindications": null,
+      "contraindications": "Nu se face cu durere inghinală ascuțită; micșorează amplitudinea dacă apare durere.",
       "video_url": null,
       "image_url": null,
       "source": null,
@@ -466,7 +466,7 @@
     {
       "slug": "pompe-de-glezna",
       "name": "Pompe de gleznă",
-      "description": "Mișcare ușoară a gleznei, în primele zile după o entorsă sau după o perioadă de imobilizare: ajută circulația și reduce umflătura.",
+      "description": "Mișcare ușoară a gleznei, în primele zile după o entorsă sau după o perioadă de imobilizare: ajută circulația și poate reduce umflătura.",
       "steps": [
         "Întinde-te sau așază-te cu piciorul sprijinit, ușor ridicat.",
         "Trage vârful piciorului spre tine cât poți fără durere.",
@@ -588,7 +588,7 @@
         "band"
       ],
       "level": "beginner",
-      "contraindications": null,
+      "contraindications": "Mișcarea trebuie să fie fără durere în fața gleznei.",
       "video_url": null,
       "image_url": null,
       "source": null,
@@ -712,7 +712,7 @@
       "steps": [
         "Stai cu picioarele la lățimea șoldurilor.",
         "Sari în sus sau de pe o cutie joasă.",
-        "Aterizează pe ambele picioare în același timp, pe partea din față a tălpii, apoi lasă călcâiele.",
+        "Aterizează pe ambele picioare în același timp, pe partea din față a tălpii, apoi coboară călcâiele.",
         "Îndoaie genunchii și șoldurile ca să amortizezi, fără zgomot.",
         "Ține poziția 2 secunde: genunchii nu se apropie unul de altul."
       ],
@@ -1176,7 +1176,7 @@
     {
       "slug": "spanish-squat",
       "name": "Spanish squat (genuflexiune cu bandă în spatele genunchilor)",
-      "description": "Genuflexiune cu trunchiul vertical, susținută de o bandă groasă. Încarcă puternic cvadricepsul și tendonul rotulian, cu presiune redusă pe fața genunchiului.",
+      "description": "Genuflexiune cu trunchiul vertical, susținută de o bandă groasă. Încarcă puternic cvadricepsul și tendonul rotulian; se folosește mai ales ca menținere izometrică.",
       "steps": [
         "Fixează o bandă groasă de un stâlp, la înălțimea genunchilor, și intră cu ambele picioare în ea.",
         "Așază banda în spatele genunchilor și fă câțiva pași înapoi, până se întinde bine.",
@@ -1193,7 +1193,7 @@
         "band"
       ],
       "level": "intermediate",
-      "contraindications": "Verifică fixarea benzii înainte de fiecare serie. Unghiul și durata se stabilesc de preparator.",
+      "contraindications": "Verifică fixarea benzii înainte de fiecare serie. Unghiul și durata se stabilesc de preparator. Oprește-te dacă apare durere ascuțită în fața genunchiului.",
       "video_url": null,
       "image_url": null,
       "source": null,
@@ -1237,7 +1237,7 @@
         "Ține bazinul nemișcat, perpendicular pe sol.",
         "Ridică genunchiul de sus cât poți, fără să dezlipești călcâiele și fără să te rotești pe spate.",
         "Ține o secundă și coboară lent.",
-        "Pentru mai multă rezistență, pune o mini-bandă deasupra genunchilor."
+        "Pentru mai multă rezistență, pune o minibandă deasupra genunchilor."
       ],
       "category": "kinetotherapy",
       "zones": [
@@ -1258,10 +1258,10 @@
     },
     {
       "slug": "mers-lateral-cu-mini-banda",
-      "name": "Mers lateral cu mini-bandă",
+      "name": "Mers lateral cu minibandă",
       "description": "Activare a fesierilor înainte de antrenament și exercițiu de prevenție pentru genunchi și șold.",
       "steps": [
-        "Pune mini-banda deasupra genunchilor sau în jurul gleznelor.",
+        "Pune minibanda deasupra genunchilor sau în jurul gleznelor.",
         "Coboară în semigenuflexiune, cu trunchiul ușor aplecat și vârfurile drept înainte.",
         "Fă un pas lateral cu un picior, apoi adu celălalt picior fără să slăbești banda.",
         "Ține genunchii depărtați, pe linia vârfurilor.",
@@ -1305,7 +1305,7 @@
         "barbell"
       ],
       "level": "intermediate",
-      "contraindications": "Nu arcui zona lombară în partea de sus a mișcării. Învață mișcarea fără greutate.",
+      "contraindications": "Nu arcui zona lombară în partea de sus a mișcării. Învață mișcarea fără greutate și crește încărcarea treptat, sub supravegherea preparatorului.",
       "video_url": null,
       "image_url": null,
       "source": null,
@@ -1373,7 +1373,7 @@
       "steps": [
         "Așază-te cu fața în jos, în sprijin pe antebrațe și pe vârfurile picioarelor, cu coatele sub umeri.",
         "Ridică trunchiul până când capul, umerii, bazinul și călcâiele sunt în linie.",
-        "Trage abdomenul înăuntru și strânge fesierii.",
+        "Încordează abdomenul și strânge fesierii.",
         "Menține poziția respirând normal, fără să lași bazinul să cadă sau să urce."
       ],
       "category": "prevention",
@@ -1477,7 +1477,7 @@
     },
     {
       "slug": "dead-bug",
-      "name": "Dead bug",
+      "name": "Dead bug (braț și picior opus, culcat pe spate)",
       "description": "Antrenează controlul abdomenului în timp ce brațele și picioarele se mișcă. Potrivit și pentru jucătorii cu sensibilitate lombară.",
       "steps": [
         "Întinde-te pe spate, cu brațele ridicate spre tavan și cu șoldurile și genunchii la 90°.",
@@ -1505,7 +1505,7 @@
     },
     {
       "slug": "bird-dog",
-      "name": "Bird dog",
+      "name": "Bird dog (braț și picior opus, din patrupedie)",
       "description": "Stabilitate pentru trunchi și zona lombară, din sprijin pe palme și genunchi.",
       "steps": [
         "Așază-te în sprijin pe palme și genunchi, cu spatele drept.",
@@ -1533,7 +1533,7 @@
     },
     {
       "slug": "pallof-press",
-      "name": "Pallof press",
+      "name": "Pallof press (împingere antirotație cu bandă)",
       "description": "Antrenează trunchiul să reziste rotației. Util pentru dueluri, șuturi și schimbări de direcție.",
       "steps": [
         "Fixează banda la înălțimea pieptului și stai lateral față de punctul de fixare.",
@@ -1697,7 +1697,7 @@
       "description": "Activează mușchii dintre omoplați și partea din spate a umărului. Util pentru portari și pentru postură.",
       "steps": [
         "Întinde-te pe burtă, pe saltea sau pe o bancă înclinată, cu fruntea sprijinită.",
-        "Ridică brațele întinse în diagonală, în formă de Y, cu policele în sus; ține o secundă.",
+        "Ridică brațele întinse în diagonală, în formă de Y, cu degetele mari în sus; ține o secundă.",
         "Du brațele lateral, în formă de T, strângând omoplații.",
         "Îndoaie coatele și trage-le spre șolduri, în formă de W.",
         "Coboară și reia, fără să ridici umerii spre urechi."
@@ -1858,7 +1858,7 @@
     },
     {
       "slug": "worlds-greatest-stretch",
-      "name": "World's greatest stretch",
+      "name": "Fandare cu rotație și întindere (world's greatest stretch)",
       "description": "Întindere dinamică completă: șold, adductori, ischiogambieri și coloana toracică într-o singură mișcare.",
       "steps": [
         "Fă o fandare mare înainte și pune ambele palme pe sol, de partea interioară a piciorului din față.",
@@ -1942,12 +1942,12 @@
     },
     {
       "slug": "a-skip",
-      "name": "A-skip",
+      "name": "A-skip (pas săltat cu genunchiul sus)",
       "description": "Exercițiu de tehnică a alergării: ridică temperatura, activează flexorii șoldului și gamba, pregătește sprintul.",
       "steps": [
         "Pornește în pași săltați, pe partea din față a tălpii.",
         "Ridică un genunchi până la nivelul șoldului, cu vârful piciorului tras spre tine.",
-        "Coboară piciorul activ, sub centrul de greutate, și sari ușor pe celălalt.",
+        "Coboară piciorul energic, sub bazin, și fă un pas săltat pe celălalt.",
         "Coordonează brațele ca la alergare, cu coatele la 90°.",
         "Ține trunchiul drept și ritmul constant."
       ],
@@ -2321,6 +2321,290 @@
       "source": null,
       "license": null,
       "attribution": null
+    },
+    {
+      "slug": "pendulari-de-brat",
+      "name": "Pendulări ale brațului",
+      "description": "Mișcare pasivă, de relaxare, pentru umăr. Folosită la începutul recuperării, când mișcările active încă dor.",
+      "steps": [
+        "Sprijină-te cu mâna sănătoasă de o masă și apleacă trunchiul înainte.",
+        "Lasă brațul accidentat să atârne relaxat, spre sol.",
+        "Leagănă ușor corpul, astfel încât brațul să se miște singur: înainte-înapoi, apoi stânga-dreapta.",
+        "Fă apoi cercuri mici, în ambele sensuri, fără să încordezi umărul."
+      ],
+      "category": "kinetotherapy",
+      "zones": [
+        "shoulder",
+        "upper_arm"
+      ],
+      "equipment": [
+        "none"
+      ],
+      "level": "beginner",
+      "contraindications": "După o luxație, o fractură sau o operație, se face doar la indicația medicului sau a kinetoterapeutului. Oprește-te dacă durerea crește.",
+      "video_url": null,
+      "image_url": null,
+      "source": null,
+      "license": null,
+      "attribution": null
+    },
+    {
+      "slug": "rotatie-externa-umar-culcat-lateral",
+      "name": "Rotație externă a umărului, culcat pe o parte",
+      "description": "Întărește rotatorii externi ai umărului cu o ganteră ușoară. Exercițiu de bază în recuperarea umărului și în prevenție, la portari.",
+      "steps": [
+        "Întinde-te pe partea sănătoasă, cu capul sprijinit și un prosop rulat între cotul de sus și trunchi.",
+        "Ține o ganteră ușoară în mâna de sus, cu cotul îndoit la 90° și antebrațul pe abdomen.",
+        "Ridică antebrațul spre tavan, rotind brațul, fără să dezlipești cotul de prosop.",
+        "Ține o secundă sus și coboară lent, în 2–3 secunde.",
+        "Trunchiul rămâne nemișcat: nu te roti pe spate ca să ridici mai sus."
+      ],
+      "category": "kinetotherapy",
+      "zones": [
+        "shoulder",
+        "upper_arm"
+      ],
+      "equipment": [
+        "mat",
+        "dumbbell"
+      ],
+      "level": "beginner",
+      "contraindications": "Începe fără greutate sau cu 0,5–1 kg. Nu se face cu durere în umăr; după o luxație sau o operație, doar cu acordul medicului.",
+      "video_url": null,
+      "image_url": null,
+      "source": null,
+      "license": null,
+      "attribution": null
+    },
+    {
+      "slug": "tractiuni-spre-fata-cu-banda",
+      "name": "Tracțiuni spre față cu bandă (face pull)",
+      "description": "Întărește partea din spate a umărului și mușchii dintre omoplați. Echilibrează munca de aruncare și de plonjon a portarilor.",
+      "steps": [
+        "Fixează banda la înălțimea feței și prinde-o cu ambele mâini, cu brațele întinse în față.",
+        "Fă un pas înapoi, până când banda este ușor întinsă, și ține genunchii puțin îndoiți.",
+        "Trage banda spre față, cu coatele la nivelul umerilor, depărtând mâinile.",
+        "La final, mâinile ajung lângă urechi, iar omoplații se apropie.",
+        "Revino lent, fără să ridici umerii spre urechi și fără să te lași pe spate."
+      ],
+      "category": "prevention",
+      "zones": [
+        "shoulder",
+        "upper_back"
+      ],
+      "equipment": [
+        "band"
+      ],
+      "level": "beginner",
+      "contraindications": "Alege o bandă cu care mișcarea se face fără durere și fără să arcuiești zona lombară.",
+      "video_url": null,
+      "image_url": null,
+      "source": null,
+      "license": null,
+      "attribution": null
+    },
+    {
+      "slug": "plansa-cu-atingerea-umerilor",
+      "name": "Planșă pe brațe întinse cu atingerea umerilor",
+      "description": "Stabilitate pentru umăr și trunchi, în sprijin pe un singur braț. Util pentru portari, ca pregătire pentru căderi și plonjoane.",
+      "steps": [
+        "Ia poziția de flotare, cu brațele întinse, palmele sub umeri și picioarele depărtate la lățimea șoldurilor.",
+        "Încordează abdomenul și fesierii, astfel încât corpul să fie drept.",
+        "Ridică o mână și atinge umărul opus, fără să rotești bazinul.",
+        "Pune mâna la loc și repetă cu cealaltă.",
+        "Mișcă-te lent: bazinul nu se leagănă de pe o parte pe alta."
+      ],
+      "category": "prevention",
+      "zones": [
+        "shoulder",
+        "abdomen",
+        "lower_back"
+      ],
+      "equipment": [
+        "mat"
+      ],
+      "level": "intermediate",
+      "contraindications": "Nu se face cu durere în umăr sau la încheietura mâinii. Varianta mai ușoară: cu genunchii pe sol.",
+      "video_url": null,
+      "image_url": null,
+      "source": null,
+      "license": null,
+      "attribution": null
+    },
+    {
+      "slug": "alergare-in-jurul-partenerului",
+      "name": "Alergare cu pași laterali în jurul partenerului",
+      "description": "Element de încălzire în perechi: alergare ușoară întreruptă de deplasări laterale, cu fața la coleg.",
+      "steps": [
+        "Aleargă ușor în perechi până la primul con.",
+        "Deplasează-te lateral, cu pași adăugați, spre coleg, la jumătatea distanței dintre voi.",
+        "Ocoliți-vă unul pe celălalt, fără să vă schimbați direcția privirii, și reveniți la con.",
+        "Rămâi pe partea din față a tălpilor, cu genunchii îndoiți și centrul de greutate jos.",
+        "Continuă la fel până la ultimul con."
+      ],
+      "category": "activation",
+      "zones": [
+        "hip",
+        "groin",
+        "ankle",
+        "knee"
+      ],
+      "equipment": [
+        "cones",
+        "partner"
+      ],
+      "level": "beginner",
+      "contraindications": null,
+      "video_url": null,
+      "image_url": null,
+      "source": null,
+      "license": null,
+      "attribution": null
+    },
+    {
+      "slug": "alergare-cu-contact-de-umar",
+      "name": "Alergare cu săritură și contact umăr la umăr",
+      "description": "Element de încălzire în perechi: pregătește corpul pentru duelurile aeriene și pentru aterizarea după contact.",
+      "steps": [
+        "Aleargă ușor în perechi până la primul con.",
+        "Deplasează-te lateral spre coleg, cu pași adăugați.",
+        "La mijloc, săriți amândoi lateral și atingeți-vă ușor umăr la umăr.",
+        "Aterizează pe ambele picioare, cu genunchii și șoldurile îndoite; genunchii nu cad spre interior.",
+        "Revino la con și continuă până la capăt."
+      ],
+      "category": "activation",
+      "zones": [
+        "shoulder",
+        "knee",
+        "ankle",
+        "glute"
+      ],
+      "equipment": [
+        "cones",
+        "partner"
+      ],
+      "level": "beginner",
+      "contraindications": "Contactul este ușor și sincronizat: nu împinge colegul. Se evită după o accidentare recentă la umăr.",
+      "video_url": null,
+      "image_url": null,
+      "source": null,
+      "license": null,
+      "attribution": null
+    },
+    {
+      "slug": "alergare-rapida-inainte-inapoi",
+      "name": "Alergare rapidă înainte și înapoi",
+      "description": "Element de încălzire: accelerări scurte înainte, urmate de alergare cu spatele. Pregătește frânarea și schimbarea sensului.",
+      "steps": [
+        "Aleargă rapid înainte, pe distanța a două conuri.",
+        "Frânează cu pași mici și aleargă repede cu spatele, pe distanța unui con.",
+        "Ține genunchii și șoldurile ușor îndoite și trunchiul puțin aplecat înainte.",
+        "Repetă: două conuri înainte, unul înapoi, până la capătul traseului."
+      ],
+      "category": "activation",
+      "zones": [
+        "thigh_front",
+        "thigh_back",
+        "calf",
+        "knee"
+      ],
+      "equipment": [
+        "cones"
+      ],
+      "level": "beginner",
+      "contraindications": "Pe teren ud sau denivelat, redu viteza la alergarea cu spatele.",
+      "video_url": null,
+      "image_url": null,
+      "source": null,
+      "license": null,
+      "attribution": null
+    },
+    {
+      "slug": "alergare-cu-accelerare",
+      "name": "Alergare în tempo, pe lățimea terenului",
+      "description": "Alergare la 75–80% din viteza maximă, în partea finală a încălzirii. Pregătește mușchii pentru sprint.",
+      "steps": [
+        "Pornește de pe o linie laterală a terenului.",
+        "Accelerează treptat până la aproximativ 75–80% din viteza ta maximă.",
+        "Menține ritmul pe aproximativ 40 de metri, cu trunchiul drept și brațele lucrând ca la sprint.",
+        "Încetinește treptat și întoarce-te în alergare ușoară."
+      ],
+      "category": "activation",
+      "zones": [
+        "thigh_back",
+        "thigh_front",
+        "calf",
+        "hip"
+      ],
+      "equipment": [
+        "none"
+      ],
+      "level": "beginner",
+      "contraindications": "Nu se aleargă la viteză maximă în încălzire. Oprește-te la orice senzație de înțepătură în coapsă.",
+      "video_url": null,
+      "image_url": null,
+      "source": null,
+      "license": null,
+      "attribution": null
+    },
+    {
+      "slug": "pasi-sariti",
+      "name": "Pași săriți (alergare cu salturi)",
+      "description": "Alergare cu pași înalți și lungi, în partea finală a încălzirii. Dezvoltă împingerea și pregătește aterizarea pe un picior.",
+      "steps": [
+        "Ia câțiva pași de elan în alergare ușoară.",
+        "Împinge puternic într-un picior și ridică genunchiul opus cât mai sus.",
+        "Mișcă brațul opus piciorului din față, ca la alergare, dar mai amplu.",
+        "Aterizează moale, pe partea din față a tălpii, cu genunchiul ușor îndoit și pe linia vârfului piciorului.",
+        "Leagă 6–8 pași săriți, apoi întoarce-te în alergare ușoară."
+      ],
+      "category": "activation",
+      "zones": [
+        "glute",
+        "thigh_front",
+        "calf",
+        "achilles",
+        "knee"
+      ],
+      "equipment": [
+        "none"
+      ],
+      "level": "intermediate",
+      "contraindications": "Nu se face cu durere la tendonul ahilean, la genunchi sau în coapsă.",
+      "video_url": null,
+      "image_url": null,
+      "source": null,
+      "license": null,
+      "attribution": null
+    },
+    {
+      "slug": "genuflexiune-cu-ridicare-pe-varfuri",
+      "name": "Genuflexiune cu ridicare pe vârfuri",
+      "description": "Genuflexiune lentă, încheiată cu ridicare pe vârfuri. Parte din încălzirea de prevenție: forță și control pentru genunchi și gleznă.",
+      "steps": [
+        "Stai cu picioarele la lățimea șoldurilor și mâinile pe șolduri.",
+        "Coboară lent, ca și cum te-ai așeza pe un scaun, până la aproximativ 90° la genunchi.",
+        "Genunchii rămân pe direcția vârfurilor, fără să se apropie.",
+        "Ridică-te mai repede și, când picioarele sunt întinse, urcă pe vârfuri.",
+        "Coboară călcâiele și reia."
+      ],
+      "category": "prevention",
+      "zones": [
+        "thigh_front",
+        "glute",
+        "knee",
+        "calf"
+      ],
+      "equipment": [
+        "none"
+      ],
+      "level": "beginner",
+      "contraindications": "Coboară doar cât poți fără durere în genunchi și fără să ridici călcâiele la coborâre.",
+      "video_url": null,
+      "image_url": null,
+      "source": null,
+      "license": null,
+      "attribution": null
     }
   ],
   "programs": [
@@ -2458,7 +2742,7 @@
         {
           "exercise": "intindere-adductori-in-genunchi",
           "sets": 2,
-          "reps": "8 balansări",
+          "reps": "8 repetări lente",
           "duration_sec": null,
           "rest_sec": 20,
           "tempo": null,
@@ -2469,7 +2753,7 @@
     {
       "slug": "preventie-glezna",
       "name": "Prevenție gleznă",
-      "description": "De 3 ori pe săptămână, 10–12 minute, înainte de antrenament. Recomandat tuturor jucătorilor cu entorse în ultimele 12 luni.",
+      "description": "De 3 ori pe săptămână, aproximativ 15 minute, înainte de antrenament. Recomandat tuturor jucătorilor cu entorse în ultimele 12 luni.",
       "kind": "prevention",
       "items": [
         {
@@ -2483,16 +2767,16 @@
         },
         {
           "exercise": "echilibru-unipodal-sol",
-          "sets": 3,
+          "sets": 2,
           "reps": null,
           "duration_sec": 30,
           "rest_sec": 15,
           "tempo": null,
-          "notes": "Pe fiecare picior; ultima serie cu ochii închiși."
+          "notes": "Pe fiecare picior; a doua serie cu ochii închiși."
         },
         {
           "exercise": "echilibru-unipodal-placa",
-          "sets": 3,
+          "sets": 2,
           "reps": null,
           "duration_sec": 30,
           "rest_sec": 20,
@@ -2604,7 +2888,7 @@
           "duration_sec": null,
           "rest_sec": 90,
           "tempo": "coborâre cât mai lentă",
-          "notes": null
+          "notes": "Volum mic. Dacă urmează sprinturi, mută exercițiul la finalul antrenamentului."
         },
         {
           "exercise": "plansa-laterala",
@@ -2620,7 +2904,7 @@
     {
       "slug": "core",
       "name": "Core",
-      "description": "Stabilitatea trunchiului, 12–15 minute, de 2–3 ori pe săptămână. Se poate face în circuit, cu pauze scurte.",
+      "description": "Stabilitatea trunchiului, 15–20 de minute, de 2–3 ori pe săptămână. Se poate face în circuit, cu pauze scurte.",
       "kind": "prevention",
       "items": [
         {
@@ -2691,7 +2975,7 @@
     {
       "slug": "incalzire-tip-11-plus",
       "name": "Încălzire de tip 11+",
-      "description": "Încălzire completă de aproximativ 20 de minute, înaintea fiecărui antrenament: alergare, apoi forță, echilibru și sărituri, apoi alergare în viteză. Structura urmează modelul 11+; descrierile sunt ale noastre. Variantele mai grele (planșă laterală, sărituri laterale) se adaugă pe măsură ce grupa progresează.",
+      "description": "Încălzire completă de aproximativ 20 de minute, înaintea fiecărui antrenament: alergare, apoi forță, echilibru și sărituri, apoi alergare în viteză. Structura urmează modelul 11+; descrierile sunt ale noastre. Variantele mai grele (planșă laterală cu ridicări de bazin, fandări în mers, sărituri laterale) înlocuiesc treptat variantele de bază, pe măsură ce grupa progresează.",
       "kind": "warmup",
       "items": [
         {
@@ -2701,7 +2985,7 @@
           "duration_sec": null,
           "rest_sec": null,
           "tempo": null,
-          "notes": "Partea 1: alergare, circa 8 minute în total."
+          "notes": "Partea 1: alergare, circa 8 minute în total, pe un traseu de 6–10 perechi de conuri."
         },
         {
           "exercise": "deschideri-de-sold",
@@ -2722,6 +3006,33 @@
           "notes": null
         },
         {
+          "exercise": "alergare-in-jurul-partenerului",
+          "sets": 2,
+          "reps": "1 lungime dus-întors",
+          "duration_sec": null,
+          "rest_sec": null,
+          "tempo": null,
+          "notes": null
+        },
+        {
+          "exercise": "alergare-cu-contact-de-umar",
+          "sets": 2,
+          "reps": "1 lungime dus-întors",
+          "duration_sec": null,
+          "rest_sec": null,
+          "tempo": null,
+          "notes": null
+        },
+        {
+          "exercise": "alergare-rapida-inainte-inapoi",
+          "sets": 2,
+          "reps": "1 lungime dus-întors",
+          "duration_sec": null,
+          "rest_sec": null,
+          "tempo": null,
+          "notes": null
+        },
+        {
           "exercise": "plansa",
           "sets": 3,
           "reps": null,
@@ -2729,6 +3040,15 @@
           "rest_sec": 15,
           "tempo": null,
           "notes": "Partea 2: forță, echilibru, sărituri, circa 10 minute."
+        },
+        {
+          "exercise": "plansa-laterala",
+          "sets": 3,
+          "reps": null,
+          "duration_sec": 20,
+          "rest_sec": 15,
+          "tempo": null,
+          "notes": "Pe fiecare parte; 20–30 de secunde."
         },
         {
           "exercise": "nordic-hamstring",
@@ -2749,7 +3069,7 @@
           "notes": "Pe fiecare picior; cu minge sau cu un coleg, pentru dificultate."
         },
         {
-          "exercise": "genuflexiune",
+          "exercise": "genuflexiune-cu-ridicare-pe-varfuri",
           "sets": 2,
           "reps": null,
           "duration_sec": 30,
@@ -2767,20 +3087,38 @@
           "notes": "Aterizare moale, genunchii pe direcția vârfurilor."
         },
         {
-          "exercise": "alergare-cu-schimbari-de-directie",
+          "exercise": "alergare-cu-accelerare",
           "sets": 2,
-          "reps": "1 lungime dus-întors",
+          "reps": "1 lățime de teren",
           "duration_sec": null,
           "rest_sec": null,
           "tempo": null,
-          "notes": "Partea 3: alergare în viteză, circa 2 minute."
+          "notes": "Partea 3: alergare în viteză, circa 2 minute. La 75–80% din viteza maximă."
+        },
+        {
+          "exercise": "pasi-sariti",
+          "sets": 2,
+          "reps": "1 lățime de teren",
+          "duration_sec": null,
+          "rest_sec": null,
+          "tempo": null,
+          "notes": "Întoarcere în alergare ușoară."
+        },
+        {
+          "exercise": "alergare-cu-schimbari-de-directie",
+          "sets": 2,
+          "reps": "1 lățime de teren",
+          "duration_sec": null,
+          "rest_sec": null,
+          "tempo": null,
+          "notes": "La 80–90% din viteza maximă."
         }
       ]
     },
     {
       "slug": "activare-inainte-de-antrenament",
       "name": "Activare înainte de antrenament",
-      "description": "8–10 minute înainte de intrarea pe teren: mobilizare, activarea fesierilor, apoi tehnică de alergare.",
+      "description": "10–12 minute înainte de intrarea pe teren: mobilizare, activarea fesierilor, apoi tehnică de alergare.",
       "kind": "warmup",
       "items": [
         {
@@ -2955,11 +3293,11 @@
         {
           "exercise": "pod-fesier-pe-un-picior",
           "sets": 3,
-          "reps": "8",
+          "reps": "8 pe fiecare picior",
           "duration_sec": null,
           "rest_sec": 45,
           "tempo": "2-1-2",
-          "notes": "Pe piciorul accidentat; apoi și pe celălalt."
+          "notes": "Începe cu piciorul accidentat."
         },
         {
           "exercise": "slider-curl-ischiogambieri",
@@ -3011,7 +3349,7 @@
     {
       "slug": "mobilitate-dupa-meci",
       "name": "Mobilitate după meci",
-      "description": "15 minute, în seara meciului sau a doua zi: automasaj cu rulou, apoi întinderi ușoare, fără durere și fără balans.",
+      "description": "15–20 de minute, în seara meciului sau a doua zi: automasaj cu rulou, apoi întinderi ușoare, fără durere și fără balans.",
       "kind": "other",
       "items": [
         {
@@ -3071,7 +3409,7 @@
         {
           "exercise": "intindere-adductori-in-genunchi",
           "sets": 1,
-          "reps": "10 balansări",
+          "reps": "10 repetări lente",
           "duration_sec": null,
           "rest_sec": null,
           "tempo": null,

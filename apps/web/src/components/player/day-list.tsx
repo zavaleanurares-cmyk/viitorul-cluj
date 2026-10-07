@@ -26,8 +26,9 @@ function itemRef(date: string, item: DayItem) {
  * Lista de exerciții a unei zile (plan personalizat + programe), cu bifă la o atingere.
  * Bifa apare imediat (optimist) și revine singură dacă salvarea eșuează.
  * `editable = false`: listă doar de citit (zile viitoare sau mai vechi de 2 zile).
+ * `upcoming`: zi viitoare — fără bife și fără progres, doar ce urmează.
  */
-export function DayList({ day, editable, backHref }: { day: PlayerDay; editable: boolean; backHref: string }) {
+export function DayList({ day, editable, upcoming = false, backHref }: { day: PlayerDay; editable: boolean; upcoming?: boolean; backHref: string }) {
   const t = useT().player;
   const toast = useToast();
   const items = [...(day.plan?.items ?? []), ...day.programs.flatMap((p) => p.items)];
@@ -69,6 +70,10 @@ export function DayList({ day, editable, backHref }: { day: PlayerDay; editable:
     const dose = describeDose(item);
     const c = item.completion;
     const name = item.exercise.name;
+    const line = dose || t.day.details;
+    const cut = line.lastIndexOf(" ") + 1;
+    const lead = line.slice(0, cut);
+    const last = line.slice(cut);
     return (
       <li key={item.key} className="py-3">
         <div className="flex items-center gap-3">
@@ -90,7 +95,7 @@ export function DayList({ day, editable, backHref }: { day: PlayerDay; editable:
                 <span className="absolute -inset-1 animate-spin rounded-full border-2 border-ink-3 border-r-transparent" aria-hidden />
               ) : null}
             </button>
-          ) : (
+          ) : upcoming ? null : (
             <span
               role="img"
               aria-label={tick.done ? t.day.stateDone : t.day.stateNotDone}
@@ -104,14 +109,18 @@ export function DayList({ day, editable, backHref }: { day: PlayerDay; editable:
           )}
           <Link
             href={`/exercitii/${item.exercise.id}?inapoi=${encodeURIComponent(backHref)}`}
-            className="flex min-h-14 min-w-0 flex-1 items-center gap-1 rounded-lg py-1"
+            className="block min-h-14 min-w-0 flex-1 content-center rounded-lg py-1"
           >
-            <span className="min-w-0 flex-1">
-              <span className="block text-lg font-bold leading-snug">{name}</span>
-              {dose ? <span className="block text-ink-2">{dose}</span> : null}
-              <span className="sr-only">{t.day.details}</span>
+            <span className="block text-lg font-bold leading-snug">{name}</span>
+            <span className="block text-ink-2">
+              {lead}
+              {/* ultimul cuvânt rămâne lipit de săgeată, ca săgeata să nu cadă singură pe rândul următor */}
+              <span className="whitespace-nowrap">
+                {last}
+                <ChevronRight className="ml-0.5 inline size-4 align-[-0.15em] text-ink-3" aria-hidden />
+              </span>
             </span>
-            <ChevronRight className="size-5 shrink-0 text-ink-3" aria-hidden />
+            {dose ? <span className="sr-only">{t.day.details}</span> : null}
           </Link>
           {editable ? (
             <button
@@ -126,7 +135,7 @@ export function DayList({ day, editable, backHref }: { day: PlayerDay; editable:
           ) : null}
         </div>
         {item.notes || c?.pain || c?.comment || failed === item.key ? (
-          <div className="mt-2 space-y-1.5 pl-[4.25rem]">
+          <div className={cn("mt-2 space-y-1.5", upcoming ? null : "pl-[4.25rem]")}>
             {item.notes ? <p className="text-sm text-ink-2">{item.notes}</p> : null}
             {c?.pain ? (
               <Badge tone="red">
@@ -144,18 +153,20 @@ export function DayList({ day, editable, backHref }: { day: PlayerDay; editable:
 
   return (
     <div className="space-y-4">
-      <div>
-        <div className="mb-1.5 flex items-baseline justify-between gap-3">
-          <p className="text-lg font-bold" aria-live="polite">{t.day.progress(doneCount, items.length)}</p>
-          {doneCount === items.length && items.length > 0 ? (
-            <Badge tone="green">
-              <Check className="size-3.5" aria-hidden />
-              {t.day.allDone}
-            </Badge>
-          ) : null}
+      {upcoming || items.length === 0 ? null : (
+        <div>
+          <div className="mb-1.5 flex items-baseline justify-between gap-3">
+            <p className="text-lg font-bold" aria-live="polite">{t.day.progress(doneCount, items.length)}</p>
+            {doneCount === items.length ? (
+              <Badge tone="green">
+                <Check className="size-3.5" aria-hidden />
+                {t.day.allDone}
+              </Badge>
+            ) : null}
+          </div>
+          <ProgressBar value={doneCount} max={items.length} label={t.day.progressLabel} />
         </div>
-        <ProgressBar value={doneCount} max={items.length} label={t.day.progressLabel} />
-      </div>
+      )}
 
       {day.plan ? (
         <Card>
@@ -241,10 +252,10 @@ function NoteDialog({ date, item, onClose }: { date: string; item: DayItem; onCl
           label={t.day.painQuestion}
           description={t.day.painHint}
           checked={pain}
-          onChange={(e) => setPain(e.target.checked)}
+          onChange={(e) => { setPain(e.target.checked); setLocalError(null); }}
         />
         {pain ? (
-          <ScaleInput label={t.day.painScale} value={intensity} onChange={setIntensity} minLabel={t.scales.painMin} maxLabel={t.scales.painMax} />
+          <ScaleInput label={t.day.painScale} value={intensity} onChange={(v) => { setIntensity(v); setLocalError(null); }} minLabel={t.scales.painMin} maxLabel={t.scales.painMax} />
         ) : null}
         <Field label={t.day.commentLabel} optional>
           <Textarea value={comment} maxLength={500} onChange={(e) => setComment(e.target.value)} placeholder={t.day.commentPlaceholder} />

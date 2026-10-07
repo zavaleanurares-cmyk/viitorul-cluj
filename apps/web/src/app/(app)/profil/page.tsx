@@ -4,7 +4,7 @@ import {
 } from "@club/shared";
 import { requireSession, type Session } from "@/lib/auth";
 import { signOut } from "@/lib/auth-actions";
-import { signedUrl } from "@/lib/storage";
+import { fileUrl } from "@/lib/storage";
 import { Button, LinkButton, buttonClass } from "@/components/ui/button";
 import { Card, CardBody, CardHeader, Notice, PageHeader } from "@/components/ui/card";
 import { DataList, TabLinks } from "@/components/ui/misc";
@@ -82,7 +82,8 @@ async function PlayerSheet({ db, ctx }: Pick<Session, "db" | "ctx" | "email">) {
   const t = getT().player;
   if (!ctx.player) return <NoPlayer />;
   const p = ctx.player;
-  const [photoUrl, contact] = await Promise.all([signedUrl(db, "avatars", p.photo_path), getContact(db, p.id)]);
+  const photoUrl = fileUrl("avatars", p.photo_path);
+  const contact = await getContact(db, p.id);
   const minor = isMinor(p.birth_date, ctx.today) === true;
   const group = ctx.groups.find((g) => g.id === p.group_id);
   const visaDays = p.medical_visa_expires_on ? diffDays(ctx.today, p.medical_visa_expires_on) : null;

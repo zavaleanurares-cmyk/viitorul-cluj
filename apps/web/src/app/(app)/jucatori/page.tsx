@@ -1,6 +1,6 @@
 import { can, listPlayers } from "@club/shared";
 import { requireCapability, visibleGroups } from "@/lib/auth";
-import { signedUrls } from "@/lib/storage";
+import { fileUrl } from "@/lib/storage";
 import { PageHeader } from "@/components/ui/card";
 import { getT } from "@/messages";
 import { PlayersList } from "@/components/players/players-list";
@@ -15,7 +15,8 @@ export default async function Page({ searchParams }: {
   const canManage = can(ctx.role, "manage");
 
   const players = await listPlayers(db, { includeInactive: canManage });
-  const photos = await signedUrls(db, "avatars", players.map((p) => p.photo_path));
+  const photos: Record<string, string> = {};
+  for (const p of players) if (p.photo_path) photos[p.photo_path] = fileUrl("avatars", p.photo_path)!;
   const groups = visibleGroups(ctx);
 
   return (

@@ -1,4 +1,4 @@
-import { diffDays, type Availability, type ClubStatus } from "@club/shared";
+import { describeZone, diffDays, todayIn, type Availability, type ClubStatus } from "@club/shared";
 
 /**
  * Reguli de domeniu ale modulului, fără acces la date (se pot folosi și în componente client).
@@ -97,4 +97,21 @@ export function formatBytes(n: number | null | undefined): string {
   if (!n) return "";
   if (n < 1024 * 1024) return `${Math.max(1, Math.round(n / 1024))} KB`;
   return `${(n / (1024 * 1024)).toFixed(1).replace(".", ",")} MB`;
+}
+
+type InjuryZone = { zone: string | null; side: string | null; zone_detail: string | null; zone_uncertain: boolean };
+
+/** „Genunchi, stânga — ligament (de confirmat)"; gol dacă accidentarea nu are zonă. */
+export function injuryZoneText(i: InjuryZone, short = false): string {
+  return describeZone({ zone: i.zone, side: i.side, detail: i.zone_detail, uncertain: i.zone_uncertain }, short);
+}
+
+/** O accidentare este activă până i se completează data reală a revenirii. */
+export function injuryIsActive(i: { actual_return_on: string | null }): boolean {
+  return !i.actual_return_on;
+}
+
+/** Ziua calendaristică (AAAA-LL-ZZ) în care cade un moment, în fusul orar al clubului. */
+export function dayOf(timestamp: string, timezone: string): string {
+  return todayIn(timezone, new Date(timestamp));
 }

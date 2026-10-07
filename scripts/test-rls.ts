@@ -290,7 +290,8 @@ try {
   const f1 = `${p1}/rmn-${run}.pdf`;
   const f3a = `${p3}/rmn-a-${run}.pdf`;
   const f3b = `${p3}/rmn-b-${run}.pdf`;
-  check("preparatorul poate încărca un document medical", await can(physio, "medical", f1, "write"));
+  check("preparatorul poate încărca un document medical nou", await can(physio, "medical", `${p1}/nou-${run}.pdf`, "write"));
+  check("un document deja înregistrat NU poate fi suprascris prin încărcare", !(await can(physio, "medical", f1, "write")));
   check("antrenorul NU poate încărca documente", !(await can(coach, "medical", `${p1}/hack-${run}.pdf`, "write")));
   check("jucătorul NU poate încărca documente medicale", !(await can(player1, "medical", `${p1}/hack2-${run}.pdf`, "write")));
   check("antrenorul poate citi documentul din grupa lui", await can(coach, "medical", f1, "read"));
@@ -300,6 +301,15 @@ try {
   check("jucătorul își poate citi propriul document", await can(player1, "medical", f1, "read"));
   check("partenerul poate citi doar documentul cazului", (await can(partner, "medical", f3a, "read")) && !(await can(partner, "medical", f3b, "read")));
   check("partenerul poate încărca doar pe cazul lui", (await can(partner, "medical", `${p3}/nou-${run}.pdf`, "write")) && !(await can(partner, "medical", `${p1}/nou-${run}.pdf`, "write")));
+  check("partenerul NU poate suprascrie un document existent al jucătorului", !(await can(partner, "medical", f3b, "write")) && !(await can(partner, "medical", f3a, "write")));
+  {
+    const r1 = must(await admin.from("referrals").insert({ player_id: p1, partner_user_id: uPartner, injury_id: i1, created_by: uPhysio }).select("id").single(), "trimitere p1").id;
+    const seen = (await coach.from("referrals").select("id, player_id")).data ?? [];
+    check("antrenorul vede trimiterile din grupa lui, nu și din altă grupă", seen.some((r) => r.id === r1) && !seen.some((r) => r.player_id === p3));
+    const upd = await coach.from("referrals").update({ is_active: false }).eq("id", r1).select("id");
+    check("antrenorul NU poate modifica o trimitere", !upd.data?.length);
+    await admin.from("referrals").delete().eq("id", r1);
+  }
   check("patronul NU poate citi documente", !(await can(owner, "medical", f1, "read")));
   check("directorul NU poate citi documente", !(await can(director, "medical", f1, "read")));
   check("fără autentificare nu există acces la fișiere", await errored(anon.rpc("file_access", { p_bucket: "medical", p_path: f1, p_action: "read" })));

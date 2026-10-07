@@ -6,7 +6,8 @@ import { cn } from "@/lib/cn";
 import { Button, IconButton } from "@/components/ui/button";
 import { Input } from "@/components/ui/form";
 import { Badge } from "@/components/ui/status";
-import { ExercisePicker, exerciseMeta } from "./exercise-picker";
+import { ExercisePicker } from "./exercise-picker";
+import { exerciseMeta } from "./format";
 import { itemProblem, newItem, type ExerciseOption, type ItemCompletion, type ItemDraft } from "./types";
 
 /**

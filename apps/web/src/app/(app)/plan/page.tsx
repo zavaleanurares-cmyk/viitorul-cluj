@@ -1,5 +1,5 @@
 import { CalendarX } from "lucide-react";
-import { addDays, formatDate, getPlayerCalendar, getPlayerDay, relativeDay, weekDates, weekStart } from "@club/shared";
+import { addDays, diffDays, formatDate, getPlayerCalendar, getPlayerDay, relativeDay, weekDates, weekStart } from "@club/shared";
 import { requireRole } from "@/lib/auth";
 import { EmptyState, Notice, PageHeader } from "@/components/ui/card";
 import { PrevNext } from "@/components/ui/misc";
@@ -50,14 +50,14 @@ export default async function PlanPage({ searchParams }: { searchParams: Promise
       <section aria-labelledby="zi-selectata" className="space-y-4 pt-2">
         <h2 id="zi-selectata" className="text-xl first-letter:uppercase">
           {formatDate(selected, { weekday: true, year: false })}
-          {Math.abs(new Date(selected).getTime() - new Date(ctx.today).getTime()) <= 86400000 ? (
+          {Math.abs(diffDays(ctx.today, selected)) <= 1 ? (
             <span className="font-normal text-ink-3"> · {relativeDay(selected, ctx.today)}</span>
           ) : null}
         </h2>
         {hasContent ? (
           <>
             {!editable ? <Notice tone="gray">{selected > ctx.today ? t.readOnlyFuture : t.readOnlyPast}</Notice> : null}
-            <DayList key={selected} day={day} editable={editable} backHref={href(selected)} />
+            <DayList key={selected} day={day} editable={editable} upcoming={selected > ctx.today} backHref={href(selected)} />
           </>
         ) : (
           <EmptyState

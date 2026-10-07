@@ -1,9 +1,8 @@
 import "server-only";
-import { randomUUID } from "node:crypto";
-import { getPlayer, type Db, type Player } from "@club/shared";
+import { DOCUMENT_KINDS, getPlayer, type Db, type Player } from "@club/shared";
 import { fail } from "@/lib/actions";
+import { readFile } from "@/lib/files";
 import { deleteFiles } from "@/lib/storage";
-import { safeFileName, signedUrl } from "@/lib/storage";
 import { getT } from "@/messages";
 import { MEDICAL_FILE_MAX_BYTES, medicalMimeType } from "./domain";
 
@@ -16,18 +15,33 @@ export async function mustSeePlayer(db: Db, playerId: string): Promise<Player> {
   return player;
 }
 
-/** Calea din bucketul „medical" pentru un fișier nou: <player_id>/<uuid>-<nume-sigur>. */
-export function newMedicalPath(playerId: string, fileName: string, size: number): { path: string; mimeType: string } {
-  const mimeType = medicalMimeType(fileName);
+export const DOCUMENT_KIND_CODES = Object.keys(DOCUMENT_KINDS) as [string, ...string[]];
+
+const UPLOADED_PATH = /^[0-9a-f-]{36}\/[0-9a-f-]{36}-[a-z0-9][a-z0-9.-]*$/;
+
+/**
+ * Verifică un fișier abia încărcat în depozitul „medical", înainte să i se scrie rândul în tabel.
+ * Calea vine din browser, deci nu avem încredere în ea: trebuie să fie în directorul jucătorului
+ * (altfel rândul ar deschide accesul la fișierul altcuiva), cu extensie permisă, iar fișierul
+ * trebuie să existe efectiv în depozit.
+ */
+export async function verifyUploadedDocument(playerId: string, path: string): Promise<{ mimeType: string; size: number | null }> {
+  if (!UPLOADED_PATH.test(path) || !path.startsWith(`${playerId}/`)) fail(e.invalid);
+  const mimeType = medicalMimeType(path);
   if (!mimeType) fail(e.docType);
-  if (size <= 0) fail(e.docEmpty);
-  if (size > MEDICAL_FILE_MAX_BYTES) fail(e.docSize);
-  return { path: `${playerId}/${randomUUID()}-${safeFileName(fileName)}`, mimeType };
+  const stored = await readFile("medical", path);
+  if (!stored) fail(e.docUnavailable);
+  await stored.stream.cancel().catch(() => {});
+  if (stored.size !== null) {
+    if (stored.size <= 0) fail(e.docEmpty);
+    if (stored.size > MEDICAL_FILE_MAX_BYTES) fail(e.docSize);
+  }
+  return { mimeType, size: stored.size };
 }
 
 /**
- * Șterge un document: întâi obiectul din storage (politica de citire a bucketului depinde de
- * rândul din tabel, deci ordinea inversă ar lăsa fișierul fără stăpân), apoi rândul.
+ * Șterge un document: întâi fișierul din depozit (dreptul de ștergere se verifică pe rândul din
+ * tabel, deci ordinea inversă ar lăsa fișierul fără stăpân), apoi rândul.
  */
 export async function removeDocument(db: Db, documentId: string): Promise<{ playerId: string }> {
   const { data: doc } = await db.from("medical_documents").select("id, player_id, storage_path").eq("id", documentId).maybeSingle();
@@ -37,18 +51,4 @@ export async function removeDocument(db: Db, documentId: string): Promise<{ play
   if (error) throw error;
   if (!deleted?.length) fail(e.docForbidden);
   return { playerId: doc.player_id };
-}
-
-/** Link semnat (expiră în 2 minute) + intrare în jurnalul de audit. */
-export async function signedDocumentUrl(db: Db, documentId: string): Promise<string> {
-  const { data: doc } = await db.from("medical_documents").select("id, player_id, storage_path").eq("id", documentId).maybeSingle();
-  if (!doc) fail(e.docNotFound);
-  const url = await signedUrl(db, "medical", doc.storage_path, 120);
-  if (!url) fail(e.docUnavailable);
-  await db.rpc("log_event", {
-    p_action: "DOWNLOAD",
-    p_entity: "medical_documents",
-    p_details: { player_id: doc.player_id, document_id: doc.id },
-  });
-  return url;
 }

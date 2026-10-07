@@ -3,7 +3,7 @@
  * (chestionare, RPE, date GPS, teste, accidentări, planuri, programe) și câte un cont pentru fiecare rol.
  * Folosit pentru prezentări și teste; nu conține nicio persoană reală.
  */
-import { deleteUser, type Db } from "@club/db";
+import { deleteUser, findUserByEmail, type Db } from "@club/db";
 import { addDays, isoWeekday, todayIn, weekStart } from "@club/shared";
 import { ensureAccount, must, randomPassword, type SeededAccount } from "./common";
 import { seedLibrary } from "./library";
@@ -258,10 +258,24 @@ export async function seedDemo(admin: Db, opts: { reset?: boolean; domain?: stri
 
   // ---- conturi ---------------------------------------------------------------------------------------
   const allPlayers = must(await admin.from("players").select("id, display_name, birth_date, group_id, user_id").eq("club_id", clubId).eq("is_active", true).order("created_at"), "jucători");
-  const adult = allPlayers.find((p) => p.birth_date && Number(p.birth_date.slice(0, 4)) <= Number(today.slice(0, 4)) - 19)!;
-  const minor = [...allPlayers].reverse().find((p) => p.birth_date && Number(p.birth_date.slice(0, 4)) >= Number(today.slice(0, 4)) - 16)!;
-  const { data: injuredOpen } = await admin.from("injuries").select("id, player_id").is("actual_return_on", null).in("player_id", allPlayers.map((p) => p.id)).limit(1).maybeSingle();
-  const injuredPlayer = allPlayers.find((p) => p.id === injuredOpen?.player_id) ?? adult;
+  // La o nouă rulare păstrăm jucătorii deja legați de conturile demo; altfel alegem dintre cei fără cont.
+  const linked = async (key: string) => {
+    const u = await findUserByEmail(`${key}.demo@${DOMAIN}`);
+    return u ? allPlayers.find((p) => p.user_id === u.id) : undefined;
+  };
+  const year = (p: { birth_date: string | null }) => (p.birth_date ? Number(p.birth_date.slice(0, 4)) : null);
+  const thisYear = Number(today.slice(0, 4));
+  const taken = new Set<string>();
+  const choose = async (key: string, candidates: typeof allPlayers) => {
+    const p = (await linked(key)) ?? candidates.find((c) => !c.user_id && !taken.has(c.id)) ?? candidates.find((c) => !taken.has(c.id))!;
+    taken.add(p.id);
+    return p;
+  };
+  const openInjuries = must(await admin.from("injuries").select("id, player_id").is("actual_return_on", null).in("player_id", allPlayers.map((p) => p.id)).order("occurred_on").order("id"), "accidentări deschise");
+  const injuredIds = openInjuries.map((i) => i.player_id);
+  const injuredPlayer = await choose("jucator.accidentat", allPlayers.filter((p) => injuredIds.includes(p.id) && (year(p) ?? thisYear) <= thisYear - 18));
+  const adult = await choose("jucator", allPlayers.filter((p) => (year(p) ?? thisYear) <= thisYear - 19 && !injuredIds.includes(p.id)));
+  const minor = await choose("jucator.minor", [...allPlayers].reverse().filter((p) => (year(p) ?? 0) >= thisYear - 16));
   const g = (name: string) => groups.find((x) => x.name === name)!.id;
 
   const accounts: Array<{ key: string; full_name: string; role: Parameters<typeof ensureAccount>[1]["role"]; group_ids?: string[]; player_id?: string; note?: string }> = [
@@ -283,6 +297,7 @@ export async function seedDemo(admin: Db, opts: { reset?: boolean; domain?: stri
     ids[a.key] = await ensureAccount(admin, { email, password, full_name: a.full_name, role: a.role, club_id: clubId, group_ids: a.group_ids, player_id: a.player_id });
     seeded.push({ label: a.note ? `${a.full_name} — ${a.note}` : a.full_name, email, password });
   }
+  const injuredOpen = openInjuries.find((i) => i.player_id === injuredPlayer.id);
   if (injuredOpen) {
     const { data: has } = await admin.from("referrals").select("id").eq("partner_user_id", ids.partener).limit(1);
     if (!has?.length) {

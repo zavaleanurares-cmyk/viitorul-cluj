@@ -31,7 +31,8 @@ function tooltipStyle() {
 
 function DataTable({ data, xKey, series, caption }: { data: Row[]; xKey: string; series: Series[]; caption: string }) {
   return (
-    <table className="sr-only">
+    <div className="sr-only">
+    <table>
       <caption>{caption}</caption>
       <thead>
         <tr>
@@ -48,6 +49,7 @@ function DataTable({ data, xKey, series, caption }: { data: Row[]; xKey: string;
         ))}
       </tbody>
     </table>
+    </div>
   );
 }
 

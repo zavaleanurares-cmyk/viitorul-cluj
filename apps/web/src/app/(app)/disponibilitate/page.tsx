@@ -18,6 +18,9 @@ const ALL = "toate";
 const NO_GROUP = "fara-grupa";
 type Filter = "nu-apti" | "verificare" | null;
 
+const PRINT_CSS =
+  "@media print{@page{margin:12mm}div:has(>aside.no-print){display:block!important}main{max-width:none!important;padding:0!important}}";
+
 const TILE_BAR: Record<Availability, string> = { full: "bg-st-green", limited: "bg-st-orange", out: "bg-st-red" };
 
 /** Tabloul de disponibilitate: ce vede antrenorul dimineața. */
@@ -116,6 +119,8 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ g
 
   return (
     <>
+      {/* tipărire: fără meniul lateral (grila lui ar îngusta foaia) și fără marginile de ecran */}
+      <style>{PRINT_CSS}</style>
       <PageHeader
         title={b.title}
         description={
@@ -216,7 +221,7 @@ function PrintTable({ sections, statuses, single }: { sections: BoardSection[]; 
             return (
               <tr key={p.id} className="break-inside-avoid">
                 <td className={cn(cell, "w-8 text-right")}>{++n}</td>
-                <th scope="row" className={cn(cell, "font-bold")}>{p.display_name}</th>
+                <th scope="row" className={cn(cell, "font-bold whitespace-nowrap")}>{p.display_name}</th>
                 <td className={cn(cell, "font-bold whitespace-nowrap")}>{status?.short_label ?? "—"}</td>
                 <td className={cell}>
                   {describeZone({ zone: p.status_zone, side: p.status_side, detail: p.status_zone_detail, uncertain: p.status_zone_uncertain }, true)}

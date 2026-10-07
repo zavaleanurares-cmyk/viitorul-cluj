@@ -5,7 +5,7 @@ import {
   type Db, type Player,
 } from "@club/shared";
 import { BarsChart, TrendChart } from "@/components/charts";
-import { Card, CardBody, CardHeader, Stat } from "@/components/ui/card";
+import { Card, CardBody, CardHeader } from "@/components/ui/card";
 import { ProgressBar } from "@/components/ui/misc";
 import { cn } from "@/lib/cn";
 import { getT } from "@/messages";
@@ -41,7 +41,7 @@ export async function Evolution({ db, player, today, days, hrefFor }: {
         const end = addDays(today, -7 * w);
         const start = addDays(end, -6);
         return {
-          x: `${formatDateShort(start, false)}–${formatDateShort(end, false)}`,
+          x: t.weekFrom(formatDateShort(start, false)),
           value: dateRange(start, end).reduce((s, d) => s + (loadByDate.get(d) ?? 0), 0),
         };
       });
@@ -67,15 +67,23 @@ export async function Evolution({ db, player, today, days, hrefFor }: {
         ))}
       </nav>
 
-      <div className="grid grid-cols-3 gap-2">
-        <Stat label={t.avgFatigue} value={fmt(average(wellness.map((w) => w.fatigue)))} />
-        <Stat label={t.avgMuscle} value={fmt(average(wellness.map((w) => w.muscle_load)))} />
-        <Stat label={t.filled} value={`${filled}/${days}`} />
-      </div>
+      <dl className="grid grid-cols-3 gap-2">
+        {[
+          { label: t.avgFatigue, value: fmt(average(wellness.map((w) => w.fatigue))) },
+          { label: t.avgMuscle, value: fmt(average(wellness.map((w) => w.muscle_load))) },
+          { label: t.filled, value: `${filled}/${days}` },
+        ].map((s) => (
+          <div key={s.label} className="flex min-w-0 flex-col-reverse justify-end rounded-[var(--radius-card)] border border-line bg-surface p-3">
+            <dt className="mt-1 text-sm leading-tight text-ink-3">{s.label}</dt>
+            <dd className="text-2xl font-bold leading-none">{s.value}</dd>
+          </div>
+        ))}
+      </dl>
 
       <Card>
         <CardHeader title={t.wellnessTitle} description={t.wellnessHint} />
-        <CardBody>
+        {/* `relative overflow-hidden`: tabelul pentru cititoare de ecran din grafic (sr-only) nu trebuie să lățească pagina */}
+        <CardBody className="relative overflow-hidden">
           <TrendChart
             data={trend}
             series={[{ key: "fatigue", label: t.fatigue }, { key: "muscle", label: t.muscleLoad }]}
@@ -88,7 +96,7 @@ export async function Evolution({ db, player, today, days, hrefFor }: {
 
       <Card>
         <CardHeader title={t.loadTitle} description={days === 7 ? t.loadHintDaily : t.loadHintWeekly} />
-        <CardBody>
+        <CardBody className="relative overflow-hidden">
           <BarsChart data={loads} label={t.loadLabel} caption={t.loadCaption(days)} />
         </CardBody>
       </Card>

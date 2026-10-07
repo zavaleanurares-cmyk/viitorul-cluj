@@ -7,11 +7,11 @@ import { EmptyState, PageHeader } from "@/components/ui/card";
 import { LinkButton } from "@/components/ui/button";
 import { Badge } from "@/components/ui/status";
 import { ExerciseThumb } from "@/components/planning/exercise-thumb";
-import { exerciseMeta } from "@/components/planning/exercise-picker";
+import { exerciseMeta } from "@/components/planning/format";
 import { LibraryFilters } from "@/components/planning/library-filters";
 import { listExerciseOptions } from "@/components/planning/queries";
 
-type Search = { q?: string; zona?: string; categorie?: string; echipament?: string; dezactivate?: string };
+type Search = { q?: string; zona?: string; categorie?: string; echipament?: string; dezactivate?: string; faraclip?: string };
 
 /** Biblioteca de exerciții a clubului (doar preparatorul). */
 export default async function LibraryPage({ searchParams }: { searchParams: Promise<Search> }) {
@@ -26,6 +26,7 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
     categorie: sp.categorie ?? "",
     echipament: sp.echipament ?? "",
     dezactivate: sp.dezactivate === "1",
+    faraclip: sp.faraclip === "1",
   };
   const needle = norm(values.q);
   const pool = values.dezactivate ? all : all.filter((e) => e.is_active);
@@ -33,14 +34,16 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
     (!needle || norm(e.name).includes(needle)) &&
     (!values.zona || e.zones.includes(values.zona)) &&
     (!values.categorie || e.category === values.categorie) &&
-    (!values.echipament || e.equipment.includes(values.echipament)));
-  const filtered = !!(needle || values.zona || values.categorie || values.echipament);
+    (!values.echipament || e.equipment.includes(values.echipament)) &&
+    (!values.faraclip || !e.has_video));
+  const filtered = !!(needle || values.zona || values.categorie || values.echipament || values.faraclip);
+  const noClip = pool.filter((e) => !e.has_video).length;
 
   return (
     <>
       <PageHeader
         title={t.title}
-        description={filtered ? t.countOf(shown.length, pool.length) : t.count(pool.length)}
+        description={`${filtered ? t.countOf(shown.length, pool.length) : t.count(pool.length)}${noClip && !values.faraclip ? ` · ${t.noClipCount(noClip)}` : ""}`}
         action={<LinkButton href="/biblioteca/nou" variant="primary" icon={<Plus className="size-5" aria-hidden />}>{t.add}</LinkButton>}
       />
       {all.length ? (
@@ -69,7 +72,7 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
                   <span className="mt-1.5 flex flex-wrap gap-1.5">
                     <Badge tone="outline">{label(EXERCISE_LEVELS, e.level)}</Badge>
                     {!e.has_video ? <Badge tone="gray">{t.noClip}</Badge> : null}
-                    {!e.is_active ? <Badge tone="outline" className="border-ink">{t.inactive}</Badge> : null}
+                    {!e.is_active ? <Badge tone="gray">{t.inactive}</Badge> : null}
                   </span>
                 </span>
               </Link>

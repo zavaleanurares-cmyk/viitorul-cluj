@@ -1,10 +1,9 @@
 "use server";
 import { z } from "zod";
-import { DOCUMENT_KINDS } from "@club/shared";
 import { run, fail } from "@/lib/actions";
 import { getT } from "@/messages";
 import { getMyCase } from "@/components/players/queries";
-import { newMedicalPath } from "@/components/players/server";
+import { DOCUMENT_KIND_CODES, verifyUploadedDocument } from "@/components/players/server";
 import { valid } from "@/components/players/validation";
 
 const t = getT().partner;
@@ -38,36 +37,35 @@ export async function deleteCaseNote(input: z.input<typeof IdInput>) {
   });
 }
 
-const KINDS = Object.keys(DOCUMENT_KINDS) as [string, ...string[]];
-const RegisterInput = z.object({
+const SaveInput = z.object({
   referralId: z.uuid(),
-  fileName: z.string().min(1).max(300),
-  size: z.number().int().nonnegative(),
+  /** calea din depozit la care browserul a încărcat deja fișierul: <player_id>/<uuid>-<nume-sigur> */
+  path: z.string().min(40).max(200),
   title: z.string().trim().min(1, e.docTitleRequired).max(200, e.tooLong(200)),
-  kind: z.enum(KINDS),
+  kind: z.enum(DOCUMENT_KIND_CODES),
 });
 
 /**
  * Document încărcat de partener pe un caz: jucătorul și accidentarea vin din trimitere, nu din formular.
- * Vezi `registerDocument` din fișa jucătorului pentru ordinea rând → fișier.
+ * Fișierul este deja în depozit; aici se scrie rândul care îl face vizibil.
  */
-export async function registerCaseDocument(input: z.input<typeof RegisterInput>) {
-  return run({ roles: ["medical_partner"] }, async ({ db, ctx }) => {
-    const v = valid(RegisterInput, input);
+export async function saveCaseDocument(input: z.input<typeof SaveInput>) {
+  return run({ roles: ["medical_partner"], message: getT().players.docs.saved }, async ({ db, ctx }) => {
+    const v = valid(SaveInput, input);
     const referral = await getMyCase(db, ctx.userId, v.referralId);
     if (!referral) fail(t.errCaseNotFound);
-    const { path, mimeType } = newMedicalPath(referral.player_id, v.fileName, v.size);
+    const file = await verifyUploadedDocument(referral.player_id, v.path);
     const { data, error } = await db.from("medical_documents").insert({
       player_id: referral.player_id,
       injury_id: referral.injury_id,
       title: v.title,
       kind: v.kind,
-      storage_path: path,
-      mime_type: mimeType,
-      size_bytes: v.size,
+      storage_path: v.path,
+      mime_type: file.mimeType,
+      size_bytes: file.size,
       uploaded_by: ctx.userId,
     }).select("id").single();
     if (error) throw error;
-    return { id: data.id, path, mimeType };
+    return { id: data.id };
   });
 }

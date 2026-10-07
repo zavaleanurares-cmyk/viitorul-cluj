@@ -7,6 +7,7 @@ export const library = {
   count: (n: number) => plural(n, "exercițiu", "exerciții"),
   countOf: (shown: number, total: number) => `${shown} din ${plural(total, "exercițiu", "exerciții")}`,
   noClip: "Fără clip",
+  noClipCount: (n: number) => `${n} fără clip`,
   hasClip: "Cu clip",
   inactive: "Dezactivat",
   filters: {
@@ -19,6 +20,7 @@ export const library = {
     equipment: "Echipament",
     allEquipment: "Orice echipament",
     showInactive: "Arată și dezactivate",
+    onlyNoClip: "Doar fără clip",
     reset: "Șterge filtrele",
   },
   empty: {
@@ -64,8 +66,12 @@ export const library = {
     fileCurrent: "Clip încărcat",
     fileSelected: (name: string, size: string) => `${name} (${size})`,
     fileTooBig: "Fișierul depășește 100 MB.",
+    fileMissing: "Alege fișierul video sau treci pe „Fără clip”.",
+    linkMissing: "Lipește linkul clipului sau treci pe „Fără clip”.",
     fileWrongType: "Formatul nu este acceptat. Încarcă un fișier MP4, WebM sau MOV.",
     uploading: "Se încarcă clipul…",
+    uploadProgress: (percent: number) => `Se încarcă clipul… ${percent}%`,
+    clipInUse: "Clipul este deja legat de alt exercițiu. Încarcă fișierul din nou.",
     uploadFailed: "Clipul nu a putut fi încărcat. Încearcă din nou.",
     link: "Link către clip",
     linkPlaceholder: "https://www.youtube.com/watch?v=…",

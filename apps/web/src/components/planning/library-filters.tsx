@@ -4,7 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useT } from "@/messages";
 import { Checkbox, Input, Select } from "@/components/ui/form";
 
-export type LibraryFilterValues = { q: string; zona: string; categorie: string; echipament: string; dezactivate: boolean };
+export type LibraryFilterValues = { q: string; zona: string; categorie: string; echipament: string; dezactivate: boolean; faraclip: boolean };
 
 /** Căutarea și filtrele bibliotecii. Starea stă în URL, ca linkul să poată fi trimis și „înapoi" să meargă. */
 export function LibraryFilters({ values, zones, categories, equipment }: {
@@ -28,6 +28,7 @@ export function LibraryFilters({ values, zones, categories, equipment }: {
     if (next.categorie) params.set("categorie", next.categorie);
     if (next.echipament) params.set("echipament", next.echipament);
     if (next.dezactivate) params.set("dezactivate", "1");
+    if (next.faraclip) params.set("faraclip", "1");
     const qs = params.toString();
     router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
   };
@@ -63,7 +64,10 @@ export function LibraryFilters({ values, zones, categories, equipment }: {
           </Select>
         </div>
       </div>
-      <Checkbox label={t.showInactive} checked={values.dezactivate} onChange={(e) => go({ dezactivate: e.target.checked })} />
+      <div className="flex flex-wrap gap-x-6">
+        <Checkbox label={t.onlyNoClip} checked={values.faraclip} onChange={(e) => go({ faraclip: e.target.checked })} />
+        <Checkbox label={t.showInactive} checked={values.dezactivate} onChange={(e) => go({ dezactivate: e.target.checked })} />
+      </div>
     </div>
   );
 }

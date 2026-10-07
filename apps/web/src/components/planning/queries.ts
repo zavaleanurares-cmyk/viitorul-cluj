@@ -109,6 +109,13 @@ export async function listAssignmentCompletions(db: Db, assignmentId: string): P
     db.from("exercise_completions").select(COMPLETION_COLUMNS).eq("assignment_id", assignmentId).order("id").range(from, to));
 }
 
+/** Bifele tuturor alocărilor unui program. */
+export async function listCompletionsForAssignments(db: Db, assignmentIds: string[]): Promise<CompletionRow[]> {
+  if (!assignmentIds.length) return [];
+  return fetchAll<CompletionRow>((from, to) =>
+    db.from("exercise_completions").select(COMPLETION_COLUMNS).in("assignment_id", assignmentIds).order("id").range(from, to));
+}
+
 /** Bifele unui jucător pe exercițiile de program. */
 export async function listPlayerProgramCompletions(db: Db, playerId: string): Promise<CompletionRow[]> {
   return fetchAll<CompletionRow>((from, to) =>
@@ -138,6 +145,15 @@ export async function listPlayerAssignments(db: Db, playerId: string): Promise<P
 export async function listPlayerOptions(db: Db): Promise<PlayerOption[]> {
   const players = await listPlayers(db);
   return players.map((p) => ({ id: p.id, name: p.display_name, group_id: p.group_id, position: p.position }));
+}
+
+/** Jucătorii activi (pentru alegere) și numele tuturor, inclusiv ale celor inactivi (pentru afișare). */
+export async function listPlayersWithNames(db: Db): Promise<{ options: PlayerOption[]; names: Map<string, string> }> {
+  const players = await listPlayers(db, { includeInactive: true });
+  return {
+    options: players.filter((p) => p.is_active).map((p) => ({ id: p.id, name: p.display_name, group_id: p.group_id, position: p.position })),
+    names: new Map(players.map((p) => [p.id, p.display_name])),
+  };
 }
 
 // ---------------------------------------------------------------------------

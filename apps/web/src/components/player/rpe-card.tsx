@@ -114,7 +114,7 @@ function RpeDialog({ initialType, entries, onClose }: {
             { value: "match", label: t.rpe.types.match },
           ]}
         />
-        <ScaleInput label={t.rpe.question} value={rpe} onChange={setRpe} minLabel={t.scales.rpeMin} maxLabel={t.scales.rpeMax} />
+        <ScaleInput label={t.rpe.question} value={rpe} onChange={(v) => { setRpe(v); setLocalError(null); }} minLabel={t.scales.rpeMin} maxLabel={t.scales.rpeMax} />
         <div>
           <Field label={t.rpe.duration}>
             <Input
@@ -124,7 +124,7 @@ function RpeDialog({ initialType, entries, onClose }: {
               max={300}
               step={1}
               value={duration}
-              onChange={(e) => setDuration(e.target.value)}
+              onChange={(e) => { setDuration(e.target.value); setLocalError(null); }}
               placeholder={t.rpe.durationPlaceholder}
             />
           </Field>
@@ -134,7 +134,7 @@ function RpeDialog({ initialType, entries, onClose }: {
                 key={m}
                 type="button"
                 aria-pressed={minutes === m}
-                onClick={() => setDuration(String(m))}
+                onClick={() => { setDuration(String(m)); setLocalError(null); }}
                 className={
                   "h-12 min-w-14 flex-1 rounded-[var(--radius-control)] border px-2 font-semibold " +
                   (minutes === m ? "border-brand bg-brand text-brand-ink" : "border-line-strong bg-surface text-ink active:bg-sunken")

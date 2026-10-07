@@ -1,5 +1,6 @@
 import "server-only";
 import { z } from "zod";
+import { DataError, type Db } from "@club/shared";
 
 const text = (max: number) => z.string().trim().max(max, `Textul este prea lung (cel mult ${max} de caractere).`);
 
@@ -19,3 +20,12 @@ export const ItemsSchema = z.array(ItemSchema).max(60, "Cel mult 60 de exerciți
 
 export const DateSchema = z.iso.date("Data nu este validă.");
 export { text };
+
+/** Toate exercițiile trimise trebuie să fie din biblioteca clubului (RLS le ascunde pe celelalte). */
+export async function assertExercises(db: Db, ids: string[]): Promise<void> {
+  const unique = [...new Set(ids)];
+  if (!unique.length) return;
+  const { data, error } = await db.from("exercises").select("id").in("id", unique);
+  if (error) throw error;
+  if ((data ?? []).length !== unique.length) throw new DataError("Unul dintre exerciții nu mai există în bibliotecă. Reîncarcă pagina.");
+}

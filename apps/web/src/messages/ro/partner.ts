@@ -27,7 +27,7 @@ export const partner = {
   injuriesEmpty: "Trimiterea nu are nicio accidentare asociată.",
 
   notesTitle: "Notele tale",
-  notesDescription: "Sunt vizibile pentru preparatorul fizic și antrenorii grupei.",
+  notesDescription: "Sunt vizibile pentru preparatorul fizic al clubului.",
   notesEmpty: "Nu ai adăugat încă nicio notă.",
   noteLabel: "Notă nouă",
   notePlaceholder: "Constatări, recomandări, pași următori",
@@ -38,7 +38,7 @@ export const partner = {
   noteDeleted: "Nota a fost ștearsă.",
 
   docsTitle: "Documentele cazului",
-  docsDescription: "Fișierele sunt private; se deschid printr-un link care expiră în două minute.",
+  docsDescription: "Vezi documentele accidentării trimise și pe cele încărcate de tine. Le poți șterge doar pe ale tale.",
   docsEmpty: "Niciun document pe acest caz.",
   docsEmptyHint: "Poți încărca rezultate, imagini sau scrisori medicale.",
 

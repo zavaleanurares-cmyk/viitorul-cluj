@@ -50,6 +50,11 @@ export function WellnessForm({ initial, config }: { initial: WellnessInitial | n
   const [mood, setMood] = useState<number | null>(initial?.mood ?? null);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  /** orice răspuns nou șterge mesajul de eroare rămas de la încercarea anterioară */
+  const answer = <T,>(set: (v: T) => void) => (v: T) => {
+    set(v);
+    setError(null);
+  };
 
   async function submit() {
     if (fatigue === null || muscle === null) return setError(t.errors.scalesNeeded);
@@ -86,14 +91,14 @@ export function WellnessForm({ initial, config }: { initial: WellnessInitial | n
 
   return (
     <div className="space-y-6">
-      <ScaleInput label={t.wellness.fatigue} value={fatigue} onChange={setFatigue} minLabel={t.scales.none} maxLabel={t.scales.max} />
-      <ScaleInput label={t.wellness.muscleLoad} value={muscle} onChange={setMuscle} minLabel={t.scales.none} maxLabel={t.scales.max} />
+      <ScaleInput label={t.wellness.fatigue} value={fatigue} onChange={answer(setFatigue)} minLabel={t.scales.none} maxLabel={t.scales.max} />
+      <ScaleInput label={t.wellness.muscleLoad} value={muscle} onChange={answer(setMuscle)} minLabel={t.scales.none} maxLabel={t.scales.max} />
 
       {config.sleep ? (
         <div className="space-y-3">
-          <ScaleInput label={t.wellness.sleepQuality} value={sleepQuality} onChange={setSleepQuality} minLabel={t.scales.sleepMin} maxLabel={t.scales.sleepMax} />
+          <ScaleInput label={t.wellness.sleepQuality} value={sleepQuality} onChange={answer(setSleepQuality)} minLabel={t.scales.sleepMin} maxLabel={t.scales.sleepMax} />
           <Field label={t.wellness.sleepHours} optional>
-            <Select value={sleepHours} onChange={(e) => setSleepHours(e.target.value)}>
+            <Select value={sleepHours} onChange={(e) => answer(setSleepHours)(e.target.value)}>
               <option value="">{t.wellness.sleepHoursNone}</option>
               {SLEEP_HOURS.map((h) => (
                 <option key={h} value={h}>{t.wellness.hours(h)}</option>
@@ -103,10 +108,10 @@ export function WellnessForm({ initial, config }: { initial: WellnessInitial | n
         </div>
       ) : null}
       {config.stress ? (
-        <ScaleInput label={t.wellness.stress} value={stress} onChange={setStress} minLabel={t.scales.none} maxLabel={t.scales.max} />
+        <ScaleInput label={t.wellness.stress} value={stress} onChange={answer(setStress)} minLabel={t.scales.none} maxLabel={t.scales.max} />
       ) : null}
       {config.mood ? (
-        <ScaleInput label={t.wellness.mood} value={mood} onChange={setMood} minLabel={t.scales.moodMin} maxLabel={t.scales.moodMax} />
+        <ScaleInput label={t.wellness.mood} value={mood} onChange={answer(setMood)} minLabel={t.scales.moodMin} maxLabel={t.scales.moodMax} />
       ) : null}
 
       {painOpen ? (
@@ -126,19 +131,19 @@ export function WellnessForm({ initial, config }: { initial: WellnessInitial | n
             </Button>
           </div>
           <p className="mb-2 text-sm text-ink-3">{t.wellness.painPick}</p>
-          <BodyMap value={zone} onChange={setZone} />
+          <BodyMap value={zone} onChange={answer(setZone)} className="mx-auto max-w-sm" />
           <p className="mt-2 font-semibold" aria-live="polite">
             {zone ? zoneLabel(zone.zone, zone.side) : t.wellness.painNoZone}
           </p>
           <div className="mt-4 space-y-4">
-            <ScaleInput label={t.wellness.painIntensity} value={painIntensity} onChange={setPainIntensity} minLabel={t.scales.painMin} maxLabel={t.scales.painMax} />
+            <ScaleInput label={t.wellness.painIntensity} value={painIntensity} onChange={answer(setPainIntensity)} minLabel={t.scales.painMin} maxLabel={t.scales.painMax} />
             <Field label={t.wellness.painNote} optional>
-              <Input value={painNote} maxLength={300} onChange={(e) => setPainNote(e.target.value)} placeholder={t.wellness.painNotePlaceholder} />
+              <Input value={painNote} maxLength={300} onChange={(e) => answer(setPainNote)(e.target.value)} placeholder={t.wellness.painNotePlaceholder} />
             </Field>
           </div>
         </section>
       ) : (
-        <Button variant="secondary" className="w-full" icon={<Plus className="size-5" aria-hidden />} onClick={() => setPainOpen(true)}>
+        <Button variant="secondary" className="w-full" icon={<Plus className="size-5" aria-hidden />} onClick={() => answer(setPainOpen)(true)}>
           {t.wellness.painOpen}
         </Button>
       )}

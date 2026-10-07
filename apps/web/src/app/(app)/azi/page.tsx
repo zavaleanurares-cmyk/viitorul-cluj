@@ -40,20 +40,20 @@ export default async function TodayPage() {
       <StatusCard player={player} status={status} today={ctx.today} />
 
       {entry ? (
-        <Card className="flex items-center gap-3 p-4" aria-label={t.today.questionnaireTitle}>
-          <span className="inline-flex size-11 shrink-0 items-center justify-center rounded-full bg-st-green text-white">
-            <Check className="size-6" strokeWidth={3} aria-hidden />
-          </span>
-          <div className="min-w-0 flex-1">
-            <h2 className="text-lg">{t.today.questionnaireDone}</h2>
-            <p className="text-ink-2">
-              {t.today.questionnaireSummary(entry.fatigue, entry.muscle_load)}
-              {entry.pain_zone ? ` · ${t.today.questionnairePain(zoneLabel(entry.pain_zone, entry.pain_side, true), entry.pain_intensity)}` : ""}
-            </p>
+        <Card className="p-4" aria-label={t.today.questionnaireTitle}>
+          <div className="flex items-center gap-3">
+            <span className="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-st-green text-white">
+              <Check className="size-5" strokeWidth={3} aria-hidden />
+            </span>
+            <h2 className="min-w-0 flex-1 text-lg leading-tight">{t.today.questionnaireDone}</h2>
+            <LinkButton href="/chestionar" variant="secondary" icon={<Pencil className="size-4" aria-hidden />}>
+              {t.today.questionnaireEdit}
+            </LinkButton>
           </div>
-          <LinkButton href="/chestionar" variant="secondary" icon={<Pencil className="size-4" aria-hidden />}>
-            {t.today.questionnaireEdit}
-          </LinkButton>
+          <p className="mt-2 text-ink-2">
+            {t.today.questionnaireSummary(entry.fatigue, entry.muscle_load)}
+            {entry.pain_zone ? ` · ${t.today.questionnairePain(zoneLabel(entry.pain_zone, entry.pain_side, true), entry.pain_intensity)}` : ""}
+          </p>
         </Card>
       ) : (
         <Card className="p-4" aria-label={t.today.questionnaireTitle}>

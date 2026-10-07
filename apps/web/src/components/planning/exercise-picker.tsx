@@ -8,14 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Input, Select } from "@/components/ui/form";
 import { Dialog } from "@/components/ui/overlay";
 import { ExerciseThumb } from "./exercise-thumb";
+import { exerciseMeta } from "./format";
 import type { ExerciseOption } from "./types";
-
-/** „Activare · Fesier, Lombar" */
-export function exerciseMeta(e: Pick<ExerciseOption, "category" | "zones">, maxZones = 3): string {
-  const zones = e.zones.slice(0, maxZones).map((z) => zoneLabel(z, null, true));
-  if (e.zones.length > maxZones) zones.push(`+${e.zones.length - maxZones}`);
-  return [label(EXERCISE_CATEGORIES, e.category), zones.join(", ")].filter(Boolean).join(" · ");
-}
 
 /**
  * Selectorul de exerciții, folosit la programe și la planuri: căutare după nume și filtre

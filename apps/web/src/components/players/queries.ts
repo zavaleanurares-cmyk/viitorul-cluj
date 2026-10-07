@@ -40,9 +40,9 @@ export async function listStatusHistory(db: Db, playerId: string, limit = 40): P
 }
 
 export async function listGroupHistory(db: Db, playerId: string): Promise<GroupHistoryRow[]> {
-  return unwrap(
-    await db.from("player_group_history").select("*").eq("player_id", playerId).order("from_date", { ascending: false }),
-  );
+  const rows = unwrap(await db.from("player_group_history").select("*").eq("player_id", playerId));
+  // grupa curentă (fără dată de sfârșit) prima, apoi cele mai recente
+  return rows.sort((a, b) => Number(!!a.to_date) - Number(!!b.to_date) || b.from_date.localeCompare(a.from_date) || (b.to_date ?? "").localeCompare(a.to_date ?? ""));
 }
 
 export async function getContacts(db: Db, playerId: string): Promise<PlayerContact | null> {
@@ -57,10 +57,12 @@ export async function listAnthropometrics(db: Db, playerId: string): Promise<Ant
   );
 }
 
+/** Consimțămintele legate de jucător: cele înregistrate pe fișa lui și cele date din contul lui. */
 export async function listConsents(db: Db, playerId: string, userId: string | null): Promise<Consent[]> {
-  let q = db.from("consents").select("*").order("accepted_at", { ascending: false });
-  q = userId ? q.or(`player_id.eq.${playerId},user_id.eq.${userId}`) : q.eq("player_id", playerId);
-  return unwrap(await q);
+  const byPlayer = unwrap(await db.from("consents").select("*").eq("player_id", playerId));
+  const byUser = userId ? unwrap(await db.from("consents").select("*").eq("user_id", userId)) : [];
+  const all = new Map([...byPlayer, ...byUser].map((c) => [c.id, c]));
+  return [...all.values()].sort((a, b) => b.accepted_at.localeCompare(a.accepted_at));
 }
 
 export async function listInjuries(db: Db, playerId: string): Promise<InjuryWithTreatments[]> {
@@ -90,13 +92,6 @@ export async function listReferrals(db: Db, playerId: string): Promise<ReferralW
     r.partner_notes = [...(r.partner_notes ?? [])].sort((a, b) => b.created_at.localeCompare(a.created_at));
   }
   return rows;
-}
-
-/** Notele partenerului pe trimiterile date (antrenorul nu vede trimiterile, dar vede notele). */
-export async function listPartnerNotesForPlayer(db: Db, referralIds: string[] | null): Promise<PartnerNote[]> {
-  let q = db.from("partner_notes").select("*").order("created_at", { ascending: false });
-  if (referralIds) q = q.in("referral_id", referralIds);
-  return unwrap(await q);
 }
 
 export type PartnerOption = { id: string; full_name: string };

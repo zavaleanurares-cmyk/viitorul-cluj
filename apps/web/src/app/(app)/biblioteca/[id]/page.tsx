@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ChevronLeft, Eye } from "lucide-react";
 import { requireRole } from "@/lib/auth";
-import { signedUrl } from "@/lib/storage";
+import { fileUrl } from "@/lib/storage";
 import { getT } from "@/messages";
 import { Card, CardBody, CardHeader, PageHeader } from "@/components/ui/card";
 import { LinkButton } from "@/components/ui/button";
@@ -19,7 +19,8 @@ export default async function ExercisePage({ params }: { params: Promise<{ id: s
   const { data: exercise } = await db.from("exercises").select("*").eq("id", id).maybeSingle();
   if (!exercise) notFound();
   const t = getT().library;
-  const [clipUrl, usage] = await Promise.all([signedUrl(db, "exercise-media", exercise.video_path), getExerciseUsage(db, id)]);
+  const clipUrl = fileUrl("exercise-media", exercise.video_path);
+  const usage = await getExerciseUsage(db, id);
 
   return (
     <>
@@ -27,7 +28,7 @@ export default async function ExercisePage({ params }: { params: Promise<{ id: s
         title={exercise.name}
         back={<Link href="/biblioteca" className="inline-flex h-10 items-center gap-1 font-semibold text-ink-3 hover:text-ink"><ChevronLeft className="size-5" aria-hidden />{t.form.back}</Link>}
         action={<LinkButton href={`/exercitii/${id}`} icon={<Eye className="size-5" aria-hidden />}>{t.detail.viewAsPlayer}</LinkButton>}
-        description={!exercise.is_active ? <Badge tone="outline" className="border-ink">{t.inactive}</Badge> : undefined}
+        description={!exercise.is_active ? <Badge tone="gray">{t.inactive}</Badge> : undefined}
       />
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start">
         <ExerciseForm key={`${exercise.id}:${exercise.video_path ?? ""}`} exercise={exercise} clipUrl={clipUrl} clubName={ctx.club.name} />

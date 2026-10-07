@@ -13,6 +13,7 @@ import { Card, CardBody, CardHeader, Notice } from "@/components/ui/card";
 import { Field, FormError, Input, Segmented, Select, Textarea } from "@/components/ui/form";
 import { BodyMap } from "@/components/ui/body-map";
 import { ExerciseMedia } from "@/components/ui/video";
+import { ProgressBar } from "@/components/ui/misc";
 import { useToast } from "@/components/ui/toast";
 import { discardClipUpload, prepareClipUpload, saveExercise, type ExerciseInput } from "@/app/(app)/biblioteca/actions";
 import { ChipToggles } from "./chips";
@@ -24,10 +25,10 @@ type MediaMode = "none" | "file" | "link";
 
 const formatSize = (bytes: number) => (bytes < 1024 * 1024 ? `${Math.max(1, Math.round(bytes / 1024))} KB` : `${(bytes / 1024 / 1024).toFixed(1).replace(".", ",")} MB`);
 
-/** Formularul unui exercițiu (adăugare și modificare). Clipul se încarcă din browser direct în storage, la salvare. */
+/** Formularul unui exercițiu (adăugare și modificare). Clipul se încarcă din browser în depozitul privat, la salvare. */
 export function ExerciseForm({ exercise, clipUrl, clubName }: {
   exercise: Tables<"exercises"> | null;
-  /** link semnat către clipul deja încărcat */
+  /** adresa clipului deja încărcat (`fileUrl`) */
   clipUrl: string | null;
   clubName: string;
 }) {
@@ -56,6 +57,7 @@ export function ExerciseForm({ exercise, clipUrl, clubName }: {
   const [file, setFile] = useState<File | null>(null);
   const [filePreview, setFilePreview] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [progress, setProgress] = useState(0);
   const [problem, setProblem] = useState<string | null>(null);
 
   useEffect(() => () => { if (filePreview) URL.revokeObjectURL(filePreview); }, [filePreview]);
@@ -86,7 +88,9 @@ export function ExerciseForm({ exercise, clipUrl, clubName }: {
     setProblem(null);
     save.clearError();
     if (!v.name.trim()) return setProblem(t.nameRequired);
-    if (mode === "link" && link && !parsedLink) return setProblem(t.linkInvalid);
+    if (mode === "file" && !file && !existingPath) return setProblem(t.fileMissing);
+    if (mode === "link" && !link) return setProblem(t.linkMissing);
+    if (mode === "link" && !parsedLink) return setProblem(t.linkInvalid);
     if (hasMedia && !(v.source.trim() && v.license.trim() && v.attribution.trim())) return setProblem(t.licenseRequired);
 
     let video: ExerciseInput["video"] = { kind: "none" };
@@ -94,15 +98,18 @@ export function ExerciseForm({ exercise, clipUrl, clubName }: {
     if (mode === "link" && link) video = { kind: "link", url: link };
     if (mode === "file" && file) {
       setUploading(true);
+      setProgress(0);
       try {
         const prep = await prepareClipUpload({ fileName: file.name, size: file.size, type: file.type });
         if (!prep.ok) {
           setProblem(prep.error);
           return;
         }
-        const up = await uploadFile("exercise-media", prep.data.path, file);
+        // unele browsere nu dau tipul fișierelor .mov: trimitem tipul stabilit de server după extensie
+        const body = file.type === prep.data.contentType ? file : new File([file], file.name, { type: prep.data.contentType });
+        const up = await uploadFile("exercise-media", prep.data.path, body, { onProgress: setProgress });
         if (!up.ok) {
-          setProblem(t.uploadFailed);
+          setProblem(`${t.uploadFailed} ${up.error}`);
           return;
         }
         uploadedPath = prep.data.path;
@@ -138,8 +145,6 @@ export function ExerciseForm({ exercise, clipUrl, clubName }: {
       return;
     }
     toast(res.data.created ? t.created : t.saved);
-    setFile(null);
-    setFilePreview(null);
     if (res.data.created) router.push("/biblioteca");
   };
 
@@ -319,7 +324,12 @@ export function ExerciseForm({ exercise, clipUrl, clubName }: {
       </Card>
 
       <FormError>{problem ?? save.error}</FormError>
-      {uploading ? <Notice tone="blue">{t.uploading}</Notice> : null}
+      {uploading ? (
+        <Notice tone="blue">
+          <p className="font-semibold" aria-live="polite">{t.uploadProgress(progress)}</p>
+          <ProgressBar className="mt-2" value={progress} max={100} label={t.uploading} />
+        </Notice>
+      ) : null}
       <div className="sticky bottom-16 z-20 -mx-4 border-t border-line bg-surface px-4 py-3 md:bottom-0 md:mx-0 md:rounded-[var(--radius-card)] md:border">
         <Button type="submit" pending={busy} className="w-full sm:w-auto">{exercise ? t.save : t.create}</Button>
       </div>

@@ -77,3 +77,42 @@ export function assignmentState(a: { is_active: boolean; start_date: string; end
   if (a.start_date > today) return "upcoming";
   return "active";
 }
+
+export type AssignmentAdherence = {
+  byPlayer: Map<string, PlayerAdherence>;
+  /** exerciții bifate / exerciții programate, pe toți jucătorii alocării */
+  percent: number | null;
+  /** câte zile programate au fost până azi inclusiv */
+  days: number;
+  /** ultima zi programată (până azi inclusiv) */
+  lastDate: string | null;
+};
+
+/** Aderența tuturor jucătorilor unei alocări. `completions` pot conține și bifele altor alocări. */
+export function assignmentAdherence(
+  assignment: Schedule & { id: string; playerIds: string[] }, exerciseIds: string[], completions: CompletionRow[], today: string, stripLength = 10,
+): AssignmentAdherence {
+  const mine = new Map<string, CompletionRow[]>();
+  for (const c of completions) {
+    if (c.assignment_id !== assignment.id) continue;
+    const list = mine.get(c.player_id);
+    if (list) list.push(c);
+    else mine.set(c.player_id, [c]);
+  }
+  const byPlayer = new Map<string, PlayerAdherence>();
+  let done = 0;
+  let expected = 0;
+  for (const playerId of assignment.playerIds) {
+    const a = playerAdherence(assignment, exerciseIds, mine.get(playerId) ?? [], today, stripLength);
+    byPlayer.set(playerId, a);
+    done += Math.min(a.done, a.expected);
+    expected += a.expected;
+  }
+  const days = scheduledDays(assignment, assignment.start_date, today);
+  return {
+    byPlayer,
+    percent: expected ? Math.round((done / expected) * 100) : null,
+    days: days.length,
+    lastDate: days.length ? days[days.length - 1] : null,
+  };
+}

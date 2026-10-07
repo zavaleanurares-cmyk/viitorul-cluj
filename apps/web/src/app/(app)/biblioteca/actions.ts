@@ -3,9 +3,8 @@ import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import { EQUIPMENT, EXERCISE_CATEGORIES, EXERCISE_LEVELS, isBodyZone, parseVideoUrl } from "@club/shared";
 import { run, fail } from "@/lib/actions";
-import { deleteFiles } from "@/lib/storage";
-import { canAccess, removeFiles } from "@/lib/files";
-import { safeFileName } from "@/lib/storage";
+import { deleteFiles, safeFileName } from "@/lib/storage";
+import { canAccess } from "@/lib/files";
 import { getT } from "@/messages";
 import { getExerciseUsage } from "@/components/planning/queries";
 import { text } from "@/components/planning/schemas";
@@ -27,7 +26,7 @@ const ClipInput = z.object({ fileName: z.string().min(1).max(300), size: z.numbe
 
 /**
  * Pregătește încărcarea unui clip: verifică tipul și mărimea și întoarce calea din bucketul privat
- * (`<club_id>/<uuid>-<nume-sigur>`). Fișierul este trimis apoi din browser direct în storage.
+ * (`<club_id>/<uuid>-<nume-sigur>`). Fișierul este trimis apoi din browser cu `uploadFile`.
  */
 export async function prepareClipUpload(input: z.infer<typeof ClipInput>) {
   return run({ roles: ["physio"] }, async ({ ctx }) => {
@@ -85,6 +84,11 @@ export async function saveExercise(input: ExerciseInput) {
       videoPath = v.video.path;
       if (!videoPath.startsWith(`${ctx.club.id}/`)) fail("Calea fișierului nu este validă.");
       if (!(await canAccess(db, BUCKET, videoPath, "read"))) fail(t.uploadFailed);
+      // un fișier aparține unui singur exercițiu (altfel ștergerea unuia l-ar lăsa pe celălalt fără clip)
+      let others = db.from("exercises").select("id", { count: "exact", head: true }).eq("video_path", videoPath);
+      if (v.id) others = others.neq("id", v.id);
+      const { count } = await others;
+      if (count) fail(t.clipInUse);
     } else if (v.video.kind === "link") {
       if (!parseVideoUrl(v.video.url)) fail(t.linkInvalid);
       videoUrl = v.video.url;
@@ -121,7 +125,7 @@ export async function saveExercise(input: ExerciseInput) {
     if (!before) fail("Exercițiul nu a fost găsit.");
     const { error } = await db.from("exercises").update(values).eq("id", v.id);
     if (error) throw error;
-    // clipul vechi nu mai este folosit de nimeni: îl ștergem din storage
+    // clipul vechi nu mai este folosit de nimeni: îl ștergem din depozit
     if (before.video_path && before.video_path !== videoPath) await deleteFiles(db, BUCKET, [before.video_path]);
     return { id: v.id, created: false };
   });
@@ -149,6 +153,6 @@ export async function deleteExercise(input: { id: string }) {
     const { data, error } = await db.from("exercises").delete().eq("id", id).select("video_path");
     if (error) throw error;
     if (!data.length) fail("Exercițiul nu a fost găsit.");
-    if (data[0].video_path) await removeFiles(BUCKET, [data[0].video_path]);
+    if (data[0].video_path) await deleteFiles(db, BUCKET, [data[0].video_path]);
   });
 }

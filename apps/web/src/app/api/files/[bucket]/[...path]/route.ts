@@ -36,8 +36,10 @@ export async function GET(request: NextRequest, { params }: Params) {
     "X-Content-Type-Options": "nosniff",
     "Cache-Control": "private, no-store",
     "Content-Disposition": `${download ? "attachment" : "inline"}; filename="${name}"`,
-    "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; sandbox",
   };
+  // PDF-urile se deschid în vizualizatorul browserului, care nu pornește sub `sandbox`;
+  // restul tipurilor (imagini etc.) rămân izolate.
+  if (file.contentType !== "application/pdf") headers["Content-Security-Policy"] = "default-src 'none'; style-src 'unsafe-inline'; sandbox";
   if (file.size !== null) headers["Content-Length"] = String(file.size);
   return new NextResponse(file.stream, { headers });
 }

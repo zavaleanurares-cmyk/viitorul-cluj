@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { z } from "zod";
 import { EQUIPMENT, EXERCISE_CATEGORIES, EXERCISE_LEVELS, homePath, label, zoneLabel } from "@club/shared";
 import { requireSession } from "@/lib/auth";
-import { signedUrl } from "@/lib/storage";
+import { fileUrl } from "@/lib/storage";
 import { Card, CardBody, Notice } from "@/components/ui/card";
 import { Badge } from "@/components/ui/status";
 import { ExerciseMedia } from "@/components/ui/video";
@@ -28,7 +28,7 @@ export default async function ExercisePage({ params, searchParams }: {
   const { data: ex } = await db.from("exercises").select("*").eq("id", id).maybeSingle();
   if (!ex) notFound();
 
-  const fileUrl = await signedUrl(db, "exercise-media", ex.video_path);
+  const clipUrl = fileUrl("exercise-media", ex.video_path);
   const credit = [ex.attribution, ex.source && ex.source !== ex.attribution ? ex.source : null, ex.license].filter(Boolean).join(" · ");
 
   return (
@@ -43,7 +43,7 @@ export default async function ExercisePage({ params, searchParams }: {
         </p>
       </header>
 
-      <ExerciseMedia title={ex.name} fileUrl={fileUrl} url={ex.video_url} imageUrl={ex.image_url} />
+      <ExerciseMedia title={ex.name} fileUrl={clipUrl} url={ex.video_url} imageUrl={ex.image_url} />
 
       {ex.description ? <p className="text-lg text-ink-2">{ex.description}</p> : null}
 
