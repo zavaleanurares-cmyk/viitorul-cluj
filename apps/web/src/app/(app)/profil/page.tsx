@@ -78,7 +78,7 @@ export default async function ProfilePage({ searchParams }: { searchParams: Prom
   );
 }
 
-async function PlayerSheet({ db, ctx }: Session) {
+async function PlayerSheet({ db, ctx }: Pick<Session, "db" | "ctx" | "email">) {
   const t = getT().player;
   if (!ctx.player) return <NoPlayer />;
   const p = ctx.player;
@@ -149,7 +149,7 @@ async function PlayerSheet({ db, ctx }: Session) {
   );
 }
 
-async function MyData({ db, ctx }: Session) {
+async function MyData({ db, ctx }: Pick<Session, "db" | "ctx" | "email">) {
   const t = getT().player;
   const [requests, consent] = await Promise.all([listMyRequests(db, ctx.userId), getMyConsent(db, ctx.userId, ctx.player?.id ?? null)]);
   const openKinds = requests.filter((r) => r.status === "open").map((r) => r.kind);

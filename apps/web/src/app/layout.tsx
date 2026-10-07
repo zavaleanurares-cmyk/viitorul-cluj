@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { ToastProvider } from "@/components/ui/toast";
 import { ServiceWorker } from "@/components/shell/service-worker";
-import { APP_NAME } from "@/lib/supabase/env";
+import { APP_NAME } from "@/lib/env";
 import "./globals.css";
 
 export const metadata: Metadata = {

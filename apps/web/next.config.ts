@@ -1,19 +1,12 @@
 import type { NextConfig } from "next";
 
-const supabaseHost = (() => {
-  try {
-    return new URL(process.env.NEXT_PUBLIC_SUPABASE_URL ?? "http://localhost:54321").host;
-  } catch {
-    return "localhost:54321";
-  }
-})();
-
 const nextConfig: NextConfig = {
   // Aplicația este integral autentificată și dinamică: fiecare pagină depinde de utilizator.
   // Folosim modelul clasic de randare la cerere (vezi DECIZII.md).
   cacheComponents: false,
   devIndicators: false,
-  transpilePackages: ["@club/shared"],
+  transpilePackages: ["@club/shared", "@club/db", "@club/seed"],
+  serverExternalPackages: ["pg"],
   turbopack: {
     rules: {
       "*.css": {
@@ -45,9 +38,6 @@ const nextConfig: NextConfig = {
         ],
       },
     ];
-  },
-  images: {
-    remotePatterns: [{ protocol: supabaseHost.startsWith("localhost") ? "http" : "https", hostname: supabaseHost.split(":")[0] }],
   },
 };
 

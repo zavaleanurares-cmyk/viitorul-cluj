@@ -7,6 +7,7 @@ export const auth = {
     forgot: "Am uitat parola",
     invalid: "E-mail sau parolă greșită.",
     inactive: "Contul nu este activ. Ia legătura cu preparatorul fizic al clubului.",
+    locked: "Prea multe încercări greșite. Așteaptă 15 minute și încearcă din nou.",
   },
   forgot: {
     title: "Resetează parola",
@@ -18,6 +19,8 @@ export const auth = {
   password: {
     title: "Alege o parolă nouă",
     firstTime: "La prima intrare în cont trebuie să îți alegi propria parolă.",
+    current: "Parola actuală",
+    wrongCurrent: "Parola actuală nu este corectă.",
     new: "Parolă nouă",
     repeat: "Repetă parola",
     rules: "Cel puțin 10 caractere.",
@@ -27,8 +30,11 @@ export const auth = {
     saved: "Parola a fost schimbată.",
   },
   confirm: {
-    working: "Se verifică linkul…",
-    invalid: "Linkul nu mai este valabil. Cere unul nou.",
+    title: "Activează contul",
+    intro: "Apasă butonul de mai jos, apoi alege-ți parola.",
+    submit: "Continuă",
+    invalid: "Linkul nu mai este valabil sau a fost deja folosit. Cere unul nou.",
+    askNew: "Cere un link nou",
   },
   consent: {
     guardianName: "Numele părintelui / tutorelui",

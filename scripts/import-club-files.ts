@@ -18,11 +18,11 @@ import {
   buildWellnessPayload, proposeMatch, decisionKey, hashSheet, weekStart, addDays, todayIn,
   type NameDecision, type Sheet,
 } from "../packages/shared/src";
-import { demoPassword, must, root, userClient } from "./lib";
+import { closePool, must, root, userClient } from "./lib";
 
 const DOMAIN = process.env.DEMO_EMAIL_DOMAIN ?? "example.com";
 const email = `preparator.viitorul@${DOMAIN}`;
-const db = await userClient(email, demoPassword(email));
+const db = await userClient(email);
 const dir = path.join(root, "data/private");
 const weekArg = process.argv.indexOf("--week");
 // implicit: săptămâna trecută
@@ -101,3 +101,4 @@ const groups = must(await db.from("groups").select("*").order("sort"), "grupe");
 
 const { count } = await db.from("players").select("id", { count: "exact", head: true });
 console.log("Total jucători în evidență:", count);
+await closePool();

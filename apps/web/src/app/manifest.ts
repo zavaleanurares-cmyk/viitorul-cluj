@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { APP_NAME } from "@/lib/supabase/env";
+import { APP_NAME } from "@/lib/env";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {

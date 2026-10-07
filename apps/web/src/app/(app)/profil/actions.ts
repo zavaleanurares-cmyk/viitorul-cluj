@@ -2,6 +2,7 @@
 import { z } from "zod";
 import { isMinor } from "@club/shared";
 import { fail, run } from "@/lib/actions";
+import { deleteFiles } from "@/lib/storage";
 import { getT } from "@/messages";
 
 const t = getT().player;
@@ -71,7 +72,7 @@ export async function setMyPhoto(input: z.infer<typeof Photo>) {
     const previous = ctx.player.photo_path;
     const { error } = await db.rpc("set_my_photo", { p_path: v.path });
     if (error) throw error;
-    if (previous && previous !== v.path) await db.storage.from("avatars").remove([previous]);
+    if (previous && previous !== v.path) await deleteFiles(db, "avatars", [previous]);
   });
 }
 

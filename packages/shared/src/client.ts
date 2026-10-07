@@ -1,8 +1,11 @@
-import type { SupabaseClient } from "@supabase/supabase-js";
+import type { PostgrestClient } from "@supabase/postgrest-js";
 import type { Database } from "./database.types";
 
-/** Clientul Supabase tipizat, folosit identic în aplicația web și în cea nativă. */
-export type Db = SupabaseClient<Database>;
+/**
+ * Clientul de date tipizat (constructorul de interogări PostgREST), folosit identic pe server
+ * (executat direct pe Postgres, vezi @club/db) și în aplicația nativă (prin API-ul aplicației).
+ */
+export type Db = PostgrestClient<Database>;
 
 export class DataError extends Error {
   code?: string;

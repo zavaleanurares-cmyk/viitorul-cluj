@@ -5,7 +5,7 @@ import { setMyPhoto } from "@/app/(app)/profil/actions";
 import { Button } from "@/components/ui/button";
 import { FormError } from "@/components/ui/form";
 import { Avatar } from "@/components/ui/misc";
-import { createClient } from "@/lib/supabase/client";
+import { uploadFile } from "@/lib/upload";
 import { useAction } from "@/lib/use-action";
 import { useT } from "@/messages";
 
@@ -62,8 +62,8 @@ export function PhotoUpload({ playerId, name, photoUrl, hasPhoto }: { playerId: 
         return;
       }
       const path = `${playerId}/foto-${Date.now()}.jpg`;
-      const { error: uploadError } = await createClient().storage.from("avatars").upload(path, blob, { contentType: "image/jpeg", upsert: false });
-      if (uploadError) {
+      const up = await uploadFile("avatars", path, blob);
+      if (!up.ok) {
         setError(t.uploadFailed);
         return;
       }

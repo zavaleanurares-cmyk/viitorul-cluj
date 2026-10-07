@@ -8,7 +8,7 @@
  * Nu atinge datele cluburilor reale.
  */
 import crypto from "node:crypto";
-import { anonClient, ensureAccount, must, randomPassword, serviceClient, userClient, type Db } from "./lib";
+import { anonClient, closePool, deleteUser, ensureAccount, must, randomPassword, serviceClient, userClient, type Db } from "./lib";
 
 const admin = serviceClient();
 const run = crypto.randomBytes(3).toString("hex");
@@ -39,7 +39,7 @@ const clubIds: string[] = [];
 
 async function cleanup() {
   for (const c of clubIds) await admin.from("clubs").delete().eq("id", c);
-  for (const u of userIds) await admin.auth.admin.deleteUser(u);
+  for (const u of userIds) await deleteUser(u);
 }
 
 // resturi de la rulări întrerupte
@@ -48,7 +48,7 @@ async function cleanup() {
   for (const c of stale ?? []) {
     const { data: us } = await admin.from("profiles").select("id").eq("club_id", c.id);
     await admin.from("clubs").delete().eq("id", c.id);
-    for (const u of us ?? []) await admin.auth.admin.deleteUser(u.id);
+    for (const u of us ?? []) await deleteUser(u.id);
   }
 }
 
@@ -112,14 +112,14 @@ try {
   for (const p of [p1, p2, p3, p4]) must(await admin.from("fitness_test_results").insert({ test_id: test, player_id: p, value: 1.8 }).select("id"), "rez");
 
   const anon = anonClient();
-  const owner = await userClient(mail("owner"), pw);
-  const director = await userClient(mail("director"), pw);
-  const physio = await userClient(mail("physio"), pw);
-  const coach = await userClient(mail("coach"), pw);
-  const player1 = await userClient(mail("player1"), pw);
-  const player4 = await userClient(mail("player4"), pw);
-  const partner = await userClient(mail("partner"), pw);
-  const physioB = await userClient(mail("physiob"), pw);
+  const owner = await userClient(mail("owner"));
+  const director = await userClient(mail("director"));
+  const physio = await userClient(mail("physio"));
+  const coach = await userClient(mail("coach"));
+  const player1 = await userClient(mail("player1"));
+  const player4 = await userClient(mail("player4"));
+  const partner = await userClient(mail("partner"));
+  const physioB = await userClient(mail("physiob"));
 
   const medicalTables = ["injuries", "wellness_entries", "anthropometrics", "medical_documents", "player_contacts", "fitness_test_results"] as const;
   const countAll = async (db: Db, t: (typeof medicalTables)[number] | "players" | "daily_plans" | "audit_log" | "alerts" | "profiles") =>
@@ -284,24 +284,35 @@ try {
   must(await physio.from("referrals").update({ is_active: true }).eq("id", referral).select("id"), "redeschidere");
 
   // -------------------------------------------------------------------------
-  console.log("\nDocumente medicale (storage privat)");
-  const file = new Blob(["%PDF-1.4 test"], { type: "application/pdf" });
-  const up = await physio.storage.from("medical").upload(`${p1}/rmn-${run}.pdf`, file);
-  check("preparatorul încarcă un document", !up.error, up.error?.message);
-  await physio.storage.from("medical").upload(`${p3}/rmn-a-${run}.pdf`, file);
-  await physio.storage.from("medical").upload(`${p3}/rmn-b-${run}.pdf`, file);
-  check("antrenorul NU poate încărca documente", !!(await coach.storage.from("medical").upload(`${p1}/hack-${run}.pdf`, file)).error);
-  check("jucătorul NU poate încărca documente medicale", !!(await player1.storage.from("medical").upload(`${p1}/hack2-${run}.pdf`, file)).error);
-  const s1 = await coach.storage.from("medical").createSignedUrl(`${p1}/rmn-${run}.pdf`, 60);
-  check("antrenorul primește link semnat pentru documentul din grupa lui", !s1.error && !!s1.data?.signedUrl, s1.error?.message);
-  check("antrenorul NU primește link pentru documentul din altă grupă", !!(await coach.storage.from("medical").createSignedUrl(`${p3}/rmn-a-${run}.pdf`, 60)).error);
-  check("alt jucător NU primește link", !!(await player4.storage.from("medical").createSignedUrl(`${p1}/rmn-${run}.pdf`, 60)).error);
-  check("jucătorul primește link pentru propriul document", !(await player1.storage.from("medical").createSignedUrl(`${p1}/rmn-${run}.pdf`, 60)).error);
-  check("partenerul primește link doar pentru documentul cazului", !(await partner.storage.from("medical").createSignedUrl(`${p3}/rmn-a-${run}.pdf`, 60)).error
-    && !!(await partner.storage.from("medical").createSignedUrl(`${p3}/rmn-b-${run}.pdf`, 60)).error);
-  check("patronul NU primește link", !!(await owner.storage.from("medical").createSignedUrl(`${p1}/rmn-${run}.pdf`, 60)).error);
-  check("fără autentificare nu există acces la fișier", !!(await anon.storage.from("medical").download(`${p1}/rmn-${run}.pdf`)).error);
-  await admin.storage.from("medical").remove([`${p1}/rmn-${run}.pdf`, `${p3}/rmn-a-${run}.pdf`, `${p3}/rmn-b-${run}.pdf`]);
+  console.log("\nFișiere (depozit privat; accesul îl decide funcția file_access, sub RLS)");
+  const can = async (db: Db, bucket: string, path: string, action: "read" | "write" | "delete") =>
+    (await db.rpc("file_access", { p_bucket: bucket, p_path: path, p_action: action })).data === true;
+  const f1 = `${p1}/rmn-${run}.pdf`;
+  const f3a = `${p3}/rmn-a-${run}.pdf`;
+  const f3b = `${p3}/rmn-b-${run}.pdf`;
+  check("preparatorul poate încărca un document medical", await can(physio, "medical", f1, "write"));
+  check("antrenorul NU poate încărca documente", !(await can(coach, "medical", `${p1}/hack-${run}.pdf`, "write")));
+  check("jucătorul NU poate încărca documente medicale", !(await can(player1, "medical", `${p1}/hack2-${run}.pdf`, "write")));
+  check("antrenorul poate citi documentul din grupa lui", await can(coach, "medical", f1, "read"));
+  check("antrenorul NU poate citi documentul din altă grupă", !(await can(coach, "medical", f3a, "read")));
+  check("antrenorul NU poate șterge documente", !(await can(coach, "medical", f1, "delete")));
+  check("alt jucător NU poate citi documentul", !(await can(player4, "medical", f1, "read")));
+  check("jucătorul își poate citi propriul document", await can(player1, "medical", f1, "read"));
+  check("partenerul poate citi doar documentul cazului", (await can(partner, "medical", f3a, "read")) && !(await can(partner, "medical", f3b, "read")));
+  check("partenerul poate încărca doar pe cazul lui", (await can(partner, "medical", `${p3}/nou-${run}.pdf`, "write")) && !(await can(partner, "medical", `${p1}/nou-${run}.pdf`, "write")));
+  check("patronul NU poate citi documente", !(await can(owner, "medical", f1, "read")));
+  check("directorul NU poate citi documente", !(await can(director, "medical", f1, "read")));
+  check("fără autentificare nu există acces la fișiere", await errored(anon.rpc("file_access", { p_bucket: "medical", p_path: f1, p_action: "read" })));
+  check("un fișier fără rând în evidență nu poate fi citit de nimeni în afară de preparator… nici de el", !(await can(physio, "medical", `${p1}/inexistent.pdf`, "read")));
+  check("căile cu „..” sunt refuzate", !(await can(physio, "medical", `${p1}/../${p3}/x.pdf`, "write")));
+  check("clipurile de exerciții: preparatorul scrie, jucătorul doar citește", (await can(physio, "exercise-media", `${clubA}/clip.mp4`, "write"))
+    && (await can(player1, "exercise-media", `${clubA}/clip.mp4`, "read")) && !(await can(player1, "exercise-media", `${clubA}/clip.mp4`, "write")));
+  check("clipurile altui club nu pot fi citite", !(await can(player1, "exercise-media", `${clubB}/clip.mp4`, "read")) && !(await can(physio, "exercise-media", `${clubB}/clip.mp4`, "write")));
+  check("patronul nu are acces la clipuri (nu are biblioteca)", !(await can(owner, "exercise-media", `${clubA}/clip.mp4`, "read")));
+  check("fotografia: jucătorul și-o schimbă pe a lui, nu pe a altuia", (await can(player1, "avatars", `${p1}/eu.jpg`, "write")) && !(await can(player1, "avatars", `${p2}/el.jpg`, "write")));
+  check("fotografia: antrenorul o vede doar la grupa lui", (await can(coach, "avatars", `${p1}/eu.jpg`, "read")) && !(await can(coach, "avatars", `${p3}/el.jpg`, "read")));
+  check("sigla: toți membrii clubului o văd, doar preparatorul o schimbă", (await can(player1, "branding", `${clubA}/sigla.png`, "read"))
+    && !(await can(coach, "branding", `${clubA}/sigla.png`, "write")) && (await can(physio, "branding", `${clubA}/sigla.png`, "write")));
 
   // -------------------------------------------------------------------------
   console.log("\nGDPR și conturi dezactivate");
@@ -324,6 +335,7 @@ try {
   console.error(e);
 } finally {
   await cleanup();
+  await closePool();
 }
 
 console.log(`\n${passed} verificări trecute, ${failures.length} eșuate.`);

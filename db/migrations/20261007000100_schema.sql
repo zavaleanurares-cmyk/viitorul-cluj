@@ -4,7 +4,6 @@
 -- Toate tabelele au RLS activat în migrarea 0002. Nimic nu este expus rolului anon.
 -- =============================================================================
 
-create extension if not exists pgcrypto with schema extensions;
 
 create type public.app_role as enum (
   'owner',             -- Patron
@@ -65,7 +64,7 @@ create table public.groups (
 -- Utilizatori
 -- ---------------------------------------------------------------------------
 create table public.profiles (
-  id                    uuid primary key references auth.users(id) on delete cascade,
+  id                    uuid primary key references app_auth.users(id) on delete cascade,
   club_id               uuid not null references public.clubs(id) on delete cascade,
   role                  public.app_role not null,
   full_name             text not null,

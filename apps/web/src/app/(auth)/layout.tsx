@@ -1,4 +1,4 @@
-import { APP_NAME } from "@/lib/supabase/env";
+import { APP_NAME } from "@/lib/env";
 import { getT } from "@/messages";
 
 /** Cadru comun pentru paginile de dinainte de autentificare. */

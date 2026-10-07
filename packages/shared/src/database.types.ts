@@ -1635,6 +1635,7 @@ export type Database = {
       club_overview: { Args: Record<PropertyKey, never>; Returns: Json };
       copy_daily_plan: { Args: { p_plan: string | null; p_dates: string[] | null; p_players?: string[] | null }; Returns: number };
       export_player_data: { Args: { p_player?: string | null }; Returns: Json };
+      file_access: { Args: { p_bucket: string | null; p_path: string | null; p_action: string | null }; Returns: boolean };
       group_test_averages: { Args: { p_group: string | null }; Returns: { test_id: string; average: number; best: number; players: number }[] };
       import_health_status: { Args: { p_payload: Json | null }; Returns: Json };
       import_physical: { Args: { p_payload: Json | null }; Returns: Json };

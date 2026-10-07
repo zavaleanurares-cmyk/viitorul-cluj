@@ -84,7 +84,7 @@ begin
       (player_id, status_id, note, zone, side, zone_detail, zone_uncertain, return_on, changed_by)
     values
       (new.id, new.status_id, new.status_note, new.status_zone, new.status_side, new.status_zone_detail,
-       new.status_zone_uncertain, new.status_return_on, (select auth.uid()));
+       new.status_zone_uncertain, new.status_return_on, (select app_auth.uid()));
   end if;
 
   -- notificări la schimbarea stării
@@ -170,7 +170,7 @@ begin
 
   insert into public.audit_log (club_id, actor_id, actor_role, action, entity, entity_id, player_id, details)
   values (
-    v_club, (select auth.uid()), coalesce((select private.my_role())::text, 'system'), tg_op, tg_table_name,
+    v_club, (select app_auth.uid()), coalesce((select private.my_role())::text, 'system'), tg_op, tg_table_name,
     coalesce(v_row->>'id', v_row->>'player_id', v_row->>'user_id'),
     case when tg_op = 'DELETE' and tg_table_name = 'players' then null else v_player end,
     v_details

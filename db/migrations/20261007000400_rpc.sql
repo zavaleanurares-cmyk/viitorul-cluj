@@ -13,17 +13,17 @@ create or replace function public.update_my_profile(
   p_email_notifications boolean default null
 ) returns void language plpgsql security definer set search_path = '' as $$
 begin
-  if (select auth.uid()) is null then raise exception 'Neautentificat' using errcode = '42501'; end if;
+  if (select app_auth.uid()) is null then raise exception 'Neautentificat' using errcode = '42501'; end if;
   update public.profiles set
     full_name = coalesce(nullif(trim(p_full_name), ''), full_name),
     phone = case when p_phone is null then phone else nullif(trim(p_phone), '') end,
     email_notifications = coalesce(p_email_notifications, email_notifications)
-  where id = (select auth.uid());
+  where id = (select app_auth.uid());
 end $$;
 
 create or replace function public.clear_must_change_password()
 returns void language sql security definer set search_path = '' as $$
-  update public.profiles set must_change_password = false where id = (select auth.uid());
+  update public.profiles set must_change_password = false where id = (select app_auth.uid());
 $$;
 
 -- Jucătorul își poate schimba doar fotografia și numele de afișare? Nu: doar fotografia.
@@ -31,7 +31,7 @@ create or replace function public.set_my_photo(p_path text)
 returns void language plpgsql security definer set search_path = '' as $$
 declare v_player uuid;
 begin
-  select pl.id into v_player from public.players pl where pl.user_id = (select auth.uid());
+  select pl.id into v_player from public.players pl where pl.user_id = (select app_auth.uid());
   if v_player is null then raise exception 'Fără fișă de jucător' using errcode = '42501'; end if;
   if p_path is not null and p_path not like v_player::text || '/%' then
     raise exception 'Cale nepermisă' using errcode = '42501';
@@ -55,23 +55,23 @@ begin
   -- o singură intrare la 5 minute pentru același cititor / jucător / secțiune
   if exists (
     select 1 from public.audit_log a
-    where a.actor_id = (select auth.uid()) and a.player_id = p_player
+    where a.actor_id = (select app_auth.uid()) and a.player_id = p_player
       and a.action = 'READ' and a.entity = p_section
       and a.created_at > now() - interval '5 minutes'
   ) then return; end if;
   insert into public.audit_log (club_id, actor_id, actor_role, action, entity, entity_id, player_id)
-  values (v_club, (select auth.uid()), (select private.my_role())::text, 'READ', p_section, p_player::text, p_player);
+  values (v_club, (select app_auth.uid()), (select private.my_role())::text, 'READ', p_section, p_player::text, p_player);
 end $$;
 
 create or replace function public.log_event(p_action text, p_entity text, p_details jsonb default null)
 returns void language plpgsql security definer set search_path = '' as $$
 begin
-  if (select auth.uid()) is null then return; end if;
+  if (select app_auth.uid()) is null then return; end if;
   if p_action not in ('LOGIN', 'EXPORT', 'DOWNLOAD', 'CONSENT') then
     raise exception 'Acțiune necunoscută';
   end if;
   insert into public.audit_log (club_id, actor_id, actor_role, action, entity, player_id, details)
-  values ((select private.my_club()), (select auth.uid()), (select private.my_role())::text,
+  values ((select private.my_club()), (select app_auth.uid()), (select private.my_role())::text,
           p_action, left(p_entity, 80),
           case when p_details ? 'player_id' then (p_details->>'player_id')::uuid end, p_details);
 end $$;
@@ -197,7 +197,7 @@ begin
   if not (
     v_role = 'physio'
     or (v_role = 'coach' and p_group = any (private.my_group_ids()))
-    or exists (select 1 from public.players pl where pl.user_id = (select auth.uid()) and pl.group_id = p_group)
+    or exists (select 1 from public.players pl where pl.user_id = (select app_auth.uid()) and pl.group_id = p_group)
   ) then
     raise exception 'Acces interzis' using errcode = '42501';
   end if;
@@ -233,7 +233,7 @@ begin
   if not private.is_physio() then raise exception 'Acces interzis' using errcode = '42501'; end if;
   if v_id is null then
     insert into public.programs (club_id, name, description, kind, is_template, created_by)
-    values (private.my_club(), p_name, p_description, coalesce(p_kind, 'prevention'), coalesce(p_is_template, false), (select auth.uid()))
+    values (private.my_club(), p_name, p_description, coalesce(p_kind, 'prevention'), coalesce(p_is_template, false), (select app_auth.uid()))
     returning id into v_id;
   else
     update public.programs set name = p_name, description = p_description,
@@ -281,7 +281,7 @@ begin
           case when p_target_type in ('group', 'position') then p_group end,
           case when p_target_type = 'position' then p_position end,
           coalesce(p_start, private.club_today()), p_end,
-          coalesce(p_weekdays, '{1,3,5}'), nullif(p_notes, ''), (select auth.uid()))
+          coalesce(p_weekdays, '{1,3,5}'), nullif(p_notes, ''), (select app_auth.uid()))
   returning id into v_id;
 
   insert into public.program_assignment_players (assignment_id, player_id)
@@ -309,7 +309,7 @@ declare
 begin
   if not private.can_manage_player(p_player) then raise exception 'Acces interzis' using errcode = '42501'; end if;
   insert into public.daily_plans (player_id, plan_date, title, notes, injury_id, rtp_stage, created_by)
-  values (p_player, p_date, nullif(p_title, ''), nullif(p_notes, ''), p_injury, p_rtp_stage, (select auth.uid()))
+  values (p_player, p_date, nullif(p_title, ''), nullif(p_notes, ''), p_injury, p_rtp_stage, (select app_auth.uid()))
   on conflict (player_id, plan_date) do update
     set title = excluded.title, notes = excluded.notes, injury_id = excluded.injury_id, rtp_stage = excluded.rtp_stage
   returning id into v_id;
@@ -360,7 +360,7 @@ begin
       insert into public.daily_plans (player_id, plan_date, title, notes, injury_id, rtp_stage, created_by)
       values (v_player, v_date, v_src.title, v_src.notes,
               case when v_player = v_src.player_id then v_src.injury_id end,
-              case when v_player = v_src.player_id then v_src.rtp_stage end, (select auth.uid()))
+              case when v_player = v_src.player_id then v_src.rtp_stage end, (select app_auth.uid()))
       returning id into v_new;
       insert into public.daily_plan_items (plan_id, exercise_id, sort, sets, reps, duration_sec, rest_sec, tempo, notes)
       select v_new, i.exercise_id, i.sort, i.sets, i.reps, i.duration_sec, i.rest_sec, i.tempo, i.notes
@@ -384,7 +384,7 @@ begin
       where nm.club_id = p_club and nm.source_name = m->>'source_name'
         and nm.group_id is not distinct from nullif(m->>'group_id', '')::uuid;
     insert into public.name_matches (club_id, source_name, group_id, player_id, created_by)
-    values (p_club, m->>'source_name', nullif(m->>'group_id', '')::uuid, (m->>'player_id')::uuid, (select auth.uid()));
+    values (p_club, m->>'source_name', nullif(m->>'group_id', '')::uuid, (m->>'player_id')::uuid, (select app_auth.uid()));
   end loop;
 end $$;
 
@@ -445,7 +445,7 @@ begin
   insert into public.imports (club_id, kind, filename, file_hash, mapping, rows_imported, rows_skipped, rows_flagged, report, created_by)
   values (v_club, 'health_status', p_payload->>'filename', p_payload->>'file_hash', p_payload->'mapping',
           v_created + v_updated, v_skipped, v_flagged,
-          jsonb_build_object('created', v_created, 'updated', v_updated, 'rows', v_details), (select auth.uid()))
+          jsonb_build_object('created', v_created, 'updated', v_updated, 'rows', v_details), (select app_auth.uid()))
   returning id into v_import;
   return jsonb_build_object('import_id', v_import, 'created', v_created, 'updated', v_updated,
                             'skipped', v_skipped, 'flagged', v_flagged);
@@ -498,7 +498,7 @@ begin
   insert into public.imports (club_id, kind, filename, file_hash, mapping, rows_imported, rows_skipped, report, created_by)
   values (v_club, 'roster', p_payload->>'filename', p_payload->>'file_hash', p_payload->'mapping',
           v_created + v_updated, v_skipped,
-          jsonb_build_object('created', v_created, 'updated', v_updated, 'rows', v_details), (select auth.uid()))
+          jsonb_build_object('created', v_created, 'updated', v_updated, 'rows', v_details), (select app_auth.uid()))
   returning id into v_import;
   return jsonb_build_object('import_id', v_import, 'created', v_created, 'updated', v_updated, 'skipped', v_skipped);
 end $$;
@@ -571,7 +571,7 @@ begin
   insert into public.imports (club_id, kind, filename, file_hash, mapping, rows_imported, rows_skipped, rows_flagged, report, created_by)
   values (v_club, 'fatigue_grid', p_payload->>'filename', p_payload->>'file_hash', p_payload->'mapping',
           v_imported, v_skipped, v_flagged,
-          jsonb_build_object('players_created', v_created, 'rows', v_details), (select auth.uid()))
+          jsonb_build_object('players_created', v_created, 'rows', v_details), (select app_auth.uid()))
   returning id into v_import;
   return jsonb_build_object('import_id', v_import, 'imported', v_imported, 'skipped', v_skipped,
                             'flagged', v_flagged, 'players_created', v_created);
@@ -593,7 +593,7 @@ declare
 begin
   if not private.is_physio() then raise exception 'Acces interzis' using errcode = '42501'; end if;
   insert into public.imports (club_id, kind, filename, file_hash, mapping, created_by)
-  values (v_club, 'physical', p_payload->>'filename', p_payload->>'file_hash', p_payload->'mapping', (select auth.uid()))
+  values (v_club, 'physical', p_payload->>'filename', p_payload->>'file_hash', p_payload->'mapping', (select app_auth.uid()))
   returning id into v_import;
 
   for s in select * from jsonb_array_elements(coalesce(p_payload->'sessions', '[]'::jsonb)) loop
@@ -652,14 +652,14 @@ create or replace function public.refresh_daily_alerts(p_club uuid default null)
 returns int language plpgsql security definer set search_path = '' as $$
 declare
   v_club uuid;
-  v_role text := coalesce((select auth.jwt()->>'role'), '');
+  v_role text := coalesce((select app_auth.jwt()->>'role'), '');
   v_today date;
   v_missing int;
   v_visa int;
   r record;
   n int := 0;
 begin
-  if v_role = 'service_role' or (select auth.uid()) is null then
+  if v_role = 'service_role' or (select app_auth.uid()) is null then
     null; -- apel de sistem (cron): toate cluburile sau cel cerut
   elsif private.is_physio() then
     p_club := private.my_club();
@@ -718,7 +718,7 @@ declare
   r record;
   n int := 0;
 begin
-  if coalesce((select auth.jwt()->>'role'), '') <> 'service_role' and (select auth.uid()) is not null then
+  if coalesce((select app_auth.jwt()->>'role'), '') <> 'service_role' and (select app_auth.uid()) is not null then
     raise exception 'Acces interzis' using errcode = '42501';
   end if;
   for r in
@@ -777,21 +777,21 @@ declare
   v_club uuid;
 begin
   if v_player is null then
-    select pl.id into v_player from public.players pl where pl.user_id = (select auth.uid());
+    select pl.id into v_player from public.players pl where pl.user_id = (select app_auth.uid());
   end if;
   if v_player is null then
     -- cont fără fișă de jucător: exportăm profilul
     return jsonb_build_object(
       'exportat_la', now(),
-      'profil', (select to_jsonb(p) from public.profiles p where p.id = (select auth.uid())),
-      'consimtaminte', (select coalesce(jsonb_agg(to_jsonb(cs)), '[]'::jsonb) from public.consents cs where cs.user_id = (select auth.uid())));
+      'profil', (select to_jsonb(p) from public.profiles p where p.id = (select app_auth.uid())),
+      'consimtaminte', (select coalesce(jsonb_agg(to_jsonb(cs)), '[]'::jsonb) from public.consents cs where cs.user_id = (select app_auth.uid())));
   end if;
   if not (private.is_self(v_player) or private.can_manage_player(v_player)) then
     raise exception 'Acces interzis' using errcode = '42501';
   end if;
   select pl.club_id into v_club from public.players pl where pl.id = v_player;
   insert into public.audit_log (club_id, actor_id, actor_role, action, entity, entity_id, player_id)
-  values (v_club, (select auth.uid()), (select private.my_role())::text, 'EXPORT', 'players', v_player::text, v_player);
+  values (v_club, (select app_auth.uid()), (select private.my_role())::text, 'EXPORT', 'players', v_player::text, v_player);
   return jsonb_build_object('exportat_la', now()) || private.player_export(v_player);
 end $$;
 

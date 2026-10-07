@@ -23,6 +23,7 @@ await page.fill('input[type="email"]', email);
 await page.fill('input[type="password"]', password);
 await page.click('button[type="submit"]');
 await page.waitForURL((u) => !u.pathname.startsWith("/autentificare"), { timeout: 20000 });
+await page.waitForLoadState("networkidle").catch(() => {});
 if (page.url().includes("/consimtamant") && route !== "/consimtamant") {
   // prima autentificare a contului demo: acceptă consimțământul
   const name = page.locator('input[autocomplete="name"]');

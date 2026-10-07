@@ -6,7 +6,7 @@ Citește tot fișierul înainte să scrii cod. Regulile de aici țin modulele co
 
 ```
 packages/shared/src/        tipuri, etichete, reguli de domeniu, parsere de import, interogări comune (web + nativ)
-supabase/migrations/        schema, RLS, triggere, RPC (sursa de adevăr pentru permisiuni)
+db/migrations/        schema, RLS, triggere, RPC (sursa de adevăr pentru permisiuni)
 apps/web/src/
   app/(auth)/               autentificare, parolă uitată
   app/(setup)/              parolă inițială, consimțământ
@@ -49,7 +49,7 @@ const { db, ctx } = await requireRole("physio");          // sau requireCapabili
 - Tipuri: `Tables<"players">`, `TablesInsert<…>`, `Enums<"app_role">` din `@club/shared`.
 - Etichete în română pentru valorile din baza de date: `packages/shared/src/labels.ts` (`label(INJURY_TYPES, x)`), zone: `zoneLabel`, `describeZone`, `BODY_ZONES`; date: `formatDate`, `formatDateShort`, `formatDateTime`, `relativeDay`, `plural`, `addDays`, `weekStart`, `weekDates`.
 - Operațiuni atomice există ca RPC: `save_daily_plan`, `copy_daily_plan`, `save_program`, `assign_program`, `import_*`, `club_overview`, `group_test_averages`, `export_player_data`, `anonymize_player`, `refresh_daily_alerts`, `update_my_profile`, `set_my_photo`, `log_event`. Semnăturile sunt în `packages/shared/src/database.types.ts`.
-- Schimbări de schemă: doar dacă sunt cu adevărat necesare. Fișier nou `supabase/migrations/202610071<NN>00_<modul>_<ce>.sql` (nu edita migrările existente), apoi `npm run db:migrate && npm run db:types` din rădăcină. Orice tabel nou are RLS și politici; orice funcție nouă are `revoke execute … from public, anon` + `grant` explicit.
+- Schimbări de schemă: doar dacă sunt cu adevărat necesare. Fișier nou `db/migrations/202610071<NN>00_<modul>_<ce>.sql` (nu edita migrările existente), apoi `npm run db:migrate && npm run db:types` din rădăcină. Orice tabel nou are RLS și politici; orice funcție nouă are `revoke execute … from public, anon` + `grant` explicit.
 
 ## Acțiuni de server
 

@@ -2,6 +2,7 @@ import "server-only";
 import { randomUUID } from "node:crypto";
 import { getPlayer, type Db, type Player } from "@club/shared";
 import { fail } from "@/lib/actions";
+import { deleteFiles } from "@/lib/storage";
 import { safeFileName, signedUrl } from "@/lib/storage";
 import { getT } from "@/messages";
 import { MEDICAL_FILE_MAX_BYTES, medicalMimeType } from "./domain";
@@ -31,8 +32,7 @@ export function newMedicalPath(playerId: string, fileName: string, size: number)
 export async function removeDocument(db: Db, documentId: string): Promise<{ playerId: string }> {
   const { data: doc } = await db.from("medical_documents").select("id, player_id, storage_path").eq("id", documentId).maybeSingle();
   if (!doc) fail(e.docNotFound);
-  const { error: storageError } = await db.storage.from("medical").remove([doc.storage_path]);
-  if (storageError) fail(e.docStorage);
+  if ((await deleteFiles(db, "medical", [doc.storage_path])) === 0) fail(e.docForbidden);
   const { data: deleted, error } = await db.from("medical_documents").delete().eq("id", documentId).select("id");
   if (error) throw error;
   if (!deleted?.length) fail(e.docForbidden);

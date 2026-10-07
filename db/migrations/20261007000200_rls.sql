@@ -20,13 +20,13 @@ grant usage on schema private to authenticated, service_role;
 create or replace function private.my_role() returns public.app_role
 language sql stable security definer set search_path = '' as $$
   select p.role from public.profiles p
-  where p.id = (select auth.uid()) and p.is_active
+  where p.id = (select app_auth.uid()) and p.is_active
 $$;
 
 create or replace function private.my_club() returns uuid
 language sql stable security definer set search_path = '' as $$
   select p.club_id from public.profiles p
-  where p.id = (select auth.uid()) and p.is_active
+  where p.id = (select app_auth.uid()) and p.is_active
 $$;
 
 create or replace function private.my_group_ids() returns uuid[]
@@ -34,7 +34,7 @@ language sql stable security definer set search_path = '' as $$
   select coalesce(array_agg(sg.group_id), '{}'::uuid[])
   from public.staff_groups sg
   join public.profiles p on p.id = sg.user_id and p.is_active
-  where sg.user_id = (select auth.uid())
+  where sg.user_id = (select app_auth.uid())
 $$;
 
 create or replace function private.is_physio() returns boolean
@@ -71,7 +71,7 @@ language sql stable security definer set search_path = '' as $$
   select exists (
     select 1 from public.players pl
     where pl.id = p_player
-      and pl.user_id = (select auth.uid())
+      and pl.user_id = (select app_auth.uid())
       and pl.club_id = (select private.my_club())
   )
 $$;
@@ -88,7 +88,7 @@ language sql stable security definer set search_path = '' as $$
         or ((select private.my_role()) = 'coach'
             and pl.group_id is not null
             and pl.group_id = any ((select private.my_group_ids())::uuid[]))
-        or pl.user_id = (select auth.uid())
+        or pl.user_id = (select app_auth.uid())
       )
   )
 $$;
@@ -113,7 +113,7 @@ language sql stable security definer set search_path = '' as $$
        select 1 from public.referrals r
        join public.players pl on pl.id = r.player_id
        where r.player_id = p_player
-         and r.partner_user_id = (select auth.uid())
+         and r.partner_user_id = (select app_auth.uid())
          and r.is_active
          and pl.club_id = (select private.my_club())
      )
@@ -128,7 +128,7 @@ language sql stable security definer set search_path = '' as $$
        join public.referrals r on r.player_id = i.player_id
        join public.players pl on pl.id = i.player_id
        where i.id = p_injury
-         and r.partner_user_id = (select auth.uid())
+         and r.partner_user_id = (select app_auth.uid())
          and r.is_active
          and pl.club_id = (select private.my_club())
          and (r.injury_id is null or r.injury_id = i.id)
@@ -159,10 +159,10 @@ language sql stable security definer set search_path = '' as $$
        select 1 from public.referrals r
        join public.players pl on pl.id = r.player_id
        where r.player_id = p_player
-         and r.partner_user_id = (select auth.uid())
+         and r.partner_user_id = (select app_auth.uid())
          and r.is_active
          and pl.club_id = (select private.my_club())
-         and (r.injury_id is null or r.injury_id = p_injury or p_uploaded_by = (select auth.uid()))
+         and (r.injury_id is null or r.injury_id = p_injury or p_uploaded_by = (select app_auth.uid()))
      )
 $$;
 
@@ -178,7 +178,7 @@ language sql stable security definer set search_path = '' as $$
        select 1 from public.referrals r
        join public.players pl on pl.id = r.player_id
        where r.id = p_referral and r.is_active
-         and r.partner_user_id = (select auth.uid())
+         and r.partner_user_id = (select app_auth.uid())
          and pl.club_id = (select private.my_club())
      )
 $$;
@@ -204,7 +204,7 @@ language sql stable security definer set search_path = '' as $$
     select 1 from public.program_assignment_players ap
     join public.players pl on pl.id = ap.player_id
     where ap.assignment_id = p_assignment
-      and pl.user_id = (select auth.uid())
+      and pl.user_id = (select app_auth.uid())
       and pl.club_id = (select private.my_club())
   )
 $$;
@@ -288,7 +288,7 @@ create policy groups_write on public.groups for all to authenticated
 
 -- profiles -------------------------------------------------------------------
 create policy profiles_select on public.profiles for select to authenticated
-  using (id = (select auth.uid())
+  using (id = (select app_auth.uid())
       or (club_id = (select private.my_club()) and (select private.is_physio())));
 create policy profiles_write on public.profiles for all to authenticated
   using (club_id = (select private.my_club()) and (select private.is_physio()))
@@ -296,7 +296,7 @@ create policy profiles_write on public.profiles for all to authenticated
 
 -- staff_groups ---------------------------------------------------------------
 create policy staff_groups_select on public.staff_groups for select to authenticated
-  using (user_id = (select auth.uid())
+  using (user_id = (select app_auth.uid())
       or (private.group_club(group_id) = (select private.my_club()) and (select private.is_physio())));
 create policy staff_groups_write on public.staff_groups for all to authenticated
   using (private.group_club(group_id) = (select private.my_club()) and (select private.is_physio()))
@@ -312,7 +312,7 @@ create policy players_select on public.players for select to authenticated
       (select private.my_role()) in ('physio', 'sporting_director')
       or ((select private.my_role()) = 'coach' and group_id is not null
           and group_id = any ((select private.my_group_ids())::uuid[]))
-      or user_id = (select auth.uid())
+      or user_id = (select app_auth.uid())
       or private.partner_can_read_player(id)
     )
   );
@@ -365,7 +365,7 @@ create policy medical_documents_select on public.medical_documents for select to
 create policy medical_documents_insert on public.medical_documents for insert to authenticated
   with check (
     private.can_manage_player(player_id)
-    or (uploaded_by = (select auth.uid())
+    or (uploaded_by = (select app_auth.uid())
         and private.partner_can_read_document(player_id, injury_id, uploaded_by))
   );
 create policy medical_documents_update on public.medical_documents for update to authenticated
@@ -373,13 +373,13 @@ create policy medical_documents_update on public.medical_documents for update to
   with check (private.can_manage_player(player_id));
 create policy medical_documents_delete on public.medical_documents for delete to authenticated
   using (private.can_manage_player(player_id)
-      or (uploaded_by = (select auth.uid()) and private.partner_can_read_player(player_id)));
+      or (uploaded_by = (select app_auth.uid()) and private.partner_can_read_player(player_id)));
 
 -- referrals ------------------------------------------------------------------
 create policy referrals_select on public.referrals for select to authenticated
   using (private.can_manage_player(player_id)
       or private.is_self(player_id)
-      or (partner_user_id = (select auth.uid()) and (select private.my_role()) = 'medical_partner'));
+      or (partner_user_id = (select app_auth.uid()) and (select private.my_role()) = 'medical_partner'));
 create policy referrals_write on public.referrals for all to authenticated
   using (private.can_manage_player(player_id))
   with check (private.can_manage_player(player_id)
@@ -390,12 +390,12 @@ create policy partner_notes_select on public.partner_notes for select to authent
   using (private.can_read_player_medical(private.referral_player(referral_id))
       or private.is_my_active_referral(referral_id));
 create policy partner_notes_insert on public.partner_notes for insert to authenticated
-  with check (author_id = (select auth.uid())
+  with check (author_id = (select app_auth.uid())
           and (private.is_my_active_referral(referral_id)
                or private.can_manage_player(private.referral_player(referral_id))));
 create policy partner_notes_delete on public.partner_notes for delete to authenticated
   using (private.can_manage_player(private.referral_player(referral_id))
-      or (author_id = (select auth.uid()) and private.is_my_active_referral(referral_id)));
+      or (author_id = (select app_auth.uid()) and private.is_my_active_referral(referral_id)));
 
 -- exercises ------------------------------------------------------------------
 create policy exercises_select on public.exercises for select to authenticated
@@ -548,14 +548,14 @@ create policy alerts_delete on public.alerts for delete to authenticated
 
 -- notifications / push_tokens -------------------------------------------------------
 create policy notifications_select on public.notifications for select to authenticated
-  using (user_id = (select auth.uid()));
+  using (user_id = (select app_auth.uid()));
 create policy notifications_update on public.notifications for update to authenticated
-  using (user_id = (select auth.uid())) with check (user_id = (select auth.uid()));
+  using (user_id = (select app_auth.uid())) with check (user_id = (select app_auth.uid()));
 create policy notifications_delete on public.notifications for delete to authenticated
-  using (user_id = (select auth.uid()));
+  using (user_id = (select app_auth.uid()));
 
 create policy push_tokens_all on public.push_tokens for all to authenticated
-  using (user_id = (select auth.uid())) with check (user_id = (select auth.uid()));
+  using (user_id = (select app_auth.uid())) with check (user_id = (select app_auth.uid()));
 
 -- importuri ------------------------------------------------------------------------
 create policy imports_all on public.imports for all to authenticated
@@ -571,7 +571,7 @@ create policy name_matches_all on public.name_matches for all to authenticated
 -- consents -------------------------------------------------------------------------
 create policy consents_select on public.consents for select to authenticated
   using (
-    user_id = (select auth.uid())
+    user_id = (select app_auth.uid())
     or (player_id is not null and (private.is_self(player_id) or private.can_manage_player(player_id)))
     or (user_id is not null and (select private.is_physio())
         and private.profile_club(user_id) = (select private.my_club()))
@@ -579,26 +579,26 @@ create policy consents_select on public.consents for select to authenticated
 create policy consents_insert on public.consents for insert to authenticated
   with check (
     -- consimțământ propriu (sau al tutorelui, dat pe ecran, pentru propriul cont)
-    (user_id = (select auth.uid())
+    (user_id = (select app_auth.uid())
        and kind in ('self', 'guardian_digital', 'staff_confidentiality')
        and (player_id is null or private.is_self(player_id))
        and recorded_by is null and withdrawn_at is null)
     -- acord pe hârtie înregistrat de preparator
     or (player_id is not null and private.can_manage_player(player_id)
-        and kind = 'guardian_paper' and recorded_by = (select auth.uid()))
+        and kind = 'guardian_paper' and recorded_by = (select app_auth.uid()))
   );
 create policy consents_update on public.consents for update to authenticated
-  using (user_id = (select auth.uid())
+  using (user_id = (select app_auth.uid())
       or (player_id is not null and private.can_manage_player(player_id)))
-  with check (user_id = (select auth.uid())
+  with check (user_id = (select app_auth.uid())
       or (player_id is not null and private.can_manage_player(player_id)));
 
 -- data_requests ----------------------------------------------------------------------
 create policy data_requests_select on public.data_requests for select to authenticated
-  using (user_id = (select auth.uid())
+  using (user_id = (select app_auth.uid())
       or (club_id = (select private.my_club()) and (select private.is_physio())));
 create policy data_requests_insert on public.data_requests for insert to authenticated
-  with check (user_id = (select auth.uid())
+  with check (user_id = (select app_auth.uid())
           and club_id = (select private.my_club())
           and status = 'open' and handled_by is null
           and (player_id is null or private.is_self(player_id)));

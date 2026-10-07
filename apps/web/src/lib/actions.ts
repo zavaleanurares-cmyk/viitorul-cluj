@@ -16,7 +16,8 @@ type Options = {
 
 /**
  * Învelește o acțiune de server: verifică sesiunea și rolul, prinde erorile și le întoarce
- * ca mesaj în română. Baza de date rămâne ultima linie de apărare (RLS).
+ * ca mesaj în română. Baza de date rămâne ultima linie de apărare (RLS): `db` din sesiune rulează
+ * fiecare interogare cu identitatea utilizatorului.
  *
  *   export async function saveThing(input: Input) {
  *     return run({ roles: ["physio"], revalidate: ["/jucatori"] }, async ({ db, ctx }) => { ... });

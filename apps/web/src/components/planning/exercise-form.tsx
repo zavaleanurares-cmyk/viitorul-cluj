@@ -7,7 +7,7 @@ import {
 } from "@club/shared";
 import { useT } from "@/messages";
 import { useAction } from "@/lib/use-action";
-import { createClient } from "@/lib/supabase/client";
+import { uploadFile } from "@/lib/upload";
 import { Button, IconButton } from "@/components/ui/button";
 import { Card, CardBody, CardHeader, Notice } from "@/components/ui/card";
 import { Field, FormError, Input, Segmented, Select, Textarea } from "@/components/ui/form";
@@ -100,10 +100,8 @@ export function ExerciseForm({ exercise, clipUrl, clubName }: {
           setProblem(prep.error);
           return;
         }
-        // corp binar simplu (nu multipart): merge la fel pe Supabase și pe emularea locală de storage
-        const { error } = await createClient().storage.from("exercise-media")
-          .upload(prep.data.path, await file.arrayBuffer(), { contentType: prep.data.contentType, cacheControl: "3600" });
-        if (error) {
+        const up = await uploadFile("exercise-media", prep.data.path, file);
+        if (!up.ok) {
           setProblem(t.uploadFailed);
           return;
         }

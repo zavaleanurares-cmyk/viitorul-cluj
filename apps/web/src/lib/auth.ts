@@ -2,29 +2,38 @@ import "server-only";
 import { cache } from "react";
 import { redirect } from "next/navigation";
 import { can, getAppContext, homePath, type AppContext, type AppRole, type Capability, type Db } from "@club/shared";
-import { createClient } from "./supabase/server";
+import { createDb, getSessionUser } from "@club/db";
+import { readSessionToken } from "./session";
 
-export type Session = { db: Db; ctx: AppContext; email: string | null };
+export type Session = {
+  /** client de date cu identitatea utilizatorului — fiecare interogare trece prin RLS */
+  db: Db;
+  ctx: AppContext;
+  email: string;
+  /** sesiune deschisă dintr-un link de invitație / resetare (poate seta parola fără cea veche) */
+  viaLink: boolean;
+  hasPassword: boolean;
+};
 
-/** Sesiunea curentă (o singură interogare pe cerere). Null dacă nu există utilizator sau profil activ. */
+/** Sesiunea curentă (o singură verificare pe cerere). Null dacă nu există utilizator sau profil activ. */
 export const getSession = cache(async (): Promise<Session | null> => {
-  const db = (await createClient()) as unknown as Db;
-  const { data } = await db.auth.getUser();
-  if (!data.user) return null;
-  const ctx = await getAppContext(db, data.user.id);
+  const user = await getSessionUser(await readSessionToken());
+  if (!user) return null;
+  const db = createDb({ sub: user.userId, role: "authenticated" });
+  const ctx = await getAppContext(db, user.userId);
   if (!ctx) return null;
-  return { db, ctx, email: data.user.email ?? null };
+  return { db, ctx, email: user.email, viaLink: user.viaLink, hasPassword: user.hasPassword };
 });
 
 /**
  * Folosit de fiecare pagină din zona autentificată.
- * Trimite la autentificare, la schimbarea parolei inițiale sau la consimțământ, după caz.
+ * Trimite la autentificare, la alegerea parolei sau la consimțământ, după caz.
  */
 export async function requireSession(opts: { allowPendingSetup?: boolean } = {}): Promise<Session> {
   const session = await getSession();
   if (!session) redirect("/autentificare");
   if (!opts.allowPendingSetup) {
-    if (session.ctx.profile.must_change_password) redirect("/parola?prima=1");
+    if (session.ctx.profile.must_change_password || !session.hasPassword) redirect("/parola?prima=1");
     if (!session.ctx.consentAccepted) redirect("/consimtamant");
   }
   return session;

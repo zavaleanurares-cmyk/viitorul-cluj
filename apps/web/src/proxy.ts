@@ -1,32 +1,21 @@
-import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-const PUBLIC_PATHS = ["/autentificare", "/parola-uitata", "/auth", "/offline", "/api/cron", "/manifest.webmanifest", "/sw.js", "/icon", "/apple-icon"];
+const PUBLIC_PATHS = ["/autentificare", "/parola-uitata", "/auth", "/offline", "/api/cron", "/api/setup", "/manifest.webmanifest", "/sw.js", "/icon", "/apple-icon"];
 
-/** Reîmprospătează sesiunea la fiecare cerere și trimite vizitatorii neautentificați la pagina de autentificare. */
-export async function proxy(request: NextRequest) {
-  let response = NextResponse.next({ request });
-  const supabase = createServerClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY)!, {
-    cookies: {
-      getAll: () => request.cookies.getAll(),
-      setAll: (list) => {
-        for (const { name, value } of list) request.cookies.set(name, value);
-        response = NextResponse.next({ request });
-        for (const { name, value, options } of list) response.cookies.set(name, value, options);
-      },
-    },
-  });
-  const { data } = await supabase.auth.getUser();
+/**
+ * Trimite vizitatorii fără cookie de sesiune la pagina de autentificare.
+ * Este doar o scurtătură: sesiunea se verifică în baza de date la fiecare pagină și acțiune (lib/auth.ts).
+ */
+export function proxy(request: NextRequest) {
   const path = request.nextUrl.pathname;
   const isPublic = PUBLIC_PATHS.some((p) => path === p || path.startsWith(p + "/") || path.startsWith(p + "."));
-
-  if (!data.user && !isPublic) {
+  if (!isPublic && !request.cookies.has("sesiune")) {
     const url = request.nextUrl.clone();
     url.pathname = "/autentificare";
     url.search = path !== "/" ? `?inapoi=${encodeURIComponent(path + request.nextUrl.search)}` : "";
     return NextResponse.redirect(url);
   }
-  return response;
+  return NextResponse.next();
 }
 
 export const config = {
