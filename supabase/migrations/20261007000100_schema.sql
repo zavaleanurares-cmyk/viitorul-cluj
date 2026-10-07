@@ -293,7 +293,7 @@ create table public.programs (
 create table public.program_exercises (
   id            uuid primary key default gen_random_uuid(),
   program_id    uuid not null references public.programs(id) on delete cascade,
-  exercise_id   uuid not null references public.exercises(id) on delete restrict,
+  exercise_id   uuid not null references public.exercises(id) on delete cascade,
   sort          int not null default 0,
   sets          smallint,
   reps          text,              -- „10", „8–12", „câte 6 pe fiecare parte"
@@ -345,7 +345,7 @@ create table public.daily_plans (
 create table public.daily_plan_items (
   id            uuid primary key default gen_random_uuid(),
   plan_id       uuid not null references public.daily_plans(id) on delete cascade,
-  exercise_id   uuid not null references public.exercises(id) on delete restrict,
+  exercise_id   uuid not null references public.exercises(id) on delete cascade,
   sort          int not null default 0,
   sets          smallint,
   reps          text,

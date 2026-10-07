@@ -11,4 +11,5 @@ export * from "./labels";
 export * from "./load";
 export * from "./consent";
 export * from "./client";
+export * from "./media";
 export * from "./queries";

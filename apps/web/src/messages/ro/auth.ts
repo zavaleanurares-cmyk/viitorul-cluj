@@ -1,0 +1,43 @@
+/** Texte pentru autentificare, parolă și consimțământ. */
+export const auth = {
+  signIn: {
+    title: "Intră în cont",
+    intro: "Conturile se creează doar prin invitație de la club.",
+    submit: "Intră în cont",
+    forgot: "Am uitat parola",
+    invalid: "E-mail sau parolă greșită.",
+    inactive: "Contul nu este activ. Ia legătura cu preparatorul fizic al clubului.",
+  },
+  forgot: {
+    title: "Resetează parola",
+    intro: "Scrie adresa de e-mail a contului. Dacă există, primești un link de resetare.",
+    submit: "Trimite linkul",
+    sent: "Dacă adresa există în sistem, ai primit un e-mail cu linkul de resetare.",
+    back: "Înapoi la autentificare",
+  },
+  password: {
+    title: "Alege o parolă nouă",
+    firstTime: "La prima intrare în cont trebuie să îți alegi propria parolă.",
+    new: "Parolă nouă",
+    repeat: "Repetă parola",
+    rules: "Cel puțin 10 caractere.",
+    mismatch: "Parolele nu sunt identice.",
+    tooShort: "Parola trebuie să aibă cel puțin 10 caractere.",
+    submit: "Salvează parola",
+    saved: "Parola a fost schimbată.",
+  },
+  confirm: {
+    working: "Se verifică linkul…",
+    invalid: "Linkul nu mai este valabil. Cere unul nou.",
+  },
+  consent: {
+    guardianName: "Numele părintelui / tutorelui",
+    guardianRelation: "Calitatea",
+    relations: { mother: "Mamă", father: "Tată", guardian: "Tutore legal" },
+    guardianNeeded: "Scrie numele părintelui sau al tutorelui.",
+    paperAlternative: "Dacă acordul a fost semnat pe hârtie la club, preparatorul fizic îl poate înregistra și contul devine activ fără acest pas.",
+    decline: "Nu sunt de acord — ieși din cont",
+    version: "Versiunea textului",
+    minorNote: "Jucătorul este minor: acest ecran trebuie completat de un părinte sau de tutorele legal.",
+  },
+} as const;

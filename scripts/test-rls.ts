@@ -42,6 +42,16 @@ async function cleanup() {
   for (const u of userIds) await admin.auth.admin.deleteUser(u);
 }
 
+// resturi de la rulări întrerupte
+{
+  const { data: stale } = await admin.from("clubs").select("id").like("slug", "rls-%");
+  for (const c of stale ?? []) {
+    const { data: us } = await admin.from("profiles").select("id").eq("club_id", c.id);
+    await admin.from("clubs").delete().eq("id", c.id);
+    for (const u of us ?? []) await admin.auth.admin.deleteUser(u.id);
+  }
+}
+
 try {
   // -------------------------------------------------------------------------
   // Date de test

@@ -1,26 +1,106 @@
 @import "tailwindcss";
+@import "@fontsource-variable/atkinson-hyperlegible-next";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/*
+ * Sistem vizual: gândit pentru telefon, la marginea terenului, în soare.
+ *  - fundal alb, cerneală închisă, contrast mare; fără umbre decorative;
+ *  - o singură familie de litere, aleasă pentru lizibilitate (Atkinson Hyperlegible);
+ *  - culoarea clubului doar pe navigație și pe acțiunea principală;
+ *  - culorile de stare (verde / galben / portocaliu / roșu / gri) sunt rezervate stării
+ *    și apar mereu împreună cu text sau pictogramă.
+ */
+@theme {
+  --font-sans: "Atkinson Hyperlegible Next Variable", ui-sans-serif, system-ui, sans-serif;
+
+  --color-ink: #0e1726;
+  --color-ink-2: #36414f;
+  --color-ink-3: #596575;
+  --color-line: #d3d9e0;
+  --color-line-strong: #a9b3bf;
+  --color-surface: #ffffff;
+  --color-canvas: #f2f4f6;
+  --color-sunken: #e8ecf0;
+
+  /* culoarea clubului (configurabilă) */
+  --color-brand: var(--club-primary, #12305a);
+  --color-brand-ink: var(--club-primary-ink, #ffffff);
+  --color-accent: var(--club-accent, #12305a);
+
+  /* stări: plin (pentru etichete) și pal (pentru fundaluri de rând) */
+  --color-st-green: #1b7a3d;
+  --color-st-green-soft: #e2f3e7;
+  --color-st-yellow: #f2c20a;
+  --color-st-yellow-soft: #fff5cc;
+  --color-st-orange: #ef8a1d;
+  --color-st-orange-soft: #ffe8d1;
+  --color-st-red: #c3281c;
+  --color-st-red-soft: #fce3e0;
+  --color-st-gray: #5d6978;
+  --color-st-gray-soft: #e8ecf0;
+  --color-st-blue: #1d5fbf;
+  --color-st-blue-soft: #e0ebfa;
+
+  --radius-control: 0.5rem;
+  --radius-card: 0.75rem;
+
+  --text-2xs: 0.6875rem;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    font-family: var(--font-sans);
+    color: var(--color-ink);
+    background: var(--color-canvas);
+  }
+  body {
+    min-height: 100dvh;
+    font-size: 1rem;
+    line-height: 1.45;
+    font-variant-numeric: tabular-nums;
+    -webkit-tap-highlight-color: transparent;
+  }
+  h1, h2, h3 {
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+  }
+  :focus-visible {
+    outline: 3px solid var(--color-st-blue);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  /* pe iOS, câmpurile sub 16px declanșează zoom */
+  input, select, textarea {
+    font-size: 1rem;
+  }
+  ::selection {
+    background: color-mix(in srgb, var(--color-brand) 22%, white);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@utility pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+@utility pt-safe {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+@utility tap {
+  min-height: 3rem;
+  min-width: 3rem;
+}
+
+@media print {
+  html, body {
+    background: #fff;
+  }
+  .no-print {
+    display: none !important;
+  }
 }

@@ -13,14 +13,17 @@
     "typecheck": "npm run typecheck -w web && npm run typecheck -w @club/shared",
     "test": "npm run test -w @club/shared",
     "stack:start": "node tools/local-stack/start.mjs",
-    "db:seed-demo": "node scripts/seed-demo.mjs",
-    "test:rls": "node scripts/test-rls.mjs",
+    "db:seed-demo": "tsx scripts/seed-demo.ts",
+    "test:rls": "tsx scripts/test-rls.ts",
     "db:migrate": "node scripts/migrate.mjs",
-    "db:types": "node scripts/gen-types.mjs"
+    "db:types": "node scripts/gen-types.mjs",
+    "db:seed-club": "tsx scripts/seed-club.ts",
+    "db:seed-library": "tsx scripts/seed-library.ts"
   },
   "devDependencies": {
     "embedded-postgres": "^18.4.0-beta.17",
     "pg": "^8.23.1",
+    "playwright": "^1.63.0",
     "tsx": "^4.23.15"
   },
   "type": "module"

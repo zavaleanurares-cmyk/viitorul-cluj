@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "exercises": [
+    {
+      "slug": "podul-fesier",
+      "name": "Podul fesier",
+      "description": "Activează fesierii și ischiogambierii fără încărcare pe genunchi. Bun la începutul recuperării și ca exercițiu de activare.",
+      "steps": [
+        "Întinde-te pe spate, cu genunchii îndoiți și tălpile pe sol, la lățimea șoldurilor.",
+        "Împinge în călcâie și ridică bazinul până când umerii, șoldurile și genunchii sunt în linie.",
+        "Ține o secundă sus, strângând fesierii.",
+        "Coboară lent, fără să lași bazinul să cadă."
+      ],
+      "category": "activation",
+      "zones": ["glute", "thigh_back", "lower_back"],
+      "equipment": ["mat"],
+      "level": "beginner",
+      "contraindications": "Oprește exercițiul dacă apare durere în zona lombară.",
+      "video_url": null,
+      "image_url": null,
+      "source": "Descriere proprie",
+      "license": "Text propriu",
+      "attribution": null
+    }
+  ],
+  "programs": [
+    {
+      "slug": "activare-fesieri",
+      "name": "Activare fesieri",
+      "description": "Scurt, înainte de antrenament.",
+      "kind": "warmup",
+      "items": [{ "exercise": "podul-fesier", "sets": 2, "reps": "12", "duration_sec": null, "rest_sec": 30, "tempo": null, "notes": null }]
+    }
+  ]
+}
