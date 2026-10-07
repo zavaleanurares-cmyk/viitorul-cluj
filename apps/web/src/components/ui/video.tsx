@@ -11,9 +11,11 @@ export function ExerciseMedia({ title, fileUrl, url, imageUrl, attribution }: {
   title: string; fileUrl?: string | null; url?: string | null; imageUrl?: string | null; attribution?: string | null;
 }) {
   const src = parseVideoUrl(url);
+  // fără imagine de copertă, cerem primul cadru al clipului (altfel pe iPhone rămâne un dreptunghi negru)
+  const firstFrame = (u: string) => (imageUrl || u.includes("#") ? u : `${u}#t=0.1`);
   let media: React.ReactNode;
   if (fileUrl) {
-    media = <video src={fileUrl} controls playsInline preload="metadata" poster={imageUrl ?? undefined} className="aspect-video w-full bg-ink" />;
+    media = <video src={firstFrame(fileUrl)} controls playsInline preload="metadata" poster={imageUrl ?? undefined} className="aspect-video w-full bg-ink" />;
   } else if (src?.kind === "youtube" || src?.kind === "vimeo") {
     media = (
       <iframe
@@ -27,7 +29,7 @@ export function ExerciseMedia({ title, fileUrl, url, imageUrl, attribution }: {
       />
     );
   } else if (src?.kind === "file") {
-    media = <video src={src.url} controls playsInline preload="metadata" poster={imageUrl ?? undefined} className="aspect-video w-full bg-ink" />;
+    media = <video src={firstFrame(src.url)} controls playsInline preload="metadata" poster={imageUrl ?? undefined} className="aspect-video w-full bg-ink" />;
   } else if (imageUrl) {
     // eslint-disable-next-line @next/next/no-img-element
     media = <img src={imageUrl} alt={`Execuție: ${title}`} loading="lazy" className="aspect-video w-full bg-sunken object-contain" />;

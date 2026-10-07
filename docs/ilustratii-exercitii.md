@@ -1,8 +1,40 @@
-# Ilustrații pentru exerciții — potrivirea bibliotecii cu catalogul Gym Visual
+# Ilustrații pentru exerciții — setul gratuit folosit (RepDB) și varianta plătită (Gym Visual)
 
 *Verificat pe 7 octombrie 2026. Completează `docs/surse-exercitii.md`. Datele sunt și în `db/seed/ilustratii-gymvisual.json`.*
 
-Sursa: [Gym Visual](https://gymvisual.com) — animații cu manechin 3D și mușchii lucrați evidențiați, vândute cu licență comercială. Am căutat câte un **GIF animat** pentru fiecare dintre cele 95 de exerciții din `db/seed/library.json`. Nu am descărcat și nu am salvat nicio imagine: documentul conține doar linkuri către paginile de produs.
+Varianta plătită, pentru stilul anatomic 3D — [Gym Visual](https://gymvisual.com) — animații cu manechin 3D și mușchii lucrați evidențiați, vândute cu licență comercială. Am căutat câte un **GIF animat** pentru fiecare dintre cele 95 de exerciții din `db/seed/library.json`. Nu am descărcat și nu am salvat nicio imagine: documentul conține doar linkuri către paginile de produs.
+
+## 0. Ce este pus acum pe site: setul gratuit RepDB
+
+*Adăugat pe 7 octombrie 2026. Datele sunt în `db/seed/ilustratii-repdb.json`; imaginile se refac cu `python3 tools/ilustratii/build.py <clona RepDB>`.*
+
+**41 din 95 exerciții au ilustrație** (26 potriviri exacte, 15 apropiate), din setul gratuit [RepDB](https://repdb.co): ilustrații plate, două cadre (poziția de plecare și cea finală) lipite într-o imagine `apps/web/public/exercitii/<slug>.webp`. Nu este stilul anatomic 3D din exemplul cerut: acela există doar contra cost (Gym Visual, secțiunile următoare).
+
+- **Licența** (RepDB Free Tier License v1.0): utilizare gratuită, inclusiv comercială, în aplicații; imaginile pot fi redimensionate și decupate; nu pot fi redistribuite ca set de date și nu pot fi folosite la antrenarea de modele generative. **Obligatoriu: linkul vizibil „Exercise data by RepDB (repdb.co)”** — este afișat la fiecare exercițiu (rândul „Sursă”), în subsolul paginii „Exerciții” și în `README.md`. Dacă se scoate, imaginile trebuie scoase și ele.
+- **De ce nu free-exercise-db** (cea mai mare colecție „liberă”): fotografiile provin de pe un site comercial, iar licența declarată de depozit nu acoperă drepturile asupra lor (problema este semnalată chiar în depozitul lor). Nu le-am folosit.
+- **Everkinetic** (CC BY-SA 4.0) are desene de sală; pentru biblioteca noastră nu aduce nimic în plus față de RepDB.
+
+Potriviri apropiate (aceeași mișcare, cu o diferență):
+
+| Exercițiu | Diferența față de imagine |
+|---|---|
+| Nordic (coborâre excentrică pentru ischiogambieri) | gleznele sunt fixate într-un aparat, nu de un partener |
+| Scufundătorul („diver”) | piciorul liber este întins, nu îndoit |
+| Întinderea ischiogambierilor, culcat pe spate | cu bandă în loc de prinderea cu mâinile |
+| Coborâri excentrice pe treaptă, cu genunchiul întins | aceeași poziție; imaginea nu arată urcarea pe două picioare |
+| Săritură cu aterizare controlată pe două picioare | săritură pe cutie, nu de pe cutie |
+| Întinderea gambei la perete | fără sprijin la perete |
+| Ridicări laterale de genunchi din patrupedie („fire hydrant”) | cu minibandă |
+| Pallof press (împingere antirotație cu bandă) | la cablu în loc de bandă |
+| Rotație externă a umărului cu bandă | la cablu în loc de bandă |
+| Fandare cu rotație și întindere (world's greatest stretch) | arată doar faza de fandare joasă, fără rotație |
+| Întinderea piriformului (cifra 4) | cu bandă în loc de prinderea cu mâinile |
+| A-skip (pas săltat cu genunchiul sus) | genunchi sus pe loc, fără pasul săltat |
+| Fandare cu rotația trunchiului | cu kettlebell în loc de minge sau brațe întinse |
+| Tracțiuni spre față cu bandă (face pull) | la cablu în loc de bandă |
+| Planșă pe brațe întinse cu atingerea umerilor | arată doar poziția de plecare |
+
+**Fără ilustrație (54):** Izometrie de ischiogambieri cu călcâiul în sol; Pod izometric cu genunchii aproape întinși; Flexii de genunchi cu alunecare (slider curl); Strângerea mingii între genunchi (izometric); Copenhagen — nivelul 1 (sprijin pe genunchi, izometric); Copenhagen — nivelul 2 (sprijin pe genunchi, dinamic); Copenhagen — nivelul 3 (sprijin pe gleznă); Întinderea adductorilor, în sprijin pe genunchi; Pompe de gleznă; Alfabetul cu glezna; Eversie de gleznă cu bandă; Inversie de gleznă cu bandă; Dorsiflexie de gleznă cu bandă; Echilibru pe un picior, pe sol; Echilibru pe un picior, pe placă instabilă; Aterizare pe un picior; Sărituri laterale de pe un picior pe altul; Coborâri excentrice pe treaptă, cu genunchiul îndoit; Izometrie de gambă, pe vârfuri; Întinderea solearului la perete; Contracție izometrică de cvadriceps; Ridicarea piciorului întins; Alunecarea călcâiului; Extensie terminală de genunchi cu bandă; Coborâre de pe treaptă (step-down); Genuflexiune pe un picior, la cutie; Spanish squat (genuflexiune cu bandă în spatele genunchilor); Planșă cu ridicarea alternativă a picioarelor; Planșă laterală cu ridicări de bazin; Bascularea bazinului, culcat pe spate; Y-T-W culcat pe burtă; Flotări „plus” pentru scapulă; Mobilitatea șoldului 90/90; Rotație toracică din patrupedie; Mobilitatea gleznei la perete (genunchi la perete); Întinderea cvadricepsului, culcat pe o parte; Mers pe călcâie; Mers pe vârfuri; Pași laterali adăugați; Automasaj cu rulou: cvadriceps; Automasaj cu rulou: ischiogambieri; Automasaj cu rulou: gambă; Automasaj cu rulou: partea laterală a coapsei și fesieri; Deschideri de șold din mers; Închideri de șold din mers; Alergare cu schimbări de direcție; Pendulări ale brațului; Rotație externă a umărului, culcat pe o parte; Alergare cu pași laterali în jurul partenerului; Alergare cu săritură și contact umăr la umăr; Alergare rapidă înainte și înapoi; Alergare în tempo, pe lățimea terenului; Pași săriți (alergare cu salturi); Genuflexiune cu ridicare pe vârfuri. Sunt mai ales exerciții de kinetoterapie, de gleznă, Copenhagen, automasaj și încălzirea specifică fotbalului, pe care seturile gratuite nu le au. Pentru ele, preparatorul își filmează propriul clip din „Exerciții” → exercițiul → „Clipul meu” → „Filmează acum”.
 
 ## 1. Pe scurt
 

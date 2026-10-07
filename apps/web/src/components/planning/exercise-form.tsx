@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowDown, ArrowUp, Plus, Trash2, Upload } from "lucide-react";
+import { ArrowDown, ArrowUp, Camera, Plus, Trash2, Upload } from "lucide-react";
 import {
   BODY_ZONES, EQUIPMENT, EXERCISE_CATEGORIES, EXERCISE_LEVELS, parseVideoUrl, zoneLabel, type BodyZoneCode, type Tables,
 } from "@club/shared";
@@ -36,6 +36,7 @@ export function ExerciseForm({ exercise, clipUrl, clubName }: {
   const router = useRouter();
   const toast = useToast();
   const fileInput = useRef<HTMLInputElement>(null);
+  const cameraInput = useRef<HTMLInputElement>(null);
 
   const [v, setV] = useState(() => ({
     name: exercise?.name ?? "",
@@ -53,7 +54,7 @@ export function ExerciseForm({ exercise, clipUrl, clubName }: {
     attribution: exercise?.attribution ?? "",
   }));
   const set = (patch: Partial<typeof v>) => setV((old) => ({ ...old, ...patch }));
-  const [mode, setMode] = useState<MediaMode>(exercise?.video_path ? "file" : exercise?.video_url ? "link" : "none");
+  const [mode, setMode] = useState<MediaMode>(exercise ? (exercise.video_path ? "file" : exercise.video_url ? "link" : "none") : "file");
   const [file, setFile] = useState<File | null>(null);
   const [filePreview, setFilePreview] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -88,7 +89,6 @@ export function ExerciseForm({ exercise, clipUrl, clubName }: {
     setProblem(null);
     save.clearError();
     if (!v.name.trim()) return setProblem(t.nameRequired);
-    if (mode === "file" && !file && !existingPath) return setProblem(t.fileMissing);
     if (mode === "link" && !link) return setProblem(t.linkMissing);
     if (mode === "link" && !parsedLink) return setProblem(t.linkInvalid);
     if (hasMedia && !(v.source.trim() && v.license.trim() && v.attribution.trim())) return setProblem(t.licenseRequired);
@@ -268,14 +268,27 @@ export function ExerciseForm({ exercise, clipUrl, clubName }: {
                 aria-label={t.file}
                 onChange={(e) => { pickFile(e.target.files?.[0]); e.target.value = ""; }}
               />
+              {/* pe telefon, `capture` deschide direct camera; pe calculator se deschide alegerea de fișier */}
+              <input
+                ref={cameraInput}
+                type="file"
+                accept="video/*"
+                capture="environment"
+                className="sr-only"
+                aria-label={t.fileRecord}
+                onChange={(e) => { pickFile(e.target.files?.[0]); e.target.value = ""; }}
+              />
               <div className="flex flex-wrap items-center gap-3">
+                <Button variant="secondary" icon={<Camera className="size-5" aria-hidden />} onClick={() => cameraInput.current?.click()}>
+                  {t.fileRecord}
+                </Button>
                 <Button variant="secondary" icon={<Upload className="size-5" aria-hidden />} onClick={() => fileInput.current?.click()}>
                   {file || existingPath ? t.fileReplace : t.fileChoose}
                 </Button>
-                <span className="text-sm text-ink-3">
-                  {file ? t.fileSelected(file.name, formatSize(file.size)) : existingPath ? t.fileCurrent : t.fileHint}
-                </span>
               </div>
+              <p className="text-sm text-ink-3">
+                {file ? t.fileSelected(file.name, formatSize(file.size)) : existingPath ? t.fileCurrent : t.fileHint}
+              </p>
               {file || existingPath ? (
                 <div className="max-w-xl">
                   <ExerciseMedia title={v.name || t.preview} fileUrl={filePreview ?? clipUrl} imageUrl={v.image_url.trim() || null} attribution={v.attribution || null} />

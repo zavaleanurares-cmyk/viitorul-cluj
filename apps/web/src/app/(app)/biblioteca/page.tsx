@@ -93,6 +93,12 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
           action={<LinkButton href="/biblioteca/nou" variant="primary">{t.add}</LinkButton>}
         />
       )}
+      {shown.some((e) => e.image_url?.startsWith("/exercitii/")) ? (
+        <p className="mt-6 text-xs text-ink-3">
+          {t.credits}{" "}
+          <a href="https://repdb.co" target="_blank" rel="noopener noreferrer" className="underline">{t.creditsLink}</a>
+        </p>
+      ) : null}
     </>
   );
 }

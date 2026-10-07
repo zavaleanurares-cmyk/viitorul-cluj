@@ -11,6 +11,7 @@ Aplicație web în care un club ține evidența stării medicale și fizice a fi
 | [`NATIVE.md`](NATIVE.md) | ghidul pentru aplicațiile iOS și Android |
 | [`docs/cerinte.md`](docs/cerinte.md) | specificația inițială |
 | [`docs/surse-exercitii.md`](docs/surse-exercitii.md) | sursele de clipuri cercetate și lista exercițiilor fără clip |
+| [`docs/ilustratii-exercitii.md`](docs/ilustratii-exercitii.md) | ilustrațiile exercițiilor: setul gratuit folosit și varianta plătită |
 | [`apps/web/CONVENTII.md`](apps/web/CONVENTII.md) | convențiile de cod — de citit înainte de orice modificare |
 | [`docs/decizii/`](docs/decizii/) | deciziile de detaliu, câte un fișier pe modul |
 
@@ -366,3 +367,7 @@ Lista completă, cu efectul fiecărui punct, este în [`DECIZII.md`](DECIZII.md)
 6. o soluție de copii de siguranță.
 
 Aplicațiile native: [`NATIVE.md`](NATIVE.md).
+
+## 9. Credite
+
+Ilustrațiile exercițiilor din biblioteca de bază: [Exercise data by RepDB (repdb.co)](https://repdb.co), sub RepDB Free Tier License v1.0. Imaginile din `apps/web/public/exercitii/` nu fac parte din licența codului și nu pot fi redistribuite separat de aplicație.

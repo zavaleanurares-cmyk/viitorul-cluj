@@ -94,7 +94,8 @@ export async function saveExercise(input: ExerciseInput) {
       videoUrl = v.video.url;
     }
     const imageUrl = v.image_url || null;
-    if (imageUrl && !httpUrl(imageUrl)) fail(t.imageInvalid);
+    // imaginile livrate cu aplicația au adrese relative (/exercitii/<slug>.webp)
+    if (imageUrl && !httpUrl(imageUrl) && !/^\/exercitii\/[a-z0-9-]+\.webp$/.test(imageUrl)) fail(t.imageInvalid);
     if ((videoPath || videoUrl || imageUrl) && !(v.source && v.license && v.attribution)) fail(t.licenseRequired);
 
     const values = {
