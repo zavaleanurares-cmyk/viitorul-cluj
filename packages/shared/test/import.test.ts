@@ -82,6 +82,11 @@ describe("potrivirea numelor", () => {
     expect(p.candidates[0]).toMatchObject({ player_id: "1", reason: "memorat", score: 1 });
     expect(p.confident).toBe(true);
   });
+  it("o inițială singură nu este o potrivire", () => {
+    const l3 = [{ id: "b", display_name: "BLIDAREAN D.", full_name: "BLIDAREAN D.", group_id: "L3" }];
+    expect(proposeMatch("DAMIAN", "L3", l3).candidates).toEqual([]);
+    expect(proposeMatch("BLIDAREAN", "L3", l3).candidates[0].player_id).toBe("b");
+  });
   it("nu inventează potriviri", () => {
     expect(proposeMatch("TELINA", "L3", players).suggested).toBeNull();
   });

@@ -160,7 +160,7 @@ Regulile sunt impuse în baza de date și verificate automat (secțiunea 7). Tab
 - **Jurnalul de audit** îl vede doar preparatorul și nu poate fi modificat de nimeni.
 - **Consimțământul** se cere la prima autentificare. Textul spune explicit că antrenorii văd fișa medicală completă. Pentru minori se cere acordul părintelui. Textele sunt propuneri de lucru, nu texte validate juridic.
 
-De rezolvat: textul de consimțământ nu menționează că directorul sportiv vede și data nașterii și istoricul stărilor. Fie se completează textul, fie se restrânge accesul (`GDPR.md`, secțiunea 10, punctul 1).
+Textul de consimțământ descrie acum exact fișa sumară a directorului sportiv (inclusiv istoricul stărilor, observațiile și viza). Observațiile în text liber pot conține informații medicale: dacă DPO-ul clubului consideră accesul excesiv, se restrânge din baza de date (`GDPR.md`, secțiunea 10, punctul 1).
 
 ## 6. Ce a rămas de făcut
 
@@ -178,7 +178,7 @@ De rezolvat: textul de consimțământ nu menționează că directorul sportiv v
 1. **Conturi reale.** Creați conturile de staff cu adresele reale, apoi dezactivați sau ștergeți conturile demo ale clubului Viitorul Cluj. Parolele demo au fost predate separat; schimbați-le până atunci.
 2. **Cei 8 jucători „de verificat”** și săptămâna grilei de oboseală (secțiunea 3).
 3. **Listele nominale**, importate din ecranul Importuri: fără date de naștere nu se știe cine este minor și cui trebuie cerut acordul părintelui.
-4. **Validarea GDPR** și alinierea textului de consimțământ cu accesul directorului sportiv.
+4. **Validarea GDPR**.
 5. **Domeniu și e-mail** (`README.md`, secțiunea 6.3). Fără e-mail, fiecare invitație se trimite de mână.
 6. **Copii de siguranță.** Neon păstrează acum un istoric de restaurare de 6 ore; fișierele nu au copie. Hotărâți un export periodic sau un plan plătit.
 7. **Un import K-Sport real**, verificat cap-coadă, apoi salvat ca șablon.

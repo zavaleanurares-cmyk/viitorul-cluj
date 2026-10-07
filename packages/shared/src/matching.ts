@@ -68,6 +68,9 @@ function scoreNames(source: string[], target: string[]): { score: number; reason
   if (!source.length || !target.length) return { score: 0, reason: "parțial" };
   if (source.join(" ") === target.join(" ")) return { score: 0.95, reason: "identic" };
   if ([...source].sort().join(" ") === [...target].sort().join(" ")) return { score: 0.93, reason: "identic" };
+  // o inițială nu este de ajuns: „DAMIAN" nu se potrivește cu „BLIDAREAN D." doar pentru că D = D…
+  const solid = source.some((x) => x.length > 1 && target.some((y) => y.length > 1 && tokenMatches(x, y)));
+  if (!solid) return { score: 0.3, reason: "parțial" };
   const a = coverage(source, target);
   const b = coverage(target, source);
   if (a === 1 || b === 1) {
