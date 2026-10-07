@@ -27,9 +27,15 @@ export function inkOn(hex: string): string {
 export function clubThemeStyle(club: { primary_color: string; accent_color: string }): CSSProperties {
   const primary = isHexColor(club.primary_color) ? club.primary_color : "#12305a";
   const accent = isHexColor(club.accent_color) ? club.accent_color : primary;
+  const ink = inkOn(primary);
   return {
     "--club-primary": primary,
-    "--club-primary-ink": inkOn(primary),
+    "--club-primary-ink": ink,
     "--club-accent": accent,
+    // Variabilele Tailwind (`bg-brand`, `text-brand-ink`) sunt declarate pe :root, unde `var(--club-primary)`
+    // este deja rezolvată la valoarea implicită; de aceea le setăm și direct, pe elementul cu tema clubului.
+    "--color-brand": primary,
+    "--color-brand-ink": ink,
+    "--color-accent": accent,
   } as CSSProperties;
 }

@@ -70,7 +70,7 @@ export function TrendChart({ data, xKey = "x", series, caption, height = 220, do
     <>
       <Frame height={height} empty={!has}>
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data} margin={{ top: 8, right: 12, bottom: 0, left: -18 }}>
+          <LineChart data={data} margin={{ top: 8, right: 12, bottom: 0, left: -4 }}>
             <CartesianGrid stroke={GRID} vertical={false} />
             <XAxis dataKey={xKey} {...AXIS} minTickGap={24} />
             <YAxis {...AXIS} axisLine={false} domain={domain ?? ["auto", "auto"]} allowDecimals={false} width={48} />
@@ -106,7 +106,7 @@ export function BarsChart({ data, xKey = "x", valueKey = "value", label, caption
     <>
       <Frame height={horizontal ? Math.max(height, data.length * 34 + 24) : height} empty={!has}>
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data} layout={horizontal ? "vertical" : "horizontal"} margin={horizontal ? { top: 0, right: 36, bottom: 0, left: 8 } : { top: 20, right: 8, bottom: 0, left: -18 }} barCategoryGap="28%">
+          <BarChart data={data} layout={horizontal ? "vertical" : "horizontal"} margin={horizontal ? { top: 0, right: 36, bottom: 0, left: 8 } : { top: 20, right: 8, bottom: 0, left: -4 }} barCategoryGap="28%">
             <CartesianGrid stroke={GRID} vertical={!!horizontal} horizontal={!horizontal} />
             {horizontal ? (
               <>
@@ -141,7 +141,7 @@ export function StackedBarsChart({ data, xKey = "x", series, caption, height = 2
     <>
       <Frame height={height} empty={!has}>
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: -18 }} barCategoryGap="30%">
+          <BarChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: -4 }} barCategoryGap="30%">
             <CartesianGrid stroke={GRID} vertical={false} />
             <XAxis dataKey={xKey} {...AXIS} minTickGap={8} />
             <YAxis {...AXIS} axisLine={false} allowDecimals={false} width={48} />

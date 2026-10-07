@@ -115,7 +115,7 @@ export const AUDIT_ENTITIES: Record<string, string> = {
   fitness_test_results: "Test fizic", daily_plans: "Plan zilnic", programs: "Program",
   program_assignments: "Alocare program", exercises: "Exercițiu", profiles: "Cont", staff_groups: "Grupe staff",
   groups: "Grupă", clubs: "Club", club_statuses: "Stare", consents: "Consimțământ", data_requests: "Cerere GDPR",
-  imports: "Import", fisa: "Fișa jucătorului", medical: "Fișa medicală", wellness: "Chestionare", fizic: "Date fizice",
+  imports: "Import", raport_saptamanal: "Raport săptămânal", lista_jucatori: "Lista jucătorilor", auth: "Autentificare", fisa: "Fișa jucătorului", medical: "Fișa medicală", wellness: "Chestionare", fizic: "Date fizice",
   documente: "Documente",
 };
 

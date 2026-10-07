@@ -1629,17 +1629,20 @@ export type Database = {
     };
     Views: { [_ in never]: never };
     Functions: {
+      admin_accounts: { Args: Record<PropertyKey, never>; Returns: { user_id: string; has_password: boolean; disabled: boolean; anonymized: boolean; last_sign_in_at: string; invite_expires_at: string }[] };
       anonymize_player: { Args: { p_player: string | null }; Returns: undefined };
       assign_program: { Args: { p_program: string | null; p_target_type: string | null; p_group: string | null; p_position: string | null; p_player_ids: string[] | null; p_start: string | null; p_end: string | null; p_weekdays: number[] | null; p_notes: string | null }; Returns: string };
       clear_must_change_password: { Args: Record<PropertyKey, never>; Returns: undefined };
       club_overview: { Args: Record<PropertyKey, never>; Returns: Json };
       copy_daily_plan: { Args: { p_plan: string | null; p_dates: string[] | null; p_players?: string[] | null }; Returns: number };
+      erase_player: { Args: { p_player: string | null }; Returns: string };
       export_player_data: { Args: { p_player?: string | null }; Returns: Json };
       file_access: { Args: { p_bucket: string | null; p_path: string | null; p_action: string | null }; Returns: boolean };
       group_test_averages: { Args: { p_group: string | null }; Returns: { test_id: string; average: number; best: number; players: number }[] };
       import_health_status: { Args: { p_payload: Json | null }; Returns: Json };
       import_physical: { Args: { p_payload: Json | null }; Returns: Json };
       import_roster: { Args: { p_payload: Json | null }; Returns: Json };
+      import_tests: { Args: { p_payload: Json | null }; Returns: Json };
       import_wellness: { Args: { p_payload: Json | null }; Returns: Json };
       log_event: { Args: { p_action: string | null; p_entity: string | null; p_details?: Json | null }; Returns: undefined };
       log_medical_access: { Args: { p_player: string | null; p_section?: string | null }; Returns: undefined };

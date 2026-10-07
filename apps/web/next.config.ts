@@ -7,6 +7,10 @@ const nextConfig: NextConfig = {
   devIndicators: false,
   transpilePackages: ["@club/shared", "@club/db", "@club/seed"],
   serverExternalPackages: ["pg"],
+  // Fonturile încorporate în PDF-uri se citesc de pe disc la cerere; fără această cheie nu ajung în funcțiile de pe Vercel.
+  outputFileTracingIncludes: {
+    "/rapoarte/**": ["./src/components/reports/fonts/*.ttf"],
+  },
   turbopack: {
     rules: {
       "*.css": {

@@ -1,2 +1,181 @@
-/** Texte pentru modulul „reports". */
-export const reports = {} as const;
+import { plural } from "@club/shared";
+
+/** Texte pentru rapoarte și exporturi (pagina, PDF-urile și fișierele Excel). */
+export const reports = {
+  title: "Rapoarte",
+  description: "Exporturi PDF și Excel. Fiecare descărcare se trece în jurnalul de audit.",
+  confidential: "Rapoartele conțin date medicale. Păstrează-le și trimite-le doar cui are dreptul să le vadă.",
+  contains: "Ce conține",
+  download: { pdf: "Descarcă PDF", xlsx: "Descarcă Excel" },
+  noPlayers: "Încă nu există jucători. Adaugă-i din lista de jucători sau printr-un import.",
+  noGroups: "Încă nu există grupe active.",
+
+  playerSheet: {
+    title: "Fișa jucătorului",
+    summary: "Un PDF cu tot ce ține clubul despre un jucător, de dat medicului sau de pus la dosar.",
+    items: [
+      "datele jucătorului și starea curentă",
+      "accidentările, cu tratamente și zile pierdute",
+      "istoricul stărilor",
+      "chestionarele din ultimele 28 de zile",
+      "ultimele rezultate la teste și antropometria",
+      "programele alocate, cu aderența",
+    ],
+    player: "Jucător",
+    noGroup: "Fără grupă",
+    inactive: "inactiv",
+  },
+  weekly: {
+    title: "Raport săptămânal pe grupă",
+    summary: "Situația unei grupe într-o săptămână, ca PDF de tipărit sau ca Excel cu foi separate.",
+    items: [
+      "disponibilitatea la zi: stare, zonă, revenire, restricții",
+      "grila de chestionare a săptămânii și cine nu a completat",
+      "accidentări noi și reveniri în săptămână",
+      "aderența la programe",
+    ],
+    group: "Grupă",
+    week: "Săptămână",
+    weekOption: (from: string, to: string) => `${from} – ${to}`,
+    currentWeek: "săptămâna curentă",
+  },
+  roster: {
+    title: "Lista de jucători",
+    summary: "Un Excel cu toți jucătorii activi și starea lor curentă.",
+    items: ["grupă, număr, nume, data nașterii, post", "stare, zonă, observații, revenire estimată, restricții", "data de expirare a vizei medicale"],
+    group: "Grupă",
+    allGroups: "Toate grupele",
+  },
+
+  errors: {
+    forbidden: "Nu ai dreptul să descarci acest raport.",
+    notFound: "Jucătorul sau grupa nu există.",
+    badWeek: "Săptămâna cerută nu este validă.",
+    failed: "Raportul nu a putut fi generat. Încearcă din nou.",
+  },
+
+  // ---- textele din fișiere ----
+  doc: {
+    generated: (dateTime: string) => `Generat la ${dateTime}`,
+    footer: "Document confidențial, conține date medicale",
+    page: (n: number, total: number) => `Pagina ${n} din ${total}`,
+    yes: "da",
+    no: "nu",
+    none: "—",
+    days: (n: number) => plural(n, "zi", "zile"),
+    years: (n: number) => plural(n, "an", "ani"),
+    uncertain: "de confirmat",
+    ongoing: "în curs",
+    availability: { full: "Disponibil", limited: "Disponibil parțial", out: "Indisponibil" },
+  },
+  sheet: {
+    title: (name: string) => `Fișa jucătorului: ${name}`,
+    fileName: "fisa",
+    sections: {
+      identity: "Datele jucătorului",
+      status: "Starea curentă",
+      injuries: "Accidentări",
+      statusHistory: "Istoricul stărilor",
+      wellness: "Chestionare, ultimele 28 de zile",
+      tests: "Ultimele rezultate la teste",
+      anthropometrics: "Antropometrie",
+      programs: "Programe alocate",
+    },
+    fields: {
+      fullName: "Nume complet", displayName: "Nume de afișare", birthDate: "Data nașterii", age: "Vârstă",
+      group: "Grupă", position: "Post", foot: "Picior de bază", number: "Număr", visa: "Viză medicală până la",
+      visaExpired: "expirată", active: "În evidență", inactive: "inactiv",
+      status: "Stare", availability: "Disponibilitate", zone: "Zonă", note: "Observații", returnOn: "Revenire estimată",
+      restrictions: "Restricții la antrenament", updated: "Actualizată la",
+    },
+    injuries: {
+      summary: (count: number, days: number, active: number) =>
+        `${count === 1 ? "O accidentare" : plural(count, "accidentare", "accidentări")} în evidență, ${plural(days, "zi pierdută", "zile pierdute")} în total` +
+        (active > 0 ? `, ${active === 1 ? "una activă" : `${active} active`}.` : "."),
+      empty: "Nicio accidentare înregistrată.",
+      cols: { date: "Data", zone: "Zonă și tip", diagnosis: "Diagnostic și note", severity: "Severitate", returned: "Revenire", days: "Zile pierdute" },
+      mechanism: "Mecanism",
+      expected: (d: string) => `estimată ${d}`,
+      stage: (s: string) => `Etapă: ${s}`,
+      recurrence: "Recidivă",
+      treatments: "Tratamente",
+    },
+    statusHistory: {
+      empty: "Nicio schimbare de stare înregistrată.",
+      cols: { date: "Data", status: "Stare", zone: "Zonă", note: "Observații", returnOn: "Revenire estimată" },
+      limited: (n: number) => `Ultimele ${plural(n, "schimbare", "schimbări")}.`,
+    },
+    wellness: {
+      empty: "Niciun chestionar completat în ultimele 28 de zile.",
+      summary: (done: number, fatigue: string, load: string) =>
+        `${done} din 28 de zile completate. Medii: oboseală ${fatigue}, încărcătură musculară ${load} (scală 1–10; 1 = deloc, 10 = maxim).`,
+      cols: { date: "Data", fatigue: "Oboseală", load: "Încărcătură musculară", pain: "Zonă dureroasă", intensity: "Intensitate", note: "Notă" },
+    },
+    tests: {
+      empty: "Niciun rezultat la teste.",
+      cols: { test: "Test", date: "Data", value: "Rezultat", average: "Media grupei", best: "Cel mai bun din grupă" },
+    },
+    anthropometrics: {
+      empty: "Nicio măsurătoare înregistrată.",
+      cols: { date: "Data", height: "Înălțime (cm)", weight: "Greutate (kg)", fat: "Grăsime (%)", muscle: "Masă musculară (kg)", notes: "Note" },
+    },
+    programs: {
+      empty: "Niciun program alocat.",
+      cols: { program: "Program", period: "Perioadă", days: "Zile", state: "Situație", adherence: "Aderență" },
+      state: { active: "în desfășurare", upcoming: "urmează", ended: "încheiat", stopped: "oprit" },
+      done: (done: number, expected: number) => `${done} din ${expected} exerciții`,
+      openEnded: "fără dată de sfârșit",
+    },
+  },
+  week: {
+    title: (group: string) => `Raport săptămânal: ${group}`,
+    subtitle: (from: string, to: string) => `Săptămâna ${from} – ${to}`,
+    fileName: "raport-saptamanal",
+    sections: {
+      availability: "Disponibilitate la zi",
+      wellness: "Chestionare",
+      missing: "Cine nu a completat",
+      injuries: "Accidentări noi și reveniri",
+      adherence: "Aderența la programe",
+    },
+    availabilitySummary: (total: number, full: number, limited: number, out: number, date: string) =>
+      `La ${date}: ${plural(total, "jucător", "jucători")}: ${full} disponibili, ${limited} disponibili parțial, ${out} indisponibili.`,
+    cols: {
+      nr: "Nr.", player: "Jucător", status: "Stare", availability: "Disponibilitate", zone: "Zonă", returnOn: "Revenire",
+      restrictions: "Restricții", note: "Observații",
+    },
+    wellnessLegend: "În fiecare celulă: oboseală / încărcătură musculară (scală 1–10), apoi zona dureroasă și intensitatea. Liniuța înseamnă necompletat.",
+    daysDone: "Zile",
+    fatigue: "Oboseală",
+    load: "Încărcătură",
+    painZone: "Zonă dureroasă",
+    painShort: "Zonă",
+    fatigueShort: "O",
+    loadShort: "Î",
+    noEntries: "Niciun chestionar completat în această săptămână.",
+    missingNone: (days: number) => `Toți jucătorii au completat în toate cele ${plural(days, "zi", "zile")}.`,
+    missingAll: "Nu au completat deloc",
+    missingSome: "Au completat doar în unele zile",
+    missingOf: (name: string, done: number, days: number) => `${name} (${done} din ${days})`,
+    futureWeek: "Săptămâna nu a început încă.",
+    newInjuries: "Accidentări noi",
+    returns: "Reveniri",
+    noInjuries: "Nicio accidentare nouă în această săptămână.",
+    noReturns: "Nicio revenire în această săptămână.",
+    injuryCols: { player: "Jucător", date: "Data", type: "Tip", zone: "Zonă și tip", diagnosis: "Diagnostic", severity: "Severitate", expected: "Revenire estimată", returned: "Revenit la", days: "Zile pierdute", kind: "Eveniment" },
+    adherenceCols: { player: "Jucător", programs: "Programe", done: "Exerciții bifate", expected: "Exerciții programate", percent: "Aderență" },
+    noPrograms: "Niciun program alocat jucătorilor din grupă în această săptămână.",
+    adherenceSummary: (pct: number, under: number) =>
+      `Aderența grupei: ${pct}%. ${under === 0 ? "Niciun jucător sub 50%." : under === 1 ? "Un jucător sub 50%." : `${plural(under, "jucător", "jucători")} sub 50%.`}`,
+    sheets: { availability: "Disponibilitate", wellness: "Chestionare", injuries: "Accidentări", adherence: "Aderență" },
+  },
+  list: {
+    fileName: "jucatori",
+    sheet: "Jucători",
+    cols: {
+      group: "Grupă", number: "Nr.", displayName: "Nume de afișare", fullName: "Nume complet", birthDate: "Data nașterii", position: "Post",
+      status: "Stare", availability: "Disponibilitate", zone: "Zonă", note: "Observații", returnOn: "Revenire estimată",
+      restrictions: "Restricții", visa: "Viză medicală până la", updated: "Stare actualizată la", review: "De verificat",
+    },
+  },
+} as const;

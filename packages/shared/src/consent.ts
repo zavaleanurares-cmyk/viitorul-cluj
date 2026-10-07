@@ -17,7 +17,7 @@ export function consentAudience(role: AppRole, minor: boolean | null): ConsentAu
 export function consentText(audience: ConsentAudience, clubName: string): { title: string; intro: string; points: string[]; accept: string } {
   const who =
     "preparatorul fizic al clubului (toate datele), antrenorii grupei din care faci parte (fișa medicală completă, " +
-    "chestionarele și datele fizice — doar citire), directorul sportiv (doar starea curentă și zona accidentată), " +
+    "chestionarele și datele fizice — doar citire), directorul sportiv (fișa sumară: datele de bază, starea curentă și istoricul stărilor, zona accidentată, observațiile, restricțiile de antrenament, data estimată de revenire și viza medicală — fără diagnostice, documente sau chestionare), " +
     "conducerea clubului (doar cifre de ansamblu, fără nume) și, dacă ești trimis la un control, partenerul medical al clubului (doar cazul respectiv)";
   if (audience === "staff") {
     return {

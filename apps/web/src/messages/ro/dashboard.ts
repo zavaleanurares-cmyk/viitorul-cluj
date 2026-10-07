@@ -1,2 +1,148 @@
-/** Texte pentru modulul „dashboard". */
-export const dashboard = {} as const;
+import { plural } from "@club/shared";
+
+/** Texte pentru tabloul de bord (patron, director sportiv, preparator). */
+export const dashboard = {
+  title: "Tablou",
+  subtitle: (date: string) => `Situația la zi · ${date}`,
+  loadError: "Cifrele de ansamblu nu au putut fi încărcate. Reîncarcă pagina.",
+  links: {
+    availability: "Tabloul de disponibilitate",
+    players: "Lista de jucători",
+  },
+
+  // ---- privire de ansamblu (toate rolurile cu acces) ----
+  overview: {
+    heading: "Privire de ansamblu",
+    availableShare: "Jucători disponibili",
+    availableOf: (n: number, total: number) => `${n} din ${total}`,
+    noPlayers: "Încă nu există jucători activi.",
+    full: "Disponibili",
+    limited: "Disponibili parțial",
+    out: "Indisponibili",
+    fullOne: "disponibil",
+    fullMany: "disponibili",
+    limitedShort: "parțial",
+    outOne: "indisponibil",
+    outMany: "indisponibili",
+    shareOf: (pct: number) => `${pct}% din lot`,
+    activeInjuries: "Accidentări active",
+    injuriesSeason: "Accidentări în sezon",
+    recurrences: "Recidive în sezon",
+    daysLost: "Zile pierdute în sezon",
+    seasonSince: (date: string) => `de la ${date}`,
+    recurrencesOf: (n: number) => (n === 1 ? "dintr-o accidentare" : `din ${plural(n, "accidentare", "accidentări")}`),
+    perInjury: (n: number) => `în medie ${plural(n, "zi", "zile")} pe accidentare`,
+    injuredNow: (n: number) => (n === 1 ? "un jucător în recuperare" : `${plural(n, "jucător", "jucători")} în recuperare`),
+  },
+  groups: {
+    title: "Disponibilitate pe grupe",
+    description: "Câți jucători pot intra azi la antrenament, pe fiecare grupă.",
+    players: (n: number) => plural(n, "jucător", "jucători"),
+    available: (pct: number) => `${pct}% disponibili`,
+    empty: "Nicio grupă activă.",
+    emptyGroup: "Fără jucători",
+    barLabel: (name: string, full: number, limited: number, out: number) =>
+      `${name}: ${full} disponibili, ${limited} disponibili parțial, ${out} indisponibili`,
+    injuries: (n: number) => (n === 1 ? "o accidentare activă" : `${plural(n, "accidentare activă", "accidentări active")}`),
+    daysLost: (n: number) => (n === 1 ? "o zi pierdută în sezon" : `${plural(n, "zi pierdută", "zile pierdute")} în sezon`),
+  },
+  trend: {
+    title: "Disponibilitate în ultimele 12 săptămâni",
+    description: "Numărul de jucători pe fiecare stare, la sfârșitul fiecărei săptămâni.",
+    caption: "Disponibilitatea lotului pe săptămâni",
+    notEnough: "Tendința apare după ce se adună cel puțin două săptămâni de istoric al stărilor.",
+    now: (pct: number) => `Acum: ${pct}% disponibili`,
+    change: (delta: number, weeks: number) =>
+      delta === 0
+        ? `la fel ca acum ${plural(weeks, "săptămână", "săptămâni")}`
+        : `${delta > 0 ? "+" : "−"}${Math.abs(delta)} ${Math.abs(delta) === 1 ? "punct procentual" : "puncte procentuale"} față de acum ${plural(weeks, "săptămână", "săptămâni")}`,
+  },
+  zones: {
+    title: "Accidentări pe zone",
+    seasonTitle: "Accidentări în sezon",
+    description: "Sezonul curent.",
+    series: "Accidentări",
+    caption: "Numărul de accidentări din sezon, pe zone ale corpului",
+    unknown: "Zonă nespecificată",
+    empty: "Nicio accidentare înregistrată în acest sezon.",
+  },
+  months: {
+    title: "Accidentări pe luni",
+    description: "Sezonul curent, după data accidentării.",
+    series: "Accidentări",
+    caption: "Numărul de accidentări din sezon, pe luni",
+  },
+
+  // ---- preparator: ce are de făcut azi ----
+  today: {
+    heading: "De făcut azi",
+    tiles: {
+      alerts: "Alerte deschise",
+      alertsCritical: (n: number) => (n === 1 ? "una critică" : `${n} critice`),
+      alertsNone: "nimic urgent",
+      wellness: "Chestionare azi",
+      wellnessMissing: (n: number) => (n === 0 ? "toți au completat" : n === 1 ? "unul lipsă" : `${n} lipsă`),
+      review: "De verificat",
+      reviewHint: "rânduri importate cu valori neclare",
+      reviewNone: "nimic de verificat",
+      gdpr: "Cereri GDPR deschise",
+      gdprHint: "de rezolvat în 30 de zile",
+      gdprNone: "nicio cerere",
+    },
+  },
+  alerts: {
+    title: "Alertele zilei",
+    description: "Alerte deschise, cele mai grave primele.",
+    empty: "Nicio alertă deschisă.",
+    severity: { critical: "Critice", warning: "De urmărit", info: "De știut" },
+    showAll: (n: number) => `Arată toate cele ${plural(n, "alertă", "alerte")}`,
+    showLess: "Arată mai puține",
+    count: (n: number) => plural(n, "alertă", "alerte"),
+  },
+  wellness: {
+    title: "Chestionare lipsă azi",
+    description: "Câți jucători au completat chestionarul de azi, pe grupe.",
+    done: (done: number, total: number) => `${done} din ${total}`,
+    missing: (n: number) => (n === 0 ? "complet" : n === 1 ? "unul lipsă" : `${n} lipsă`),
+    open: (group: string) => `Chestionarele grupei ${group}`,
+    progress: (group: string) => `Chestionare completate, ${group}`,
+    empty: "Nicio grupă cu jucători activi.",
+  },
+  returns: {
+    title: "Reveniri apropiate",
+    description: "Jucători cu revenire estimată în următoarele 7 zile sau deja depășită.",
+    empty: "Nicio revenire estimată în următoarele 7 zile.",
+    overdue: "depășit",
+    more: (n: number) => `și încă ${n}`,
+  },
+  visas: {
+    title: "Vize medicale care expiră",
+    description: (days: number) => `Expirate sau care expiră în următoarele ${plural(days, "zi", "zile")}.`,
+    empty: "Nicio viză medicală nu expiră în perioada următoare.",
+    expired: "expirată",
+    more: (n: number) => `și încă ${n}`,
+    all: "Vezi în lista de jucători",
+  },
+  adherence: {
+    title: "Aderența la programe",
+    description: "Ultimele 7 zile, pe fiecare alocare în desfășurare.",
+    empty: "Niciun program alocat în desfășurare.",
+    emptyAction: "Deschide programele",
+    players: (n: number) => plural(n, "jucător", "jucători"),
+    under: (n: number) => (n === 0 ? "nimeni sub 50%" : n === 1 ? "un jucător sub 50%" : `${plural(n, "jucător", "jucători")} sub 50%`),
+    notScheduled: "nicio zi programată în ultimele 7 zile",
+    progress: (name: string) => `Aderență, ${name}`,
+    targetGroup: (g: string) => `Grupa ${g}`,
+    targetPlayer: "Un jucător",
+    targetPosition: "Un post",
+    targetManual: "Selecție manuală",
+  },
+  review: {
+    title: "De verificat",
+    description: "Rânduri importate cu valori neclare, care așteaptă confirmarea ta.",
+    players: (n: number) => (n === 1 ? "un jucător cu starea de verificat" : `${plural(n, "jucător", "jucători")} cu starea de verificat`),
+    wellness: (n: number) => (n === 1 ? "un chestionar de verificat" : `${plural(n, "chestionar", "chestionare")} de verificat`),
+    openPlayers: "Deschide jucătorii",
+    openWellness: "Deschide chestionarele",
+  },
+} as const;
