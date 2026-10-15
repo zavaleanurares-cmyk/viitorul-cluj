@@ -1,7 +1,7 @@
 "use client";
 import { uploadPresigned } from "@vercel/blob/client";
 
-export type UploadBucket = "medical" | "exercise-media" | "avatars" | "branding" | "finance";
+export type UploadBucket = "medical" | "exercise-media" | "avatars" | "branding" | "finance" | "visas" | "videos" | "contracts" | "shop" | "site" | "messages";
 
 let modePromise: Promise<"blob" | "local" | "none"> | null = null;
 function storageMode() {

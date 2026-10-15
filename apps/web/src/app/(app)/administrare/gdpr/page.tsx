@@ -129,7 +129,7 @@ export default async function Page() {
                   <ul className="divide-y divide-line rounded-[var(--radius-control)] border border-line">
                     {minorsMissing.map((p) => (
                       <li key={p.id}>
-                        <Link href={`/jucatori/${p.id}`} className="flex min-h-12 flex-wrap items-center justify-between gap-x-3 px-3 py-2 hover:bg-canvas">
+                        <Link href={`/lot/jucatori/${p.id}/stare`} className="flex min-h-12 flex-wrap items-center justify-between gap-x-3 px-3 py-2 hover:bg-canvas">
                           <span className="font-semibold underline underline-offset-4">{p.display_name}</span>
                           <span className="flex items-center gap-2 text-sm text-ink-3">
                             {p.group_id ? groupName.get(p.group_id) : null}
@@ -152,7 +152,7 @@ export default async function Page() {
                     const p = c.player_id ? playerById.get(c.player_id) : null;
                     return (
                       <li key={c.id} className="flex flex-wrap items-center justify-between gap-x-3 px-3 py-2">
-                        {p ? <Link href={`/jucatori/${p.id}`} className="font-semibold underline underline-offset-4">{p.display_name}</Link> : <span>{t.staffAccount}</span>}
+                        {p ? <Link href={`/lot/jucatori/${p.id}/stare`} className="font-semibold underline underline-offset-4">{p.display_name}</Link> : <span>{t.staffAccount}</span>}
                         <span className="text-sm text-ink-3">{t.consentKinds[c.kind as keyof typeof t.consentKinds] ?? c.kind} · {t.withdrawnOn(formatDateTime(c.withdrawn_at, tz))}</span>
                       </li>
                     );
@@ -183,7 +183,7 @@ export default async function Page() {
                     return p ? (
                       <li key={p.id} className="flex flex-wrap items-center justify-between gap-3 p-3">
                         <span>
-                          <Link href={`/jucatori/${p.id}`} className="font-semibold underline underline-offset-4">{p.displayName}</Link>
+                          <Link href={`/lot/jucatori/${p.id}/stare`} className="font-semibold underline underline-offset-4">{p.displayName}</Link>
                           <span className="block text-sm text-ink-3">{t.inactiveSince(formatDateShort(d.inactive_since.slice(0, 10)))}</span>
                         </span>
                         <PlayerDataActions player={p} withExport={false} />
@@ -203,7 +203,7 @@ export default async function Page() {
                     const p = gdprPlayer(pl.id)!;
                     return (
                       <li key={p.id} className="flex flex-wrap items-center justify-between gap-3 p-3">
-                        <Link href={`/jucatori/${p.id}`} className="font-semibold underline underline-offset-4">{p.displayName}</Link>
+                        <Link href={`/lot/jucatori/${p.id}/stare`} className="font-semibold underline underline-offset-4">{p.displayName}</Link>
                         <PlayerDataActions player={p} />
                       </li>
                     );

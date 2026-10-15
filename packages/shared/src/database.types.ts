@@ -3297,6 +3297,65 @@ export type Database = {
           { foreignKeyName: "venues_parent_id_fkey"; columns: ["parent_id"]; isOneToOne: false; referencedRelation: "venues"; referencedColumns: ["id"] },
         ];
       };
+      visa_documents: {
+        Row: {
+          id: string;
+          club_id: string;
+          player_id: string;
+          storage_path: string;
+          file_name: string | null;
+          mime_type: string | null;
+          size_bytes: number | null;
+          issued_on: string | null;
+          status: string;
+          valid_until: string | null;
+          reject_reason: string | null;
+          uploaded_by: string | null;
+          uploaded_at: string;
+          decided_by: string | null;
+          decided_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          club_id: string;
+          player_id: string;
+          storage_path: string;
+          file_name?: string | null;
+          mime_type?: string | null;
+          size_bytes?: number | null;
+          issued_on?: string | null;
+          status?: string;
+          valid_until?: string | null;
+          reject_reason?: string | null;
+          uploaded_by?: string | null;
+          uploaded_at?: string;
+          decided_by?: string | null;
+          decided_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          club_id?: string;
+          player_id?: string;
+          storage_path?: string;
+          file_name?: string | null;
+          mime_type?: string | null;
+          size_bytes?: number | null;
+          issued_on?: string | null;
+          status?: string;
+          valid_until?: string | null;
+          reject_reason?: string | null;
+          uploaded_by?: string | null;
+          uploaded_at?: string;
+          decided_by?: string | null;
+          decided_at?: string | null;
+        };
+        Relationships: [
+          { foreignKeyName: "visa_documents_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
+          { foreignKeyName: "visa_documents_decided_by_fkey"; columns: ["decided_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
+          { foreignKeyName: "visa_documents_player_id_fkey"; columns: ["player_id"]; isOneToOne: false; referencedRelation: "players"; referencedColumns: ["id"] },
+          { foreignKeyName: "visa_documents_uploaded_by_fkey"; columns: ["uploaded_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
+        ];
+      };
       wellness_entries: {
         Row: {
           id: string;
@@ -3446,6 +3505,7 @@ export type Database = {
       create_payment_intent: { Args: { p_charge_ids: string[] | null; p_save_method?: boolean | null }; Returns: Json };
       decide_bonus_entries: { Args: { p_ids: string[] | null; p_status: string | null }; Returns: number };
       decide_purchase_request: { Args: { p_id: string | null; p_decision: string | null; p_note?: string | null }; Returns: undefined };
+      decide_visa_document: { Args: { p_id: string | null; p_approve: boolean | null; p_valid_until?: string | null; p_issued_on?: string | null; p_reason?: string | null }; Returns: undefined };
       delete_charge_request: { Args: { p_id: string | null }; Returns: undefined };
       delete_match_event: { Args: { p_id: string | null }; Returns: undefined };
       erase_player: { Args: { p_player: string | null }; Returns: string };
@@ -3468,6 +3528,7 @@ export type Database = {
       log_medical_access: { Args: { p_player: string | null; p_section?: string | null }; Returns: undefined };
       match_eligibility: { Args: { p_event: string | null }; Returns: { player_id: string; reason: string; detail: string; until_date: string }[] };
       money_summary: { Args: { p_year: number | null; p_month?: number | null }; Returns: Json };
+      player_file_paths: { Args: { p_player: string | null }; Returns: { bucket: string; path: string }[] };
       players_past_retention: { Args: Record<PropertyKey, never>; Returns: { player_id: string; display_name: string; inactive_since: string }[] };
       preview_bank_lines: { Args: { p_lines: Json | null }; Returns: Json };
       preview_monthly_charges: { Args: { p_period: string | null }; Returns: Json };
@@ -3477,6 +3538,7 @@ export type Database = {
       reopen_match: { Args: { p_event: string | null }; Returns: undefined };
       resolve_bank_line: { Args: { p_line: string | null; p: Json | null }; Returns: undefined };
       revoke_payment_method: { Args: { p_method: string | null }; Returns: undefined };
+      run_visa_reminders: { Args: Record<PropertyKey, never>; Returns: number };
       save_attendance: { Args: { p_event: string | null; p_rows: Json | null }; Returns: number };
       save_budget_lines: { Args: { p_year: number | null; p_kind: string | null; p_department: string | null; p_amounts: number[] | null }; Returns: undefined };
       save_charge_request: { Args: { p: Json | null }; Returns: Json };
@@ -3487,6 +3549,7 @@ export type Database = {
       save_purchase_request: { Args: { p: Json | null }; Returns: Json };
       search_club: { Args: { p_query: string | null; p_limit?: number | null }; Returns: Json };
       send_fee_reminders: { Args: Record<PropertyKey, never>; Returns: number };
+      send_visa_reminders: { Args: { p_players: string[] | null }; Returns: number };
       send_wellness_reminders: { Args: Record<PropertyKey, never>; Returns: number };
       set_approver_roles: { Args: { p_roles: Database["public"]["Enums"]["app_role"][] | null }; Returns: undefined };
       set_auto_pay: { Args: { p_method: string | null; p_on: boolean | null }; Returns: undefined };
@@ -3495,6 +3558,7 @@ export type Database = {
       set_fee_plan: { Args: { p_group: string | null; p_player: string | null; p_amount: number | null; p_from: string | null; p_reason?: string | null }; Returns: string };
       set_my_photo: { Args: { p_path: string | null }; Returns: undefined };
       setup_club: { Args: { p_slug: string | null; p_name: string | null; p_short_name: string | null; p_groups: string[] | null; p_settings?: Json | null }; Returns: string };
+      submit_visa_document: { Args: { p_player: string | null; p_path: string | null; p_file_name: string | null; p_mime: string | null; p_size: number | null; p_issued_on?: string | null }; Returns: string };
       switch_membership: { Args: { p_membership: string | null }; Returns: undefined };
       unaccent_ro: { Args: { p: string | null }; Returns: string };
       update_my_profile: { Args: { p_full_name?: string | null; p_phone?: string | null; p_email_notifications?: boolean | null }; Returns: undefined };

@@ -21,7 +21,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
   const { id } = await params;
   const { db, ctx } = await requireCapability("viewPlayerList");
   // directorul sportiv are doar fișa sumară
-  if (!can(ctx.role, "viewPhysicalData")) redirect(`/jucatori/${id}`);
+  if (!can(ctx.role, "viewPhysicalData")) redirect(`/lot/jucatori/${id}/stare`);
   const player = await getPlayerForRequest(id);
   if (!player) notFound();
   await db.rpc("log_medical_access", { p_player: id, p_section: "fizic" });
@@ -61,7 +61,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
       <IntervalNav
         label={p.interval}
         current={String(weeks)}
-        options={WEEKS.map((w) => ({ value: String(w), label: p.weeks(w), href: w === 8 ? `/jucatori/${id}/fizic` : `/jucatori/${id}/fizic?saptamani=${w}` }))}
+        options={WEEKS.map((w) => ({ value: String(w), label: p.weeks(w), href: w === 8 ? `/lot/jucatori/${id}/fizic` : `/lot/jucatori/${id}/fizic?saptamani=${w}` }))}
         className="w-full md:w-auto"
       />
 
@@ -219,7 +219,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
 
       <p className="text-sm text-ink-3">
         {p.anthropometry}{" "}
-        <Link href={`/jucatori/${id}`} className="font-semibold text-ink underline underline-offset-4">{p.anthropometryLink}</Link>.
+        <Link href={`/lot/jucatori/${id}/stare`} className="font-semibold text-ink underline underline-offset-4">{p.anthropometryLink}</Link>.
       </p>
     </div>
   );

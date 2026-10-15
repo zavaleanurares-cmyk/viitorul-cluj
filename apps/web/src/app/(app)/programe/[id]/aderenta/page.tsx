@@ -141,7 +141,7 @@ export default async function AdherencePage({ params, searchParams }: { params: 
             </li>
             {rows.map((r) => (
               <li key={r.playerId} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-2 border-b border-line px-4 py-3 last:border-b-0 md:grid-cols-[minmax(0,12rem)_10rem_18rem_minmax(0,1fr)] md:items-start">
-                <Link href={`/jucatori/${r.playerId}/plan`} className="inline-flex min-h-10 items-center truncate font-bold underline-offset-2 hover:underline md:min-h-0">{r.name}</Link>
+                <Link href={`/lot/jucatori/${r.playerId}/plan`} className="inline-flex min-h-10 items-center truncate font-bold underline-offset-2 hover:underline md:min-h-0">{r.name}</Link>
                 <div>
                   <p className="flex items-baseline justify-end gap-2 md:justify-start">
                     <span className="text-xl font-bold leading-none">{r.a.percent === null ? "—" : `${r.a.percent}%`}</span>
@@ -172,7 +172,7 @@ export default async function AdherencePage({ params, searchParams }: { params: 
 function PlayerLinks({ rows, inline }: { rows: Array<{ playerId: string; name: string }>; inline?: boolean }) {
   const links = rows.map((r, i) => (
     <span key={r.playerId}>
-      <Link href={`/jucatori/${r.playerId}/plan`} className="font-semibold text-ink underline underline-offset-2">{r.name}</Link>
+      <Link href={`/lot/jucatori/${r.playerId}/plan`} className="font-semibold text-ink underline underline-offset-2">{r.name}</Link>
       {i < rows.length - 1 ? ", " : ""}
     </span>
   ));

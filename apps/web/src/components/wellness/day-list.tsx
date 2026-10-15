@@ -32,7 +32,7 @@ export function DayList({ players, entries, date, today, thresholds, canEdit }: 
             <li key={p.id} className="flex items-center gap-3 px-4 py-1.5">
               <div className="min-w-0 flex-1">
                 <p className="flex flex-wrap items-center gap-x-2">
-                  <Link href={`/jucatori/${p.id}/wellness`} className="truncate font-semibold hover:underline">{p.name}</Link>
+                  <Link href={`/lot/jucatori/${p.id}/wellness`} className="truncate font-semibold hover:underline">{p.name}</Link>
                   {e?.needs_review ? <ReviewBadge note={e.review_note} /> : null}
                 </p>
                 {pain ? (

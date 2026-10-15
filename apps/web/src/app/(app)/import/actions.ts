@@ -134,7 +134,7 @@ const RPC = {
 /** Rulează importul și întoarce raportul lui. */
 export async function runImport(input: { kind: string; payload: unknown; annotations: unknown }) {
   return run<ImportRecord>(
-    { roles: ["physio"], revalidate: ["/import", "/jucatori", "/disponibilitate", "/wellness", "/fizic", "/tablou"] },
+    { roles: ["physio"], revalidate: ["/import", "/lot", "layout:/lot/jucatori/[id]", "/disponibilitate", "/wellness", "/fizic", "/tablou"] },
     async ({ db, ctx }) => {
       const t = getT().imports.errors;
       const parsed = Input.safeParse(input);

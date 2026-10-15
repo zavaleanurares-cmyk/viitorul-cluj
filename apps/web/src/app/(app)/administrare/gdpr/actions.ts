@@ -4,6 +4,7 @@ import { deleteUser, deleteUserSessions, setUserDisabled, setUserEmail } from "@
 import { fail, run } from "@/lib/actions";
 import type { Session } from "@/lib/auth";
 import { deleteFiles } from "@/lib/storage";
+import { isBucket } from "@/lib/files";
 import { anonymizedEmail, targetProfile } from "@/components/admin/server";
 import { getT } from "@/messages";
 
@@ -64,11 +65,21 @@ async function removePlayerFiles({ db }: Session, player: { id: string; photo_pa
   const removed = await deleteFiles(db, "medical", paths);
   if (removed !== paths.length) fail(t.errors.filesNotDeleted);
   if (player.photo_path) await deleteFiles(db, "avatars", [player.photo_path]);
+  // modulele fazei 4 (vize, contracte, video…): baza de date spune ce fișiere are jucătorul
+  const { data: more, error: e2 } = await db.rpc("player_file_paths", { p_player: player.id });
+  if (e2) throw e2;
+  const byBucket = new Map<string, string[]>();
+  for (const f of more ?? []) byBucket.set(f.bucket, [...(byBucket.get(f.bucket) ?? []), f.path]);
+  for (const [bucket, list] of byBucket) {
+    if (!isBucket(bucket)) continue;
+    const n = await deleteFiles(db, bucket, list);
+    if (n !== list.length) fail(t.errors.filesNotDeleted);
+  }
 }
 
 /** Anonimizare: datele statistice rămân, identitatea dispare. Ireversibilă. */
 export async function anonymizePlayer(input: z.infer<typeof Irreversible>) {
-  return run({ roles: ["physio"], revalidate: [...PATHS, "/jucatori"], message: t.gdpr.anonymized }, async (session) => {
+  return run({ roles: ["physio"], revalidate: [...PATHS, "/lot", "layout:/lot/jucatori/[id]"], message: t.gdpr.anonymized }, async (session) => {
     const player = await confirmedPlayer(session, input);
     if (player.anonymized_at) fail(t.errors.alreadyAnonymized);
     await removePlayerFiles(session, player);
@@ -85,7 +96,7 @@ export async function anonymizePlayer(input: z.infer<typeof Irreversible>) {
 
 /** Ștergere definitivă: fișierele, fișa jucătorului cu tot ce ține de ea, apoi contul. Ireversibilă. */
 export async function erasePlayer(input: z.infer<typeof Irreversible>) {
-  return run({ roles: ["physio"], revalidate: [...PATHS, "/jucatori"], message: t.gdpr.erased }, async (session) => {
+  return run({ roles: ["physio"], revalidate: [...PATHS, "/lot", "layout:/lot/jucatori/[id]"], message: t.gdpr.erased }, async (session) => {
     const player = await confirmedPlayer(session, input);
     await removePlayerFiles(session, player);
     const { data: userId, error } = await session.db.rpc("erase_player", { p_player: player.id });

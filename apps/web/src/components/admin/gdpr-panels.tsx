@@ -95,7 +95,7 @@ export function RequestCard({ request }: { request: RequestItem }) {
           {p ? (
             <p className="text-sm">
               {t.aboutPlayer}{" "}
-              <Link href={`/jucatori/${p.id}`} className="font-semibold underline underline-offset-4">{p.displayName}</Link>
+              <Link href={`/lot/jucatori/${p.id}/stare`} className="font-semibold underline underline-offset-4">{p.displayName}</Link>
             </p>
           ) : null}
         </div>
@@ -109,7 +109,7 @@ export function RequestCard({ request }: { request: RequestItem }) {
           {p ? (
             <div className="flex flex-wrap gap-2">
               {request.kind === "rectify" ? (
-                <Link href={`/jucatori/${p.id}`} className={buttonClass("secondary", "sm")}>{t.openFile}</Link>
+                <Link href={`/lot/jucatori/${p.id}/stare`} className={buttonClass("secondary", "sm")}>{t.openFile}</Link>
               ) : null}
               {request.kind === "withdraw_consent" ? (
                 <Button variant="secondary" size="sm" pending={withdraw.pending} disabled={p.activeConsents === 0} onClick={() => withdraw.run({ playerId: p.id })}>

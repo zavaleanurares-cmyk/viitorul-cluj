@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { INJURY_CONTACT, INJURY_CONTEXT, INJURY_SEVERITY, INJURY_TYPES, RTP_STAGES, formatDateShort } from "@club/shared";
-import { saveInjury } from "@/app/(app)/jucatori/[id]/medical/actions";
+import { saveInjury } from "@/app/(app)/lot/jucatori/[id]/(fisa)/medical/actions";
 import { Button } from "@/components/ui/button";
 import { Checkbox, Field, FormError, Input, Select, Textarea } from "@/components/ui/form";
 import { Dialog } from "@/components/ui/overlay";

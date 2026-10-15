@@ -21,6 +21,27 @@ export function acuteChronicRatio(loadsByDate: Record<string, number>, todayIso:
   return { acute, chronic: Math.round(chronic), ratio: enough && chronic > 0 ? Math.round((acute / chronic) * 100) / 100 : null };
 }
 
+/**
+ * Zona raportului acut:cronic (Gabbett): sub 0,8 sub-încărcat, 0,8–1,3 optim, 1,3–1,5 atenție, peste 1,5 risc.
+ * null = istoric insuficient.
+ */
+export type AcwrZone = "low" | "optimal" | "caution" | "high" | "unknown";
+export function acwrZone(ratio: number | null): AcwrZone {
+  if (ratio === null) return "unknown";
+  if (ratio < 0.8) return "low";
+  if (ratio <= 1.3) return "optimal";
+  if (ratio <= 1.5) return "caution";
+  return "high";
+}
+
+/** Raportul acut:cronic pentru fiecare zi dintr-un interval (pentru grafice). */
+export function acwrSeries(loadsByDate: Record<string, number>, from: string, to: string): Array<{ date: string; load: number; ratio: number | null }> {
+  return dateRange(from, to).map((d) => {
+    const visible = Object.fromEntries(Object.entries(loadsByDate).filter(([k]) => k <= d));
+    return { date: d, load: loadsByDate[d] ?? 0, ratio: acuteChronicRatio(visible, d).ratio };
+  });
+}
+
 export type AdherenceInput = {
   start_date: string;
   end_date: string | null;

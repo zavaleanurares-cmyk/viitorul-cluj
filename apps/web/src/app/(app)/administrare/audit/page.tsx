@@ -130,7 +130,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
                   <span className="order-5 col-span-2 min-w-0 lg:order-none lg:col-span-1">
                     {r.player_id ? (
                       playerName ? (
-                        <Link href={`/jucatori/${r.player_id}`} className="font-semibold underline underline-offset-4">{playerName}</Link>
+                        <Link href={`/lot/jucatori/${r.player_id}`} className="font-semibold underline underline-offset-4">{playerName}</Link>
                       ) : <span className="text-ink-3">{t.deletedPlayer}</span>
                     ) : <span className="hidden text-ink-3 lg:inline">—</span>}
                   </span>

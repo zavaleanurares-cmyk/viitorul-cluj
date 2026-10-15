@@ -3,7 +3,7 @@ import { plural } from "@club/shared";
 /** Spațiul Lot: jucători, echipe, părinți. */
 export const squad = {
   title: "Lot",
-  tabs: { players: "Jucători", teams: "Echipe", guardians: "Părinți" },
+  tabs: { players: "Jucători", teams: "Echipe", guardians: "Părinți", visas: "Vize medicale" },
   list: {
     description: (n: number) => plural(n, "jucător", "jucători"),
     add: "Adaugă jucător",

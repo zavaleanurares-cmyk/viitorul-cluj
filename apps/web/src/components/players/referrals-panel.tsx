@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { Send } from "lucide-react";
 import { formatDateShort, formatDateTime } from "@club/shared";
-import { createReferral, setReferralActive } from "@/app/(app)/jucatori/[id]/medical/actions";
+import { createReferral, setReferralActive } from "@/app/(app)/lot/jucatori/[id]/(fisa)/medical/actions";
 import { Button } from "@/components/ui/button";
 import { Card, CardBody, CardHeader, Notice } from "@/components/ui/card";
 import { Field, FormError, Select, Textarea } from "@/components/ui/form";

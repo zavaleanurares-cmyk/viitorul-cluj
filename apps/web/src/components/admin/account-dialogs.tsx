@@ -209,7 +209,7 @@ export function AccountDialog({ account, onClose, groups, freePlayers }: {
             <h3 className="font-bold">{t.linkedPlayer}</h3>
             {account.player ? (
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <a href={`/jucatori/${account.player.id}`} className="font-semibold underline underline-offset-4">{account.player.displayName}</a>
+                <a href={`/lot/jucatori/${account.player.id}`} className="font-semibold underline underline-offset-4">{account.player.displayName}</a>
                 <Button variant="secondary" size="sm" icon={<Link2Off className="size-4" aria-hidden />} onClick={() => setConfirm("unlink")}>{t.unlink}</Button>
               </div>
             ) : (

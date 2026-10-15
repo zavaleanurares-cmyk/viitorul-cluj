@@ -3,7 +3,7 @@ import { useRef, useState } from "react";
 import { Download, ExternalLink, FileText, Trash2, Upload } from "lucide-react";
 import { DOCUMENT_KINDS, label } from "@club/shared";
 import { saveCaseDocument } from "@/app/(app)/cazuri/actions";
-import { deleteDocument, saveDocument } from "@/app/(app)/jucatori/[id]/documente/actions";
+import { deleteDocument, saveDocument } from "@/app/(app)/lot/jucatori/[id]/(fisa)/documente/actions";
 import { Button, IconButton, buttonClass } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/card";
 import { Field, FormError, Input, Select } from "@/components/ui/form";

@@ -20,7 +20,7 @@ type Options = {
  * fiecare interogare cu identitatea utilizatorului.
  *
  *   export async function saveThing(input: Input) {
- *     return run({ roles: ["physio"], revalidate: ["/jucatori"] }, async ({ db, ctx }) => { ... });
+ *     return run({ roles: ["physio"], revalidate: ["/lot"] }, async ({ db, ctx }) => { ... });
  *   }
  */
 export async function run<T>(options: Options, fn: (session: Session) => Promise<T>): Promise<ActionResult<T>> {
@@ -31,7 +31,11 @@ export async function run<T>(options: Options, fn: (session: Session) => Promise
       return { ok: false, error: "Nu ai dreptul să faci această operațiune." };
     }
     const data = await fn(session);
-    for (const p of options.revalidate ?? []) revalidatePath(p);
+    for (const p of options.revalidate ?? []) {
+      // „layout:/lot/jucatori/[id]" = tot ce stă sub acel layout (toate filele fișei)
+      if (p.startsWith("layout:")) revalidatePath(p.slice(7), "layout");
+      else revalidatePath(p);
+    }
     return { ok: true, data, message: options.message };
   } catch (e) {
     // redirect() și notFound() trebuie lăsate să treacă

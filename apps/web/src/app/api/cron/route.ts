@@ -37,7 +37,8 @@ async function step(name: string, out: Record<string, StepResult>, fn: () => Pro
 /**
  * Sarcinile programate (Vercel Cron → GET /api/cron, cu `Authorization: Bearer <CRON_SECRET>`).
  * La fiecare rulare:
- *   1. recalculează alertele zilnice (chestionare lipsă, vize) pentru toate cluburile;
+ *   1. recalculează alertele zilnice (chestionare lipsă, vize) pentru toate cluburile și trimite familiilor
+ *      mementourile pentru viza medicală;
  *   2. creează mementourile „Completează chestionarul de azi" (ține cont de ora clubului / grupei);
  *   3. trimite pe e-mail un rezumat al notificărilor netrimise — fără date medicale (după pașii de bani);
  *   4. bani: emite taxele lunii (o dată), încasează plata automată, trimite mementourile pentru restanțe;
@@ -56,6 +57,13 @@ export async function GET(request: NextRequest) {
     const { data, error } = await admin.rpc("refresh_daily_alerts", {});
     if (error) throw new Error(error.message);
     return { checked: data ?? 0 };
+  });
+
+  // Vize medicale: mementouri către familii la 30 și 7 zile înainte de expirare și după (o dată pe prag)
+  await step("visa_reminders", result, async () => {
+    const { data, error } = await admin.rpc("run_visa_reminders");
+    if (error) throw new Error(error.message);
+    return { sent: data ?? 0 };
   });
 
   await step("reminders", result, async () => {

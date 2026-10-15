@@ -34,17 +34,22 @@ export function resetSchemaMeta() {
  * Rulează `fn` într-o tranzacție cu identitatea dată, exact cum face PostgREST:
  *   - `role` devine rolul cererii (authenticated / anon), deci se aplică GRANT-urile și RLS;
  *   - `request.jwt.claims` poartă id-ul utilizatorului, citit de `app_auth.uid()` în politici.
+ * Pentru un utilizator autentificat, rolul Postgres se alege din rolul lui în club (`private.db_role_for`):
+ * personalul medical și sportiv rulează ca `lr_health` (vede și coloanele medicale), restul ca `authenticated`.
  * Pentru `service_role` nu schimbăm rolul: conexiunea aplicației este proprietara tabelelor și ocolește RLS.
  */
-export async function withIdentity<T>(claims: Claims, fn: (client: PoolClient) => Promise<T>): Promise<T> {
+export async function withIdentity<T>(claims: Claims, fn: (client: PoolClient, role: string) => Promise<T>): Promise<T> {
   const client = await getPool().connect();
   try {
     await client.query("begin");
-    await client.query("select set_config('request.jwt.claims', $1, true), set_config('role', $2, true)", [
-      JSON.stringify(claims),
-      claims.role === "service_role" ? "none" : claims.role,
-    ]);
-    const out = await fn(client);
+    const claimsJson = JSON.stringify(claims);
+    const r =
+      claims.role === "service_role"
+        ? await client.query("select set_config('request.jwt.claims', $1, true), set_config('role', 'none', true) as role", [claimsJson])
+        : claims.role === "authenticated" && claims.sub
+          ? await client.query("select set_config('request.jwt.claims', $1, true), set_config('role', private.db_role_for($2::uuid), true) as role", [claimsJson, claims.sub])
+          : await client.query("select set_config('request.jwt.claims', $1, true), set_config('role', $2, true) as role", [claimsJson, claims.role]);
+    const out = await fn(client, (r.rows[0]?.role as string) ?? claims.role);
     await client.query("commit");
     return out;
   } catch (e) {
@@ -63,9 +68,9 @@ function restFetch(claims: Claims): typeof fetch {
     let body: unknown = undefined;
     if (typeof init?.body === "string" && init.body !== "") body = JSON.parse(init.body);
     const meta = await schemaMeta();
-    const res = await withIdentity(claims, async (client) => {
+    const res = await withIdentity(claims, async (client, role) => {
       const exec: Exec = (sql, params) => client.query(sql, params) as ReturnType<Exec>;
-      const out = await handleRest({ method, path: url.pathname.replace(/^\/rest/, ""), query: url.searchParams, headers, body }, exec, meta);
+      const out = await handleRest({ method, path: url.pathname.replace(/^\/rest/, ""), query: url.searchParams, headers, body }, exec, meta, role);
       // o eroare întoarsă ca răspuns trebuie totuși să anuleze tranzacția
       if (out.status >= 400) await client.query("rollback").then(() => client.query("begin"));
       return out;

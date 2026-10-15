@@ -58,6 +58,15 @@ export const CAPABILITIES = {
   purchaseRequests: ["admin", "secretary", "accountant", "sporting_director", "physio", "coach", "owner"],
   /** ecranul de plăți al familiei */
   familyPayments: ["guardian", "player"],
+  // Performanță (faza 4)
+  /** detaliile medicale de pe rândul jucătorului (nota stării, zona, restricțiile); oglindește `private.db_role_for` */
+  readHealth: ["physio", "coach", "sporting_director", "player", "medical_partner"],
+  /** vizele medicale ale lotului (antrenorul: echipele lui) */
+  viewVisas: ["admin", "secretary", "sporting_director", "physio", "coach"],
+  /** aprobă documentele de viză și trimite reamintiri */
+  manageVisas: ["admin", "secretary", "physio"],
+  /** evaluări, video, statistici sportive */
+  viewAnalysis: ["sporting_director", "physio", "coach"],
 } as const satisfies Record<string, readonly AppRole[]>;
 
 export type Capability = keyof typeof CAPABILITIES;

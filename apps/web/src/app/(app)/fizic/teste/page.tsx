@@ -130,7 +130,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ g
                   <tr key={r.player.id}>
                     <td className="px-2! text-right text-ink-3">{i + 1}</td>
                     <th scope="row" className="border-t border-line text-base! font-semibold! whitespace-nowrap text-ink!">
-                      <Link href={`/jucatori/${r.player.id}/fizic`} className="hover:underline">{r.player.display_name}</Link>
+                      <Link href={`/lot/jucatori/${r.player.id}/fizic`} className="hover:underline">{r.player.display_name}</Link>
                     </th>
                     <td className="text-right text-lg font-bold whitespace-nowrap">{formatValue(r.last.value)}</td>
                     <td className="whitespace-nowrap text-ink-2">{formatDateShort(r.last.tested_on)}</td>

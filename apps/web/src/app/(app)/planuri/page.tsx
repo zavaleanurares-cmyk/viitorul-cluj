@@ -172,7 +172,7 @@ export default async function PlansPage({ searchParams }: { searchParams: Promis
               {players.map((p) => (
                 <tr key={p.id}>
                   <th scope="row" className="sticky left-0 z-10 w-36 min-w-36 max-w-36 border-r border-t border-line bg-surface !py-1 md:w-56 md:max-w-56">
-                    <Link href={`/jucatori/${p.id}/plan`} className="flex min-h-12 flex-col justify-center gap-0.5 text-base font-bold text-ink underline-offset-2 hover:underline">
+                    <Link href={`/lot/jucatori/${p.id}/plan`} className="flex min-h-12 flex-col justify-center gap-0.5 text-base font-bold text-ink underline-offset-2 hover:underline">
                       <span className="truncate">{p.display_name}</span>
                       {(statusOf(p)?.availability ?? "full") !== "full" ? <StatusChip status={statusOf(p)} size="sm" className="self-start" /> : null}
                     </Link>

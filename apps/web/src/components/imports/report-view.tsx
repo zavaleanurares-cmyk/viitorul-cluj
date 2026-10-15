@@ -16,9 +16,9 @@ const DONE: ReportRow["result"][] = ["created", "updated", "imported"];
 const LIMIT = 500;
 
 const VERIFY: Record<ImportKind, Array<{ href: string; key: "review" | "players" | "wellness" | "physical" }>> = {
-  health_status: [{ href: "/disponibilitate?filtru=verificare", key: "review" }, { href: "/jucatori", key: "players" }],
+  health_status: [{ href: "/disponibilitate?filtru=verificare", key: "review" }, { href: "/lot", key: "players" }],
   fatigue_grid: [{ href: "/wellness", key: "wellness" }, { href: "/disponibilitate?filtru=verificare", key: "review" }],
-  roster: [{ href: "/jucatori", key: "players" }],
+  roster: [{ href: "/lot", key: "players" }],
   physical: [{ href: "/fizic", key: "physical" }],
   tests: [{ href: "/fizic", key: "physical" }],
 };

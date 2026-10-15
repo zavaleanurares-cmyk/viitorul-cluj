@@ -6,7 +6,7 @@ import {
   Bell, CalendarDays, ClipboardCheck, Dumbbell, Ellipsis, FileText, Gauge, HeartPulse, House, LayoutDashboard,
   ListChecks, LogOut, Search, Settings, Stethoscope, Wallet, ReceiptText, Upload, User, Users, X,
 } from "lucide-react";
-import type { NavItem } from "@/lib/nav";
+import type { NavItem, VisibleSection } from "@/lib/nav";
 import { useT } from "@/messages";
 import { cn } from "@/lib/cn";
 import { CommandPalette } from "./command-palette";
@@ -22,7 +22,7 @@ const ICONS: Record<string, typeof House> = {
 type Props = {
   items: NavItem[];
   /** secțiunile spațiilor de lucru (Performanță, Bani) vizibile rolului: file deasupra paginii */
-  sectionGroups: Array<{ key: string; sections: Array<{ href: string; key: string }> }>;
+  sectionGroups: Array<{ key: string; sections: VisibleSection[] }>;
   clubName: string;
   logoUrl: string | null;
   userName: string;
@@ -54,13 +54,18 @@ export function AppShell({ items, sectionGroups, clubName, logoUrl, userName, ro
 
   const primary = items.length > 5 ? items.slice(0, 4) : items;
   const overflow = items.length > 5 ? items.slice(4) : [];
-  // fila curentă = cea mai lungă potrivire („/bani/taxe" bate „/bani"), în grupul care o conține
+  // fila curentă = cea mai lungă potrivire („/bani/taxe" bate „/bani"), în grupul care o conține;
+  // o filă de grup se potrivește și pe rutele sub-filelor ei (`match`)
+  const longest = (hrefs: string[]) => Math.max(-1, ...hrefs.filter(starts).map((h) => h.length));
   const sectionMatch = sectionGroups
-    .flatMap((g) => g.sections.filter((s) => starts(s.href)).map((s) => ({ group: g, section: s })))
-    .sort((a, b) => b.section.href.length - a.section.href.length)[0];
+    .flatMap((g) => g.sections.map((s) => ({ group: g, section: s, len: longest([s.href, ...(s.match ?? [])]) })))
+    .filter((x) => x.len >= 0)
+    .sort((a, b) => b.len - a.len)[0];
   const sections = sectionMatch?.group.sections ?? [];
   const showSections = sections.length > 1;
   const currentSection = sectionMatch?.section.key;
+  const subTabs = sectionMatch?.section.tabs ?? [];
+  const currentSub = subTabs.map((x) => ({ key: x.key, len: longest([x.href]) })).filter((x) => x.len >= 0).sort((a, b) => b.len - a.len)[0]?.key;
 
   // ⌘K / Ctrl+K deschide căutarea
   useEffect(() => {
@@ -175,6 +180,19 @@ export function AppShell({ items, sectionGroups, clubName, logoUrl, userName, ro
                   </li>
                 ))}
               </ul>
+              {subTabs.length ? (
+                <ul className="mt-2 flex gap-1" aria-label={label(currentSection ?? "")}>
+                  {subTabs.map((x) => (
+                    <li key={x.href}>
+                      <Link href={x.href} aria-current={currentSub === x.key ? "page" : undefined}
+                        className={cn("inline-flex h-10 items-center whitespace-nowrap rounded-full px-3.5 text-[0.9375rem] font-semibold",
+                          currentSub === x.key ? "bg-ink text-surface" : "text-ink-2 hover:bg-sunken")}>
+                        {label(x.key)}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
             </nav>
           ) : null}
           <QueueUserContext.Provider value={syncUserId}>{children}</QueueUserContext.Provider>

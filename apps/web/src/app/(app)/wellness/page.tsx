@@ -185,7 +185,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Sea
                   {missing.map((p) => (
                     <li key={p.id}>
                       <Link
-                        href={`/jucatori/${p.id}/wellness`}
+                        href={`/lot/jucatori/${p.id}/wellness`}
                         className="inline-flex h-10 items-center gap-2 rounded-full border border-line-strong bg-surface px-3 font-semibold hover:bg-canvas"
                       >
                         {p.name}
@@ -253,7 +253,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Sea
                       <li key={e.id} className="flex flex-wrap items-center gap-x-3 gap-y-2 px-4 py-3">
                         <div className="min-w-0 flex-1 basis-56">
                           <p>
-                            <Link href={`/jucatori/${e.player_id}/wellness`} className="font-semibold underline underline-offset-4">{player.name}</Link>
+                            <Link href={`/lot/jucatori/${e.player_id}/wellness`} className="font-semibold underline underline-offset-4">{player.name}</Link>
                             <span className="text-ink-3"> · {formatDate(e.entry_date, { weekday: true, year: false })}</span>
                           </p>
                           {e.review_note ? <p className="text-ink-2">{e.review_note}</p> : null}

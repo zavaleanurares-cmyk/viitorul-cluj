@@ -99,11 +99,11 @@ function StatusForm({ player, statuses, onClose, fileHref }: {
                 disabled={!s.is_active}
                 onClick={() => setStatusId(s.id)}
                 className={cn(
-                  "relative flex h-14 items-center gap-2 overflow-hidden rounded-[var(--radius-control)] border pl-5 pr-3 text-left font-bold tracking-wide disabled:opacity-50",
+                  "flex h-14 items-center gap-2 rounded-[var(--radius-control)] border px-3 text-left font-bold tracking-wide disabled:opacity-50",
                   on ? cn(TONE_SOLID[tone] ?? TONE_SOLID.gray, "border-ink ring-2 ring-ink") : "border-line-strong bg-surface hover:bg-canvas",
                 )}
               >
-                {on ? null : <span className={cn("absolute inset-y-0 left-0 w-2", TONE_BAR[tone] ?? TONE_BAR.gray)} aria-hidden />}
+                {on ? null : <span className={cn("size-3 shrink-0 rounded-full", TONE_BAR[tone] ?? TONE_BAR.gray)} aria-hidden />}
                 <StatusIcon icon={s.icon} className="size-5" />
                 <span className="min-w-0 leading-tight">
                   <span className="block truncate">{s.short_label}</span>

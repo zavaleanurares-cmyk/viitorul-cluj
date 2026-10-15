@@ -11,7 +11,7 @@ import { getPlayerForRequest, listDocuments, listInjuries, profileNames } from "
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const { db, ctx } = await requireCapability("viewPlayerList");
-  if (!can(ctx.role, "viewMedicalFile")) redirect(`/jucatori/${id}`);
+  if (!can(ctx.role, "viewMedicalFile")) redirect(`/lot/jucatori/${id}/stare`);
   const player = await getPlayerForRequest(id);
   if (!player) notFound();
   await db.rpc("log_medical_access", { p_player: id, p_section: "documente" });

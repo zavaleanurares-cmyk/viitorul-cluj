@@ -97,7 +97,7 @@ export function TodayView({ day, ctx, showAllAlerts }: { day: PhysioDay; ctx: Ap
                         </h3>
                         <ul>
                           {items.map((a) => (
-                            <Row key={a.id} href={`/jucatori/${a.playerId}`}>
+                            <Row key={a.id} href={`/lot/jucatori/${a.playerId}/stare`}>
                               <span className="flex items-baseline justify-between gap-3">
                                 <span className="truncate font-bold">{a.playerName}</span>
                                 <span className="shrink-0 text-sm text-ink-3">{relativeDay(a.date, today)}</span>
@@ -128,7 +128,7 @@ export function TodayView({ day, ctx, showAllAlerts }: { day: PhysioDay; ctx: Ap
               {day.visas.length === 0 ? <Empty>{t.visas.empty}</Empty> : (
                 <ul className="pt-2">
                   {day.visas.slice(0, LIST_PREVIEW).map((v) => (
-                    <Row key={v.id} href={`/jucatori/${v.id}`}>
+                    <Row key={v.id} href={`/lot/jucatori/${v.id}/stare`}>
                       <span className="flex items-center justify-between gap-3">
                         <span className="min-w-0">
                           <span className="block truncate font-bold">{v.name}</span>
@@ -146,7 +146,7 @@ export function TodayView({ day, ctx, showAllAlerts }: { day: PhysioDay; ctx: Ap
                   {day.visas.length > LIST_PREVIEW ? (
                     <li className="border-t border-line px-4 py-3 text-sm text-ink-3">
                       {t.visas.more(day.visas.length - LIST_PREVIEW)} ·{" "}
-                      <Link href="/jucatori" className="font-semibold text-ink underline underline-offset-4">{t.visas.all}</Link>
+                      <Link href="/lot/vize" className="font-semibold text-ink underline underline-offset-4">{t.visas.all}</Link>
                     </li>
                   ) : null}
                 </ul>
@@ -181,7 +181,7 @@ export function TodayView({ day, ctx, showAllAlerts }: { day: PhysioDay; ctx: Ap
               {day.returns.length === 0 ? <Empty>{t.returns.empty}</Empty> : (
                 <ul className="pt-2">
                   {day.returns.slice(0, LIST_PREVIEW).map((r) => (
-                    <Row key={r.id} href={`/jucatori/${r.id}`}>
+                    <Row key={r.id} href={`/lot/jucatori/${r.id}/stare`}>
                       <span className="flex items-center justify-between gap-3">
                         <span className="min-w-0">
                           <span className="block truncate font-bold">{r.name}</span>

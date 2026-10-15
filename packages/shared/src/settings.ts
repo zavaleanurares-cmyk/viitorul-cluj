@@ -9,6 +9,8 @@ export type ClubSettings = {
   medical_visa_validity_months: number;
   /** după câte luni de inactivitate un jucător apare pe lista de ștergere/anonimizare */
   retention_months: number;
+  /** greutatea și compoziția corporală se urmăresc doar de la această vârstă (implicit 14 ani) */
+  body_min_age: number;
   alerts: {
     fatigue_threshold: number;
     muscle_load_threshold: number;
@@ -26,6 +28,7 @@ export const DEFAULT_SETTINGS: ClubSettings = {
   reminder_hour: 9,
   medical_visa_validity_months: 6,
   retention_months: 36,
+  body_min_age: 14,
   alerts: {
     fatigue_threshold: 8,
     muscle_load_threshold: 8,
@@ -46,6 +49,7 @@ export function parseSettings(raw: Json | null | undefined): ClubSettings {
     reminder_hour: num(r.reminder_hour, DEFAULT_SETTINGS.reminder_hour),
     medical_visa_validity_months: num(r.medical_visa_validity_months, DEFAULT_SETTINGS.medical_visa_validity_months),
     retention_months: num(r.retention_months, DEFAULT_SETTINGS.retention_months),
+    body_min_age: num(r.body_min_age, DEFAULT_SETTINGS.body_min_age),
     alerts: {
       fatigue_threshold: num(a.fatigue_threshold, DEFAULT_SETTINGS.alerts.fatigue_threshold),
       muscle_load_threshold: num(a.muscle_load_threshold, DEFAULT_SETTINGS.alerts.muscle_load_threshold),

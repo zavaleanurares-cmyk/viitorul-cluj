@@ -51,7 +51,7 @@ function Row({ alert: a, today }: { alert: AlertItem; today: string }) {
         <p className="mt-0.5 text-ink-2">
           {a.player ? (
             <>
-              <Link href={`/jucatori/${a.player.id}/wellness`} className="font-semibold text-ink underline underline-offset-4">{a.player.name}</Link>
+              <Link href={`/lot/jucatori/${a.player.id}/wellness`} className="font-semibold text-ink underline underline-offset-4">{a.player.name}</Link>
               {" — "}
             </>
           ) : null}

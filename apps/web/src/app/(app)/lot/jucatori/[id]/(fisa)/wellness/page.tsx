@@ -27,7 +27,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
   const { id } = await params;
   const { db, ctx } = await requireCapability("viewPlayerList");
   // directorul sportiv are doar fișa sumară
-  if (!can(ctx.role, "viewWellnessGrid")) redirect(`/jucatori/${id}`);
+  if (!can(ctx.role, "viewWellnessGrid")) redirect(`/lot/jucatori/${id}/stare`);
   const player = await getPlayerForRequest(id);
   if (!player) notFound();
   await db.rpc("log_medical_access", { p_player: id, p_section: "wellness" });
@@ -104,7 +104,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
         <IntervalNav
           label={p.interval}
           current={String(days)}
-          options={INTERVALS.map((d) => ({ value: String(d), label: p.days(d), href: d === 28 ? `/jucatori/${id}/wellness` : `/jucatori/${id}/wellness?interval=${d}` }))}
+          options={INTERVALS.map((d) => ({ value: String(d), label: p.days(d), href: d === 28 ? `/lot/jucatori/${id}/wellness` : `/lot/jucatori/${id}/wellness?interval=${d}` }))}
           className="w-full md:w-auto"
         />
         {canEdit ? (

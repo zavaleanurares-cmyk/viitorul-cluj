@@ -2,8 +2,8 @@
 import Link from "next/link";
 import { useState, type ReactNode } from "react";
 import { ChevronRight } from "lucide-react";
-import { describeZone, diffDays, formatDateShort, relativeDay, type ClubStatus, type PlayerListItem, type StatusTone } from "@club/shared";
-import { ReviewBadge, StatusChip, TONE_BAR } from "@/components/ui/status";
+import { describeZone, diffDays, formatDateShort, relativeDay, type ClubStatus, type PlayerListItem } from "@club/shared";
+import { ReviewBadge, StatusChip } from "@/components/ui/status";
 import { cn } from "@/lib/cn";
 import { useT } from "@/messages";
 import { StatusDialog } from "./status-dialog";
@@ -45,7 +45,6 @@ export function AvailabilityBoard({ sections, statuses, canEdit, today }: {
             <ul>
               {section.players.map((p) => {
                 const status = p.status_id ? byId.get(p.status_id) : undefined;
-                const tone = (status?.tone ?? "gray") as StatusTone;
                 const zone = describeZone(
                   { zone: p.status_zone, side: p.status_side, detail: p.status_zone_detail, uncertain: p.status_zone_uncertain },
                   true,
@@ -100,19 +99,18 @@ export function AvailabilityBoard({ sections, statuses, canEdit, today }: {
                   </>
                 );
                 const rowClass = cn(
-                  "grid min-h-13 w-full flex-1 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 py-2 pl-3 pr-3 text-left",
+                  "grid min-h-13 w-full flex-1 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 px-4 py-2 text-left",
                   "hover:bg-canvas active:bg-sunken md:items-start md:gap-y-0 md:py-2.5",
                   GRID,
                 );
                 return (
                   <li key={p.id} className="flex border-b border-line last:border-b-0">
-                    <span className={cn("w-2 shrink-0", TONE_BAR[tone] ?? TONE_BAR.gray)} aria-hidden />
                     {canEdit ? (
                       <button type="button" className={rowClass} onClick={() => setEditing(p)} aria-haspopup="dialog">
                         {content}
                       </button>
                     ) : (
-                      <Link href={`/jucatori/${p.id}`} className={rowClass}>
+                      <Link href={`/lot/jucatori/${p.id}/stare`} className={rowClass}>
                         {content}
                       </Link>
                     )}
@@ -128,7 +126,7 @@ export function AvailabilityBoard({ sections, statuses, canEdit, today }: {
           player={editing}
           statuses={statuses}
           onClose={() => setEditing(null)}
-          fileHref={editing ? `/jucatori/${editing.id}` : undefined}
+          fileHref={editing ? `/lot/jucatori/${editing.id}/stare` : undefined}
         />
       ) : null}
     </>

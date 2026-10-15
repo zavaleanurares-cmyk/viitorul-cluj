@@ -60,7 +60,7 @@ export function WeekGrid({ players, dates, entries, today, thresholds, canEdit }
           {players.map((p) => (
             <tr key={p.id}>
               <th scope="row" className={cn(sticky, "min-w-28 max-w-36 bg-surface px-2! py-1! border-t border-line text-base! font-semibold! text-ink! md:max-w-none md:px-3!")}>
-                <Link href={`/jucatori/${p.id}/wellness`} className="block truncate hover:underline" title={p.name}>{p.name}</Link>
+                <Link href={`/lot/jucatori/${p.id}/wellness`} className="block truncate hover:underline" title={p.name}>{p.name}</Link>
               </th>
               {dates.map((d) => {
                 const e = byKey.get(`${p.id}:${d}`) ?? null;

@@ -10,6 +10,8 @@ import { listRpe } from "@/components/player/queries";
 import { RpeCard } from "@/components/player/rpe-card";
 import { StatusCard } from "@/components/player/status-card";
 import { getT } from "@/messages";
+import { VisaFamilyNotice } from "@/components/performance/visa-family";
+import { visaState } from "@/components/squad/queries";
 
 function capitalize(s: string) {
   return s.charAt(0).toLocaleUpperCase("ro") + s.slice(1);
@@ -21,11 +23,13 @@ export async function PlayerToday({ db, ctx }: Pick<Session, "db" | "ctx">) {
   if (!ctx.player) return <NoPlayer />;
   const player = ctx.player;
 
-  const [day, entry, rpe] = await Promise.all([
+  const [day, entry, rpe, docs] = await Promise.all([
     getPlayerDay(db, player.id, ctx.today),
     getWellnessEntry(db, player.id, ctx.today),
     listRpe(db, player.id, ctx.today, ctx.today),
+    db.from("visa_documents").select("status, reject_reason").eq("player_id", player.id).order("uploaded_at", { ascending: false }).limit(1),
   ]);
+  const visa = visaState(player.medical_visa_expires_on ?? null, ctx.today, ctx.settings.alerts.visa_days_before);
   const status = ctx.statuses.find((s) => s.id === player.status_id) ?? null;
 
   return (
@@ -36,6 +40,7 @@ export async function PlayerToday({ db, ctx }: Pick<Session, "db" | "ctx">) {
       </header>
 
       <StatusCard player={player} status={status} today={ctx.today} />
+      <VisaFamilyNotice playerId={player.id} playerName={player.display_name} state={visa.state} today={ctx.today} last={docs.data?.[0] ?? null} self />
 
       {entry ? (
         <Card className="p-4" aria-label={t.today.questionnaireTitle}>

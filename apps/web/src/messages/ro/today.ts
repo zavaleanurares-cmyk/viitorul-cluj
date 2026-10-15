@@ -2,6 +2,14 @@ import { plural } from "@club/shared";
 
 /** Spațiul Azi pentru staff și părinți (pagina jucătorului rămâne în player.ts). */
 export const today = {
+  visa: {
+    pending: "Viza trimisă, în verificare la club",
+    expiring: "Viza medicală expiră curând",
+    expired: "Viza medicală a expirat",
+    missing: "Lipsește viza medicală",
+    text: "Fără viză valabilă, copilul nu poate fi convocat la meci. Fotografiază avizul medical sportiv și trimite-l clubului.",
+    textSelf: "Fără viză valabilă nu poți fi convocat la meci. Fotografiază avizul medical sportiv și trimite-l clubului.",
+  },
   title: "Azi",
   nothingToday: "Nimic programat azi.",
   nextMatch: "Următorul meci",

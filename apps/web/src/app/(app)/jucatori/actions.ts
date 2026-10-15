@@ -25,7 +25,7 @@ export type StatusInput = z.input<typeof StatusInput>;
 
 /** Schimbă starea curentă a jucătorului (istoricul se scrie din trigger; marcajul „de verificat" dispare). */
 export async function setPlayerStatus(input: StatusInput) {
-  return run({ roles: ["physio"], revalidate: ["/disponibilitate", "/jucatori"], message: t.statusDialog.saved }, async ({ db, ctx }) => {
+  return run({ roles: ["physio"], revalidate: ["/disponibilitate", "/lot", "layout:/lot/jucatori/[id]"], message: t.statusDialog.saved }, async ({ db, ctx }) => {
     const v = valid(StatusInput, input);
     const status = ctx.statuses.find((s) => s.id === v.statusId && s.is_active);
     if (!status) fail(e.statusUnknown);
@@ -83,7 +83,7 @@ function playerColumns(v: z.output<typeof CreatePlayerInput>) {
 }
 
 export async function createPlayer(input: PlayerInput) {
-  return run({ roles: ["physio"], revalidate: ["/jucatori", "/disponibilitate"], message: t.form.created }, async ({ db, ctx }) => {
+  return run({ roles: ["physio"], revalidate: ["/lot", "layout:/lot/jucatori/[id]", "/disponibilitate"], message: t.form.created }, async ({ db, ctx }) => {
     const v = valid(CreatePlayerInput, input);
     if (v.groupId && !ctx.groups.some((g) => g.id === v.groupId)) fail(e.groupUnknown);
     if (v.birthDate && v.birthDate > ctx.today) fail(e.futureDate);
@@ -95,7 +95,7 @@ export async function createPlayer(input: PlayerInput) {
 }
 
 export async function updatePlayer(input: PlayerInput & { playerId: string }) {
-  return run({ roles: ["physio"], revalidate: ["/jucatori", "/disponibilitate"], message: t.form.saved }, async ({ db, ctx }) => {
+  return run({ roles: ["physio"], revalidate: ["/lot", "layout:/lot/jucatori/[id]", "/disponibilitate"], message: t.form.saved }, async ({ db, ctx }) => {
     const v = valid(UpdatePlayerInput, input);
     if (v.groupId && !ctx.groups.some((g) => g.id === v.groupId)) fail(e.groupUnknown);
     if (v.birthDate && v.birthDate > ctx.today) fail(e.futureDate);
@@ -109,7 +109,7 @@ export async function updatePlayer(input: PlayerInput & { playerId: string }) {
 const ActiveInput = z.object({ playerId: z.uuid(), active: z.boolean() });
 
 export async function setPlayerActive(input: z.input<typeof ActiveInput>) {
-  return run({ roles: ["physio"], revalidate: ["/jucatori", "/disponibilitate"] }, async ({ db }) => {
+  return run({ roles: ["physio"], revalidate: ["/lot", "layout:/lot/jucatori/[id]", "/disponibilitate"] }, async ({ db }) => {
     const v = valid(ActiveInput, input);
     const { data, error } = await db.from("players").update({ is_active: v.active }).eq("id", v.playerId).select("id");
     if (error) throw error;
@@ -121,7 +121,7 @@ export async function setPlayerActive(input: z.input<typeof ActiveInput>) {
 const VisaInput = z.object({ playerId: z.uuid(), expiresOn: optDate });
 
 export async function setMedicalVisa(input: z.input<typeof VisaInput>) {
-  return run({ roles: ["physio"], revalidate: ["/jucatori"], message: t.summary.visaSaved }, async ({ db }) => {
+  return run({ roles: ["physio"], revalidate: ["/lot", "layout:/lot/jucatori/[id]"], message: t.summary.visaSaved }, async ({ db }) => {
     const v = valid(VisaInput, input);
     const { data, error } = await db.from("players").update({ medical_visa_expires_on: v.expiresOn }).eq("id", v.playerId).select("id");
     if (error) throw error;

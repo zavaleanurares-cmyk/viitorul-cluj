@@ -46,7 +46,7 @@ export function RpeTable({ players, dates, rpe }: { players: Array<{ id: string;
         {rows.map((r) => (
           <tr key={r.id}>
             <th scope="row" className="sticky left-0 z-10 min-w-28 max-w-36 border-r border-line bg-surface px-2! py-1.5! border-t border-line text-base! font-semibold! text-ink! md:max-w-none md:px-3!">
-              <Link href={`/jucatori/${r.id}/wellness`} className="block truncate hover:underline" title={r.name}>{r.name}</Link>
+              <Link href={`/lot/jucatori/${r.id}/wellness`} className="block truncate hover:underline" title={r.name}>{r.name}</Link>
             </th>
             {r.days.map((c, i) => (
               <td key={dates[i]} className="px-2! py-1.5! text-right" title={c ? c.parts.join(" + ") : undefined}>

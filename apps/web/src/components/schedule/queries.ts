@@ -90,7 +90,7 @@ export async function venueConflicts(db: Db, venueId: string, startsAt: string, 
 export async function eventRoster(db: Db, eventId: string, groupIds: string[]) {
   if (!groupIds.length) return [];
   const [players, att] = await Promise.all([
-    db.from("players").select("id, full_name, display_name, shirt_number, position, status_id, status_note, group_id, medical_visa_expires_on")
+    db.from("players").select("id, full_name, display_name, shirt_number, position, status_id, group_id, medical_visa_expires_on")
       .in("group_id", groupIds).eq("is_active", true).is("anonymized_at", null).order("shirt_number").order("display_name"),
     db.from("attendance").select("player_id, status, reason, note, recorded_at").eq("event_id", eventId),
   ]);

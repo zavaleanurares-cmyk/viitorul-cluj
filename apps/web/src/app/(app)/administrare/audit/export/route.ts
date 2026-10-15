@@ -6,13 +6,13 @@ import { getT } from "@/messages";
 
 const cell = (v: string) => (/[";\n\r]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v);
 
-/** Exportul CSV al jurnalului, cu aceleași filtre ca pagina. Doar preparatorul; exportul însuși se jurnalizează. */
+/** Exportul CSV al jurnalului, cu aceleași filtre ca pagina. Preparatorul și administratorul (ca pagina); exportul însuși se jurnalizează. */
 export async function GET(request: NextRequest) {
   const t = getT().admin.audit;
   const session = await getSession();
   if (!session) return NextResponse.json({ eroare: getT().admin.errors.sessionExpired }, { status: 401 });
   const { db, ctx } = session;
-  if (ctx.role !== "physio") return NextResponse.json({ eroare: getT().admin.errors.forbidden }, { status: 403 });
+  if (ctx.role !== "physio" && ctx.role !== "admin") return NextResponse.json({ eroare: getT().admin.errors.forbidden }, { status: 403 });
 
   const f = parseAuditFilters(Object.fromEntries(request.nextUrl.searchParams));
   const lookups = await loadAuditLookups(db, ctx);

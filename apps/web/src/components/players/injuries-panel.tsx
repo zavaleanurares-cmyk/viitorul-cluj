@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import { formatDate, formatDateShort, type ClubStatus } from "@club/shared";
-import { addTreatment, deleteInjury, deleteTreatment } from "@/app/(app)/jucatori/[id]/medical/actions";
+import { addTreatment, deleteInjury, deleteTreatment } from "@/app/(app)/lot/jucatori/[id]/(fisa)/medical/actions";
 import { Button, IconButton } from "@/components/ui/button";
 import { Card, EmptyState } from "@/components/ui/card";
 import { FormError, Input } from "@/components/ui/form";

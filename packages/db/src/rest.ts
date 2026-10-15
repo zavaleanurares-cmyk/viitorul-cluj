@@ -140,7 +140,16 @@ export function parseSelect(input: string): Field[] {
 // ---------------------------------------------------------------------------
 // Construirea interogării
 // ---------------------------------------------------------------------------
-type Ctx = { meta: SchemaMeta; params: unknown[]; aliasSeq: number; query: URLSearchParams };
+/** `role` = rolul Postgres al cererii; sub `authenticated`, `*` înseamnă doar coloanele pe care le poate citi. */
+type Ctx = { meta: SchemaMeta; params: unknown[]; aliasSeq: number; query: URLSearchParams; role: string };
+
+/** Coloanele pe care rolul cererii le poate citi, ca listă SQL; null = toate (`*`). */
+function readableColumns(ctx: Ctx, t: TableMeta, alias: string | null): string | null {
+  if (ctx.role !== "authenticated" && ctx.role !== "anon") return null;
+  const cols = [...t.columns.values()];
+  if (!cols.some((c) => c.restricted)) return null;
+  return cols.filter((c) => !c.restricted).map((c) => (alias ? `${alias}.${q(c.name)}` : q(c.name))).join(", ");
+}
 
 const RESERVED = new Set(["select", "order", "limit", "offset", "on_conflict", "columns", "and", "or", "not.and", "not.or"]);
 
@@ -328,7 +337,7 @@ function projection(ctx: Ctx, t: TableMeta, alias: string, fields: Field[], path
   const columns: string[] = [];
   const inner: string[] = [];
   for (const f of fields) {
-    if (f.kind === "star") columns.push(`${alias}.*`);
+    if (f.kind === "star") columns.push(readableColumns(ctx, t, alias) ?? `${alias}.*`);
     else if (f.kind === "count") columns.push(`count(*) as "count"`);
     else if (f.kind === "column") {
       const e = columnExpr(t, alias, f.name, f.path);
@@ -385,8 +394,8 @@ function single(rowsJson: string, n: number): RestResponse {
   return ok(200, rowsJson.replace(/^\[/, "").replace(/\]$/, ""));
 }
 
-async function read(req: RestRequest, exec: Exec, meta: SchemaMeta, tableName: string): Promise<RestResponse> {
-  const ctx: Ctx = { meta, params: [], aliasSeq: 0, query: req.query };
+async function read(req: RestRequest, exec: Exec, meta: SchemaMeta, tableName: string, role: string): Promise<RestResponse> {
+  const ctx: Ctx = { meta, params: [], aliasSeq: 0, query: req.query, role };
   const t = table(ctx, tableName);
   const fields = parseSelect(req.query.get("select") ?? "*");
   const proj = projection(ctx, t, "t0", fields, "");
@@ -439,7 +448,7 @@ async function mutate(req: RestRequest, exec: Exec, ctx: Ctx, t: TableMeta, stat
   const fields = parseSelect(req.query.get("select") ?? "*");
   const proj = projection(ctx, t, "t0", fields, "");
   const sql =
-    `with m as (${statement} returning *) ` +
+    `with m as (${statement} returning ${readableColumns(ctx, t, null) ?? "*"}) ` +
     `select coalesce(json_agg(row_to_json(r)), '[]'::json)::text as body, count(*)::int as n ` +
     `from (select ${proj.columns.join(", ")} from m t0${orderSql(ctx, t, "t0", "")}) r`;
   const r = await exec(sql, ctx.params);
@@ -452,8 +461,8 @@ async function mutate(req: RestRequest, exec: Exec, ctx: Ctx, t: TableMeta, stat
   return ok(successStatus, body);
 }
 
-async function insert(req: RestRequest, exec: Exec, meta: SchemaMeta, tableName: string): Promise<RestResponse> {
-  const ctx: Ctx = { meta, params: [], aliasSeq: 0, query: req.query };
+async function insert(req: RestRequest, exec: Exec, meta: SchemaMeta, tableName: string, role: string): Promise<RestResponse> {
+  const ctx: Ctx = { meta, params: [], aliasSeq: 0, query: req.query, role };
   const t = table(ctx, tableName);
   const rows = (Array.isArray(req.body) ? req.body : [req.body]) as Record<string, unknown>[];
   if (!rows.length || rows.some((r) => !r || typeof r !== "object")) {
@@ -482,8 +491,8 @@ async function insert(req: RestRequest, exec: Exec, meta: SchemaMeta, tableName:
   return mutate(req, exec, ctx, t, statement, 201);
 }
 
-async function update(req: RestRequest, exec: Exec, meta: SchemaMeta, tableName: string): Promise<RestResponse> {
-  const ctx: Ctx = { meta, params: [], aliasSeq: 0, query: req.query };
+async function update(req: RestRequest, exec: Exec, meta: SchemaMeta, tableName: string, role: string): Promise<RestResponse> {
+  const ctx: Ctx = { meta, params: [], aliasSeq: 0, query: req.query, role };
   const t = table(ctx, tableName);
   if (!req.body || typeof req.body !== "object" || Array.isArray(req.body)) {
     throw new RestError(400, "PGRST102", "Corpul cererii trebuie să fie un obiect");
@@ -499,8 +508,8 @@ async function update(req: RestRequest, exec: Exec, meta: SchemaMeta, tableName:
   return mutate(req, exec, ctx, t, statement, 200);
 }
 
-async function remove(req: RestRequest, exec: Exec, meta: SchemaMeta, tableName: string): Promise<RestResponse> {
-  const ctx: Ctx = { meta, params: [], aliasSeq: 0, query: req.query };
+async function remove(req: RestRequest, exec: Exec, meta: SchemaMeta, tableName: string, role: string): Promise<RestResponse> {
+  const ctx: Ctx = { meta, params: [], aliasSeq: 0, query: req.query, role };
   const t = table(ctx, tableName);
   const where = conditions(ctx, t, "t0", "");
   const statement = `delete from public.${q(t.name)} as t0` + (where.length ? ` where ${where.join(" and ")}` : "");
@@ -572,7 +581,8 @@ function statusForPgError(code: string): number {
   return 400;
 }
 
-export async function handleRest(req: RestRequest, exec: Exec, meta: SchemaMeta): Promise<RestResponse> {
+/** `role` = rolul Postgres sub care rulează tranzacția (vezi `withIdentity`). */
+export async function handleRest(req: RestRequest, exec: Exec, meta: SchemaMeta, role = "authenticated"): Promise<RestResponse> {
   try {
     const parts = req.path.replace(/^\/+|\/+$/g, "").split("/");
     if (parts[0] === "rpc" && parts.length === 2) {
@@ -583,13 +593,13 @@ export async function handleRest(req: RestRequest, exec: Exec, meta: SchemaMeta)
     switch (req.method) {
       case "GET":
       case "HEAD":
-        return await read(req, exec, meta, parts[0]);
+        return await read(req, exec, meta, parts[0], role);
       case "POST":
-        return await insert(req, exec, meta, parts[0]);
+        return await insert(req, exec, meta, parts[0], role);
       case "PATCH":
-        return await update(req, exec, meta, parts[0]);
+        return await update(req, exec, meta, parts[0], role);
       case "DELETE":
-        return await remove(req, exec, meta, parts[0]);
+        return await remove(req, exec, meta, parts[0], role);
       default:
         throw new RestError(405, "PGRST101", "Metodă nepermisă");
     }

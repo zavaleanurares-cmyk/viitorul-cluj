@@ -42,7 +42,7 @@ export default async function PlayerPlanPage({ params, searchParams }: {
     listProgramSummaries(db, ctx.today),
   ]);
 
-  const base = `/jucatori/${id}/plan`;
+  const base = `/lot/jucatori/${id}/plan`;
   const weekHref = (m: string) => (m === weekStart(ctx.today) ? base : `${base}?saptamana=${m}`);
   const order = { active: 0, upcoming: 1, ended: 2, stopped: 3 } as const;
   const rows = assignments

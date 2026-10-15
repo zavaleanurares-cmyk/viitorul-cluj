@@ -71,7 +71,7 @@ export default async function PlanEditorPage({ params }: { params: Promise<{ juc
             <StatusChip status={status} size="sm" />
             {group ? <span>{group.name}</span> : null}
             {!player.is_active ? <Badge tone="outline">{t.playerInactive}</Badge> : null}
-            <Link href={`/jucatori/${jucator}/plan`} className="font-semibold underline underline-offset-2">{t.playerFile}</Link>
+            <Link href={`/lot/jucatori/${jucator}/plan`} className="font-semibold underline underline-offset-2">{t.playerFile}</Link>
           </span>
         }
       />

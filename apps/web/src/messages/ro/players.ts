@@ -9,7 +9,8 @@ export const players = {
     number: (n: number) => `nr. ${n}`,
   },
   tabs: {
-    sumar: "Sumar",
+    fisa: "Fișă",
+    stare: "Stare și istoric",
     medical: "Medical",
     wellness: "Chestionare",
     fizic: "Date fizice",
@@ -277,6 +278,8 @@ export const players = {
   },
 
   medical: {
+    stageAdvanced: "Etapa de revenire a fost actualizată.",
+    recovered: "Accidentarea a fost închisă.",
     mapTitle: "Harta accidentărilor",
     legendActive: "Activă",
     legendClosed: "Închisă",
@@ -429,6 +432,7 @@ export const players = {
   },
 
   errors: {
+    injuryClosed: "Accidentarea este deja închisă.",
     invalid: "Date invalide. Verifică câmpurile completate.",
     playerNotFound: "Jucătorul nu a fost găsit.",
     statusUnknown: "Starea aleasă nu mai există. Reîncarcă pagina.",

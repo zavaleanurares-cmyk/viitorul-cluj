@@ -38,7 +38,7 @@ const InjuryInput = z.object({
 export type InjuryInput = z.input<typeof InjuryInput>;
 
 export async function saveInjury(input: InjuryInput) {
-  return run({ roles: ["physio"], revalidate: ["/disponibilitate", "/jucatori"], message: t.medical.saved }, async ({ db, ctx }) => {
+  return run({ roles: ["physio"], revalidate: ["/disponibilitate", "/lot", "layout:/lot/jucatori/[id]"], message: t.medical.saved }, async ({ db, ctx }) => {
     const v = valid(InjuryInput, input);
     await mustSeePlayer(db, v.playerId);
     if (v.occurredOn > ctx.today) fail(e.futureDate);
@@ -119,6 +119,50 @@ export async function deleteInjury(input: z.input<typeof IdInput>) {
     if (error) throw error;
     if (!data?.length) fail(e.injuryNotFound);
     return { id: v.id };
+  });
+}
+
+/** Etapa următoare de revenire (din lista clubului sau din fișă), fără a închide accidentarea. */
+export async function advanceInjuryStage(input: z.input<typeof IdInput>) {
+  return run({ roles: ["physio"], revalidate: ["/performanta/medical", "/disponibilitate", "layout:/lot/jucatori/[id]"], message: t.medical.stageAdvanced }, async ({ db }) => {
+    const v = valid(IdInput, input);
+    const { data: inj } = await db.from("injuries").select("id, rtp_stage, actual_return_on").eq("id", v.id).maybeSingle();
+    if (!inj) fail(e.injuryNotFound);
+    if (inj.actual_return_on) fail(e.injuryClosed);
+    const next = Math.min((inj.rtp_stage ?? 0) + 1, RTP_STAGES.length - 2);
+    const { error } = await db.from("injuries").update({ rtp_stage: next }).eq("id", v.id).is("actual_return_on", null);
+    if (error) throw error;
+    return { stage: next };
+  });
+}
+
+/**
+ * „Recuperat": închide accidentarea azi, la etapa „Apt de joc". Dacă jucătorul nu mai are alte
+ * accidentări deschise, starea lui devine „Apt" (cu zona și restricțiile șterse).
+ */
+export async function markInjuryRecovered(input: z.input<typeof IdInput>) {
+  return run({ roles: ["physio"], revalidate: ["/performanta/medical", "/disponibilitate", "/lot", "layout:/lot/jucatori/[id]"], message: t.medical.recovered }, async ({ db, ctx }) => {
+    const v = valid(IdInput, input);
+    const { data: inj } = await db.from("injuries").select("id, player_id, occurred_on, actual_return_on").eq("id", v.id).maybeSingle();
+    if (!inj) fail(e.injuryNotFound);
+    if (inj.actual_return_on) fail(e.injuryClosed);
+    const { error } = await db.from("injuries")
+      .update({ actual_return_on: ctx.today < inj.occurred_on ? inj.occurred_on : ctx.today, rtp_stage: RTP_STAGES.length - 1 })
+      .eq("id", v.id).is("actual_return_on", null);
+    if (error) throw error;
+    const { count } = await db.from("injuries").select("id", { count: "exact", head: true }).eq("player_id", inj.player_id).is("actual_return_on", null);
+    let statusChanged = false;
+    if (!count) {
+      const status = fitStatus(ctx.statuses);
+      if (status) {
+        await updatePlayerStatus(db, inj.player_id, {
+          status_id: status.id, status_note: null, status_zone: null, status_side: null, status_zone_detail: null,
+          status_zone_uncertain: false, status_return_on: null, training_restrictions: null,
+        });
+        statusChanged = true;
+      }
+    }
+    return { statusChanged };
   });
 }
 

@@ -139,10 +139,11 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ g
       {/* Sumarul selecției */}
       <dl aria-label={b.summaryLabel} className="mb-3 grid grid-cols-3 gap-2">
         {AVAILABILITY_ORDER.slice().reverse().map((a) => (
-          <div key={a} className="relative overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface py-2 pl-4 pr-2">
-            <span className={cn("absolute inset-y-0 left-0 w-2 [print-color-adjust:exact]", TILE_BAR[a])} aria-hidden />
+          <div key={a} className="flex flex-col-reverse rounded-[var(--radius-card)] border border-line bg-surface px-3 py-2">
             <dd className="text-2xl font-bold leading-none md:text-3xl">{counts[a]}</dd>
-            <dt className="mt-1 truncate text-sm text-ink-2" title={AVAILABILITY_LABELS[a]}>{t.availability[a]}</dt>
+            <dt className="mb-1 flex items-center gap-1.5 truncate text-sm text-ink-2" title={AVAILABILITY_LABELS[a]}>
+              <span className={cn("size-2.5 shrink-0 rounded-full [print-color-adjust:exact]", TILE_BAR[a])} aria-hidden />{t.availability[a]}
+            </dt>
           </div>
         ))}
       </dl>
@@ -188,7 +189,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ g
           icon={<Users className="size-8" aria-hidden />}
           title={b.emptyGroupTitle}
           description={canEdit ? b.emptyGroupPhysio : b.emptyGroupOther}
-          action={canEdit ? <LinkButton href="/jucatori">{t.list.title}</LinkButton> : undefined}
+          action={canEdit ? <LinkButton href="/lot">{t.list.title}</LinkButton> : undefined}
         />
       )}
     </>

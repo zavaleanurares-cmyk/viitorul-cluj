@@ -86,7 +86,7 @@ export function MetricsTable({ rows, sessionId, canEdit }: { rows: MetricsRow[];
           {sorted.map((r) => (
             <tr key={r.player_id}>
               <th scope="row" className={cn(sticky, "min-w-32 max-w-40 bg-surface py-1.5! border-t border-line text-base! font-semibold! text-ink! md:max-w-none")}>
-                <Link href={`/jucatori/${r.player_id}/fizic`} className="block truncate hover:underline" title={r.name}>{r.name}</Link>
+                <Link href={`/lot/jucatori/${r.player_id}/fizic`} className="block truncate hover:underline" title={r.name}>{r.name}</Link>
               </th>
               {columns.map((c, i) => {
                 const v = c.get(r);

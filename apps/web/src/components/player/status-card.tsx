@@ -1,8 +1,7 @@
 import { CalendarClock, ShieldAlert } from "lucide-react";
-import { describeZone, formatDate, relativeDay, type ClubStatus, type Player, type StatusTone } from "@club/shared";
+import { describeZone, formatDate, relativeDay, type ClubStatus, type Player } from "@club/shared";
 import { Card } from "@/components/ui/card";
-import { StatusChip, TONE_BAR } from "@/components/ui/status";
-import { cn } from "@/lib/cn";
+import { StatusChip } from "@/components/ui/status";
 import { getT } from "@/messages";
 
 /** Starea curentă a jucătorului, așa cum a setat-o preparatorul: stare, zonă, observație, restricții, revenire. */
@@ -11,11 +10,9 @@ export function StatusCard({ player, status, today }: { player: Player; status: 
   const zone = describeZone({
     zone: player.status_zone, side: player.status_side, detail: player.status_zone_detail, uncertain: player.status_zone_uncertain,
   });
-  const tone = (status?.tone ?? "gray") as StatusTone;
   return (
-    <Card className="relative overflow-hidden" aria-label={t.title}>
-      <span className={cn("absolute inset-y-0 left-0 w-1.5", TONE_BAR[tone] ?? TONE_BAR.gray)} aria-hidden />
-      <div className="space-y-2 py-4 pl-5 pr-4">
+    <Card aria-label={t.title}>
+      <div className="space-y-2 p-4">
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
           <StatusChip status={status} size="lg" full />
           {zone ? <p className="font-semibold">{zone}</p> : null}

@@ -131,7 +131,27 @@ try {
   check("secretariatul vede toți jucătorii clubului", (await rows(secretary.from("players").select("id"))) === 4);
   check("contabilul vede jucătorii (pentru taxe)", (await rows(accountant.from("players").select("id"))) === 4);
   check("părintele vede doar copilul lui", (await rows(guardian.from("players").select("id"))) === 1);
-  check("antrenorul nu vede părinții copiilor din alte echipe", (await rows(coach.from("guardians").select("id"))) === 0);
+  // Detaliile medicale de pe rândul jucătorului (faza 4): doar personalul medical și sportiv.
+  await admin.from("players").update({ status_note: "Ruptură LIA", status_zone: "knee", training_restrictions: "fără contact" }).eq("id", p1);
+  for (const [who, c] of [["secretariatul", secretary], ["contabilul", accountant], ["administratorul", adminU], ["părintele", guardian]] as const) {
+    check(`${who} NU citește nota medicală`, await errored(c.from("players").select("status_note").eq("id", p1)));
+  }
+  {
+    const star = (await secretary.from("players").select("*").eq("id", p1).single()).data as Record<string, unknown> | null;
+    check("„*\" pentru birou întoarce rândul fără coloanele medicale", !!star && star.full_name === "UNU" && !("status_note" in star) && !("training_restrictions" in star), star && Object.keys(star));
+    const all = Object.keys(((await admin.from("players").select("*").eq("id", p1).single()).data ?? {}) as object);
+    const hidden = all.filter((k) => !star || !(k in star)).sort().join(",");
+    check("biroul vede toate coloanele în afară de cele medicale (coloană nouă fără grant = eșec aici)",
+      hidden === "review_note,status_note,status_side,status_zone,status_zone_detail,status_zone_uncertain,training_restrictions", hidden);
+    const coachRow = (await coach.from("players").select("status_note, training_restrictions").eq("id", p1).single()).data;
+    check("antrenorul citește nota medicală a echipei lui", coachRow?.status_note === "Ruptură LIA" && coachRow?.training_restrictions === "fără contact");
+    check("jucătorul își citește nota medicală", (await player1.from("players").select("status_note").eq("id", p1).single()).data?.status_note === "Ruptură LIA");
+    check("biroul NU scrie nota medicală", await errored(secretary.from("players").update({ status_note: "x" }).eq("id", p1).select("id")));
+    const ins = await secretary.from("players").insert({ club_id: clubA, group_id: G2, full_name: "STAR", display_name: "STAR" }).select("*").single();
+    check("biroul adaugă jucător și primește rândul înapoi", !ins.error && (ins.data as Record<string, unknown> | null)?.full_name === "STAR", ins.error);
+    if (ins.data) await admin.from("players").delete().eq("id", (ins.data as { id: string }).id);
+  }
+  check("antrenorul nu vede părinții copiilor din alte echipe",(await rows(coach.from("guardians").select("id"))) === 0);
   check("secretariatul adaugă jucători", !(await errored(secretary.from("players").insert({ club_id: clubA, group_id: G2, full_name: "NOU", display_name: "NOU" }))));
   check("antrenorul NU adaugă jucători", await errored(coach.from("players").insert({ club_id: clubA, group_id: G1, full_name: "X", display_name: "X" })));
   check("administratorul vede rolurile din club", (await rows(adminU.from("memberships").select("id"))) >= 7);
@@ -180,7 +200,16 @@ try {
     match: { competition_id: comp, opponent_name: "CS Vest", round: "9", is_home: true },
   } }), "meci 2");
   const elig2 = must(await coach.rpc("match_eligibility", { p_event: match2 }), "eligibilitate 2");
-  check("suspendatul apare ca indisponibil", elig2.some((e: { player_id: string; reason: string }) => e.player_id === p1 && e.reason === "suspended"), elig2);
+  {
+    const out = must(await admin.from("club_statuses").select("id, label").eq("club_id", clubA).eq("availability", "out").limit(1).single(), "stare indisponibil");
+    await admin.from("players").update({ status_id: out.id, status_note: "Entorsă gleznă" }).eq("id", p5);
+    const byCoach = must(await coach.rpc("match_eligibility", { p_event: match2 }), "elig antrenor").find((e: { player_id: string; reason: string }) => e.player_id === p5 && e.reason === "injured");
+    const bySec = must(await secretary.rpc("match_eligibility", { p_event: match2 }), "elig secretariat").find((e: { player_id: string; reason: string }) => e.player_id === p5 && e.reason === "injured");
+    check("la meci antrenorul vede nota accidentării", byCoach?.detail === "Entorsă gleznă", byCoach);
+    check("la meci secretariatul vede doar starea, fără notă", bySec?.detail === out.label, bySec);
+    await admin.from("players").update({ status_id: null, status_note: null }).eq("id", p5);
+  }
+  check("suspendatul apare ca indisponibil",elig2.some((e: { player_id: string; reason: string }) => e.player_id === p1 && e.reason === "suspended"), elig2);
   check("antrenorul poate chema un jucător din altă echipă", !(await errored(coach.rpc("save_match_squad", { p_event: match2, p_formation: "4-3-3", p_rows: [
     { player_id: p2, role: "starter", slot: 0 }, { player_id: p3, role: "sub" }] }))));
   await admin.from("players").update({ medical_visa_expires_on: "2020-01-01" }).eq("id", p3);

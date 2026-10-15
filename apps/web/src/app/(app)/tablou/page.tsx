@@ -32,7 +32,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ a
   const directorLinks = ctx.role === "sporting_director" ? (
     <>
       <LinkButton href="/disponibilitate" icon={<HeartPulse className="size-5" aria-hidden />}>{t.links.availability}</LinkButton>
-      <LinkButton href="/jucatori" icon={<Users className="size-5" aria-hidden />}>{t.links.players}</LinkButton>
+      <LinkButton href="/lot" icon={<Users className="size-5" aria-hidden />}>{t.links.players}</LinkButton>
     </>
   ) : null;
 

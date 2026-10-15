@@ -23,6 +23,8 @@ export const BUCKETS = {
   avatars: { maxBytes: 5 * 1024 * 1024, types: ["image/jpeg", "image/png", "image/webp"] },
   branding: { maxBytes: 2 * 1024 * 1024, types: ["image/png", "image/webp", "image/jpeg"] },
   finance: { maxBytes: 10 * 1024 * 1024, types: ["application/pdf", "image/jpeg", "image/png", "image/webp", "image/heic"] },
+  /** avizele medicale sportive: <jucător>/<fișier> */
+  visas: { maxBytes: 10 * 1024 * 1024, types: ["application/pdf", "image/jpeg", "image/png", "image/webp", "image/heic"] },
 } as const;
 
 export type Bucket = keyof typeof BUCKETS;

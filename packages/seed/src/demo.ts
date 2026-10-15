@@ -9,6 +9,7 @@ import { ensureAccount, must, randomPassword, type SeededAccount } from "./commo
 import { seedLibrary } from "./library";
 import { seedLotDemo } from "./lot";
 import { seedBaniDemo } from "./bani";
+import { seedPerfDemo } from "./perf";
 
 const SLUG = "club-demo";
 
@@ -313,6 +314,7 @@ export async function seedDemo(admin: Db, opts: { reset?: boolean; domain?: stri
   await admin.rpc("refresh_daily_alerts", { p_club: clubId });
   await seedLotDemo(admin, clubId, ids);
   await seedBaniDemo(admin, clubId, ids);
+  await seedPerfDemo(admin, clubId, ids);
 
   return { clubName: club.name, players: allPlayers.length, accounts: seeded };
 }

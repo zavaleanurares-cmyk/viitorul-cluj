@@ -10,6 +10,8 @@ const nextConfig: NextConfig = {
   // Fonturile încorporate în PDF-uri se citesc de pe disc la cerere; fără această cheie nu ajung în funcțiile de pe Vercel.
   outputFileTracingIncludes: {
     "/rapoarte/**": ["./src/components/reports/fonts/*.ttf"],
+    // chitanțe, dovezi de plată, referate, contracte
+    "/api/**": ["./src/components/reports/fonts/*.ttf"],
   },
   turbopack: {
     rules: {
@@ -21,6 +23,15 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     serverActions: { bodySizeLimit: "4mb" },
+  },
+  // Fișa medicală din Vestiar a devenit o parte a fișei din Lot (faza 4); linkurile vechi (inclusiv cele
+  // scrise în notificări de baza de date) duc la aceeași filă.
+  async redirects() {
+    return [
+      { source: "/jucatori", destination: "/lot", permanent: false },
+      { source: "/jucatori/:id", destination: "/lot/jucatori/:id/stare", permanent: false },
+      { source: "/jucatori/:id/:tab(medical|wellness|fizic|plan|documente)", destination: "/lot/jucatori/:id/:tab", permanent: false },
+    ];
   },
   async headers() {
     return [

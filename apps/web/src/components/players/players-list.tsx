@@ -129,7 +129,7 @@ export function PlayersList({ players, groups, statuses, photos, canManage, toda
               return (
                 <li key={p.id} className="border-b border-line last:border-b-0">
                   <Link
-                    href={`/jucatori/${p.id}`}
+                    href={`/lot/jucatori/${p.id}/stare`}
                     className={cn(
                       "grid min-h-16 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 px-3 py-2 hover:bg-canvas active:bg-sunken md:min-h-14",
                       GRID, !p.is_active && "opacity-70",
@@ -180,7 +180,7 @@ export function PlayersList({ players, groups, statuses, photos, canManage, toda
           known={players}
           today={today}
           defaultGroupId={f.grupa && f.grupa !== NO_GROUP ? f.grupa : undefined}
-          onCreated={(id) => router.push(`/jucatori/${id}`)}
+          onCreated={(id) => router.push(`/lot/jucatori/${id}/stare`)}
         />
       ) : null}
     </>
