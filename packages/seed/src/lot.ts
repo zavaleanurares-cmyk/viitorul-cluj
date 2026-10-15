@@ -98,7 +98,7 @@ export async function seedLotDemo(admin: Db, clubId: string, ids: Record<string,
       }).select("id").single(), "antrenament");
       await admin.from("event_teams").insert({ event_id: ev.id, group_id: g.id });
       if (past) {
-        await admin.from("attendance").insert(players.map((p) => {
+        must(await admin.from("attendance").insert(players.map((p) => {
           const injured = p.status_id && outIds.has(p.status_id);
           const r = rnd();
           const status = injured ? "injured" : r < 0.86 ? "present" : r < 0.9 ? "late" : "absent";
@@ -106,7 +106,7 @@ export async function seedLotDemo(admin: Db, clubId: string, ids: Record<string,
             event_id: ev.id, player_id: p.id, status, reason: status === "absent" ? pick(["sick", "school", "family", "unexcused"] as const) : injured ? "injured" : null,
             recorded_by: creator, recorded_at: new Date(Date.parse(startsAt) + 15 * 60000).toISOString(),
           };
-        }));
+        })).select("player_id"), "prezență");
       }
     }
 
@@ -143,10 +143,10 @@ export async function seedLotDemo(admin: Db, clubId: string, ids: Record<string,
       const total = plan.half * 2;
       const nSubs = Math.max(0, Math.min(3, subs.length, starters.length - 8));
       const subMinutes = subs.slice(0, nSubs).map(() => between(55, 80));
-      await admin.from("match_squad").insert([
+      must(await admin.from("match_squad").insert([
         ...starters.map((p, i) => ({ event_id: ev.id, player_id: p.id, role: "starter", slot: i, is_captain: i === 4, minutes: i >= 8 && i - 8 < nSubs ? subMinutes[i - 8] : total, rating: between(2, 5) })),
-        ...subs.map((p, i) => ({ event_id: ev.id, player_id: p.id, role: "sub", minutes: i < nSubs ? total - subMinutes[i] : 0, rating: i < nSubs ? between(2, 4) : null })),
-      ]);
+        ...subs.map((p, i) => ({ event_id: ev.id, player_id: p.id, role: "sub", slot: null, is_captain: false, minutes: i < nSubs ? total - subMinutes[i] : 0, rating: i < nSubs ? between(2, 4) : null })),
+      ]).select("player_id"), "lot meci");
       const goalsFor = between(0, 3);
       const goalsAgainst = between(0, 2);
       const events: TablesInsert<"match_events">[] = [];
@@ -154,7 +154,7 @@ export async function seedLotDemo(admin: Db, clubId: string, ids: Record<string,
       for (let k = 0; k < goalsAgainst; k++) events.push({ event_id: ev.id, minute: between(5, total - 2), kind: "goal_against", created_by: creator });
       for (let k = 0; k < nSubs; k++) events.push({ event_id: ev.id, minute: subMinutes[k], kind: "sub", player_id: starters[8 + k].id, related_player_id: subs[k].id, created_by: creator });
       events.push({ event_id: ev.id, minute: between(20, total - 5), kind: "yellow", player_id: pick(starters.slice(1, 8)).id, created_by: creator });
-      await admin.from("match_events").insert(events);
+      must(await admin.from("match_events").insert(events.map((e) => ({ player_id: null, related_player_id: null, ...e }))).select("id"), "evenimente meci");
       await admin.from("matches").update({ goals_for: goalsFor, goals_against: goalsAgainst }).eq("event_id", ev.id);
     }
 
