@@ -16,7 +16,6 @@ export function ClipPlayer({ source, url, storagePath, start, end, title }: {
   }
   if (source === "upload" && storagePath) {
     const src = `/api/files/videos/${storagePath.split("/").map(encodeURIComponent).join("/")}#t=${start}${end ? `,${end}` : ""}`;
-    // eslint-disable-next-line jsx-a11y/media-has-caption
     return <video src={src} controls preload="metadata" className="aspect-video w-full rounded-[var(--radius-control)] bg-black" />;
   }
   return url ? (

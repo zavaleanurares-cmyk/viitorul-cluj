@@ -1,5 +1,5 @@
 "use client";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Check, ExternalLink, Pencil, Plus, Send, Trash2, Undo2, X } from "lucide-react";
 import { VIDEO_TAGS, formatClock, parseClock, parseMatchVideoUrl, type MatchVideoSource, type VideoTag } from "@club/shared";
 import { Button, IconButton } from "@/components/ui/button";
@@ -74,7 +74,7 @@ export function VideoWorkspace({ video, markers, players, canEdit }: { video: Vi
   const save = useAction(saveMarker, { onSuccess: () => setDraft(empty) });
   const del = useAction(deleteMarker);
   const share = useAction(shareMarker, { successMessage: false, onSuccess: (r) => { if (r.notified) toast(t.marker.sharedToast(r.notified)); } });
-  const nowText = useCallback(() => { const s = ctl.time(); return s === null ? "" : formatClock(s); }, [ctl]);
+  const nowText = () => { const s = ctl.time(); return s === null ? "" : formatClock(s); };
 
   // scurtături (în afara câmpurilor de text)
   useEffect(() => {
@@ -107,8 +107,7 @@ export function VideoWorkspace({ video, markers, players, canEdit }: { video: Vi
     <div className="grid gap-4 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
       <div className="space-y-3">
         {video.source === "upload" && video.fileUrl ? (
-          // eslint-disable-next-line jsx-a11y/media-has-caption
-          <video ref={vRef} src={video.fileUrl} controls preload="metadata" className="aspect-video w-full rounded-[var(--radius-card)] bg-black" />
+                <video ref={vRef} src={video.fileUrl} controls preload="metadata" className="aspect-video w-full rounded-[var(--radius-card)] bg-black" />
         ) : ytId ? (
           <div className="aspect-video w-full overflow-hidden rounded-[var(--radius-card)] bg-black"><div ref={ytEl} className="size-full" /></div>
         ) : (
