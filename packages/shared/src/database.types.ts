@@ -4353,6 +4353,74 @@ export type Database = {
           { foreignKeyName: "site_posts_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
         ];
       };
+      sponsors: {
+        Row: {
+          id: string;
+          club_id: string;
+          name: string;
+          fiscal_code: string | null;
+          contact_name: string | null;
+          email: string | null;
+          phone: string | null;
+          kind: string;
+          amount: number | null;
+          status: string;
+          starts_on: string | null;
+          ends_on: string | null;
+          tier: string;
+          url: string | null;
+          logo_path: string | null;
+          show_on_site: boolean;
+          notes: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          club_id: string;
+          name: string;
+          fiscal_code?: string | null;
+          contact_name?: string | null;
+          email?: string | null;
+          phone?: string | null;
+          kind?: string;
+          amount?: number | null;
+          status?: string;
+          starts_on?: string | null;
+          ends_on?: string | null;
+          tier?: string;
+          url?: string | null;
+          logo_path?: string | null;
+          show_on_site?: boolean;
+          notes?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          club_id?: string;
+          name?: string;
+          fiscal_code?: string | null;
+          contact_name?: string | null;
+          email?: string | null;
+          phone?: string | null;
+          kind?: string;
+          amount?: number | null;
+          status?: string;
+          starts_on?: string | null;
+          ends_on?: string | null;
+          tier?: string;
+          url?: string | null;
+          logo_path?: string | null;
+          show_on_site?: boolean;
+          notes?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          { foreignKeyName: "sponsors_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
+        ];
+      };
       staff_groups: {
         Row: {
           user_id: string;
@@ -4415,6 +4483,89 @@ export type Database = {
           { foreignKeyName: "status_history_changed_by_fkey"; columns: ["changed_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
           { foreignKeyName: "status_history_player_id_fkey"; columns: ["player_id"]; isOneToOne: false; referencedRelation: "players"; referencedColumns: ["id"] },
           { foreignKeyName: "status_history_status_id_fkey"; columns: ["status_id"]; isOneToOne: false; referencedRelation: "club_statuses"; referencedColumns: ["id"] },
+        ];
+      };
+      support_campaigns: {
+        Row: {
+          id: string;
+          club_id: string;
+          income_year: number;
+          title: string;
+          goal: number | null;
+          deadline: string | null;
+          is_active: boolean;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          club_id: string;
+          income_year: number;
+          title: string;
+          goal?: number | null;
+          deadline?: string | null;
+          is_active?: boolean;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          club_id?: string;
+          income_year?: number;
+          title?: string;
+          goal?: number | null;
+          deadline?: string | null;
+          is_active?: boolean;
+          created_at?: string;
+        };
+        Relationships: [
+          { foreignKeyName: "support_campaigns_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
+        ];
+      };
+      support_pledges: {
+        Row: {
+          id: string;
+          club_id: string;
+          campaign_id: string;
+          full_name: string;
+          email: string | null;
+          phone: string | null;
+          two_years: boolean;
+          source: string;
+          status: string;
+          notes: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          club_id: string;
+          campaign_id: string;
+          full_name: string;
+          email?: string | null;
+          phone?: string | null;
+          two_years?: boolean;
+          source: string;
+          status?: string;
+          notes?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          club_id?: string;
+          campaign_id?: string;
+          full_name?: string;
+          email?: string | null;
+          phone?: string | null;
+          two_years?: boolean;
+          source?: string;
+          status?: string;
+          notes?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          { foreignKeyName: "support_pledges_campaign_id_fkey"; columns: ["campaign_id"]; isOneToOne: false; referencedRelation: "support_campaigns"; referencedColumns: ["id"] },
+          { foreignKeyName: "support_pledges_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
         ];
       };
       suspensions: {
@@ -4840,7 +4991,9 @@ export type Database = {
       delete_evaluation_round: { Args: { p_round: string | null }; Returns: undefined };
       delete_match_event: { Args: { p_id: string | null }; Returns: undefined };
       delete_photo: { Args: { p_id: string | null }; Returns: string };
+      delete_pledge: { Args: { p_id: string | null }; Returns: undefined };
       delete_site_post: { Args: { p_id: string | null }; Returns: undefined };
+      delete_sponsor: { Args: { p_id: string | null }; Returns: string };
       enrol_request: { Args: { p_id: string | null; p: Json | null }; Returns: Json };
       erase_player: { Args: { p_player: string | null }; Returns: string };
       evaluation_comment: { Args: { p_eval: string | null }; Returns: string };
@@ -4883,6 +5036,7 @@ export type Database = {
       public_policy: { Args: { p_slug: string | null }; Returns: { version: number; body: string; published_at: string }[] };
       public_post: { Args: { p_slug: string | null; p_post: string | null }; Returns: { id: string; title: string; slug: string; excerpt: string; cover_path: string; blocks: Json; published_at: string }[] };
       public_posts: { Args: { p_slug: string | null; p_limit?: number | null; p_offset?: number | null }; Returns: { id: string; title: string; slug: string; excerpt: string; cover_path: string; published_at: string }[] };
+      public_support: { Args: { p_slug: string | null }; Returns: Json };
       public_teams: { Args: { p_slug: string | null }; Returns: Json };
       publish_evaluation_round: { Args: { p_round: string | null }; Returns: number };
       publish_site_policy: { Args: { p_body: string | null }; Returns: number };
@@ -4890,6 +5044,7 @@ export type Database = {
       purge_camp_data: { Args: Record<PropertyKey, never>; Returns: number };
       purge_enrolment_requests: { Args: Record<PropertyKey, never>; Returns: number };
       record_payment: { Args: { p: Json | null }; Returns: Json };
+      record_support_pledge: { Args: { p_slug: string | null; p: Json | null; p_ip?: string | null }; Returns: Json };
       record_trial: { Args: { p_id: string | null; p_rating: number | null; p_note: string | null }; Returns: undefined };
       refresh_daily_alerts: { Args: { p_club?: string | null }; Returns: number };
       register_camp: { Args: { p_camp: string | null; p_player: string | null; p_notes?: string | null }; Returns: string };
@@ -4908,6 +5063,7 @@ export type Database = {
       save_body_measurements: { Args: { p_date: string | null; p_rows: Json | null }; Returns: number };
       save_budget_lines: { Args: { p_year: number | null; p_kind: string | null; p_department: string | null; p_amounts: number[] | null }; Returns: undefined };
       save_camp: { Args: { p: Json | null }; Returns: string };
+      save_campaign: { Args: { p: Json | null }; Returns: string };
       save_charge_request: { Args: { p: Json | null }; Returns: Json };
       save_contract_template: { Args: { p: Json | null }; Returns: string };
       save_daily_plan: { Args: { p_player: string | null; p_date: string | null; p_title: string | null; p_notes: string | null; p_injury: string | null; p_rtp_stage: number | null; p_items: Json | null }; Returns: string };
@@ -4916,11 +5072,13 @@ export type Database = {
       save_event: { Args: { p: Json | null }; Returns: string };
       save_match_squad: { Args: { p_event: string | null; p_formation: string | null; p_rows: Json | null }; Returns: number };
       save_photo: { Args: { p: Json | null }; Returns: string };
+      save_pledge: { Args: { p: Json | null }; Returns: string };
       save_product: { Args: { p: Json | null }; Returns: string };
       save_program: { Args: { p_id: string | null; p_name: string | null; p_description: string | null; p_kind: string | null; p_is_template: boolean | null; p_items: Json | null }; Returns: string };
       save_purchase_request: { Args: { p: Json | null }; Returns: Json };
       save_site_post: { Args: { p: Json | null }; Returns: string };
       save_site_settings: { Args: { p: Json | null }; Returns: number };
+      save_sponsor: { Args: { p: Json | null }; Returns: string };
       save_test_grid: { Args: { p_date: string | null; p_rows: Json | null }; Returns: number };
       search_club: { Args: { p_query: string | null; p_limit?: number | null }; Returns: Json };
       send_contracts: { Args: { p_template: string | null; p_players: string[] | null; p_due_on?: string | null }; Returns: Json };
@@ -4937,6 +5095,7 @@ export type Database = {
       set_kit_size: { Args: { p_player: string | null; p_size: string | null }; Returns: undefined };
       set_my_photo: { Args: { p_path: string | null }; Returns: undefined };
       set_order_status: { Args: { p_id: string | null; p_status: string | null }; Returns: undefined };
+      set_pledges_status: { Args: { p_ids: string[] | null; p_status: string | null }; Returns: number };
       setup_club: { Args: { p_slug: string | null; p_name: string | null; p_short_name: string | null; p_groups: string[] | null; p_settings?: Json | null }; Returns: string };
       share_video_marker: { Args: { p_marker: string | null; p_share: boolean | null }; Returns: number };
       sign_contract: { Args: { p_id: string | null; p_name: string | null; p_signature_path: string | null; p_ip?: string | null; p_user_agent?: string | null }; Returns: string };

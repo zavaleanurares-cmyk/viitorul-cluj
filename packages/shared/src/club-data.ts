@@ -9,3 +9,20 @@ const CHILD_AGES: Record<string, string> = { "116": "5–6 ani", "128": "7–8 a
 export function kitSizeLabel(size: string): string {
   return CHILD_AGES[size] ? `${size} cm (${CHILD_AGES[size]})` : size;
 }
+
+/** CNP valid: 13 cifre, cifra de control corectă (ponderile 279146358279). */
+export function isValidCnp(cnp: string): boolean {
+  if (!/^[1-9]\d{12}$/.test(cnp)) return false;
+  const w = "279146358279";
+  let sum = 0;
+  for (let i = 0; i < 12; i++) sum += Number(cnp[i]) * Number(w[i]);
+  const c = sum % 11 === 10 ? 1 : sum % 11;
+  return c === Number(cnp[12]);
+}
+
+export const COUNTIES = [
+  "Alba", "Arad", "Argeș", "Bacău", "Bihor", "Bistrița-Năsăud", "Botoșani", "Brăila", "Brașov", "București", "Buzău", "Călărași",
+  "Caraș-Severin", "Cluj", "Constanța", "Covasna", "Dâmbovița", "Dolj", "Galați", "Giurgiu", "Gorj", "Harghita", "Hunedoara",
+  "Ialomița", "Iași", "Ilfov", "Maramureș", "Mehedinți", "Mureș", "Neamț", "Olt", "Prahova", "Sălaj", "Satu Mare", "Sibiu",
+  "Suceava", "Teleorman", "Timiș", "Tulcea", "Vâlcea", "Vaslui", "Vrancea",
+] as const;

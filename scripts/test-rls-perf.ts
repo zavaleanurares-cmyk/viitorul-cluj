@@ -551,6 +551,42 @@ try {
     && (await rows(admin.from("shop_stock_moves").select("id").eq("variant_id", v140).eq("reason", "restock"))) >= 2);
   check("fotografiile produselor: le vede clubul, le încarcă doar biroul", await access(guardian, "shop", `${clubA}/x.jpg`, "read") && !(await access(guardian, "shop", `${clubA}/x.jpg`, "write")) && await access(accountant, "shop", `${clubA}/x.jpg`, "write"));
   check("alt club NU vede produsele", (await rows(secretaryB.from("shop_products").select("id"))) === 0);
+  // -------------------------------------------------------------------------
+  console.log("\nSuporteri");
+  const pledge = (over: Record<string, unknown> = {}) => (anon.rpc("record_support_pledge", { p_slug: slugA, p: { full_name: "Ion Popescu", email: "ion@example.com", phone: "0722111222", two_years: true, keep_contact: false, ...over }, p_ip: "198.51.100.30" }));
+  check("fără campanie, formularul de pe site e închis", await errored(pledge()));
+  check("antrenorul NU creează campanii", await errored(coach.rpc("save_campaign", { p: { income_year: 2025, title: "Campania 2025" } })));
+  const camp = await accountant.rpc("save_campaign", { p: { income_year: 2025, title: "Campania 2025", goal: 100, deadline: "2026-05-25" } });
+  check("contabilul creează campania", !camp.error, camp);
+  must(await admin.from("finance_settings").update({ fiscal_code: null, iban: null }).eq("club_id", clubA).select("club_id"), "fără date fiscale");
+  check("fără CIF și IBAN, formularul nu se generează", await errored(pledge()));
+  must(await admin.from("finance_settings").update({ fiscal_code: "RO12345678", iban: "RO49AAAA1B31007593840000", beneficiary: "Asociația Perf A" }).eq("club_id", clubA).select("club_id"), "date fiscale");
+  const pl230 = await pledge();
+  check("vizitatorul primește datele entității pentru PDF", !pl230.error && (pl230.data as { fiscal_code: string }).fiscal_code === "RO12345678" && (pl230.data as { name: string }).name === "Asociația Perf A", pl230);
+  const stored = must(await admin.from("support_pledges").select("full_name, email, phone, status").eq("club_id", clubA).single(), "formular");
+  check("fără acord, contactul nu se păstrează (și nici CNP-ul: tabela nu are coloane pentru el)", stored.email === null && stored.phone === null && stored.status === "started", stored);
+  await pledge({ full_name: "Maria Ionescu", keep_contact: true });
+  check("cu acord, contactul se păstrează", (await admin.from("support_pledges").select("email").eq("full_name", "Maria Ionescu").single()).data?.email === "ion@example.com");
+  check("biroul e anunțat (o dată pe zi)", (await rows(admin.from("notifications").select("id").like("dedupe_key", `support230:${camp.data}:%`))) >= 1);
+  check("secretariatul vede formularele", (await rows(secretary.from("support_pledges").select("id"))) === 2);
+  check("antrenorul și părintele NU văd formularele", (await rows(coach.from("support_pledges").select("id"))) === 0 && (await rows(guardian.from("support_pledges").select("id"))) === 0);
+  check("vizitatorul NU citește formularele", (await rows(anon.from("support_pledges").select("id"))) === 0 || await errored(anon.from("support_pledges").select("id")));
+  const ids = ((await secretary.from("support_pledges").select("id")).data ?? []).map((x) => x.id);
+  check("biroul marchează formularele depuse", (await secretary.rpc("set_pledges_status", { p_ids: ids, p_status: "submitted" })).data === 2);
+  check("biroul adaugă un formular primit pe hârtie", !(await errored(secretary.rpc("save_pledge", { p: { full_name: "Vasile Pop", status: "received" } }))));
+  check("antrenorul NU adaugă sponsori", await errored(coach.rpc("save_sponsor", { p: { name: "Firma X" } })));
+  const sp1 = (await secretary.rpc("save_sponsor", { p: { name: "Firma Semnată", status: "signed", show_on_site: true, logo_path: `${clubA}/sponsor/a.png`, amount: 500000 } })).data as string;
+  await secretary.rpc("save_sponsor", { p: { name: "Firma În Discuții", status: "negotiating", show_on_site: true, logo_path: `${clubA}/sponsor/b.png` } });
+  await secretary.rpc("save_sponsor", { p: { name: "Firma Ascunsă", status: "paid", show_on_site: false } });
+  const ps = (await anon.rpc("public_support", { p_slug: slugA })).data as { sponsors: Array<{ name: string }> };
+  check("pe site apar doar sponsorii cu contract și cu acordul afișării", ps.sponsors.length === 1 && ps.sponsors[0].name === "Firma Semnată", ps);
+  check("datele publice nu conțin sumele sau contactele", !JSON.stringify(ps).includes("500000"));
+  check("sigla sponsorului afișat se servește public; a celorlalți nu", (await anon.rpc("site_public_file", { p_slug: slugA, p_path: `${clubA}/sponsor/a.png` })).data === true
+    && (await anon.rpc("site_public_file", { p_slug: slugA, p_path: `${clubA}/sponsor/b.png` })).data === false);
+  check("contabilul încarcă sigle; antrenorul nu", await access(accountant, "site", `${clubA}/sponsor/c.png`, "write") && !(await access(coach, "site", `${clubA}/sponsor/c.png`, "write")));
+  check("părintele NU vede sponsorii (sume, contacte)", (await rows(guardian.from("sponsors").select("id"))) === 0);
+  check("sponsorul se șterge", !(await errored(secretary.rpc("delete_sponsor", { p_id: sp1 }))));
+  check("alt club NU vede campaniile", (await rows(secretaryB.from("support_campaigns").select("id"))) === 0);
   void adminU; void player1;
 } finally {
   await cleanup();

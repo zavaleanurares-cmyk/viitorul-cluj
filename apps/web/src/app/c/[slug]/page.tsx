@@ -5,6 +5,7 @@ import { createAnonDb } from "@club/db";
 import { getPublicClub, siteOn } from "@/lib/public-site";
 import { buttonClass } from "@/components/ui/button";
 import { PostCard, type PostSummary } from "@/components/site/post-card";
+import { SponsorStrip, type PublicSponsor } from "@/components/site/sponsors";
 import { getT } from "@/messages";
 
 /** Prima pagină a site-ului public: motto, ultimele știri, echipele, despre club. */
@@ -16,6 +17,7 @@ export default async function PublicHome({ params }: { params: Promise<{ slug: s
   const base = `/c/${club.slug}`;
   const tagline = typeof club.site.tagline === "string" ? club.site.tagline : null;
   const about = typeof club.site.about === "string" ? club.site.about : null;
+  const sponsors = (((await createAnonDb().rpc("public_support", { p_slug: club.slug })).data as { sponsors?: PublicSponsor[] } | null)?.sponsors ?? []);
   const posts = siteOn(club, "news") ? (((await createAnonDb().rpc("public_posts", { p_slug: club.slug, p_limit: 3 })).data ?? []) as PostSummary[]) : [];
   return (
     <div className="space-y-12">
@@ -51,6 +53,7 @@ export default async function PublicHome({ params }: { params: Promise<{ slug: s
           </ul>
         </section>
       ) : null}
+      <SponsorStrip sponsors={sponsors} media={`${base}/media`} title={getT().club.supporters.public.sponsors} />
       {about ? (
         <section className="max-w-prose space-y-2">
           <h2 className="text-2xl">{w.about}</h2>

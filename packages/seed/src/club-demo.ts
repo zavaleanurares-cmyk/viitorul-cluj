@@ -59,6 +59,33 @@ export async function seedClubDemo(admin: Db, clubId: string, ids: Record<string
   await seedCamps(admin, clubId, ids, today);
   await seedWebsite(admin, clubId, ids, today);
   await seedShop(admin, clubId, ids);
+  await seedSupporters(admin, clubId, ids, today);
+}
+
+/** Suporteri: campania 230 pentru veniturile anului trecut, câteva formulare, trei sponsori (doi afișați pe site). */
+async function seedSupporters(admin: Db, clubId: string, ids: Record<string, string>, today: string) {
+  const { count } = await admin.from("support_campaigns").select("id", { count: "exact", head: true }).eq("club_id", clubId);
+  if (count || !ids.contabil) return;
+  const acc = createDb({ sub: ids.contabil, role: "authenticated" });
+  const year = Number(today.slice(0, 4)) - 1;
+  await rpc(acc, "save_campaign", { p: { income_year: year, title: `Redirecționare 3,5% · veniturile din ${year}`, goal: 150, deadline: `${year + 1}-05-25`, is_active: true } }, "campania 230");
+  const people: Array<[string, string]> = [["Moldovan Ana", "received"], ["Rus Gheorghe", "submitted"], ["Pop Daniela", "submitted"], ["Sabău Ioan", "received"], ["Câmpean Lucia", "received"]];
+  for (const [name, status] of people) await rpc(acc, "save_pledge", { p: { full_name: name, status, two_years: name.length % 2 === 0 } }, `formular ${name}`);
+  const { data: club } = await admin.from("clubs").select("slug").eq("id", clubId).single();
+  for (const name of ["Toma Radu", "Lazăr Elena"]) {
+    await rpc(createDb({ role: "anon" }), "record_support_pledge", { p_slug: club!.slug, p_ip: `203.0.113.${name.length}`, p: { full_name: name, two_years: true, keep_contact: false } }, "formular de pe site");
+  }
+  const logo = (c0: string, c1: string) => {
+    const img = demoImage(c0, c1);
+    if (!img) return "";
+    const p = `${clubId}/sponsor/${crypto.randomUUID()}.jpg`;
+    return writeLocalFile("site", p, img) ? p : "";
+  };
+  await rpc(acc, "save_sponsor", { p: { name: "Construct Nord SRL", fiscal_code: "RO10000001", contact_name: "Andrei Mureșan", email: "contact@example.com", kind: "money", amount: 2500000,
+    status: "signed", starts_on: `${year + 1}-01-01`, ends_on: `${year + 1}-12-31`, tier: "main", url: "https://example.com", logo_path: logo("12305a", "f2c14e"), show_on_site: true } }, "sponsor 1");
+  await rpc(acc, "save_sponsor", { p: { name: "Farmacia Centrală", kind: "goods", amount: 300000, status: "paid", tier: "partner", logo_path: logo("0e5c3a", "ffffff"), show_on_site: true,
+    notes: "Truse medicale pentru toate echipele." } }, "sponsor 2");
+  await rpc(acc, "save_sponsor", { p: { name: "Transport Rapid", kind: "services", status: "negotiating", tier: "partner", contact_name: "Ioana Pop", phone: "0744000111" } }, "sponsor 3");
 }
 
 /** Magazin: tricou, șort, jambiere, trening, rucsac, pachetul de echipament; comenzile părintelui demo. */
