@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 
-const PUBLIC_PATHS = ["/autentificare", "/parola-uitata", "/auth", "/offline", "/api/cron", "/api/setup", "/manifest.webmanifest", "/sw.js", "/icon", "/apple-icon"];
+const PUBLIC_PATHS = ["/autentificare", "/parola-uitata", "/auth", "/offline", "/api/cron", "/api/setup", "/api/plati/webhook", "/manifest.webmanifest", "/sw.js", "/icon", "/apple-icon"];
 
 /**
  * Trimite vizitatorii fără cookie de sesiune la pagina de autentificare.

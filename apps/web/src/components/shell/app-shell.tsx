@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 import {
   Bell, CalendarDays, ClipboardCheck, Dumbbell, Ellipsis, FileText, Gauge, HeartPulse, House, LayoutDashboard,
-  ListChecks, LogOut, Search, Settings, Stethoscope, Upload, User, Users, X,
+  ListChecks, LogOut, Search, Settings, Stethoscope, Wallet, ReceiptText, Upload, User, Users, X,
 } from "lucide-react";
 import type { NavItem } from "@/lib/nav";
 import { useT } from "@/messages";
@@ -16,13 +16,13 @@ import { AttendanceSync, QueueUserContext } from "@/components/schedule/attendan
 const ICONS: Record<string, typeof House> = {
   home: House, clipboard: ClipboardCheck, calendar: CalendarDays, user: User, pulse: HeartPulse, users: Users,
   gauge: Gauge, dashboard: LayoutDashboard, list: ListChecks, dumbbell: Dumbbell, upload: Upload, file: FileText,
-  settings: Settings, stethoscope: Stethoscope,
+  settings: Settings, stethoscope: Stethoscope, wallet: Wallet, receipt: ReceiptText,
 };
 
 type Props = {
   items: NavItem[];
-  /** secțiunile spațiului Performanță vizibile rolului (file deasupra paginii) */
-  sections: Array<{ href: string; key: string }>;
+  /** secțiunile spațiilor de lucru (Performanță, Bani) vizibile rolului: file deasupra paginii */
+  sectionGroups: Array<{ key: string; sections: Array<{ href: string; key: string }> }>;
   clubName: string;
   logoUrl: string | null;
   userName: string;
@@ -30,7 +30,6 @@ type Props = {
   unread: number;
   memberships: MembershipOption[];
   searchable: boolean;
-  /** antrenorul și biroul: trimitem prezențele rămase în coada offline */
   /** Utilizatorul a cărui coadă offline de prezență o sincronizăm (null: rolul nu face prezență). */
   syncUserId: string | null;
   signOut: () => Promise<void>;
@@ -42,7 +41,7 @@ function clearOfflinePages() {
   navigator.serviceWorker?.controller?.postMessage({ type: "clear-pages" });
 }
 
-export function AppShell({ items, sections, clubName, logoUrl, userName, roleLabel, unread, memberships, searchable, syncUserId, signOut, children }: Props) {
+export function AppShell({ items, sectionGroups, clubName, logoUrl, userName, roleLabel, unread, memberships, searchable, syncUserId, signOut, children }: Props) {
   const t = useT().common;
   const pathname = usePathname();
   const [moreOpen, setMoreOpen] = useState(false);
@@ -55,8 +54,13 @@ export function AppShell({ items, sections, clubName, logoUrl, userName, roleLab
 
   const primary = items.length > 5 ? items.slice(0, 4) : items;
   const overflow = items.length > 5 ? items.slice(4) : [];
-  const showSections = sections.length > 1 && sections.some((s) => starts(s.href));
-  const currentSection = sections.find((s) => starts(s.href))?.key;
+  // fila curentă = cea mai lungă potrivire („/bani/taxe" bate „/bani"), în grupul care o conține
+  const sectionMatch = sectionGroups
+    .flatMap((g) => g.sections.filter((s) => starts(s.href)).map((s) => ({ group: g, section: s })))
+    .sort((a, b) => b.section.href.length - a.section.href.length)[0];
+  const sections = sectionMatch?.group.sections ?? [];
+  const showSections = sections.length > 1;
+  const currentSection = sectionMatch?.section.key;
 
   // ⌘K / Ctrl+K deschide căutarea
   useEffect(() => {
@@ -159,7 +163,7 @@ export function AppShell({ items, sections, clubName, logoUrl, userName, roleLab
 
         <main className="mx-auto w-full max-w-6xl flex-1 px-4 pb-28 pt-4 md:px-8 md:pb-10 md:pt-8">
           {showSections ? (
-            <nav aria-label={t.nav.performance} className="no-print -mx-4 mb-4 overflow-x-auto px-4 md:mx-0 md:px-0">
+            <nav aria-label={label(sectionMatch?.group.key ?? "performance")} className="no-print -mx-4 mb-4 overflow-x-auto px-4 md:mx-0 md:px-0">
               <ul className="flex gap-1 border-b border-line">
                 {sections.map((s) => (
                   <li key={s.href}>

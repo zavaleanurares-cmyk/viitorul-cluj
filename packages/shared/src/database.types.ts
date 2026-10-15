@@ -1377,6 +1377,7 @@ export type Database = {
           vat_rates: number[];
           approver_roles: Database["public"]["Enums"]["app_role"][];
           updated_at: string;
+          last_auto_issue: string | null;
         };
         Insert: {
           club_id: string;
@@ -1399,6 +1400,7 @@ export type Database = {
           vat_rates?: number[];
           approver_roles?: Database["public"]["Enums"]["app_role"][];
           updated_at?: string;
+          last_auto_issue?: string | null;
         };
         Update: {
           club_id?: string;
@@ -1421,6 +1423,7 @@ export type Database = {
           vat_rates?: number[];
           approver_roles?: Database["public"]["Enums"]["app_role"][];
           updated_at?: string;
+          last_auto_issue?: string | null;
         };
         Relationships: [
           { foreignKeyName: "finance_settings_club_id_fkey"; columns: ["club_id"]; isOneToOne: true; referencedRelation: "clubs"; referencedColumns: ["id"] },
@@ -3424,6 +3427,7 @@ export type Database = {
       apply_provider_event: { Args: { p: Json | null }; Returns: Json };
       assign_program: { Args: { p_program: string | null; p_target_type: string | null; p_group: string | null; p_position: string | null; p_player_ids: string[] | null; p_start: string | null; p_end: string | null; p_weekdays: number[] | null; p_notes: string | null }; Returns: string };
       attach_intent_checkout: { Args: { p_intent: string | null; p_provider_ref: string | null; p_url: string | null }; Returns: undefined };
+      auto_issue_due: { Args: Record<PropertyKey, never>; Returns: Json };
       auto_pay_candidates: { Args: { p_club: string | null }; Returns: { guardian_id: string; method_ref: string; provider: string; charge_ids: string[]; amount: number }[] };
       budget_report: { Args: { p_year: number | null }; Returns: Json };
       cancel_charge: { Args: { p_charge: string | null; p_reason: string | null }; Returns: undefined };
@@ -3442,6 +3446,7 @@ export type Database = {
       erase_player: { Args: { p_player: string | null }; Returns: string };
       export_player_data: { Args: { p_player?: string | null }; Returns: Json };
       family_payment_info: { Args: Record<PropertyKey, never>; Returns: Json };
+      fee_roster: { Args: { p_period: string | null }; Returns: { player_id: string; full_name: string; group_id: string; is_active: boolean; fee: number; own_plan: boolean; adjustments: string; guardian_id: string; guardian_name: string; payment_ref: string; charge_id: string; net: number; paid: number; state: string; due_on: string }[] };
       file_access: { Args: { p_bucket: string | null; p_path: string | null; p_action: string | null }; Returns: boolean };
       group_test_averages: { Args: { p_group: string | null }; Returns: { test_id: string; average: number; best: number; players: number }[] };
       import_bank_statement: { Args: { p: Json | null }; Returns: Json };
@@ -3462,6 +3467,7 @@ export type Database = {
       preview_monthly_charges: { Args: { p_period: string | null }; Returns: Json };
       record_payment: { Args: { p: Json | null }; Returns: Json };
       refresh_daily_alerts: { Args: { p_club?: string | null }; Returns: number };
+      remind_overdue_families: { Args: Record<PropertyKey, never>; Returns: number };
       reopen_match: { Args: { p_event: string | null }; Returns: undefined };
       resolve_bank_line: { Args: { p_line: string | null; p: Json | null }; Returns: undefined };
       revoke_payment_method: { Args: { p_method: string | null }; Returns: undefined };

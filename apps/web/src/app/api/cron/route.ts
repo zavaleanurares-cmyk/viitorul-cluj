@@ -5,6 +5,7 @@ import type { AppRole } from "@club/shared";
 import { emailConfigured, sendEmail } from "@/lib/email";
 import { APP_NAME, SITE_URL } from "@/lib/env";
 import { buildDigest } from "@/components/notifications/digest";
+import { getAdapter } from "@/lib/payments/registry";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -38,8 +39,9 @@ async function step(name: string, out: Record<string, StepResult>, fn: () => Pro
  * La fiecare rulare:
  *   1. recalculează alertele zilnice (chestionare lipsă, vize) pentru toate cluburile;
  *   2. creează mementourile „Completează chestionarul de azi" (ține cont de ora clubului / grupei);
- *   3. trimite pe e-mail un rezumat al notificărilor netrimise — fără date medicale;
- *   4. face curățenie: sesiuni și linkuri expirate, notificări citite vechi.
+ *   3. trimite pe e-mail un rezumat al notificărilor netrimise — fără date medicale (după pașii de bani);
+ *   4. bani: emite taxele lunii (o dată), încasează plata automată, trimite mementourile pentru restanțe;
+ *   5. face curățenie: sesiuni și linkuri expirate, notificări citite vechi.
  * Fiecare pas este independent și poate fi repetat fără efecte duble.
  */
 export async function GET(request: NextRequest) {
@@ -60,6 +62,47 @@ export async function GET(request: NextRequest) {
     const { data, error } = await admin.rpc("send_wellness_reminders");
     if (error) throw new Error(error.message);
     return { created: data ?? 0 };
+  });
+
+  // Bani: taxele lunii (o dată pe lună), plata automată cu cardul salvat, mementourile pentru restanțe.
+  await step("fees", result, async () => {
+    const { data, error } = await admin.rpc("auto_issue_due");
+    if (error) throw new Error(error.message);
+    return { issued: data ?? [] };
+  });
+
+  await step("auto_pay", result, async () => {
+    const { data: clubs, error } = await admin.from("finance_settings").select("club_id, provider, currency").eq("online_enabled", true);
+    if (error) throw new Error(error.message);
+    let charged = 0;
+    let failed = 0;
+    for (const c of clubs ?? []) {
+      const { data: due, error: e2 } = await admin.rpc("auto_pay_candidates", { p_club: c.club_id });
+      if (e2) throw new Error(e2.message);
+      for (const d of due ?? []) {
+        try {
+          const adapter = getAdapter(d.provider);
+          if (!adapter.supportsSavedMethods) continue;
+          const { data: intent, error: e3 } = await admin.rpc("create_auto_pay_intent", { p_guardian: d.guardian_id, p_charge_ids: d.charge_ids });
+          if (e3) throw new Error(e3.message);
+          const i = intent as { id: string; amount: number; currency: string } | null;
+          if (!i) continue;
+          const res = await adapter.chargeSaved({ intentId: i.id, amount: i.amount, currency: i.currency, methodRef: d.method_ref, description: "Taxe lunare" });
+          await admin.rpc("attach_intent_checkout", { p_intent: i.id, p_provider_ref: res.providerRef, p_url: "" });
+          charged++;
+        } catch (e) {
+          failed++;
+          console.error("[cron] plată automată:", (e as Error).message);
+        }
+      }
+    }
+    return { charged, failed };
+  });
+
+  await step("fee_reminders", result, async () => {
+    const { data, error } = await admin.rpc("send_fee_reminders");
+    if (error) throw new Error(error.message);
+    return { families: data ?? 0 };
   });
 
   await step("emails", result, async () => {

@@ -7,7 +7,10 @@ export function safeInternalLink(link: string | null | undefined): string | null
   return link;
 }
 
-export const KNOWN_KINDS = ["wellness_reminder", "plan_new", "program_new", "status_changed", "alert", "visa_expiring"] as const;
+export const KNOWN_KINDS = [
+  "wellness_reminder", "plan_new", "program_new", "status_changed", "alert", "visa_expiring",
+  "fee_issued", "fee_reminder", "charge_request", "payment_received", "purchase_request",
+] as const;
 export type KnownKind = (typeof KNOWN_KINDS)[number];
 
 export function knownKind(kind: string): KnownKind | "other" {

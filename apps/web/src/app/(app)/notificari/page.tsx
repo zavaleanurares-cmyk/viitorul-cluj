@@ -1,4 +1,4 @@
-import { Bell, BellRing, CalendarDays, ChevronRight, ClipboardCheck, HeartPulse, ListChecks, Stethoscope, TriangleAlert } from "lucide-react";
+import { Bell, BellRing, CalendarDays, ChevronRight, CircleCheck, ClipboardCheck, ClipboardList, HeartPulse, ListChecks, ReceiptText, Stethoscope, TriangleAlert, Wallet } from "lucide-react";
 import { addDays, formatDateTime, listNotifications, todayIn, type Notification } from "@club/shared";
 import { requireSession } from "@/lib/auth";
 import { EmptyState, PageHeader } from "@/components/ui/card";
@@ -16,6 +16,11 @@ const ICONS: Record<KnownKind | "other", typeof Bell> = {
   status_changed: HeartPulse,
   alert: TriangleAlert,
   visa_expiring: Stethoscope,
+  fee_issued: ReceiptText,
+  fee_reminder: Wallet,
+  charge_request: ReceiptText,
+  payment_received: CircleCheck,
+  purchase_request: ClipboardList,
   other: BellRing,
 };
 

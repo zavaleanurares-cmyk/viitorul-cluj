@@ -8,6 +8,7 @@ import { addDays, isoWeekday, todayIn, weekStart } from "@club/shared";
 import { ensureAccount, must, randomPassword, type SeededAccount } from "./common";
 import { seedLibrary } from "./library";
 import { seedLotDemo } from "./lot";
+import { seedBaniDemo } from "./bani";
 
 const SLUG = "club-demo";
 
@@ -291,6 +292,7 @@ export async function seedDemo(admin: Db, opts: { reset?: boolean; domain?: stri
     { key: "partener", full_name: "Clinică Parteneră Demo", role: "medical_partner" },
     { key: "admin", full_name: "Administrator Demo", role: "admin" },
     { key: "secretariat", full_name: "Secretariat Demo", role: "secretary" },
+    { key: "contabil", full_name: "Contabil Demo", role: "accountant" },
     { key: "parinte", full_name: "Părinte Demo", role: "guardian", note: "părintele jucătorului minor" },
   ];
   const seeded: SeededAccount[] = [];
@@ -310,6 +312,7 @@ export async function seedDemo(admin: Db, opts: { reset?: boolean; domain?: stri
   }
   await admin.rpc("refresh_daily_alerts", { p_club: clubId });
   await seedLotDemo(admin, clubId, ids);
+  await seedBaniDemo(admin, clubId, ids);
 
   return { clubName: club.name, players: allPlayers.length, accounts: seeded };
 }

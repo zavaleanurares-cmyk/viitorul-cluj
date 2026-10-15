@@ -22,10 +22,10 @@ export const ROLE_DESCRIPTIONS: Record<AppRole, string> = {
   coach: "Vede echipele lui: lot, program, disponibilitate, fișa medicală. Face prezența și conduce meciurile.",
   player: "Vede doar pagina lui: planul zilei, chestionarul, exercițiile, profilul.",
   medical_partner: "Vede doar jucătorii trimiși către el și adaugă note și documente pe acele cazuri.",
-  admin: "Administrează clubul: conturi, echipe, setări, lot și program.",
-  secretary: "Gestionează lotul, părinții, programul, terenurile și competițiile.",
-  accountant: "Vede lotul și se ocupă de bani: taxe, plăți, cheltuieli.",
-  guardian: "Vede programul și situația copiilor lui.",
+  admin: "Administrează clubul: conturi, echipe, setări, lot, program și bani.",
+  secretary: "Gestionează lotul, părinții, programul, terenurile și competițiile; încasează taxele.",
+  accountant: "Se ocupă de bani: taxe, plăți, chitanțe, extrase, cheltuieli, buget. Vede lotul.",
+  guardian: "Vede programul și situația copiilor lui și plătește taxele.",
 };
 
 /** Ce are voie fiecare rol în interfață. Regulile reale sunt impuse în baza de date (RLS); aici doar ascundem ce nu se aplică. */
@@ -47,6 +47,17 @@ export const CAPABILITIES = {
   manageSchedule: ["admin", "secretary", "sporting_director", "physio"],
   runEvents: ["admin", "secretary", "sporting_director", "physio", "coach"],
   guardianHome: ["guardian"],
+  // Bani (faza 3)
+  /** registrul pe familii: taxe, plăți, chitanțe, extrase, cheltuieli */
+  manageMoney: ["admin", "secretary", "accountant"],
+  /** cifrele agregate (fără rânduri pe familii): prezentare, buget */
+  viewMoneySummary: ["admin", "secretary", "accountant", "sporting_director", "owner"],
+  /** setări financiare, buget, prime, returnări */
+  administerMoney: ["admin", "accountant"],
+  /** referatele de necesitate (cererea; aprobarea depinde de setările clubului) */
+  purchaseRequests: ["admin", "secretary", "accountant", "sporting_director", "physio", "coach", "owner"],
+  /** ecranul de plăți al familiei */
+  familyPayments: ["guardian", "player"],
 } as const satisfies Record<string, readonly AppRole[]>;
 
 export type Capability = keyof typeof CAPABILITIES;
