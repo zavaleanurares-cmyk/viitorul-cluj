@@ -10,6 +10,7 @@ import { seedLibrary } from "./library";
 import { seedLotDemo } from "./lot";
 import { seedBaniDemo } from "./bani";
 import { seedPerfDemo } from "./perf";
+import { seedClubDemo } from "./club-demo";
 
 const SLUG = "club-demo";
 
@@ -315,6 +316,7 @@ export async function seedDemo(admin: Db, opts: { reset?: boolean; domain?: stri
   await seedLotDemo(admin, clubId, ids);
   await seedBaniDemo(admin, clubId, ids);
   await seedPerfDemo(admin, clubId, ids);
+  await seedClubDemo(admin, clubId, ids);
 
   return { clubName: club.name, players: allPlayers.length, accounts: seeded };
 }

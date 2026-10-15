@@ -175,6 +175,18 @@ export class Report {
 
   space(points = 8) { this.y -= points; }
 
+  /** O imagine PNG (ex. semnătura), aliniată la stânga, în limitele date. */
+  async image(png: Uint8Array, opts: { width: number; height: number }) {
+    const img = await this.pdf.embedPng(png);
+    const scale = Math.min(opts.width / img.width, opts.height / img.height, 1);
+    const w = img.width * scale;
+    const h = img.height * scale;
+    this.need(h + 8);
+    this.y -= h;
+    this.page.drawImage(img, { x: MARGIN, y: this.y, width: w, height: h });
+    this.y -= 8;
+  }
+
   /** Titlu de secțiune. Rămâne pe aceeași pagină cu cel puțin `keep` puncte din conținutul care urmează. */
   heading(text: string, keep = 60) {
     this.need(30 + keep);

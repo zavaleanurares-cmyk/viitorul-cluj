@@ -774,6 +774,179 @@ export type Database = {
           { foreignKeyName: "consents_user_id_fkey"; columns: ["user_id"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
         ];
       };
+      contract_events: {
+        Row: {
+          id: number;
+          contract_id: string;
+          at: string;
+          actor_id: string | null;
+          action: string;
+          ip: string | null;
+          details: string | null;
+        };
+        Insert: {
+          id?: never;
+          contract_id: string;
+          at?: string;
+          actor_id?: string | null;
+          action: string;
+          ip?: string | null;
+          details?: string | null;
+        };
+        Update: {
+          id?: never;
+          contract_id?: string;
+          at?: string;
+          actor_id?: string | null;
+          action?: string;
+          ip?: string | null;
+          details?: string | null;
+        };
+        Relationships: [
+          { foreignKeyName: "contract_events_actor_id_fkey"; columns: ["actor_id"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
+          { foreignKeyName: "contract_events_contract_id_fkey"; columns: ["contract_id"]; isOneToOne: false; referencedRelation: "contracts"; referencedColumns: ["id"] },
+        ];
+      };
+      contract_template_versions: {
+        Row: {
+          id: string;
+          template_id: string;
+          version: number;
+          body: string;
+          created_by: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          template_id: string;
+          version: number;
+          body: string;
+          created_by?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          template_id?: string;
+          version?: number;
+          body?: string;
+          created_by?: string | null;
+          created_at?: string;
+        };
+        Relationships: [
+          { foreignKeyName: "contract_template_versions_created_by_fkey"; columns: ["created_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
+          { foreignKeyName: "contract_template_versions_template_id_fkey"; columns: ["template_id"]; isOneToOne: false; referencedRelation: "contract_templates"; referencedColumns: ["id"] },
+        ];
+      };
+      contract_templates: {
+        Row: {
+          id: string;
+          club_id: string;
+          name: string;
+          kind: string;
+          is_active: boolean;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          club_id: string;
+          name: string;
+          kind?: string;
+          is_active?: boolean;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          club_id?: string;
+          name?: string;
+          kind?: string;
+          is_active?: boolean;
+          created_at?: string;
+        };
+        Relationships: [
+          { foreignKeyName: "contract_templates_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
+        ];
+      };
+      contracts: {
+        Row: {
+          id: string;
+          club_id: string;
+          template_version_id: string;
+          title: string;
+          player_id: string | null;
+          signer_user_id: string | null;
+          signer_name: string;
+          body: string;
+          status: string;
+          due_on: string | null;
+          sent_at: string;
+          sent_by: string | null;
+          signed_at: string | null;
+          signed_name: string | null;
+          signature_path: string | null;
+          signed_ip: string | null;
+          signed_user_agent: string | null;
+          document_hash: string | null;
+          decline_reason: string | null;
+          void_reason: string | null;
+          reminders_sent: number;
+          last_reminded_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          club_id: string;
+          template_version_id: string;
+          title: string;
+          player_id?: string | null;
+          signer_user_id?: string | null;
+          signer_name: string;
+          body: string;
+          status?: string;
+          due_on?: string | null;
+          sent_at?: string;
+          sent_by?: string | null;
+          signed_at?: string | null;
+          signed_name?: string | null;
+          signature_path?: string | null;
+          signed_ip?: string | null;
+          signed_user_agent?: string | null;
+          document_hash?: string | null;
+          decline_reason?: string | null;
+          void_reason?: string | null;
+          reminders_sent?: number;
+          last_reminded_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          club_id?: string;
+          template_version_id?: string;
+          title?: string;
+          player_id?: string | null;
+          signer_user_id?: string | null;
+          signer_name?: string;
+          body?: string;
+          status?: string;
+          due_on?: string | null;
+          sent_at?: string;
+          sent_by?: string | null;
+          signed_at?: string | null;
+          signed_name?: string | null;
+          signature_path?: string | null;
+          signed_ip?: string | null;
+          signed_user_agent?: string | null;
+          document_hash?: string | null;
+          decline_reason?: string | null;
+          void_reason?: string | null;
+          reminders_sent?: number;
+          last_reminded_at?: string | null;
+        };
+        Relationships: [
+          { foreignKeyName: "contracts_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
+          { foreignKeyName: "contracts_player_id_fkey"; columns: ["player_id"]; isOneToOne: false; referencedRelation: "players"; referencedColumns: ["id"] },
+          { foreignKeyName: "contracts_sent_by_fkey"; columns: ["sent_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
+          { foreignKeyName: "contracts_signer_user_id_fkey"; columns: ["signer_user_id"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
+          { foreignKeyName: "contracts_template_version_id_fkey"; columns: ["template_version_id"]; isOneToOne: false; referencedRelation: "contract_template_versions"; referencedColumns: ["id"] },
+        ];
+      };
       daily_plan_items: {
         Row: {
           id: string;
@@ -3966,6 +4139,7 @@ export type Database = {
       decide_bonus_entries: { Args: { p_ids: string[] | null; p_status: string | null }; Returns: number };
       decide_purchase_request: { Args: { p_id: string | null; p_decision: string | null; p_note?: string | null }; Returns: undefined };
       decide_visa_document: { Args: { p_id: string | null; p_approve: boolean | null; p_valid_until?: string | null; p_issued_on?: string | null; p_reason?: string | null }; Returns: undefined };
+      decline_contract: { Args: { p_id: string | null; p_reason: string | null }; Returns: undefined };
       delete_charge_request: { Args: { p_id: string | null }; Returns: undefined };
       delete_evaluation_round: { Args: { p_round: string | null }; Returns: undefined };
       delete_match_event: { Args: { p_id: string | null }; Returns: undefined };
@@ -4000,10 +4174,12 @@ export type Database = {
       publish_evaluation_round: { Args: { p_round: string | null }; Returns: number };
       record_payment: { Args: { p: Json | null }; Returns: Json };
       refresh_daily_alerts: { Args: { p_club?: string | null }; Returns: number };
+      remind_contracts: { Args: { p_ids: string[] | null }; Returns: number };
       remind_overdue_families: { Args: Record<PropertyKey, never>; Returns: number };
       reopen_match: { Args: { p_event: string | null }; Returns: undefined };
       resolve_bank_line: { Args: { p_line: string | null; p: Json | null }; Returns: undefined };
       revoke_payment_method: { Args: { p_method: string | null }; Returns: undefined };
+      run_contract_reminders: { Args: Record<PropertyKey, never>; Returns: number };
       run_rpe_requests: { Args: Record<PropertyKey, never>; Returns: number };
       run_scheduled_messages: { Args: Record<PropertyKey, never>; Returns: number };
       run_visa_reminders: { Args: Record<PropertyKey, never>; Returns: number };
@@ -4011,6 +4187,7 @@ export type Database = {
       save_body_measurements: { Args: { p_date: string | null; p_rows: Json | null }; Returns: number };
       save_budget_lines: { Args: { p_year: number | null; p_kind: string | null; p_department: string | null; p_amounts: number[] | null }; Returns: undefined };
       save_charge_request: { Args: { p: Json | null }; Returns: Json };
+      save_contract_template: { Args: { p: Json | null }; Returns: string };
       save_daily_plan: { Args: { p_player: string | null; p_date: string | null; p_title: string | null; p_notes: string | null; p_injury: string | null; p_rtp_stage: number | null; p_items: Json | null }; Returns: string };
       save_evaluation: { Args: { p_round: string | null; p_player: string | null; p_scores: Json | null; p_strengths?: string | null; p_next_goals?: string | null; p_comment?: string | null; p_submit?: boolean | null }; Returns: string };
       save_evaluation_template: { Args: { p: Json | null }; Returns: string };
@@ -4020,6 +4197,7 @@ export type Database = {
       save_purchase_request: { Args: { p: Json | null }; Returns: Json };
       save_test_grid: { Args: { p_date: string | null; p_rows: Json | null }; Returns: number };
       search_club: { Args: { p_query: string | null; p_limit?: number | null }; Returns: Json };
+      send_contracts: { Args: { p_template: string | null; p_players: string[] | null; p_due_on?: string | null }; Returns: Json };
       send_fee_reminders: { Args: Record<PropertyKey, never>; Returns: number };
       send_message: { Args: { p: Json | null }; Returns: Json };
       send_visa_reminders: { Args: { p_players: string[] | null }; Returns: number };
@@ -4032,11 +4210,14 @@ export type Database = {
       set_my_photo: { Args: { p_path: string | null }; Returns: undefined };
       setup_club: { Args: { p_slug: string | null; p_name: string | null; p_short_name: string | null; p_groups: string[] | null; p_settings?: Json | null }; Returns: string };
       share_video_marker: { Args: { p_marker: string | null; p_share: boolean | null }; Returns: number };
+      sign_contract: { Args: { p_id: string | null; p_name: string | null; p_signature_path: string | null; p_ip?: string | null; p_user_agent?: string | null }; Returns: string };
       start_evaluation_round: { Args: { p: Json | null }; Returns: string };
       submit_visa_document: { Args: { p_player: string | null; p_path: string | null; p_file_name: string | null; p_mime: string | null; p_size: number | null; p_issued_on?: string | null }; Returns: string };
       switch_membership: { Args: { p_membership: string | null }; Returns: undefined };
       unaccent_ro: { Args: { p: string | null }; Returns: string };
       update_my_profile: { Args: { p_full_name?: string | null; p_phone?: string | null; p_email_notifications?: boolean | null }; Returns: undefined };
+      view_contract: { Args: { p_id: string | null; p_ip?: string | null }; Returns: undefined };
+      void_contract: { Args: { p_id: string | null; p_reason: string | null }; Returns: undefined };
       void_payment: { Args: { p_payment: string | null; p_reason: string | null }; Returns: undefined };
     };
     Enums: {

@@ -143,7 +143,7 @@ export const NAV: Record<AppRole, NavItem[]> = {
   secretary: [today, schedule, squad, money, club("/club/mesaje"), profile],
   accountant: [today, money, squad, club("/club/magazin"), profile],
   owner: [{ href: "/tablou", key: "overview", icon: "dashboard" }, money, profile],
-  guardian: [today, { href: "/plati", key: "familyPayments", icon: "wallet" }, { href: "/mesaje", key: "inbox", icon: "megaphone", match: ["/clipuri", "/evaluari"] }, profile],
+  guardian: [today, { href: "/plati", key: "familyPayments", icon: "wallet" }, { href: "/mesaje", key: "inbox", icon: "megaphone", match: ["/clipuri", "/evaluari", "/contracte"] }, profile],
   medical_partner: [
     { href: "/cazuri", key: "cases", icon: "stethoscope" },
     profile,

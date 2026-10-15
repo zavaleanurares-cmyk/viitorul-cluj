@@ -11,6 +11,7 @@ import { FamilyDueCard } from "@/components/money/today-cards";
 import { VisaFamilyNotice } from "@/components/performance/visa-family";
 import { FamilyEvaluationsCard } from "@/components/performance/family-evaluations";
 import { FamilyClipsCard } from "@/components/performance/family-clips";
+import { FamilyContractsCard } from "@/components/club/family-contracts";
 
 const capitalize = (s: string) => s.charAt(0).toLocaleUpperCase("ro") + s.slice(1);
 
@@ -34,6 +35,7 @@ export async function GuardianToday({ db, ctx }: { db: Db; ctx: AppContext }) {
     <div className="mx-auto max-w-2xl space-y-4">
       <h1 className="text-2xl md:text-3xl">{capitalize(formatDate(ctx.today, { weekday: true, year: false }))}</h1>
       <FamilyDueCard db={db} ctx={ctx} />
+      <FamilyContractsCard db={db} />
       {children.length === 0 ? <Notice tone="blue" title={t.children}>{t.noChildren}</Notice> : null}
       <FamilyEvaluationsCard db={db} />
       <FamilyClipsCard db={db} />

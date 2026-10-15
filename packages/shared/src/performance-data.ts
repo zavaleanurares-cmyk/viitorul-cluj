@@ -106,3 +106,42 @@ export const STANDARD_MESSAGE_TEMPLATES: Array<{ key: string; name: string; titl
   { key: "kit", name: "Echipament", title: "Echipamentul pentru sezonul nou", body: "Bună ziua,\n\nEchipamentul pentru sezonul nou se poate ridica de la secretariatul clubului. Mărimile le găsiți în aplicație." },
   { key: "meeting", name: "Ședință cu părinții", title: "Ședință cu părinții", body: "Bună ziua,\n\nVă invităm la o ședință cu părinții. Detaliile (data, ora, locul) sunt mai jos.\n\n" },
 ];
+
+/**
+ * Modele de pornire pentru documentele clubului. Sunt texte de lucru, nu consultanță juridică:
+ * clubul le verifică și le adaptează înainte de prima trimitere.
+ */
+export const STANDARD_CONTRACTS: Array<{ key: string; name: string; kind: string; body: string }> = [
+  {
+    key: "photo", name: "Acord pentru fotografii și înregistrări video", kind: "photo_consent",
+    body: `Subsemnatul/Subsemnata {{parinte}}, în calitate de reprezentant legal al jucătorului {{jucator}} (născut la {{data_nasterii}}), echipa {{echipa}}, sunt de acord ca {{club}} să realizeze fotografii și înregistrări video la antrenamente, meciuri și evenimentele clubului, în sezonul {{sezon}}.
+
+Imaginile pot fi folosite:
+1. pentru analiza sportivă, de către staff-ul tehnic (fără publicare);
+2. pe site-ul și paginile oficiale ale clubului, fără date de contact și fără a indica școala sau domiciliul copilului.
+
+Pot retrage acest acord oricând, printr-un mesaj către club; retragerea nu afectează folosirea de până atunci. Imaginile publicate vor fi retrase de pe paginile clubului în cel mult 30 de zile de la cerere.
+
+Data: {{data}}`,
+  },
+  {
+    key: "enrolment", name: "Contract de participare la activitatea sportivă", kind: "enrolment",
+    body: `Între {{club}}, denumit în continuare „Clubul", și {{parinte}}, reprezentant legal al jucătorului {{jucator}} (născut la {{data_nasterii}}), denumit în continuare „Părintele", se încheie prezentul contract pentru sezonul {{sezon}}.
+
+1. Obiectul. Clubul asigură pregătirea sportivă a jucătorului în cadrul echipei {{echipa}}: antrenamente, participare la competiții și evaluări periodice.
+2. Obligațiile Clubului: antrenori calificați, program comunicat din timp prin aplicație, informarea Părintelui despre evoluția și starea jucătorului.
+3. Obligațiile Părintelui: plata la termen a taxei lunare comunicate prin aplicație, viza medicală sportivă valabilă, anunțarea absențelor.
+4. Date personale. Clubul prelucrează datele jucătorului conform informării privind protecția datelor, disponibilă în aplicație.
+5. Încetarea. Oricare parte poate denunța contractul cu un preaviz de 30 de zile, comunicat în scris (inclusiv prin aplicație).
+
+Data: {{data}}`,
+  },
+  {
+    key: "transport", name: "Acord pentru transportul la meciuri", kind: "transport",
+    body: `Subsemnatul/Subsemnata {{parinte}}, reprezentant legal al jucătorului {{jucator}} (echipa {{echipa}}), sunt de acord ca acesta să fie transportat la meciurile din deplasare ale sezonului {{sezon}} cu mijlocul de transport organizat de {{club}}, însoțit de staff-ul clubului.
+
+Mă oblig să anunț clubul, prin aplicație, dacă jucătorul nu va folosi transportul organizat la un anumit meci.
+
+Data: {{data}}`,
+  },
+];

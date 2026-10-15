@@ -27,6 +27,8 @@ export const BUCKETS = {
   visas: { maxBytes: 10 * 1024 * 1024, types: ["application/pdf", "image/jpeg", "image/png", "image/webp", "image/heic"] },
   /** înregistrări video ale meciurilor și antrenamentelor: <club>/<fișier> */
   videos: { maxBytes: 4 * 1024 * 1024 * 1024, types: ["video/mp4", "video/webm", "video/quicktime"] },
+  /** semnăturile desenate pe contracte: <club>/<contract>/semnatura-<uuid>.png */
+  contracts: { maxBytes: 1024 * 1024, types: ["image/png"] },
 } as const;
 
 export type Bucket = keyof typeof BUCKETS;
