@@ -77,7 +77,7 @@ export default async function Page() {
     <>
       <PageHeader title={t.title} description={t.description} />
 
-      <div className="mb-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="mb-5 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <Stat label={t.statOpen} value={open.length} tone={open.length ? "orange" : undefined} />
         <Stat label={t.statConsent} value={`${accepted.length} / ${withAccount.length}`} hint={t.statConsentHint} />
         <Stat label={t.statMinors} value={minorsMissing.length} tone={minorsMissing.length ? "red" : undefined} />
@@ -89,14 +89,14 @@ export default async function Page() {
           <CardHeader title={t.requestsTitle} description={t.requestsHint} />
           <CardBody className="space-y-4">
             {open.length ? (
-              <ul className="divide-y divide-line rounded-[var(--radius-control)] border border-line">
+              <ul className="divide-y divide-line border-y border-line">
                 {open.map((r) => <RequestCard key={r.id} request={r} />)}
               </ul>
             ) : <EmptyState title={t.noOpenTitle} description={t.noOpen} />}
             {closed.length ? (
               <details>
                 <summary className="flex h-12 cursor-pointer items-center font-semibold">{t.closedTitle(closed.length)}</summary>
-                <ul className="mt-1 divide-y divide-line rounded-[var(--radius-control)] border border-line">
+                <ul className="mt-1 divide-y divide-line border-y border-line">
                   {closed.map((r) => <RequestCard key={r.id} request={r} />)}
                 </ul>
               </details>
@@ -122,11 +122,11 @@ export default async function Page() {
             </dl>
 
             <section>
-              <h3 className="mb-1 font-bold">{t.minorsTitle(minorsMissing.length)}</h3>
+              <h3 className="mb-1">{t.minorsTitle(minorsMissing.length)}</h3>
               {minorsMissing.length ? (
                 <>
                   <p className="mb-2 text-sm text-ink-3">{t.minorsHint}</p>
-                  <ul className="divide-y divide-line rounded-[var(--radius-control)] border border-line">
+                  <ul className="divide-y divide-line border-y border-line">
                     {minorsMissing.map((p) => (
                       <li key={p.id}>
                         <Link href={`/lot/jucatori/${p.id}/stare`} className="flex min-h-12 flex-wrap items-center justify-between gap-x-3 px-3 py-2 hover:bg-canvas">
@@ -146,8 +146,8 @@ export default async function Page() {
 
             {withdrawn.length ? (
               <section>
-                <h3 className="mb-1 font-bold">{t.withdrawnTitle}</h3>
-                <ul className="divide-y divide-line rounded-[var(--radius-control)] border border-line">
+                <h3 className="mb-1">{t.withdrawnTitle}</h3>
+                <ul className="divide-y divide-line border-y border-line">
                   {withdrawn.slice(0, 30).map((c) => {
                     const p = c.player_id ? playerById.get(c.player_id) : null;
                     return (
@@ -175,9 +175,9 @@ export default async function Page() {
             </Notice>
 
             <section>
-              <h3 className="mb-1 font-bold">{t.dueTitle(due.length)}</h3>
+              <h3 className="mb-1">{t.dueTitle(due.length)}</h3>
               {due.length ? (
-                <ul className="divide-y divide-line rounded-[var(--radius-control)] border border-line">
+                <ul className="divide-y divide-line border-y border-line">
                   {due.map((d) => {
                     const p = gdprPlayer(d.player_id);
                     return p ? (
@@ -196,9 +196,9 @@ export default async function Page() {
 
             {inactive.length ? (
               <section>
-                <h3 className="mb-1 font-bold">{t.inactiveTitle(inactive.length)}</h3>
+                <h3 className="mb-1">{t.inactiveTitle(inactive.length)}</h3>
                 <p className="mb-2 text-sm text-ink-3">{t.inactiveHint}</p>
-                <ul className="divide-y divide-line rounded-[var(--radius-control)] border border-line">
+                <ul className="divide-y divide-line border-y border-line">
                   {inactive.map((pl) => {
                     const p = gdprPlayer(pl.id)!;
                     return (
@@ -214,9 +214,9 @@ export default async function Page() {
 
             {anonymized.length ? (
               <section>
-                <h3 className="mb-1 font-bold">{t.anonymizedTitle(anonymized.length)}</h3>
+                <h3 className="mb-1">{t.anonymizedTitle(anonymized.length)}</h3>
                 <p className="mb-2 text-sm text-ink-3">{t.anonymizedHint}</p>
-                <ul className="divide-y divide-line rounded-[var(--radius-control)] border border-line">
+                <ul className="divide-y divide-line border-y border-line">
                   {anonymized.map((pl) => {
                     const p = gdprPlayer(pl.id)!;
                     return (

@@ -139,7 +139,7 @@ export function TabularStep({ kind, sheet, meta, context, onBack, onNext }: {
           </Field>
         )}
       >
-        <div className="rounded-[var(--radius-card)] border border-line bg-surface">
+        <div className="rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]">
           <div className="hidden grid-cols-[3rem_minmax(0,1fr)_minmax(0,1.3fr)_20rem] gap-3 border-b border-line bg-canvas px-3 py-2 text-sm font-semibold text-ink-3 md:grid">
             <span>{t.common.column}</span><span>{t.common.header}</span><span>{t.common.samples}</span><span>{m.target}</span>
           </div>

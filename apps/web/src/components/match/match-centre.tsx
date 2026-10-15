@@ -129,7 +129,7 @@ export function MatchCentre(props: {
         <p className="text-xl font-bold">{t.squad.title(selected.length, props.maxSquad)}</p>
         <p className="mb-3 text-sm text-ink-3">{t.squad.hint}</p>
         {tooMany ? <Notice tone="red" className="mb-3" title={t.squad.tooMany(props.maxSquad)} /> : null}
-        <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface">
+        <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]">
           {props.players.map((p) => {
             const on = selected.includes(p.id);
             const Icon = p.blocked ? BLOCK_ICON[p.blocked.reason] ?? Ban : null;
@@ -149,7 +149,7 @@ export function MatchCentre(props: {
                     <span className="block font-semibold">{p.number ? `${p.number} · ` : ""}{p.name}</span>
                     {p.blocked ? <span className="block text-sm text-ink-2">{p.blocked.detail ?? ELIGIBILITY_LABELS[p.blocked.reason]}</span> : null}
                   </span>
-                  {p.blocked ? <span className="inline-flex h-6 items-center rounded-md bg-st-red px-1.5 text-xs font-bold text-white">{ELIGIBILITY_LABELS[p.blocked.reason] ?? t.squad.blocked}</span> : null}
+                  {p.blocked ? <span className="inline-flex h-6 items-center rounded-full bg-st-red px-2.5 text-xs font-bold text-white">{ELIGIBILITY_LABELS[p.blocked.reason] ?? t.squad.blocked}</span> : null}
                 </button>
               </li>
             );
@@ -185,7 +185,7 @@ export function MatchCentre(props: {
         <div role="radiogroup" aria-label={t.form.formation} className="mb-3 flex flex-wrap gap-2">
           {props.formations.map((f) => (
             <button key={f} type="button" role="radio" aria-checked={formation === f} onClick={() => changeFormation(f)}
-              className={cn("h-11 min-w-20 flex-1 whitespace-nowrap rounded-[var(--radius-control)] border px-3 font-semibold", formation === f ? "border-brand bg-brand text-brand-ink" : "border-border-control bg-surface")}>
+              className={cn("h-11 min-w-20 flex-1 whitespace-nowrap rounded-[var(--radius-control)] border px-3 font-semibold", formation === f ? "border-brand bg-brand text-brand-ink" : "border-transparent bg-sunken")}>
               {f.replace(/ \(\d+\)$/, "")}
             </button>
           ))}
@@ -225,7 +225,7 @@ export function MatchCentre(props: {
           <div className="flex flex-wrap gap-2">
             {bench.map((id) => (
               <button key={id} type="button" onClick={() => assign(id)}
-                className="inline-flex h-11 items-center gap-1.5 rounded-[var(--radius-control)] border border-border-control bg-surface px-3 text-sm font-semibold hover:bg-canvas">
+                className="inline-flex h-11 items-center gap-1.5 rounded-full px-3 text-sm font-medium hover:bg-line bg-sunken transition-colors">
                 {byId.get(id)?.number ?? ""} {byId.get(id)?.name}
               </button>
             ))}
@@ -250,7 +250,7 @@ export function MatchCentre(props: {
     };
     const options = (ids: string[], pick: (id: string) => void) => ids.map((id) => (
       <button key={id} type="button" onClick={() => pick(id)}
-        className="flex h-13 min-h-12 items-center gap-3 rounded-[var(--radius-control)] border border-border-control px-4 text-left font-semibold hover:bg-canvas">
+        className="flex h-13 min-h-12 items-center gap-3 rounded-[var(--radius-control)] bg-sunken px-4 text-left font-medium transition-colors hover:bg-line">
         <span className="w-7 text-ink-3">{byId.get(id)?.number ?? ""}</span>{name(id)}
       </button>
     ));
@@ -265,12 +265,12 @@ export function MatchCentre(props: {
           <span className="font-semibold">{them}</span>
         </Card>
         <div className="mt-3 flex items-center justify-center gap-3">
-          <button type="button" aria-label={t.live.minuteDown} onClick={() => setMinute(Math.max(0, minute - 1))} className="inline-flex size-12 items-center justify-center rounded-[var(--radius-control)] border border-border-control bg-surface"><Minus className="size-5" aria-hidden /></button>
+          <button type="button" aria-label={t.live.minuteDown} onClick={() => setMinute(Math.max(0, minute - 1))} className="inline-flex size-11 items-center justify-center rounded-full bg-sunken transition-colors hover:bg-line"><Minus className="size-5" aria-hidden /></button>
           <label className="flex items-center gap-2 font-semibold">{t.live.minute}
             <input type="number" min={0} max={150} value={minute} onChange={(e) => setMinute(Math.max(0, Math.min(150, Number(e.target.value) || 0)))}
               className="h-12 w-20 rounded-[var(--radius-control)] border border-border-control bg-surface text-center text-xl font-bold tabular-nums" />
           </label>
-          <button type="button" aria-label={t.live.minuteUp} onClick={() => setMinute(Math.min(150, minute + 1))} className="inline-flex size-12 items-center justify-center rounded-[var(--radius-control)] border border-border-control bg-surface"><Plus className="size-5" aria-hidden /></button>
+          <button type="button" aria-label={t.live.minuteUp} onClick={() => setMinute(Math.min(150, minute + 1))} className="inline-flex size-11 items-center justify-center rounded-full bg-sunken transition-colors hover:bg-line"><Plus className="size-5" aria-hidden /></button>
         </div>
         <div className="mt-3 grid grid-cols-2 gap-2">
           {[
@@ -280,7 +280,7 @@ export function MatchCentre(props: {
             { label: t.live.yellow, Icon: RectangleVertical, onClick: () => setSheet({ mode: "yellow" }) },
           ].map((x) => (
             <button key={x.label} type="button" disabled={busy} onClick={x.onClick}
-              className="flex h-20 flex-col items-center justify-center gap-1 rounded-[var(--radius-card)] border border-border-control bg-surface font-bold hover:bg-canvas disabled:opacity-50">
+              className="flex h-20 flex-col items-center justify-center gap-1 rounded-[var(--radius-card)] bg-surface font-semibold shadow-[var(--shadow-card)] ring-1 ring-line transition-colors hover:bg-canvas disabled:opacity-50">
               <x.Icon className="size-5" aria-hidden />{x.label}
             </button>
           ))}
@@ -348,14 +348,14 @@ export function MatchCentre(props: {
         {header}
         <p className="text-xl font-bold">{t.notes.title(Object.keys(ratings).length, played.length)}</p>
         <p className="mb-3 text-sm text-ink-3">{t.notes.hint}</p>
-        <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface">
+        <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]">
           {played.map((id) => (
             <li key={id} className="space-y-2 px-4 py-3">
               <p className="font-semibold">{byId.get(id)?.number ? `${byId.get(id)!.number} · ` : ""}{name(id)}</p>
               <div role="radiogroup" aria-label={t.notes.rating(name(id))} className="flex gap-1.5">
                 {[1, 2, 3, 4, 5].map((v) => (
                   <button key={v} type="button" role="radio" aria-checked={ratings[id] === v} onClick={() => setRatings({ ...ratings, [id]: v })}
-                    className={cn("h-11 flex-1 rounded-[var(--radius-control)] border font-bold", ratings[id] === v ? "border-brand bg-brand text-brand-ink" : "border-border-control bg-surface")}>
+                    className={cn("h-11 flex-1 rounded-[var(--radius-control)] border font-bold", ratings[id] === v ? "border-brand bg-brand text-brand-ink" : "border-transparent bg-sunken")}>
                     {v}
                   </button>
                 ))}
@@ -417,7 +417,7 @@ export function MatchCentre(props: {
         </Card>
       ) : null}
       <div className="flex flex-wrap gap-2">
-        <a href={`/program/${props.eventId}`} className="inline-flex h-12 items-center rounded-[var(--radius-control)] border border-border-control bg-surface px-4 font-semibold hover:bg-canvas">{t.done.toEvent}</a>
+        <a href={`/program/${props.eventId}`} className="inline-flex h-11 items-center rounded-full px-4 font-medium hover:bg-line bg-sunken transition-colors">{t.done.toEvent}</a>
         {props.canReopen && props.status === "finished" ? (
           <Button variant="ghost" pending={busy} onClick={async () => { if (await call(() => reopenMatch(props.eventId), t.done.reopened)) setStep("live"); }}>{t.done.reopen}</Button>
         ) : null}

@@ -94,7 +94,7 @@ export function FatigueStep({ sheet, meta, context, onBack, onNext }: {
           {!grid.columns.some((c) => c.metric) ? <Notice tone="yellow" title={f.noSectionsTitle} className="mb-3">{f.noSectionsBody}</Notice>
             : !grid.columns.some((c) => c.metric === "fatigue" || c.metric === "muscle_load") ? <Notice tone="yellow" title={f.wrongFileTitle} className="mb-3">{f.wrongFileBody}</Notice>
             : null}
-          <div className="rounded-[var(--radius-card)] border border-line bg-surface">
+          <div className="rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]">
             <div className={cn("hidden gap-3 border-b border-line bg-canvas px-3 py-2 text-sm font-semibold text-ink-3 md:grid", GRID)}>
               <span>{t.common.column}</span><span>{t.common.header}</span><span>{t.common.samples}</span><span>{f.metric}</span><span>{f.day}</span>
             </div>
@@ -132,7 +132,7 @@ export function FatigueStep({ sheet, meta, context, onBack, onNext }: {
             </ul>
           </div>
           {inferred > 0 ? (
-            <div className="mt-3 rounded-[var(--radius-control)] border-l-4 border-st-yellow bg-st-yellow-soft px-4 py-1">
+            <div className="mt-3 rounded-[var(--radius-control)] bg-st-yellow-soft px-4 py-1">
               <Checkbox
                 checked={confirmed} onChange={(e) => setConfirmed(e.target.checked)}
                 label={f.confirmInferred(inferred)} description={f.confirmInferredHint}

@@ -49,7 +49,7 @@ export default async function ShopAdmin({ searchParams }: { searchParams: Promis
               const total = vars.reduce((s, x) => s + x.stock, 0);
               const bundle = ((p.shop_bundle_items ?? []) as Array<{ product_id: string }>).map((b) => b.product_id);
               return (
-                <li key={p.id} className="flex gap-3 rounded-[var(--radius-card)] border border-line bg-surface p-3">
+                <li key={p.id} className="flex gap-3 rounded-[var(--radius-card)] border border-line/70 bg-surface p-3 shadow-[var(--shadow-card)]">
                   {p.photo_paths[0] ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={`/api/files/shop/${p.photo_paths[0]}`} alt="" className="size-24 shrink-0 rounded-[var(--radius-control)] object-cover" />
@@ -109,7 +109,7 @@ export default async function ShopAdmin({ searchParams }: { searchParams: Promis
             {orders.map((o) => {
               const lines = (o.shop_order_items ?? []) as Item[];
               return (
-                <li key={o.id} className="rounded-[var(--radius-card)] border border-line bg-surface p-4">
+                <li key={o.id} className="rounded-[var(--radius-card)] border border-line/70 bg-surface p-4 shadow-[var(--shadow-card)]">
                   <div className="flex flex-wrap items-start gap-3">
                     <div className="min-w-0 flex-1">
                       <p className="font-semibold">{t.orderNo(o.number)} · {o.child_name}</p>
@@ -138,7 +138,7 @@ export default async function ShopAdmin({ searchParams }: { searchParams: Promis
           <aside>
             <h2 className="mb-2 text-lg">{t.orders.pickList}</h2>
             {!pick.size ? <p className="text-sm text-ink-3">{t.orders.pickListEmpty}</p> : (
-              <ul className="divide-y divide-line rounded-[var(--radius-card)] border border-line bg-surface text-sm">
+              <ul className="divide-y divide-line rounded-[var(--radius-card)] border border-line/70 bg-surface text-sm shadow-[var(--shadow-card)]">
                 {[...pick.entries()].sort().map(([k, n]) => {
                   const [title, size] = k.split("|");
                   return <li key={k} className="flex justify-between gap-2 px-3 py-2"><span>{title}{size ? ` · ${size}` : ""}</span><span className="font-bold tabular-nums">{n}</span></li>;

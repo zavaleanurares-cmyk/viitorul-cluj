@@ -73,7 +73,7 @@ export function ImportWizard({ mode, competitionId, ownName, timezone, label }: 
           <Textarea rows={5} value={text} onChange={(e) => { setText(e.target.value); applyTable(parsePastedTable(e.target.value)); }}
             placeholder={mode === "fixtures" ? "Etapa\tData\tOra\tGazde\tOaspeți" : "Loc\tEchipa\tJ\tV\tE\tÎ\tGolaveraj\tPct"} />
         </Field>
-        <label className="mt-2 inline-flex h-12 cursor-pointer items-center gap-2 rounded-[var(--radius-control)] border border-border-control bg-surface px-4 font-semibold hover:bg-canvas">
+        <label className="mt-2 inline-flex h-11 cursor-pointer items-center gap-2 rounded-full px-4 font-medium hover:bg-line bg-sunken transition-colors">
           <Upload className="size-5" aria-hidden /> {t.file}
           <input type="file" accept=".xlsx,.csv,.txt,.tsv" className="sr-only" onChange={async (e) => {
             const f = e.target.files?.[0];

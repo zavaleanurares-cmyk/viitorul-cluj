@@ -54,10 +54,10 @@ export function PlayerChecklist({ players, groups, value, onChange, single, mark
           return (
             <section key={s.id || "none"}>
               <header className="sticky top-0 z-10 flex items-center justify-between gap-2 border-b border-line bg-canvas px-3 py-1">
-                <h3 className="text-sm font-bold">{s.name}</h3>
+                <h3 className="text-sm">{s.name}</h3>
                 {!single ? (
                   <button type="button" onClick={() => setGroup(ids, !all)}
-                    className="inline-flex h-10 items-center rounded-[var(--radius-control)] px-2 text-sm font-semibold underline underline-offset-2 hover:bg-sunken">
+                    className="inline-flex h-10 items-center rounded-full px-2 text-sm font-medium underline underline-offset-2 hover:bg-sunken">
                     {all ? t.clearGroup(s.name) : t.selectGroup(s.name)}
                   </button>
                 ) : null}

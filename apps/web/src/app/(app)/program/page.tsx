@@ -79,15 +79,15 @@ export default async function SchedulePage({ searchParams }: { searchParams: Pro
 
       <div className="mb-4 flex flex-wrap items-center gap-2">
         <div className="flex items-center gap-1">
-          <Link href={href({ zi: prev })} aria-label={t.prev} className="inline-flex size-12 items-center justify-center rounded-[var(--radius-control)] border border-border-control bg-surface hover:bg-canvas"><ChevronLeft className="size-6" aria-hidden /></Link>
-          <Link href={href({ zi: ctx.today })} className="inline-flex h-12 items-center rounded-[var(--radius-control)] border border-border-control bg-surface px-3 font-semibold hover:bg-canvas">{t.today}</Link>
-          <Link href={href({ zi: next })} aria-label={t.next} className="inline-flex size-12 items-center justify-center rounded-[var(--radius-control)] border border-border-control bg-surface hover:bg-canvas"><ChevronRight className="size-6" aria-hidden /></Link>
+          <Link href={href({ zi: prev })} aria-label={t.prev} className="inline-flex size-11 items-center justify-center rounded-full hover:bg-line bg-sunken transition-colors"><ChevronLeft className="size-6" aria-hidden /></Link>
+          <Link href={href({ zi: ctx.today })} className="inline-flex h-11 items-center rounded-full px-3 font-medium hover:bg-line bg-sunken transition-colors">{t.today}</Link>
+          <Link href={href({ zi: next })} aria-label={t.next} className="inline-flex size-11 items-center justify-center rounded-full hover:bg-line bg-sunken transition-colors"><ChevronRight className="size-6" aria-hidden /></Link>
         </div>
-        <p className="px-2 text-lg font-bold" aria-live="polite">{label.charAt(0).toLocaleUpperCase("ro") + label.slice(1)}</p>
-        <nav aria-label={t.viewLabel} className="ml-auto flex rounded-[var(--radius-control)] border border-border-control bg-surface p-0.5">
+        <p className="px-2 text-lg font-semibold" aria-live="polite">{label.charAt(0).toLocaleUpperCase("ro") + label.slice(1)}</p>
+        <nav aria-label={t.viewLabel} className="flex w-full gap-1 rounded-[0.75rem] bg-sunken p-1 sm:ml-auto sm:w-auto">
           {(["saptamana", "luna", "lista"] as View[]).map((v) => (
             <Link key={v} href={href({ vedere: v })} aria-current={view === v ? "page" : undefined}
-              className={cn("inline-flex h-11 items-center rounded-[calc(var(--radius-control)-2px)] px-3 font-semibold", view === v ? "bg-brand text-brand-ink" : "hover:bg-canvas")}>
+              className={cn("inline-flex h-8 flex-1 items-center justify-center rounded-[0.5rem] px-3.5 text-[0.875rem] font-medium transition-colors sm:flex-none", view === v ? "bg-surface text-ink shadow-[0_1px_3px_rgb(0_0_0/0.12)]" : "text-ink-2 hover:text-ink")}>
               {v === "saptamana" ? t.views.week : v === "luna" ? t.views.month : t.views.agenda}
             </Link>
           ))}

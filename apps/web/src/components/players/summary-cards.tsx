@@ -305,7 +305,7 @@ export function AnthroCard({ playerId, rows, canManage, today }: {
                 <TrendChart data={chart} series={[{ key: "weight", label: t.weightChart }]} caption={t.weightCaption} height={180} />
               </div>
             ) : null}
-            <TableWrap className="max-md:[&_td]:!px-2 max-md:[&_th]:!px-2">
+            <TableWrap flush className="max-md:[&_td]:!px-2 max-md:[&_th]:!px-2">
               <thead>
                 <tr>
                   <th scope="col" className="align-top">{t.anthroDate}</th>

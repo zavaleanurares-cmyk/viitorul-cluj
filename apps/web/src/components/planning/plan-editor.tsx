@@ -200,7 +200,7 @@ export function PlanEditor({ playerId, date, today, backHref, plan, exercises, t
             ))}
           </ul>
         ) : (
-          <p className="mt-3 rounded-[var(--radius-control)] border border-dashed border-line-strong px-4 py-6 text-center text-ink-3">{t.fromProgramNone}</p>
+          <p className="mt-3 rounded-[var(--radius-control)] bg-sunken px-4 py-6 text-center text-ink-3">{t.fromProgramNone}</p>
         )}
       </Dialog>
 

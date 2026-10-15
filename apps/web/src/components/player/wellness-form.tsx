@@ -115,7 +115,7 @@ export function WellnessForm({ initial, config }: { initial: WellnessInitial | n
       ) : null}
 
       {painOpen ? (
-        <section aria-label={t.wellness.painTitle} className="rounded-[var(--radius-card)] border border-line bg-surface p-4">
+        <section aria-label={t.wellness.painTitle} className="rounded-[var(--radius-card)] border border-line/70 bg-surface p-4 shadow-[var(--shadow-card)]">
           <div className="mb-3 flex items-center justify-between gap-2">
             <h2 className="text-lg">{t.wellness.painTitle}</h2>
             <Button

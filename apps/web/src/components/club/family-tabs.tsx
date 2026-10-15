@@ -5,7 +5,7 @@ import { getT } from "@/messages";
 export function FamilyClubTabs({ current }: { current: "messages" | "documents" | "camps" | "shop" }) {
   const t = getT().common.familyClub;
   return (
-    <TabLinks className="mb-4" current={current} tabs={[
+    <TabLinks className="mb-6" current={current} tabs={[
       { key: "messages", href: "/mesaje", label: t.messages },
       { key: "documents", href: "/contracte", label: t.documents },
       { key: "camps", href: "/tabere", label: t.camps },

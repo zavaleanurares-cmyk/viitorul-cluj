@@ -33,7 +33,7 @@ export default async function VenuesPage() {
           {venues.map((v) => {
             const h = hours.get(v.id) ?? 0;
             return (
-              <li key={v.id} className="rounded-[var(--radius-card)] border border-line bg-surface p-4">
+              <li key={v.id} className="rounded-[var(--radius-card)] border border-line/70 bg-surface p-4 shadow-[var(--shadow-card)]">
                 <div className="flex items-start justify-between gap-2">
                   <div>
                     <h2 className="text-lg">{v.name}</h2>
@@ -50,7 +50,7 @@ export default async function VenuesPage() {
                 </div>
                 <p className="mt-3 text-sm text-ink-2">{t.week}: <strong className="text-ink">{t.hours(h)}</strong></p>
                 <div className="mt-1 h-2 overflow-hidden rounded-full bg-sunken" aria-hidden>
-                  <div className="h-full bg-ink-2" style={{ width: `${Math.min(100, (h / 40) * 100)}%` }} />
+                  <div className="h-full rounded-full bg-brand" style={{ width: `${Math.min(100, (h / 40) * 100)}%` }} />
                 </div>
               </li>
             );

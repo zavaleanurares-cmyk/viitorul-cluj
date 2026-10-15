@@ -31,7 +31,7 @@ export default async function CompetitionsPage() {
     <>
       <PageHeader title={t.title} action={canManage ? <CompetitionDialogButton teams={ctx.groups.filter((g) => g.is_active).map((g) => ({ id: g.id, name: g.name }))} clubName={ctx.club.name} /> : null} />
       {visible.length === 0 ? <EmptyState title={t.emptyTitle} description={t.emptyText} /> : (
-        <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface">
+        <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]">
           {visible.map((c) => {
             const n = counts.get(c.id) ?? { played: 0, upcoming: 0 };
             return (

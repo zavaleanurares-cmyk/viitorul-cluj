@@ -109,7 +109,7 @@ export function PurchaseForm({ initial, departments, teams, vatRates, clubId, us
       </Card>
 
       <div className="flex flex-wrap items-center gap-3">
-        <label className="inline-flex h-12 cursor-pointer items-center gap-2 rounded-[var(--radius-control)] border border-border-control bg-surface px-4 font-semibold hover:bg-canvas">
+        <label className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-full px-4 font-medium hover:bg-line bg-sunken transition-colors">
           <Upload className="size-5" aria-hidden /> {m.expenses.fields.document}
           <input type="file" accept="application/pdf,image/*" className="sr-only" onChange={async (e) => {
             const f = e.target.files?.[0];

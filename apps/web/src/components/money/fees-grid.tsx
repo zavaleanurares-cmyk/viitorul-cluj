@@ -63,7 +63,7 @@ export function FeesGrid({ year, rows, today, families }: { year: number; rows: 
         <ul aria-label={t.legend} className="flex flex-wrap gap-2 text-sm">
           {(["paid", "partial", "overdue", "open", "waived", "future"] as const).map((s) => {
             const Icon = ICON[s];
-            return <li key={s} className={cn("inline-flex h-8 items-center gap-1.5 rounded-md px-2 font-semibold", CLS[s], s === "open" && "border border-border-control")}><Icon className="size-4" aria-hidden />{m.states[s]}</li>;
+            return <li key={s} className={cn("inline-flex h-7 items-center gap-1.5 rounded-full px-3 text-[0.8125rem] font-semibold", CLS[s], s === "open" && "ring-1 ring-inset ring-line-strong")}><Icon className="size-4" aria-hidden />{m.states[s]}</li>;
           })}
         </ul>
         <Button variant="secondary" size="sm" icon={<Download className="size-4" aria-hidden />} onClick={exportCsv}>{t.exportCsv}</Button>
@@ -95,7 +95,7 @@ export function FeesGrid({ year, rows, today, families }: { year: number; rows: 
                       {c ? (
                         <button type="button" aria-label={`${label}, ${formatLei(c.paid)} din ${formatLei(c.net)}`} onClick={() => setOpen({ row: r, month: mo, cell: c })}
                           className={cn("flex h-10 w-full min-w-14 items-center justify-center gap-1 rounded-md px-1 text-xs font-semibold tabular-nums hover:outline hover:outline-2 hover:outline-ink",
-                            CLS[state as keyof typeof CLS], state === "open" && "border border-border-control")}>
+                            CLS[state as keyof typeof CLS], state === "open" && "ring-1 ring-inset ring-line-strong")}>
                           <Icon className="size-3.5 shrink-0" aria-hidden />
                           {state === "waived" ? "0" : formatLei(state === "paid" ? c.paid : c.net - c.paid, { currency: false })}
                         </button>

@@ -6,7 +6,7 @@ export type PostSummary = { id: string; title: string; slug: string; excerpt: st
 
 export function PostCard({ post, href, media, big }: { post: PostSummary; href: string; media: string; big?: boolean }) {
   return (
-    <Link href={href} className="group flex h-full flex-col overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface hover:border-line-strong">
+    <Link href={href} className="group flex h-full flex-col overflow-hidden rounded-[var(--radius-card)] border border-line/70 bg-surface hover:border-line-strong shadow-[var(--shadow-card)]">
       {post.cover_path ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={`${media}/${post.cover_path}`} alt="" loading="lazy" className={big ? "aspect-[16/9] w-full object-cover" : "aspect-[16/10] w-full object-cover"} />

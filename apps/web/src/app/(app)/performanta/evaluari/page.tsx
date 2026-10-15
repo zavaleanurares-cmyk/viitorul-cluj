@@ -57,7 +57,7 @@ export default async function EvaluationsPage() {
       {!list.length ? (
         <EmptyState icon={<Star className="size-8" aria-hidden />} title={t.noRounds} description={manager ? t.noRoundsManager : t.noRoundsCoach} />
       ) : (
-        <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface">
+        <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]">
           {list.map((r) => {
             const groups = (r.evaluation_round_groups ?? []).map((g) => g.group_id).filter((g) => manager || myTeams.has(g));
             const total = (players ?? []).filter((p) => p.group_id && groups.includes(p.group_id)).length;
@@ -71,7 +71,7 @@ export default async function EvaluationsPage() {
                   <span className="min-w-0">
                     <span className="flex flex-wrap items-center gap-2">
                       <span className="font-bold">{r.name}</span>
-                      <span className={cn("inline-flex h-6 items-center rounded-md px-2 text-xs font-semibold", r.status === "published" ? "bg-st-green-soft text-ink" : "bg-st-blue-soft text-ink")}>{t.roundStatus[r.status as "open" | "published"]}</span>
+                      <span className={cn("inline-flex h-6 items-center rounded-full px-2.5 text-xs font-semibold", r.status === "published" ? "bg-st-green-soft text-ink" : "bg-st-blue-soft text-ink")}>{t.roundStatus[r.status as "open" | "published"]}</span>
                     </span>
                     <span className="block text-sm text-ink-3">
                       {groups.map(teamName).join(", ")}

@@ -23,7 +23,7 @@ export default async function SitePrivacyPage() {
         <aside>
           <h2 className="mb-2 text-lg">{t.versions}</h2>
           {!versions?.length ? <p className="text-sm text-ink-3">{t.none}</p> : (
-            <ol className="divide-y divide-line rounded-[var(--radius-card)] border border-line bg-surface text-sm">
+            <ol className="divide-y divide-line rounded-[var(--radius-card)] border border-line/70 bg-surface text-sm shadow-[var(--shadow-card)]">
               {versions.map((v) => (
                 <li key={v.id} className="px-3 py-2"><p className="font-semibold">{t.version(v.version)}</p>
                   <p className="text-ink-3">{formatDateTime(v.published_at, ctx.settings.timezone)} · {(v.profiles as { full_name: string } | null)?.full_name ?? ""}</p></li>

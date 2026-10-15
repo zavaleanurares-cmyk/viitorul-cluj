@@ -35,8 +35,8 @@ export async function GuardianToday({ db, ctx }: { db: Db; ctx: AppContext }) {
   for (const d of docs ?? []) if (!lastDoc.has(d.player_id)) lastDoc.set(d.player_id, d);
 
   return (
-    <div className="mx-auto max-w-2xl space-y-4">
-      <h1 className="text-2xl md:text-3xl">{capitalize(formatDate(ctx.today, { weekday: true, year: false }))}</h1>
+    <div className="max-w-2xl space-y-6">
+      <h1 className="text-[1.75rem] leading-tight md:text-[2.125rem]">{capitalize(formatDate(ctx.today, { weekday: true, year: false }))}</h1>
       <FamilyOnboardingCard db={db} kids={children} today={ctx.today} visaPending={new Set([...lastDoc].filter(([, d]) => d.status === "pending").map(([id]) => id))} />
       <FamilyDueCard db={db} ctx={ctx} />
       <FamilyContractsCard db={db} />
@@ -62,11 +62,11 @@ export async function GuardianToday({ db, ctx }: { db: Db; ctx: AppContext }) {
               <VisaFamilyNotice playerId={c.id} playerName={c.full_name} state={visa.state} today={ctx.today} last={lastDoc.get(c.id) ?? null} />
               <h3 className="text-base">{t.childNext}</h3>
               {next.length === 0 ? <p className="text-ink-3">{t.childNoEvents}</p> : (
-                <ul className="divide-y divide-line rounded-[var(--radius-control)] border border-line">
+                <ul className="divide-y divide-line border-y border-line">
                   {next.map((e) => {
                     const Icon = KIND_ICONS[e.kind] ?? CalendarDays;
                     return (
-                      <li key={e.id} className="flex items-start gap-3 px-3 py-2">
+                      <li key={e.id} className="flex items-start gap-3 py-2.5">
                         <Icon className="mt-0.5 size-5 shrink-0 text-ink-3" aria-hidden />
                         <span>
                           <span className="block font-semibold">{e.match ? `${e.match.is_home ? "" : "@ "}${e.match.opponent}` : e.title}</span>

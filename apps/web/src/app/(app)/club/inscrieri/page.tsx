@@ -57,7 +57,7 @@ export default async function EnrolmentPage({ searchParams }: { searchParams: Pr
     <>
       <PageHeader title={t.title} description={t.description}
         action={<div className="flex flex-wrap gap-2">
-          <a href={publicHref} target="_blank" rel="noreferrer" className="inline-flex h-12 items-center gap-2 rounded-[var(--radius-control)] border border-border-control bg-surface px-4 font-semibold hover:bg-canvas">
+          <a href={publicHref} target="_blank" rel="noreferrer" className="inline-flex h-11 items-center gap-2 rounded-full px-4 font-medium hover:bg-line bg-sunken transition-colors">
             <ExternalLink className="size-5" aria-hidden />{t.publicForm}
           </a>
           <RequestFormButton groups={ctx.groups.map((g) => ({ id: g.id, name: g.name }))} />

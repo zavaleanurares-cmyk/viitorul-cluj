@@ -134,11 +134,11 @@ export default async function Page({ searchParams }: { searchParams: Promise<Sea
 
   const toggle = (active: "yes" | "no" | "desktop" | "mobile") =>
     cn(
-      "inline-flex h-12 flex-1 items-center justify-center rounded-[var(--radius-control)] border px-4 font-semibold md:flex-none",
-      active === "yes" && "border-ink bg-ink text-white",
-      active === "no" && "border-line-strong bg-surface text-ink hover:bg-canvas",
-      active === "desktop" && "border-line-strong bg-surface text-ink md:border-ink md:bg-ink md:text-white",
-      active === "mobile" && "border-ink bg-ink text-white md:border-line-strong md:bg-surface md:text-ink",
+      "inline-flex h-8 flex-1 items-center justify-center rounded-[0.5rem] px-3.5 text-[0.875rem] font-medium transition-colors md:flex-none",
+      active === "yes" && "bg-surface text-ink shadow-[0_1px_3px_rgb(0_0_0/0.12)]",
+      active === "no" && "text-ink-2 hover:text-ink",
+      active === "desktop" && "text-ink-2 md:bg-surface md:text-ink md:shadow-[0_1px_3px_rgb(0_0_0/0.12)]",
+      active === "mobile" && "bg-surface text-ink shadow-[0_1px_3px_rgb(0_0_0/0.12)] md:bg-transparent md:text-ink-2 md:shadow-none",
     );
 
   return (
@@ -160,7 +160,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Sea
           />
         ) : (
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-2 lg:grid-cols-4">
+            <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
               <Stat
                 label={t.stats.missingToday}
                 value={`${missing.length}/${roster.length}`}
@@ -175,7 +175,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Sea
             {missing.length ? (
               <details
                 // pe telefon, lista zilei de azi arată deja cine nu a completat
-                className={cn("rounded-[var(--radius-card)] border border-line bg-surface", (view === "auto" || day === today) && "max-md:hidden")}
+                className={cn("rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]", (view === "auto" || day === today) && "max-md:hidden")}
                 open={missing.length <= 8}
               >
                 <summary className="flex min-h-12 cursor-pointer items-center gap-2 px-4 py-2 font-semibold">
@@ -186,7 +186,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Sea
                     <li key={p.id}>
                       <Link
                         href={`/lot/jucatori/${p.id}/wellness`}
-                        className="inline-flex h-10 items-center gap-2 rounded-full border border-line-strong bg-surface px-3 font-semibold hover:bg-canvas"
+                        className="inline-flex h-10 items-center gap-2 rounded-full px-3 font-medium hover:bg-line bg-sunken transition-colors"
                       >
                         {p.name}
                         {!p.hasAccount ? <Badge tone="outline">{t.missing.noAccount}</Badge> : null}
@@ -199,7 +199,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Sea
             ) : null}
 
             <section aria-label={t.grid.caption} className="space-y-3">
-              <nav aria-label={t.view.label} className="flex gap-2">
+              <nav aria-label={t.view.label} className="flex w-full gap-1 rounded-[0.75rem] bg-sunken p-1 md:inline-flex md:w-auto">
                 <Link href={href({ zi: null, saptamana: monday })} aria-current={view === "week" ? "true" : undefined}
                   className={toggle(view === "week" ? "yes" : view === "auto" ? "desktop" : "no")}>
                   {t.view.week}

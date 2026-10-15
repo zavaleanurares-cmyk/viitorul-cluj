@@ -44,7 +44,7 @@ export function WeekGrid({ players, dates, entries, today, thresholds, canEdit }
                 key={d}
                 scope="col"
                 aria-current={d === today ? "date" : undefined}
-                className={cn("min-w-[5.25rem] px-1! text-center", d === today && "border-b-[3px] border-brand text-ink!")}
+                className={cn("min-w-[5.25rem] px-1! text-center", d === today && "font-semibold text-brand!")}
               >
                 <span title={WEEKDAYS_RO[isoWeekday(d) - 1]}>{WEEKDAYS_SHORT_RO[isoWeekday(d) - 1]}</span>{" "}
                 <span className="font-normal">{formatDateShort(d, false)}</span>

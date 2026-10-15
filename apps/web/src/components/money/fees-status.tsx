@@ -95,7 +95,7 @@ export async function FeesStatus({ db, ctx }: { db: Db; ctx: AppContext }) {
   const nextIssue = settings?.auto_issue
     ? (Number(ctx.today.slice(8, 10)) < settings.issue_day && !issuedThisMonth ? `${period.slice(0, 8)}${String(settings.issue_day).padStart(2, "0")}` : `${addMonths(period, 1).slice(0, 8)}${String(settings.issue_day).padStart(2, "0")}`)
     : null;
-  const toneCls = { red: "bg-st-red text-white", yellow: "bg-st-yellow text-ink", blue: "bg-st-blue-soft text-ink" } as const;
+  const toneCls = { red: "bg-st-red-soft text-st-red", yellow: "bg-st-yellow-soft text-ink", blue: "bg-st-blue-soft text-st-blue" } as const;
 
   return (
     <div className="space-y-6">
@@ -107,7 +107,7 @@ export async function FeesStatus({ db, ctx }: { db: Db; ctx: AppContext }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <Stat label={f.kpiCollected(monthLabel(period).split(" ")[0])} value={<Money value={month.collected_for_month} />} hint={f.kpiCollectedHint(pct, formatLei(month.expected))} tone={pct >= 85 ? "green" : pct >= 50 ? "yellow" : "red"} />
         <Stat label={f.kpiOutstanding} value={<Money value={outstanding} />} hint={f.kpiOutstandingHint(debtPlayers, debtList.length)} tone={outstanding > 0 ? "red" : "green"} />
         <Stat label={f.kpiUnallocated} value={summary.kpi.unallocated_count} hint={f.kpiUnallocatedHint} tone={summary.kpi.unallocated_count ? "yellow" : "green"} />
@@ -158,7 +158,7 @@ export async function FeesStatus({ db, ctx }: { db: Db; ctx: AppContext }) {
             <CardHeader title={f.arrearsTitle} />
             <CardBody className="pt-3">
               {byTeam.size === 0 ? <p className="text-ink-3">{f.arrearsEmpty}</p> : (
-                <TableWrap>
+                <TableWrap flush>
                   <>
                     <thead>
                       <tr><th scope="col">{f.arrearsCols.team}</th><th scope="col" className="text-right">{f.arrearsCols.players}</th><th scope="col" className="text-right">{f.arrearsCols.amount}</th></tr>

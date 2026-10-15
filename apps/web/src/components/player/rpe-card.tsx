@@ -43,7 +43,7 @@ export function RpeCard({ entries }: { entries: RpeToday[] }) {
                   type="button"
                   aria-label={t.rpe.editFor(t.rpe.types[e.session_type])}
                   onClick={() => setEditing(e.session_type)}
-                  className="inline-flex size-12 shrink-0 items-center justify-center rounded-lg border border-line-strong bg-surface active:bg-sunken"
+                  className="inline-flex size-11 shrink-0 items-center justify-center rounded-full active:bg-line bg-sunken transition-colors"
                 >
                   <Pencil className="size-5" aria-hidden />
                 </button>
@@ -137,7 +137,7 @@ function RpeDialog({ initialType, entries, onClose }: {
                 onClick={() => { setDuration(String(m)); setLocalError(null); }}
                 className={
                   "h-12 min-w-14 flex-1 rounded-[var(--radius-control)] border px-2 font-semibold " +
-                  (minutes === m ? "border-brand bg-brand text-brand-ink" : "border-line-strong bg-surface text-ink active:bg-sunken")
+                  (minutes === m ? "border-brand bg-brand text-brand-ink" : "border-transparent bg-sunken text-ink active:bg-line")
                 }
               >
                 {m}

@@ -10,7 +10,7 @@ export function ScaleInput({ label, value, onChange, minLabel = "deloc", maxLabe
 }) {
   return (
     <fieldset>
-      <legend className="mb-2 text-lg font-bold">{label}</legend>
+      <legend className="mb-2 text-[1.0625rem] font-semibold">{label}</legend>
       <div role="radiogroup" aria-label={label} className="grid grid-cols-5 gap-2 sm:grid-cols-10">
         {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
           <button
@@ -21,8 +21,8 @@ export function ScaleInput({ label, value, onChange, minLabel = "deloc", maxLabe
             aria-label={`${n} din 10${n === 1 ? `, ${minLabel}` : n === 10 ? `, ${maxLabel}` : ""}`}
             onClick={() => onChange(n)}
             className={cn(
-              "h-14 rounded-lg border-2 text-xl font-bold transition-colors",
-              value === n ? "border-brand bg-brand text-brand-ink" : "border-line-strong bg-surface text-ink active:bg-sunken",
+              "h-14 rounded-[var(--radius-control)] border-2 text-xl font-semibold transition-colors",
+              value === n ? "border-brand bg-brand text-brand-ink" : "border-transparent bg-sunken text-ink active:bg-line",
             )}
           >
             {n}
@@ -42,5 +42,5 @@ export function ScaleInput({ label, value, onChange, minLabel = "deloc", maxLabe
 export function ScoreCell({ value, threshold = 8 }: { value: number | null | undefined; threshold?: number }) {
   if (value === null || value === undefined) return <span className="text-ink-3">·</span>;
   const tone = value >= threshold ? "bg-st-red text-white" : value >= threshold - 2 ? "bg-st-yellow-soft text-ink" : "text-ink";
-  return <span className={cn("inline-flex size-8 items-center justify-center rounded-md font-bold", tone)}>{value}</span>;
+  return <span className={cn("inline-flex size-8 items-center justify-center rounded-full font-semibold", tone)}>{value}</span>;
 }

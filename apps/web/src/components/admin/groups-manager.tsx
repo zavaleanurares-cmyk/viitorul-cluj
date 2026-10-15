@@ -46,7 +46,7 @@ export function GroupsManager({ groups, coaches, clubReminderHour }: { groups: G
       </div>
       <ul className="space-y-3">
         {groups.map((g, i) => (
-          <li key={g.id} className={cn("rounded-[var(--radius-card)] border border-line bg-surface p-4", !g.isActive && "opacity-75")}>
+          <li key={g.id} className={cn("rounded-[var(--radius-card)] border border-line/70 bg-surface p-4 shadow-[var(--shadow-card)]", !g.isActive && "opacity-75")}>
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0">
                 <h2 className="flex flex-wrap items-center gap-2 text-xl">

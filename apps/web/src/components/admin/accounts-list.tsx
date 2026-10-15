@@ -103,8 +103,8 @@ export function AccountsList({ accounts, groups, withoutAccount, initial, openAc
           action={<Button variant="secondary" onClick={() => update({ q: "", rol: "", stare: "" })}>{t.resetFilters}</Button>}
         />
       ) : (
-        <div className="overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface">
-          <div className={cn("hidden border-b border-line bg-canvas px-3 py-2 text-sm font-semibold text-ink-3 md:grid md:gap-x-3", GRID)}>
+        <div className="overflow-hidden rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]">
+          <div className={cn("hidden border-b border-line bg-canvas px-4 py-2 text-sm font-semibold text-ink-3 md:grid md:gap-x-3", GRID)}>
             <span>{t.colAccount}</span>
             <span>{t.role}</span>
             <span>{t.colDetail}</span>
@@ -118,7 +118,7 @@ export function AccountsList({ accounts, groups, withoutAccount, initial, openAc
                 <button
                   type="button" onClick={() => setEditing(a.id)} aria-label={t.open(a.fullName)}
                   className={cn(
-                    "grid w-full min-h-16 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 px-3 py-2 text-left hover:bg-canvas active:bg-sunken md:min-h-14",
+                    "grid w-full min-h-16 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 px-4 py-2 text-left hover:bg-canvas active:bg-sunken md:min-h-14",
                     GRID, (a.state === "disabled" || a.state === "anonymized") && "opacity-70",
                   )}
                 >

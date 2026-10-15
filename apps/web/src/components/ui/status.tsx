@@ -30,12 +30,12 @@ export const TONE_BAR: Record<StatusTone, string> = {
 };
 /** Valorile hex, pentru SVG și grafice. */
 export const TONE_HEX: Record<StatusTone, string> = {
-  green: "#1b7a3d",
-  yellow: "#f2c20a",
-  orange: "#ef8a1d",
-  red: "#c3281c",
-  gray: "#5d6978",
-  blue: "#1d5fbf",
+  green: "#248a3d",
+  yellow: "#ffcc00",
+  orange: "#ff9500",
+  red: "#d70015",
+  gray: "#6e6e73",
+  blue: "#0071e3",
 };
 
 const ICONS: Record<string, typeof Check> = {
@@ -61,12 +61,12 @@ export type StatusLike = { short_label: string; label: string; tone: string; ico
  */
 export function StatusChip({ status, size = "md", full, className }: { status: StatusLike; size?: "sm" | "md" | "lg"; full?: boolean; className?: string }) {
   if (!status) {
-    return <span className={cn("inline-flex items-center gap-1.5 rounded-md bg-sunken px-2 py-1 text-sm font-bold text-ink-3", className)}>—</span>;
+    return <span className={cn("inline-flex items-center gap-1.5 rounded-full bg-sunken px-2.5 py-1 text-sm font-semibold text-ink-3", className)}>—</span>;
   }
-  const sizes = { sm: "h-6 px-1.5 text-xs gap-1", md: "h-8 px-2.5 text-sm gap-1.5", lg: "h-11 px-4 text-lg gap-2" } as const;
+  const sizes = { sm: "h-6 px-2 text-xs gap-1", md: "h-7 px-2.5 text-[0.8125rem] gap-1.5", lg: "h-10 px-4 text-base gap-2" } as const;
   return (
     <span
-      className={cn("inline-flex items-center rounded-md font-bold tracking-wide whitespace-nowrap", sizes[size], TONE_SOLID[status.tone as StatusTone] ?? TONE_SOLID.gray, className)}
+      className={cn("inline-flex items-center rounded-full font-semibold whitespace-nowrap", sizes[size], TONE_SOLID[status.tone as StatusTone] ?? TONE_SOLID.gray, className)}
       title={status.label}
     >
       <StatusIcon icon={status.icon} className={size === "lg" ? "size-5" : size === "sm" ? "size-3.5" : undefined} />
@@ -80,10 +80,10 @@ export function Badge({ tone = "gray", children, className }: { tone?: StatusTon
   const tones: Record<string, string> = {
     ...TONE_SOFT,
     brand: "bg-brand text-brand-ink",
-    outline: "border border-line-strong bg-surface",
+    outline: "bg-sunken text-ink-2",
   };
   return (
-    <span className={cn("inline-flex h-6 items-center gap-1 rounded-md px-2 text-xs font-semibold text-ink whitespace-nowrap", tones[tone], className)}>
+    <span className={cn("inline-flex h-6 items-center gap-1 rounded-full px-2.5 text-xs font-medium text-ink whitespace-nowrap", tones[tone], className)}>
       {children}
     </span>
   );
@@ -91,7 +91,7 @@ export function Badge({ tone = "gray", children, className }: { tone?: StatusTon
 
 export function ReviewBadge({ note }: { note?: string | null }) {
   return (
-    <span className="inline-flex h-6 items-center gap-1 rounded-md border border-st-orange bg-st-orange-soft px-2 text-xs font-bold text-ink" title={note ?? undefined}>
+    <span className="inline-flex h-6 items-center gap-1 rounded-full bg-st-orange-soft px-2.5 text-xs font-semibold text-ink ring-1 ring-st-orange/60 ring-inset" title={note ?? undefined}>
       <TriangleAlert className="size-3.5" aria-hidden />
       De verificat
     </span>

@@ -15,12 +15,12 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
   const t = getT().auth.signIn;
   return (
     <>
-      <h1 className="text-3xl">{t.title}</h1>
-      <p className="mb-6 mt-1 text-ink-3">{t.intro}</p>
+      <h1 className="text-2xl">{t.title}</h1>
+      <p className="mb-6 mt-2 text-[0.9375rem] text-ink-3">{t.intro}</p>
       <SignInForm next={inapoi ?? null} />
       {demoLoginEnabled() ? (
         <p className="mt-4 border-t border-line pt-4 text-center">
-          <Link href="/demo" className="inline-flex min-h-12 items-center font-semibold underline">{t.demo}</Link>
+          <Link href="/demo" className="inline-flex min-h-11 items-center font-medium text-st-blue hover:underline">{t.demo}</Link>
         </p>
       ) : null}
     </>

@@ -43,9 +43,9 @@ export default async function PublicHome({ params }: { params: Promise<{ slug: s
       {club.groups.length ? (
         <section>
           <h2 className="mb-3 text-2xl">{t.enrol.groupsTitle}</h2>
-          <ul className="grid gap-2 sm:grid-cols-2 md:grid-cols-3">
+          <ul className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
             {club.groups.map((g) => (
-              <li key={g.id} className="rounded-[var(--radius-card)] border border-line bg-surface px-4 py-3">
+              <li key={g.id} className="rounded-[var(--radius-card)] border border-line/70 bg-surface p-4 shadow-[var(--shadow-card)] md:p-5">
                 <span className="block text-lg font-bold">{g.name}</span>
                 {g.from ? <span className="text-sm text-ink-3">{t.enrol.years(g.from, g.to)}</span> : null}
               </li>

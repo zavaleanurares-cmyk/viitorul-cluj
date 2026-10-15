@@ -57,7 +57,7 @@ export function WeeklyForm({ groups, weeks, groupLabel, weekLabel, labels }: {
           </Select>
         </Field>
       </div>
-      <div className="flex flex-col gap-2 sm:flex-row">
+      <div className="flex flex-wrap gap-2">
         <DownloadLink primary href={href("pdf")}>{labels.pdf}</DownloadLink>
         <DownloadLink href={href("xlsx")}>{labels.xlsx}</DownloadLink>
       </div>

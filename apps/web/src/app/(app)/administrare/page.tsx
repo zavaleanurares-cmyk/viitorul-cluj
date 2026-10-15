@@ -47,7 +47,7 @@ export default async function Page() {
       <ul className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
         {sections.map((s) => (
           <li key={s.href}>
-            <Link href={s.href} className="flex h-full items-start gap-3 rounded-[var(--radius-card)] border border-line bg-surface p-4 hover:bg-canvas active:bg-sunken">
+            <Link href={s.href} className="flex h-full items-start gap-3 rounded-[var(--radius-card)] border border-line/70 bg-surface p-4 hover:bg-canvas active:bg-sunken shadow-[var(--shadow-card)]">
               <s.icon className="mt-0.5 size-6 shrink-0 text-ink-3" aria-hidden />
               <span className="min-w-0 flex-1">
                 <span className="block text-lg font-bold leading-tight">{s.title}</span>

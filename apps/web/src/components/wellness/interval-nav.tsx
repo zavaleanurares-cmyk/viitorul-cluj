@@ -6,7 +6,7 @@ export function IntervalNav({ label, options, current, className }: {
   label: string; options: Array<{ value: string; label: string; href: string }>; current: string; className?: string;
 }) {
   return (
-    <nav aria-label={label} className={cn("no-print flex gap-2", className)}>
+    <nav aria-label={label} className={cn("no-print flex w-full gap-1 rounded-[0.75rem] bg-sunken p-1 md:inline-flex md:w-auto", className)}>
       {options.map((o) => (
         <Link
           key={o.value}
@@ -14,8 +14,8 @@ export function IntervalNav({ label, options, current, className }: {
           scroll={false}
           aria-current={o.value === current ? "true" : undefined}
           className={cn(
-            "inline-flex h-12 min-w-0 flex-1 items-center justify-center rounded-[var(--radius-control)] border px-2 font-semibold whitespace-nowrap md:flex-none md:px-4",
-            o.value === current ? "border-ink bg-ink text-white" : "border-line-strong bg-surface text-ink hover:bg-canvas",
+            "inline-flex h-8 min-w-0 flex-1 items-center justify-center rounded-[0.5rem] px-3.5 text-[0.875rem] font-medium whitespace-nowrap transition-colors md:flex-none",
+            o.value === current ? "bg-surface text-ink shadow-[0_1px_3px_rgb(0_0_0/0.12)]" : "text-ink-2 hover:text-ink",
           )}
         >
           {o.label}

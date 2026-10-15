@@ -18,7 +18,7 @@ export default async function SiteNewsPage() {
     <>
       <SiteHeader slug={ctx.club.slug} current="news" action={<LinkButton href="/club/site/stiri/nou" variant="primary" icon={<Plus className="size-5" aria-hidden />}>{t.news.new}</LinkButton>} />
       {!data?.length ? <EmptyState icon={<Newspaper className="size-8" aria-hidden />} title={t.news.empty} /> : (
-        <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface">
+        <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]">
           {data.map((p) => (
             <li key={p.id}>
               <Link href={`/club/site/stiri/${p.id}`} className="flex min-h-20 items-center gap-4 px-4 py-3 hover:bg-canvas">

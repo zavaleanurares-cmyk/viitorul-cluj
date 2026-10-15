@@ -111,10 +111,10 @@ export function VideoWorkspace({ video, markers, players, canEdit }: { video: Vi
         ) : ytId ? (
           <div className="aspect-video w-full overflow-hidden rounded-[var(--radius-card)] bg-black"><div ref={ytEl} className="size-full" /></div>
         ) : (
-          <div className="space-y-3 rounded-[var(--radius-card)] border border-line bg-surface p-4">
+          <div className="space-y-3 rounded-[var(--radius-card)] border border-line/70 bg-surface p-4 shadow-[var(--shadow-card)]">
             <p className="text-ink-2">{t.externalNote}</p>
             {video.url ? (
-              <a href={video.url} target="_blank" rel="noreferrer" className="inline-flex h-12 items-center gap-2 rounded-[var(--radius-control)] bg-brand px-4 font-semibold text-brand-ink">
+              <a href={video.url} target="_blank" rel="noreferrer" className="inline-flex h-11 items-center gap-2 rounded-full bg-brand px-4 font-medium text-brand-ink">
                 <ExternalLink className="size-5" aria-hidden />{t.openExternal(sourceName)}
               </a>
             ) : null}
@@ -123,7 +123,7 @@ export function VideoWorkspace({ video, markers, players, canEdit }: { video: Vi
         {canEdit && playable ? <p className="text-sm text-ink-3">{t.shortcuts}</p> : null}
 
         {canEdit ? (
-          <section className="space-y-3 rounded-[var(--radius-card)] border border-line bg-surface p-4" aria-label={draft.id ? t.marker.edit : t.marker.title}>
+          <section className="space-y-3 rounded-[var(--radius-card)] border border-line/70 bg-surface p-4 shadow-[var(--shadow-card)]" aria-label={draft.id ? t.marker.edit : t.marker.title}>
             <h2 className="text-lg">{draft.id ? t.marker.edit : t.marker.title}</h2>
             <div className="grid gap-3 sm:grid-cols-3">
               <Field label={t.marker.start}>
@@ -173,7 +173,7 @@ export function VideoWorkspace({ video, markers, players, canEdit }: { video: Vi
       <section aria-label={t.markers(markers.length)} className="space-y-2">
         <h2 className="text-lg">{t.markers(markers.length)}</h2>
         <p className="text-sm text-ink-3">{t.marker.shareHint}</p>
-        <ol className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface">
+        <ol className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]">
           {markers.map((m) => (
             <li key={m.id} className="space-y-1.5 px-3 py-2.5">
               <div className="flex items-start gap-2">
@@ -185,7 +185,7 @@ export function VideoWorkspace({ video, markers, players, canEdit }: { video: Vi
                   <span className="block font-semibold">{t.tags[m.tag]}{m.label ? <span className="font-normal"> · {m.label}</span> : null}</span>
                   {m.players.length ? <span className="block text-sm text-ink-3">{m.players.map((p) => nameOf.get(p) ?? "—").join(", ")}</span> : null}
                 </span>
-                {m.shared ? <span className="inline-flex h-7 shrink-0 items-center gap-1 rounded-md bg-st-green-soft px-2 text-xs font-semibold"><Check className="size-3.5" aria-hidden />{t.marker.shared}</span> : null}
+                {m.shared ? <span className="inline-flex h-7 shrink-0 items-center gap-1 rounded-full bg-st-green-soft px-2.5 text-xs font-semibold"><Check className="size-3.5" aria-hidden />{t.marker.shared}</span> : null}
               </div>
               {canEdit ? (
                 <div className="flex flex-wrap gap-1">

@@ -120,7 +120,7 @@ async function InboxView({ db, families }: { db: Db; families: Family[] }) {
     <div className="space-y-4">
       <p className="max-w-prose text-ink-3">{t.inbox.description}</p>
       {rows.length === 0 ? <EmptyState title={t.inbox.empty} description={t.inbox.emptyText} /> : (
-        <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface">
+        <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]">
           {rows.map((r) => {
             const s = suggest(r);
             return (
@@ -160,7 +160,7 @@ async function ReceiptsView({ db, ctx, sp }: { db: Db; ctx: AppContext; sp: SP }
             <tbody>
               {rows.map((r) => (
                 <tr key={r.id} className={r.cancelled_at ? "text-ink-3" : undefined}>
-                  <td className="whitespace-nowrap font-semibold tabular-nums">{r.series} {r.number}{r.cancelled_at ? <span className="ml-2 inline-flex h-6 items-center rounded-md bg-sunken px-1.5 text-xs font-semibold">{t.cancelledChip}</span> : null}</td>
+                  <td className="whitespace-nowrap font-semibold tabular-nums">{r.series} {r.number}{r.cancelled_at ? <span className="ml-2 inline-flex h-6 items-center rounded-full bg-sunken px-2.5 text-xs font-semibold">{t.cancelledChip}</span> : null}</td>
                   <td className="tabular-nums">{formatDateShort(r.issued_on)}</td>
                   <td>{r.payer_name}</td>
                   <td className="max-w-md text-sm">{r.description}</td>

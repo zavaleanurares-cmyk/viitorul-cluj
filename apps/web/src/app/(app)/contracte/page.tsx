@@ -35,11 +35,11 @@ export default async function FamilyContracts() {
       <FamilyClubTabs current="documents" />
       <PageHeader title={t.family.title} description={t.family.description} />
       {!data?.length ? <EmptyState icon={<FileSignature className="size-8" aria-hidden />} title={t.family.empty} /> : null}
-      {pending.length ? (<section><h2 className="mb-2 text-lg">{t.family.pending}</h2><ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface">{pending.map((c) => <Row key={c.id} c={c} />)}</ul></section>) : null}
+      {pending.length ? (<section><h2 className="mb-2 text-lg">{t.family.pending}</h2><ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]">{pending.map((c) => <Row key={c.id} c={c} />)}</ul></section>) : null}
       {kids?.length ? (
         <section>
           <h2 className="mb-2 text-lg">{w.photoConsent}</h2>
-          <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface">
+          <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]">
             {kids.map((k) => (
               <li key={k.id} className="flex flex-wrap items-center gap-3 px-4 py-3">
                 <p className="min-w-0 flex-1 text-ink-2">{k.photo_consent ? w.consentOn(k.full_name) : w.consentOff(k.full_name)}</p>
@@ -49,7 +49,7 @@ export default async function FamilyContracts() {
           </ul>
         </section>
       ) : null}
-      {done.length ? (<section><h2 className="mb-2 text-lg">{t.family.done}</h2><ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface">{done.map((c) => <Row key={c.id} c={c} />)}</ul></section>) : null}
+      {done.length ? (<section><h2 className="mb-2 text-lg">{t.family.done}</h2><ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]">{done.map((c) => <Row key={c.id} c={c} />)}</ul></section>) : null}
     </div>
   );
 }

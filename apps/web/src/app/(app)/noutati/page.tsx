@@ -13,7 +13,7 @@ export default async function FamilyNews() {
   const t = getT().club.website.family;
   const { data } = await db.from("site_posts").select("id, title, slug, excerpt, cover_path, published_at").eq("status", "published").eq("to_app", true).order("published_at", { ascending: false }).limit(60);
   return (
-    <div className="mx-auto max-w-2xl">
+    <div className="max-w-2xl">
       {ctx.role === "guardian" || ctx.role === "player" ? <FamilyClubTabs current="messages" /> : null}
       <PageHeader title={t.title} />
       {!data?.length ? <EmptyState icon={<Newspaper className="size-8" aria-hidden />} title={t.empty} /> : (

@@ -59,7 +59,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ t
             <li key={slug}>
               <Link
                 href={`/import?tip=${slug}`}
-                className="flex h-full min-h-24 items-start gap-3 rounded-[var(--radius-card)] border border-line bg-surface p-4 hover:border-line-strong hover:bg-canvas"
+                className="flex h-full min-h-24 items-start gap-3 rounded-[var(--radius-card)] border border-line/70 bg-surface p-4 hover:border-line-strong hover:bg-canvas shadow-[var(--shadow-card)]"
               >
                 <Icon className="mt-0.5 size-6 shrink-0 text-ink-3" aria-hidden />
                 <span className="min-w-0 flex-1">
@@ -74,7 +74,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ t
         <li>
           <Link
             href="/import/tfb"
-            className="flex h-full min-h-24 items-start gap-3 rounded-[var(--radius-card)] border border-line bg-surface p-4 hover:border-line-strong hover:bg-canvas"
+            className="flex h-full min-h-24 items-start gap-3 rounded-[var(--radius-card)] border border-line/70 bg-surface p-4 hover:border-line-strong hover:bg-canvas shadow-[var(--shadow-card)]"
           >
             <DatabaseZap className="mt-0.5 size-6 shrink-0 text-ink-3" aria-hidden />
             <span className="min-w-0 flex-1">
@@ -90,7 +90,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ t
       {!imports.length ? (
         <EmptyState icon={<Upload className="size-8" aria-hidden />} title={t.history.emptyTitle} description={t.history.emptyDescription} />
       ) : (
-        <div className="rounded-[var(--radius-card)] border border-line bg-surface">
+        <div className="rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]">
           <div className={`hidden gap-3 border-b border-line bg-canvas px-4 py-2 text-sm font-semibold text-ink-3 md:grid ${GRID}`}>
             <span>{t.history.date}</span><span>{t.history.kind}</span><span>{t.history.file}</span><span>{t.history.by}</span>
             <span className="text-right">{t.history.imported}</span><span className="text-right">{t.history.skipped}</span>

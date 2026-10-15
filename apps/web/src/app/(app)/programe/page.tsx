@@ -93,7 +93,7 @@ function ProgramCard({ program: p }: { program: ProgramSummary }) {
   return (
     <li>
       <Link href={`/programe/${p.id}`}
-        className={cn("flex h-full items-start gap-3 rounded-[var(--radius-card)] border border-line p-3 hover:border-line-strong hover:bg-canvas", p.is_active ? "bg-surface" : "bg-canvas")}>
+        className={cn("flex h-full items-start gap-3 rounded-[var(--radius-card)] border border-line/70 p-4 shadow-[var(--shadow-card)] transition-colors hover:bg-canvas", p.is_active ? "bg-surface" : "bg-canvas")}>
         <span className="min-w-0 flex-1">
           <span className="block font-bold leading-snug">{p.name}</span>
           {p.description ? <span className="mt-0.5 line-clamp-2 text-sm text-ink-3">{p.description}</span> : null}

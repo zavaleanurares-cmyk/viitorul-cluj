@@ -78,7 +78,7 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
         <Card>
           <CardHeader title={t.statsTitle} description={t.statSeasonSince(formatDate(season))} />
           <CardBody className="space-y-4">
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-4">
               <Stat label={t.statDaysOut} value={daysOut} />
               <Stat label={t.statSeason} value={inSeason.length} />
               <Stat label={t.statTotal} value={injuries.length} />

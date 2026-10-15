@@ -10,13 +10,13 @@ export function VisaChip({ state, days, expires, size = "sm" }: { state: VisaSta
   const t = getT().squad.visa;
   const cfg = {
     ok: { cls: "bg-st-green-soft text-ink", Icon: CircleCheck, text: t.chipOk },
-    expiring: { cls: "bg-st-orange text-ink", Icon: Clock, text: t.expiring(days ?? 0) },
+    expiring: { cls: "bg-st-orange-soft text-ink", Icon: Clock, text: t.expiring(days ?? 0) },
     expired: { cls: "bg-st-red text-white", Icon: CircleAlert, text: t.expired },
     missing: { cls: "bg-st-red text-white", Icon: FileQuestion, text: t.missing },
   }[state];
   return (
     <span title={expires ? t.ok(formatDateShort(expires)) : undefined}
-      className={cn("inline-flex items-center gap-1 whitespace-nowrap rounded-md font-semibold", size === "sm" ? "h-6 px-1.5 text-xs" : "h-8 px-2.5 text-sm", cfg.cls)}>
+      className={cn("inline-flex items-center gap-1 whitespace-nowrap rounded-full font-semibold", size === "sm" ? "h-6 px-2.5 text-xs" : "h-7 px-3 text-[0.8125rem]", cfg.cls)}>
       <cfg.Icon className={size === "sm" ? "size-3.5" : "size-4"} aria-hidden />
       {cfg.text}
     </span>
@@ -45,8 +45,8 @@ export function FilterLinks({ items, label }: { items: Array<{ href: string; lab
         {items.map((it) => (
           <li key={it.href}>
             <Link href={it.href} aria-current={it.active ? "page" : undefined}
-              className={cn("inline-flex h-11 items-center gap-1.5 whitespace-nowrap rounded-full border px-4 font-semibold",
-                it.active ? "border-brand bg-brand text-brand-ink" : "border-border-control bg-surface hover:bg-canvas")}>
+              className={cn("inline-flex h-10 items-center gap-1.5 whitespace-nowrap rounded-full border px-4 text-[0.9375rem] font-medium transition-colors",
+                it.active ? "border-brand bg-brand text-brand-ink" : "border-transparent bg-sunken hover:bg-line")}>
               {it.label}
               {it.count !== undefined ? <span className={cn("text-sm", it.active ? "opacity-90" : "text-ink-3")}>{it.count}</span> : null}
             </Link>

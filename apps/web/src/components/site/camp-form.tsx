@@ -34,7 +34,7 @@ export function PublicCampForm({ slug, campId }: { slug: string; campId: string 
     if (res.ok) setDone(true); else setError(res.error || errs.generic);
   };
   return (
-    <form className="space-y-4 rounded-[var(--radius-card)] border border-line bg-surface p-4 md:p-6" onSubmit={(e) => { e.preventDefault(); void submit(); }}>
+    <form className="space-y-4 rounded-[var(--radius-card)] border border-line/70 bg-surface p-4 md:p-6 shadow-[var(--shadow-card)]" onSubmit={(e) => { e.preventDefault(); void submit(); }}>
       <div className="grid gap-3 sm:grid-cols-[2fr_1fr]">
         <Field label={f.childName}><Input value={v.childName} maxLength={120} onChange={(e) => set({ childName: e.target.value })} /></Field>
         <Field label={f.birthDate}><Input type="date" value={v.birthDate} onChange={(e) => set({ birthDate: e.target.value })} /></Field>

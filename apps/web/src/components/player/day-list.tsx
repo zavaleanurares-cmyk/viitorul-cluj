@@ -86,11 +86,11 @@ export function DayList({ day, editable, upcoming = false, backHref }: { day: Pl
               aria-label={t.day.tick(name)}
               onClick={() => toggle(item)}
               className={cn(
-                "relative inline-flex size-14 shrink-0 items-center justify-center rounded-full border-2 transition-colors",
+                "relative inline-flex size-11 shrink-0 items-center justify-center rounded-full border-2 transition-colors",
                 tick.done ? "border-st-green bg-st-green text-white" : "border-line-strong bg-surface text-transparent active:bg-sunken",
               )}
             >
-              <Check className="size-8" strokeWidth={3} aria-hidden />
+              <Check className="size-6" strokeWidth={3} aria-hidden />
               {tick.pending ? (
                 <span className="absolute -inset-1 animate-spin rounded-full border-2 border-ink-3 border-r-transparent" aria-hidden />
               ) : null}
@@ -100,18 +100,18 @@ export function DayList({ day, editable, upcoming = false, backHref }: { day: Pl
               role="img"
               aria-label={tick.done ? t.day.stateDone : t.day.stateNotDone}
               className={cn(
-                "inline-flex size-14 shrink-0 items-center justify-center rounded-full border-2",
-                tick.done ? "border-st-green bg-st-green text-white" : "border-dashed border-line-strong bg-canvas text-transparent",
+                "inline-flex size-11 shrink-0 items-center justify-center rounded-full border-2",
+                tick.done ? "border-st-green bg-st-green text-white" : "border-line bg-sunken text-transparent",
               )}
             >
-              <Check className="size-8" strokeWidth={3} aria-hidden />
+              <Check className="size-6" strokeWidth={3} aria-hidden />
             </span>
           )}
           <Link
             href={`/exercitii/${item.exercise.id}?inapoi=${encodeURIComponent(backHref)}`}
             className="block min-h-14 min-w-0 flex-1 content-center rounded-lg py-1"
           >
-            <span className="block text-lg font-bold leading-snug">{name}</span>
+            <span className="block text-[1.0625rem] font-semibold leading-snug">{name}</span>
             <span className="block text-ink-2">
               {lead}
               {/* ultimul cuvânt rămâne lipit de săgeată, ca săgeata să nu cadă singură pe rândul următor */}
@@ -128,14 +128,14 @@ export function DayList({ day, editable, upcoming = false, backHref }: { day: Pl
               aria-label={t.day.noteFor(name)}
               title={t.day.noteTitle}
               onClick={() => setNoteFor(item)}
-              className="relative inline-flex size-12 shrink-0 items-center justify-center rounded-lg border border-line-strong bg-surface text-ink active:bg-sunken"
+              className="relative inline-flex size-11 shrink-0 items-center justify-center rounded-full text-ink active:bg-line bg-sunken transition-colors"
             >
               <MessageSquareText className="size-6" aria-hidden />
             </button>
           ) : null}
         </div>
         {item.notes || c?.pain || c?.comment || failed === item.key ? (
-          <div className={cn("mt-2 space-y-1.5", upcoming ? null : "pl-[4.25rem]")}>
+          <div className={cn("mt-2 space-y-1.5", upcoming ? null : "pl-14")}>
             {item.notes ? <p className="text-sm text-ink-2">{item.notes}</p> : null}
             {c?.pain ? (
               <Badge tone="red">

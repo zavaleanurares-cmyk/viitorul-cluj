@@ -26,7 +26,7 @@ export function AvailabilityBoard({ sections, statuses, canEdit, today }: {
 
   return (
     <>
-      <div className="overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface print:hidden">
+      <div className="overflow-hidden rounded-[var(--radius-card)] border border-line/70 bg-surface print:hidden shadow-[var(--shadow-card)]">
         <div className={cn("hidden border-b border-line bg-canvas px-4 py-2 text-sm font-semibold text-ink-3 md:grid md:gap-x-3", GRID)}>
           <span>{t.colPlayer}</span>
           <span>{t.colStatus}</span>
@@ -38,7 +38,7 @@ export function AvailabilityBoard({ sections, statuses, canEdit, today }: {
         </div>
         {sections.map((section) => (
           <section key={section.key} aria-label={section.title}>
-            <h2 className="flex items-baseline gap-2 border-b border-line bg-canvas px-3 py-1.5 text-sm font-bold text-ink-2">
+            <h2 className="flex items-baseline gap-2 border-b border-line bg-canvas px-4 md:px-5 py-1.5 text-sm text-ink-2">
               {section.title}
               <span className="font-semibold text-ink-3">{section.hint ?? section.players.length}</span>
             </h2>

@@ -84,7 +84,7 @@ export default async function RoundPage({ params }: { params: Promise<{ round: s
                           <span className="block font-semibold">{p.name}</span>
                           {p.evaluatorId ? <span className="block text-sm text-ink-3">{t.evaluator(evaluatorName.get(p.evaluatorId) ?? "—")}</span> : null}
                         </span>
-                        <span className={cn("inline-flex h-7 items-center gap-1 rounded-md px-2 text-sm font-semibold", S.cls)}><S.Icon className="size-4" aria-hidden />{t.status[p.status]}</span>
+                        <span className={cn("inline-flex h-7 items-center gap-1 rounded-full px-2.5 text-sm font-semibold", S.cls)}><S.Icon className="size-4" aria-hidden />{t.status[p.status]}</span>
                         {canRate ? <span className="hidden font-semibold text-ink-2 sm:inline">{p.status === "none" ? t.rate : t.continue}</span> : null}
                       </>
                     );
@@ -104,7 +104,7 @@ export default async function RoundPage({ params }: { params: Promise<{ round: s
           <Card>
             <CardHeader title={t.teamAverages} description={t.teamAveragesHint} />
             <CardBody>
-              <TableWrap>
+              <TableWrap flush>
                 <>
                   <thead><tr><th scope="col">{t.teams}</th>{usedCats.map((c) => <th key={c} scope="col" className="text-right">{t.categories[c]}</th>)}</tr></thead>
                   <tbody>

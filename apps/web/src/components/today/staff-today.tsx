@@ -86,14 +86,14 @@ export async function StaffToday({ db, ctx }: { db: Db; ctx: AppContext }) {
   const rosterByGroup = (gids: string[]) => roster.filter((p) => p.group_id && gids.includes(p.group_id));
 
   return (
-    <div className="mx-auto max-w-3xl space-y-4">
-      <h1 className="text-2xl md:text-3xl">{capitalize(formatDate(ctx.today, { weekday: true, year: false }))}</h1>
+    <div className="max-w-3xl space-y-6">
+      <h1 className="text-[1.75rem] leading-tight md:text-[2.125rem]">{capitalize(formatDate(ctx.today, { weekday: true, year: false }))}</h1>
       <WarmOffline urls={warm} />
       {runs ? <PendingSyncNotice /> : null}
       <MoneyTodayCard db={db} ctx={ctx} />
 
       {!isCoach ? (
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
           <Stat label={t.stats.trainings} value={todayEvents.filter((e) => e.kind === "training" && e.status !== "cancelled").length} />
           <Stat label={t.stats.matches} value={week.filter((e) => e.status !== "cancelled").length} />
           <Stat label={t.stats.visas} value={visas.length} tone={visas.some((v) => v.days < 0) ? "red" : visas.length ? "orange" : undefined} />
@@ -103,9 +103,9 @@ export async function StaffToday({ db, ctx }: { db: Db; ctx: AppContext }) {
 
       {/* evenimentele de azi */}
       {todayEvents.length === 0 ? (
-        <p className="rounded-[var(--radius-card)] border border-dashed border-line-strong bg-surface p-5 text-center text-ink-3">{t.nothingToday}</p>
+        <p className="rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)] p-5 text-center text-ink-3">{t.nothingToday}</p>
       ) : (
-        <section aria-label={t.officeEvents} className="space-y-3">
+        <section aria-label={t.officeEvents} className="space-y-4">
           {todayEvents.map((e) => {
             const Icon = KIND_ICONS[e.kind];
             const r = rosterByGroup(e.groupIds);
@@ -134,8 +134,8 @@ export async function StaffToday({ db, ctx }: { db: Db; ctx: AppContext }) {
                   {e.kind === "training" && runs && mine && !cancelled ? (
                     // link complet (nu navigare client), ca pagina să poată fi servită și fără semnal
                     <a href={`/program/${e.id}/prezenta`}
-                      className={cn("inline-flex h-12 w-full items-center justify-center gap-2 rounded-[var(--radius-control)] px-4 font-semibold",
-                        e.attendance_saved_at ? "border border-border-control bg-surface hover:bg-canvas" : "bg-brand text-brand-ink hover:brightness-110")}>
+                      className={cn("inline-flex h-11 w-full items-center justify-center gap-2 rounded-full px-4 font-medium sm:w-auto sm:px-6",
+                        e.attendance_saved_at ? "bg-sunken hover:bg-line" : "bg-brand text-brand-ink hover:brightness-110")}>
                       <ClipboardCheck className="size-5" aria-hidden />{e.attendance_saved_at ? t.editAttendance : t.takeAttendance}
                     </a>
                   ) : null}
@@ -162,7 +162,7 @@ export async function StaffToday({ db, ctx }: { db: Db; ctx: AppContext }) {
                 </p>
               ) : <p className="text-sm text-ink-2">{squadCount ? t.squadPicked(squadCount) : t.squadNotPicked}</p>}
               <Link href={runs ? `/program/${nextMatch.id}/meci` : `/program/${nextMatch.id}`}
-                className="inline-flex h-12 w-full items-center justify-center rounded-[var(--radius-control)] border border-border-control bg-surface px-4 font-semibold hover:bg-canvas">
+                className="inline-flex h-11 w-full items-center justify-center rounded-full px-4 font-medium hover:bg-line bg-sunken sm:w-auto sm:px-6 transition-colors">
                 {squadCount || !runs ? t.openMatch : t.pickSquad}
               </Link>
             </>
@@ -177,14 +177,14 @@ export async function StaffToday({ db, ctx }: { db: Db; ctx: AppContext }) {
           <ul className="mt-3 divide-y divide-line border-t border-line">
             {todos.slice(0, 12).map((x) => (
               <li key={x.key}>
-                <Link href={x.href} className="flex min-h-14 items-center gap-3 px-4 py-2 hover:bg-canvas">
+                <Link href={x.href} className="flex min-h-14 items-center gap-3 px-4 md:px-5 py-2 hover:bg-canvas">
                   <x.icon className={cn("size-5 shrink-0", x.tone === "red" ? "text-st-red" : x.tone === "orange" ? "text-ink-2" : "text-st-blue")} aria-hidden />
                   <span className="flex-1">{x.text}</span>
                   <ChevronRight className="size-5 text-ink-3" aria-hidden />
                 </Link>
               </li>
             ))}
-            {todos.length > 12 ? <li className="px-4 py-2 text-sm text-ink-3">{t.more(todos.length - 12)}</li> : null}
+            {todos.length > 12 ? <li className="px-4 md:px-5 py-2 text-sm text-ink-3">{t.more(todos.length - 12)}</li> : null}
           </ul>
         )}
       </Card>

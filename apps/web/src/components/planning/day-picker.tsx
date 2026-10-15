@@ -47,7 +47,7 @@ export function DayPicker({ start, weeks = 3, value, onChange, today, disabledDa
                   className={cn(
                     "relative flex h-12 flex-col items-center justify-center rounded-[var(--radius-control)] font-semibold leading-none",
                     off ? "border border-dashed border-line bg-sunken text-ink-3"
-                      : on ? "border border-ink bg-ink text-white"
+                      : on ? "border border-brand bg-brand text-brand-ink"
                       : d === today ? "border-2 border-ink bg-surface hover:bg-canvas"
                       : "border border-line-strong bg-surface hover:bg-canvas",
                   )}

@@ -29,7 +29,7 @@ export default async function PublicCamps({ params }: { params: Promise<{ slug: 
         <ul className="grid gap-4 md:grid-cols-2">
           {camps.map((c) => (
             <li key={c.id}>
-              <Link href={`/c/${club.slug}/tabere/${c.id}`} className="flex h-full flex-col gap-3 rounded-[var(--radius-card)] border border-line bg-surface p-5 hover:border-line-strong">
+              <Link href={`/c/${club.slug}/tabere/${c.id}`} className="flex h-full flex-col gap-3 rounded-[var(--radius-card)] border border-line/70 bg-surface p-5 hover:border-line-strong shadow-[var(--shadow-card)]">
                 <span className="flex items-start justify-between gap-3">
                   <span className="text-xl font-bold">{c.title}</span>
                   <span className="shrink-0 text-lg font-bold">{c.price ? formatLei(c.price) : t.free}</span>

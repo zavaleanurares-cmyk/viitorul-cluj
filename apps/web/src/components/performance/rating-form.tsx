@@ -40,7 +40,7 @@ export function RatingForm({ roundId, playerId, criteria, initial, prevHref, nex
   return (
     <div className="space-y-5">
       {CATEGORIES.filter((cat) => criteria.some((c) => c.category === cat)).map((cat) => (
-        <section key={cat} className="rounded-[var(--radius-card)] border border-line bg-surface p-4">
+        <section key={cat} className="rounded-[var(--radius-card)] border border-line/70 bg-surface p-4 shadow-[var(--shadow-card)]">
           <h2 className="mb-3 text-lg">{t.categories[cat]}</h2>
           <ul className="space-y-4">
             {criteria.filter((c) => c.category === cat).map((c) => (
@@ -54,7 +54,7 @@ export function RatingForm({ roundId, playerId, criteria, initial, prevHref, nex
                       <button key={n} type="button" role="radio" aria-checked={on} disabled={readOnly} title={t.scores[n]}
                         onClick={() => setScores({ ...scores, [c.id]: n })}
                         className={cn("flex h-12 flex-col items-center justify-center rounded-[var(--radius-control)] border text-lg font-bold disabled:opacity-60",
-                          on ? "border-ink bg-ink text-surface" : "border-line-strong bg-surface hover:bg-canvas")}>
+                          on ? "border-brand bg-brand text-brand-ink" : "border-transparent bg-sunken hover:bg-line")}>
                         {n}
                         <span className="sr-only"> — {t.scores[n]}</span>
                       </button>
@@ -68,7 +68,7 @@ export function RatingForm({ roundId, playerId, criteria, initial, prevHref, nex
         </section>
       ))}
 
-      <section className="space-y-4 rounded-[var(--radius-card)] border border-line bg-surface p-4">
+      <section className="space-y-4 rounded-[var(--radius-card)] border border-line/70 bg-surface p-4 shadow-[var(--shadow-card)]">
         <Field label={t.strengths} optional><Textarea rows={2} value={strengths} maxLength={1000} disabled={readOnly} onChange={(e) => setStrengths(e.target.value)} /></Field>
         <Field label={t.nextGoals} hint={t.nextGoalsHint} optional><Textarea rows={3} value={nextGoals} maxLength={1000} disabled={readOnly} onChange={(e) => setNextGoals(e.target.value)} /></Field>
         <Field label={t.comment} optional><Textarea rows={2} value={comment} maxLength={2000} disabled={readOnly} onChange={(e) => setComment(e.target.value)} /></Field>
@@ -76,7 +76,7 @@ export function RatingForm({ roundId, playerId, criteria, initial, prevHref, nex
 
       <FormError>{save.error}</FormError>
       {readOnly ? <p className="text-ink-3">{t.roundClosed}</p> : (
-        <div className="sticky bottom-20 z-10 flex flex-wrap items-center justify-end gap-2 rounded-[var(--radius-card)] border border-line bg-surface p-3 shadow-sm md:bottom-4">
+        <div className="sticky bottom-20 z-10 flex flex-wrap items-center justify-end gap-2 rounded-[var(--radius-card)] border border-line/70 bg-surface p-3 shadow-sm md:bottom-4 shadow-[var(--shadow-card)]">
           {missing ? <span className="mr-auto text-sm font-semibold text-ink-2">{t.missingScores(missing)}</span> : null}
           <Button variant="ghost" pending={save.pending && !submitting} icon={<Save className="size-5" aria-hidden />} onClick={() => send(false)}>{t.saveDraft}</Button>
           <Button disabled={missing > 0} pending={save.pending && submitting} icon={<Send className="size-5" aria-hidden />} onClick={() => send(true)}>

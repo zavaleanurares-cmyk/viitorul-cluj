@@ -77,7 +77,7 @@ export default async function CompetitionPage({ params }: { params: Promise<{ id
         <Card className="overflow-hidden">
           <CardHeader title={t.competitions.standings} action={canManage ? <ImportWizard mode="standings" competitionId={c.id} ownName={c.own_name ?? ""} timezone={tz} label={t.competitions.importStandings} /> : null} />
           {(standings.data ?? []).length === 0 ? <p className="p-4 text-ink-3">{t.competitions.noStandings}</p> : (
-            <TableWrap className="mt-3 md:rounded-none md:border-x-0 md:border-b-0">
+            <TableWrap flush className="mt-3">
               <thead>
                 <tr>
                   <th scope="col">{t.competitions.standingsColumns.pos}</th>

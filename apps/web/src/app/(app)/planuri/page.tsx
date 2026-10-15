@@ -89,21 +89,21 @@ export default async function PlansPage({ searchParams }: { searchParams: Promis
         )}
       </div>
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
-        <nav aria-label={t.view} className="inline-flex rounded-[var(--radius-control)] border border-line-strong bg-surface p-0.5">
+        <nav aria-label={t.view} className="inline-flex gap-1 rounded-[0.75rem] bg-sunken p-1">
           {[
             { on: !day, href: href({ zi: null }), label: t.week },
             { on: !!day, href: href({ zi: day ?? defaultDay }), label: t.day },
           ].map((v) => (
             <Link key={v.label} href={v.href} aria-current={v.on ? "page" : undefined}
-              className={cn("inline-flex h-11 items-center rounded-md px-4 font-semibold", v.on ? "bg-ink text-white" : "text-ink-2 hover:bg-canvas")}>
+              className={cn("inline-flex h-8 items-center rounded-[0.5rem] px-3.5 text-[0.875rem] font-medium transition-colors", v.on ? "bg-surface text-ink shadow-[0_1px_3px_rgb(0_0_0/0.12)]" : "text-ink-2 hover:text-ink")}>
               {v.label}
             </Link>
           ))}
         </nav>
         <Link href={href({ filtru: !onlyUnavailable })} aria-current={onlyUnavailable ? "true" : undefined}
           className={cn(
-            "inline-flex h-12 items-center justify-center gap-2 rounded-[var(--radius-control)] border px-4 font-semibold whitespace-nowrap",
-            onlyUnavailable ? "border-ink bg-ink text-white" : "border-line-strong bg-surface text-ink hover:bg-canvas",
+            "inline-flex h-11 items-center justify-center gap-2 rounded-full px-4 font-medium whitespace-nowrap",
+            onlyUnavailable ? "border-brand bg-brand text-brand-ink" : "border-transparent bg-sunken text-ink hover:bg-line",
           )}>
           {onlyUnavailable ? <Check className="size-5" strokeWidth={3} aria-hidden /> : null}
           {t.onlyUnavailable} ({unavailable.length})
@@ -131,7 +131,7 @@ export default async function PlansPage({ searchParams }: { searchParams: Promis
               <li key={p.id}>
                 <Link href={`/planuri/${p.id}/${day}`}
                   aria-label={(cell ? t.open : t.create)(p.display_name, formatDate(day, { year: false }))}
-                  className="flex h-full min-h-16 items-center gap-3 rounded-[var(--radius-card)] border border-line bg-surface p-3 hover:border-line-strong hover:bg-canvas">
+                  className="flex h-full min-h-16 items-center gap-3 rounded-[var(--radius-card)] border border-line/70 bg-surface p-3 hover:border-line-strong hover:bg-canvas shadow-[var(--shadow-card)]">
                   <span className="min-w-0 flex-1">
                     <span className="block truncate font-bold">{p.display_name}</span>
                     <span className="mt-1 flex items-center gap-2">
@@ -142,7 +142,7 @@ export default async function PlansPage({ searchParams }: { searchParams: Promis
                     </span>
                   </span>
                   {cell ? <CellBadge cell={cell} /> : (
-                    <span className="inline-flex h-10 items-center gap-1 rounded-[var(--radius-control)] border border-dashed border-line-strong px-2.5 text-sm font-semibold text-ink-2">
+                    <span className="inline-flex h-10 items-center gap-1 rounded-full border-dashed px-2.5 text-sm font-medium text-ink-2">
                       <Plus className="size-4" aria-hidden />{t.addPlan}
                     </span>
                   )}
@@ -160,7 +160,7 @@ export default async function PlansPage({ searchParams }: { searchParams: Promis
                 {days.map((d, i) => (
                   <th key={d} scope="col" className={cn("min-w-16 !px-1 text-center", d === ctx.today && "!text-ink")}>
                     <Link href={href({ zi: d })} title={`${WEEKDAYS_RO[i]}, ${formatDate(d, { year: false })}`}
-                      className={cn("mx-auto flex h-11 w-14 flex-col items-center justify-center rounded-[var(--radius-control)] leading-tight hover:bg-sunken", d === ctx.today && "bg-ink text-white hover:bg-ink")}>
+                      className={cn("mx-auto flex h-11 w-14 flex-col items-center justify-center rounded-[var(--radius-control)] leading-tight hover:bg-sunken", d === ctx.today && "bg-brand text-brand-ink hover:bg-brand")}>
                       <span>{WEEKDAYS_SHORT_RO[i]}</span>
                       <span className="font-normal">{formatDateShort(d, false)}</span>
                     </Link>
@@ -212,9 +212,9 @@ function CellBadge({ cell, compact }: { cell: PlanCell; compact?: boolean }) {
   const complete = cell.total > 0 && cell.done >= cell.total;
   return (
     <span className={cn(
-      "relative inline-flex h-10 shrink-0 items-center justify-center gap-1 rounded-[var(--radius-control)] border text-sm font-bold",
+      "relative inline-flex h-10 shrink-0 items-center justify-center gap-1 rounded-full text-sm font-bold",
       compact ? "w-full px-0.5" : "px-2",
-      cell.pain ? "border-st-red bg-st-red-soft" : complete ? "border-st-green bg-st-green-soft" : "border-line-strong bg-surface",
+      cell.pain ? "border-st-red bg-st-red-soft" : complete ? "border-st-green bg-st-green-soft" : "border-transparent bg-sunken",
     )}>
       {cell.pain ? <TriangleAlert className="size-3.5 shrink-0 text-st-red" aria-hidden /> : complete ? <Check className="size-3.5 shrink-0 text-st-green" strokeWidth={3} aria-hidden /> : null}
       {cell.total ? t.cell(cell.done, cell.total) : "0"}

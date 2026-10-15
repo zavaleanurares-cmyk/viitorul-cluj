@@ -54,10 +54,14 @@ export default async function SquadPage({ searchParams }: { searchParams: Promis
         <form action="/lot" method="get" role="search" className="flex max-w-md gap-2">
           {teamId ? <input type="hidden" name="echipa" value={teamId} /> : null}
           <label className="sr-only" htmlFor="lot-q">{t.list.search}</label>
-          <input id="lot-q" name="q" defaultValue={q} placeholder={t.list.search}
-            className="h-12 min-w-0 flex-1 rounded-[var(--radius-control)] border border-border-control bg-surface px-3" />
-          <button type="submit" className="inline-flex h-12 items-center gap-2 rounded-[var(--radius-control)] border border-border-control bg-surface px-4 font-semibold hover:bg-canvas">
-            <Search className="size-5" aria-hidden /> {t.list.searchButton}
+          {/* câmp de căutare ca în aplicațiile Apple: lupa în câmp, Enter caută; butonul rămâne pentru tastatură */}
+          <span className="relative min-w-0 flex-1">
+            <Search className="pointer-events-none absolute left-3 top-1/2 size-[1.125rem] -translate-y-1/2 text-ink-3" aria-hidden />
+            <input id="lot-q" name="q" defaultValue={q} placeholder={t.list.search} type="search"
+              className="h-10 w-full rounded-[var(--radius-control)] bg-sunken pl-10 pr-3 placeholder:text-ink-3 focus:bg-surface focus:outline-none focus:ring-4 focus:ring-st-blue/15" />
+          </span>
+          <button type="submit" className="sr-only focus:not-sr-only focus:inline-flex focus:h-10 focus:items-center focus:rounded-full focus:bg-sunken focus:px-4 focus:font-medium">
+            {t.list.searchButton}
           </button>
         </form>
       </div>
@@ -67,7 +71,7 @@ export default async function SquadPage({ searchParams }: { searchParams: Promis
       ) : (
         <>
           {/* telefon: listă */}
-          <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface md:hidden">
+          <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line/70 bg-surface md:hidden shadow-[var(--shadow-card)]">
             {rows.map((p) => {
               const st = p.status_id ? status.get(p.status_id) : null;
               const visa = visaState(p.medical_visa_expires_on, ctx.today, warn);
@@ -80,7 +84,7 @@ export default async function SquadPage({ searchParams }: { searchParams: Promis
                       <span className="flex flex-col items-start gap-1 pt-0.5 text-sm text-ink-3">
                         {p.group_id ? groupName.get(p.group_id) : t.list.noTeam}
                         {visa.state !== "ok" ? <VisaChip {...visa} expires={p.medical_visa_expires_on} /> : null}
-                        {p.suspended ? <span className="inline-flex h-6 items-center gap-1 rounded-md bg-st-red px-1.5 text-xs font-semibold text-white"><Ban className="size-3.5" aria-hidden />{t.player.suspended}</span> : null}
+                        {p.suspended ? <span className="inline-flex h-6 items-center gap-1 rounded-full bg-st-red px-2.5 text-xs font-semibold text-white"><Ban className="size-3.5" aria-hidden />{t.player.suspended}</span> : null}
                       </span>
                     </span>
                     {st ? <StatusChip status={st} size="sm" /> : null}
@@ -117,7 +121,7 @@ export default async function SquadPage({ searchParams }: { searchParams: Promis
                           <span aria-hidden className="inline-flex size-8 shrink-0 items-center justify-center rounded-full bg-sunken text-xs font-bold text-ink-2">{p.shirt_number ?? "–"}</span>
                           <span className="text-base">{p.full_name}</span>
                         </Link>
-                        {p.suspended ? <span className="ml-10 inline-flex h-6 items-center gap-1 rounded-md bg-st-red px-1.5 text-xs font-semibold text-white"><Ban className="size-3.5" aria-hidden />{t.player.suspended}</span> : null}
+                        {p.suspended ? <span className="ml-10 inline-flex h-6 items-center gap-1 rounded-full bg-st-red px-2.5 text-xs font-semibold text-white"><Ban className="size-3.5" aria-hidden />{t.player.suspended}</span> : null}
                       </td>
                       <td className="px-3 py-2">{p.group_id ? groupName.get(p.group_id) : <span className="text-ink-3">{t.list.noTeam}</span>}</td>
                       <td className="px-3 py-2">{p.position ? t.player.positions[p.position] ?? p.position : "—"}</td>

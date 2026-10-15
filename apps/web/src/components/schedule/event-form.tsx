@@ -104,7 +104,7 @@ export function EventForm({ initial, kinds, teams, venues, competitions, opponen
                   const on = v.groupIds.includes(g.id);
                   return (
                     <button key={g.id} type="button" aria-pressed={on} onClick={() => toggleTeam(g.id)}
-                      className={cn("h-12 rounded-[var(--radius-control)] border px-4 font-semibold", on ? "border-brand bg-brand text-brand-ink" : "border-border-control bg-surface hover:bg-canvas")}>
+                      className={cn("h-12 rounded-[var(--radius-control)] border px-4 font-semibold", on ? "border-brand bg-brand text-brand-ink" : "border-transparent bg-sunken hover:bg-line")}>
                       {g.name}
                     </button>
                   );
@@ -127,7 +127,7 @@ export function EventForm({ initial, kinds, teams, venues, competitions, opponen
                         const on = repeat.weekdays.includes(i + 1);
                         return (
                           <button key={d} type="button" aria-pressed={on} onClick={() => toggleDay(i + 1)}
-                            className={cn("size-12 rounded-[var(--radius-control)] border font-semibold", on ? "border-brand bg-brand text-brand-ink" : "border-border-control bg-surface hover:bg-canvas")}>
+                            className={cn("size-12 rounded-[var(--radius-control)] border font-semibold", on ? "border-brand bg-brand text-brand-ink" : "border-transparent bg-sunken hover:bg-line")}>
                             {d}
                           </button>
                         );

@@ -115,7 +115,7 @@ export default async function AdherencePage({ params, searchParams }: { params: 
         </Notice>
       ) : (
         <>
-          <div className="mb-4 grid grid-cols-2 gap-2 md:grid-cols-4">
+          <div className="mb-4 grid grid-cols-2 gap-4 md:grid-cols-4">
             <Stat label={t.average} value={result.percent === null ? "—" : `${result.percent}%`} hint={`${labels.days} · ${labels.period}`} />
             <Stat label={t.stateLabel} value={all.assignments.states[state]} hint={`${all.assignments.players(rows.length)} · ${t.scheduledDays(result.days)}`} />
             <Stat label={t.lastDayShort} value={result.lastDate ? formatDateShort(result.lastDate, false) : "—"}
@@ -135,7 +135,7 @@ export default async function AdherencePage({ params, searchParams }: { params: 
             ) : null}
           </Notice>
 
-          <ul className="overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface">
+          <ul className="overflow-hidden rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]">
             <li className="hidden grid-cols-[minmax(0,12rem)_10rem_18rem_minmax(0,1fr)] gap-4 border-b border-line bg-canvas px-4 py-2 text-sm font-semibold text-ink-3 md:grid" aria-hidden>
               <span>{t.player}</span><span>{t.percent}</span><span>{t.lastDays}</span><span>{t.notes}</span>
             </li>

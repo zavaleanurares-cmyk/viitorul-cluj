@@ -22,7 +22,7 @@ function CopyButton({ value, label }: { value: string; label: string }) {
   const t = useT().money.family;
   return (
     <button type="button" aria-label={`${t.copy}: ${label}`} onClick={() => navigator.clipboard?.writeText(value).then(() => toast(t.copied)).catch(() => {})}
-      className="inline-flex size-11 shrink-0 items-center justify-center rounded-lg border border-border-control hover:bg-canvas">
+      className="inline-flex size-11 shrink-0 items-center justify-center rounded-full hover:bg-line bg-sunken transition-colors">
       <Copy className="size-5" aria-hidden />
     </button>
   );
@@ -57,7 +57,7 @@ export function PaymentResult({ intentId }: { intentId: string }) {
         <span aria-hidden className="inline-flex size-14 items-center justify-center rounded-full bg-st-green text-white"><CircleCheck className="size-8" /></span>
         <p className="text-xl font-bold">{t.resultOk}</p>
         <p className="text-ink-2">{t.resultOkText}</p>
-        {state.paymentId ? <a href={`/api/bani/dovada/${state.paymentId}`} className="mt-1 inline-flex h-12 items-center gap-2 rounded-[var(--radius-control)] border border-border-control bg-surface px-4 font-semibold"><FileDown className="size-5" aria-hidden />{t.confirmation}</a> : null}
+        {state.paymentId ? <a href={`/api/bani/dovada/${state.paymentId}`} className="mt-1 inline-flex h-11 items-center gap-2 rounded-full bg-sunken px-4 font-medium"><FileDown className="size-5" aria-hidden />{t.confirmation}</a> : null}
       </div>
     );
   }
@@ -88,12 +88,12 @@ export function DueNow({ charges, today, info, savedCard, canSaveCard }: { charg
     <Card>
       <CardHeader title={t.dueNow} description={<span className="text-2xl font-bold text-ink"><Money value={charges.reduce((s, c) => s + c.balance, 0)} /></span>} />
       <CardBody className="space-y-3">
-        <ul className="divide-y divide-line rounded-[var(--radius-control)] border border-line">
+        <ul className="divide-y divide-line border-y border-line">
           {charges.map((c) => {
             const late = c.due_on < today ? diffDays(c.due_on, today) : null;
             return (
               <li key={c.id}>
-                <label className="flex min-h-16 cursor-pointer items-center gap-3 px-3 py-2">
+                <label className="flex min-h-16 cursor-pointer items-center gap-3 py-2">
                   <input type="checkbox" className="size-6 shrink-0 accent-[var(--color-brand)]" checked={picked.has(c.id)}
                     onChange={(e) => { const n = new Set(picked); if (e.target.checked) n.add(c.id); else n.delete(c.id); setPicked(n); }} />
                   <span className="min-w-0 flex-1">

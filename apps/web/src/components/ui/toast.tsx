@@ -26,9 +26,9 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       <div aria-live="polite" className="pointer-events-none fixed inset-x-0 bottom-20 z-50 flex flex-col items-center gap-2 px-4 md:bottom-6">
         {toasts.map((t) => (
           <div key={t.id} role={t.tone === "error" ? "alert" : "status"}
-            className={cn("pointer-events-auto flex max-w-md items-center gap-2 rounded-[var(--radius-control)] py-2 pl-4 font-semibold shadow-lg",
-              t.undo ? "pr-2" : "pr-4",
-              t.tone === "error" ? "bg-st-red text-white" : "bg-ink text-white")}>
+            className={cn("pointer-events-auto flex max-w-md items-center gap-2 rounded-full py-2 pl-4 text-[0.9375rem] font-medium shadow-[var(--shadow-float)] backdrop-blur-xl",
+              t.undo ? "pr-2" : "pr-5",
+              t.tone === "error" ? "bg-st-red text-white" : "bg-ink/90 text-white")}>
             {t.tone === "error" ? <TriangleAlert className="size-5 shrink-0" aria-hidden /> : <Check className="size-5 shrink-0" aria-hidden />}
             <span className="py-1">{t.message}</span>
             {t.undo ? (

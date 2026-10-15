@@ -9,12 +9,12 @@ export function PublicNav({ items, base }: { items: Array<{ href: string; label:
   if (items.length < 2) return null;
   const active = (href: string) => (href === base ? path === base : path === href || path.startsWith(href + "/"));
   return (
-    <nav aria-label="Meniu" className="mx-auto max-w-5xl overflow-x-auto px-2">
+    <nav aria-label="Meniu" className="mx-auto max-w-5xl overflow-x-auto px-1">
       <ul className="flex gap-1">
         {items.map((i) => (
           <li key={i.href}>
             <Link href={i.href} aria-current={active(i.href) ? "page" : undefined}
-              className={cn("flex h-12 items-center whitespace-nowrap border-b-[3px] px-3 font-semibold", active(i.href) ? "border-current" : "border-transparent opacity-85 hover:opacity-100")}>
+              className={cn("flex h-11 items-center whitespace-nowrap px-3 text-[0.9375rem] transition-colors", active(i.href) ? "font-semibold text-ink" : "font-medium text-ink-3 hover:text-ink")}>
               {i.label}
             </Link>
           </li>

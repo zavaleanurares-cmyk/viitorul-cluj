@@ -13,7 +13,8 @@ export function AdminTabs() {
   if (!current) return null;
   return (
     <TabLinks
-      className="mb-5"
+      variant="pills"
+      className="-mt-3 mb-6"
       current={current}
       tabs={[{ key: "start", href: "/administrare", label: t.start }, ...SECTIONS.map((s) => ({ key: s, href: `/administrare/${s}`, label: t[s] }))]}
     />

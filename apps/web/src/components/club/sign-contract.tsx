@@ -68,7 +68,7 @@ export function SignContract({ id, clubId, defaultName }: { id: string; clubId: 
     await sign.run({ id, name, signaturePath: path });
   };
   return (
-    <div className="space-y-4 rounded-[var(--radius-card)] border border-line bg-surface p-4">
+    <div className="space-y-4 rounded-[var(--radius-card)] border border-line/70 bg-surface p-4 shadow-[var(--shadow-card)]">
       <Checkbox label={t.read} checked={read} onChange={(ev) => setRead(ev.target.checked)} />
       <Field label={t.name} hint={t.nameHint}><Input value={name} maxLength={120} autoComplete="name" onChange={(ev) => setName(ev.target.value)} /></Field>
       <div ref={wrap}>

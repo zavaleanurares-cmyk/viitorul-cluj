@@ -82,7 +82,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ g
         description={tt.description(group.name)}
         action={
           canEdit ? (
-            <div className="grid w-full gap-2 sm:flex sm:w-auto sm:flex-wrap">
+            <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto sm:flex-wrap [&>:last-child:nth-child(odd)]:col-span-2">
               <TestsManager tests={allTests.map((x) => ({ id: x.id, name: x.name, unit: x.unit, lower_is_better: x.lower_is_better, is_active: x.is_active }))} />
               <BatteriesManager
                 batteries={(batteries ?? []).map((b) => ({ id: b.id, name: b.name, tests: [...(b.fitness_battery_tests ?? [])].sort((a, c) => a.sort - c.sort).map((x) => (x.fitness_tests as { name: string } | null)?.name ?? "") }))}
@@ -106,7 +106,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ g
         <div className="space-y-4">
           <TabLinks tabs={tests.map((x) => ({ key: x.id, href: href(group.id, x.id), label: x.name }))} current={test.id} />
 
-          <div className="grid grid-cols-2 gap-2 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
             <Stat
               label={tt.groupAverage}
               value={avg ? <>{formatValue(avg.average)} <span className="text-lg font-normal text-ink-3">{test.unit}</span></> : "—"}

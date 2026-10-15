@@ -57,7 +57,7 @@ export function MessageComposer({ teams, templates, coach, staffAllowed, canSave
   return (
     <div className="grid gap-4 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
       <div className="space-y-4">
-        <section className="space-y-3 rounded-[var(--radius-card)] border border-line bg-surface p-4">
+        <section className="space-y-3 rounded-[var(--radius-card)] border border-line/70 bg-surface p-4 shadow-[var(--shadow-card)]">
           <h2 className="text-lg">{t.to}</h2>
           <div className="flex flex-wrap gap-2">
             {(["guardians", "players", "coaches", ...(staffAllowed ? ["staff"] : [])] as Audience[]).map((a) => (
@@ -73,7 +73,7 @@ export function MessageComposer({ teams, templates, coach, staffAllowed, canSave
           </fieldset>
         </section>
 
-        <section className="space-y-3 rounded-[var(--radius-card)] border border-line bg-surface p-4">
+        <section className="space-y-3 rounded-[var(--radius-card)] border border-line/70 bg-surface p-4 shadow-[var(--shadow-card)]">
           {templates.length ? (
             <Field label={t.template}>
               <Select defaultValue="" onChange={(e) => { const x = templates.find((k) => k.key === e.target.value); if (x) { setTitle(x.title); setBody(x.body); } }}>
@@ -92,7 +92,7 @@ export function MessageComposer({ teams, templates, coach, staffAllowed, canSave
           ) : null}
         </section>
 
-        <section className="space-y-3 rounded-[var(--radius-card)] border border-line bg-surface p-4">
+        <section className="space-y-3 rounded-[var(--radius-card)] border border-line/70 bg-surface p-4 shadow-[var(--shadow-card)]">
           <h2 className="text-lg">{t.when}</h2>
           <div className="flex flex-wrap gap-2">
             <Chip on={!later} onClick={() => setLater(false)}>{t.now}</Chip>
@@ -103,7 +103,7 @@ export function MessageComposer({ teams, templates, coach, staffAllowed, canSave
         </section>
       </div>
 
-      <section className="space-y-3 rounded-[var(--radius-card)] border border-line bg-surface p-4 lg:sticky lg:top-4 lg:self-start" aria-live="polite">
+      <section className="space-y-3 rounded-[var(--radius-card)] border border-line/70 bg-surface p-4 lg:sticky lg:top-4 lg:self-start shadow-[var(--shadow-card)]" aria-live="polite">
         {!list ? (
           <>
             <p className="text-ink-2">{t.recipientsHint}</p>

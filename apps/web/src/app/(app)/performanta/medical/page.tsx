@@ -104,7 +104,7 @@ export default async function MedicalPage({ searchParams }: { searchParams: Prom
         </Card>
       ) : null}
 
-      <div className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="mb-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <Stat label={t.stats.out} value={open.filter((r) => r.rtp_stage < 2).length} tone={open.some((r) => r.rtp_stage < 2) ? "red" : "green"} />
         <Stat label={t.stats.rehab} value={open.filter((r) => r.rtp_stage >= 2).length} tone={open.some((r) => r.rtp_stage >= 2) ? "orange" : undefined} />
         <Stat label={t.stats.season} value={inSeason.length} hint={t.stats.recurrences(recurrences)} />
@@ -119,7 +119,7 @@ export default async function MedicalPage({ searchParams }: { searchParams: Prom
       {list.length === 0 ? (
         view === "history" ? <EmptyState title={t.emptyHistory} /> : <EmptyState title={t.emptyActive} description={t.emptyActiveText} />
       ) : (
-        <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface">
+        <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]">
           {list.map((r) => {
             const zone = injuryZoneText(r) || label(INJURY_TYPES, r.injury_type ?? "other");
             const overdue = !r.actual_return_on && !!r.expected_return_on && r.expected_return_on < ctx.today;

@@ -98,7 +98,7 @@ export function ClubIdentityForm({ club, logoUrl }: {
               // eslint-disable-next-line @next/next/no-img-element
               <img src={logoUrl} alt={t.logoAlt} className="size-16 shrink-0 rounded-lg border border-line bg-white object-contain p-1" />
             ) : (
-              <span aria-hidden className="inline-flex size-16 shrink-0 items-center justify-center rounded-lg border border-dashed border-line-strong text-2xl font-bold text-ink-3">
+              <span aria-hidden className="inline-flex size-16 shrink-0 items-center justify-center rounded-[0.875rem] bg-sunken text-2xl font-bold text-ink-3">
                 {(shortName || name).slice(0, 1)}
               </span>
             )}
@@ -132,7 +132,7 @@ export function ClubIdentityForm({ club, logoUrl }: {
               <span className="truncate text-lg font-bold">{shortName || name}</span>
             </div>
             <div className="flex flex-wrap items-center gap-x-4 gap-y-3 bg-surface p-3">
-              <span className="inline-flex h-12 items-center rounded-[var(--radius-control)] bg-brand px-4 font-semibold text-brand-ink">{t.previewButton}</span>
+              <span className="inline-flex h-11 items-center rounded-full bg-brand px-4 font-medium text-brand-ink">{t.previewButton}</span>
               <span className="flex flex-col items-center gap-0.5 text-xs font-semibold text-brand">
                 <span className="flex h-8 w-14 items-center justify-center rounded-full bg-brand text-brand-ink"><HeartPulse className="size-5" aria-hidden /></span>
                 {t.previewActive}

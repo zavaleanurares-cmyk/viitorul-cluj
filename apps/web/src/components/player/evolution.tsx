@@ -58,8 +58,8 @@ export async function Evolution({ db, player, today, days, hrefFor }: {
             scroll={false}
             aria-current={d === days ? "true" : undefined}
             className={cn(
-              "inline-flex h-12 flex-1 items-center justify-center rounded-[var(--radius-control)] border px-3 font-semibold",
-              d === days ? "border-brand bg-brand text-brand-ink" : "border-line-strong bg-surface text-ink hover:bg-canvas",
+              "inline-flex h-11 flex-1 items-center justify-center rounded-full px-3 font-medium",
+              d === days ? "border-brand bg-brand text-brand-ink" : "border-transparent bg-sunken text-ink hover:bg-line",
             )}
           >
             {t.days(d)}
@@ -73,7 +73,7 @@ export async function Evolution({ db, player, today, days, hrefFor }: {
           { label: t.avgMuscle, value: fmt(average(wellness.map((w) => w.muscle_load))) },
           { label: t.filled, value: `${filled}/${days}` },
         ].map((s) => (
-          <div key={s.label} className="flex min-w-0 flex-col-reverse justify-end rounded-[var(--radius-card)] border border-line bg-surface p-3">
+          <div key={s.label} className="flex min-w-0 flex-col-reverse justify-end rounded-[var(--radius-card)] border border-line/70 bg-surface p-3 shadow-[var(--shadow-card)]">
             <dt className="mt-1 text-sm leading-tight text-ink-3">{s.label}</dt>
             <dd className="text-2xl font-bold leading-none">{s.value}</dd>
           </div>

@@ -23,7 +23,7 @@ export default async function PublicContact({ params }: { params: Promise<{ slug
         </ul>
         {social.length ? (
           <ul className="flex flex-wrap gap-2">
-            {social.map((k) => <li key={k}><a href={s[k]} target="_blank" rel="noreferrer" className="inline-flex h-11 items-center rounded-full border border-line-strong px-4 font-semibold capitalize hover:bg-surface">{k === "youtube" ? "YouTube" : k === "tiktok" ? "TikTok" : k[0].toUpperCase() + k.slice(1)}</a></li>)}
+            {social.map((k) => <li key={k}><a href={s[k]} target="_blank" rel="noreferrer" className="inline-flex h-11 items-center rounded-full px-4 font-medium capitalize hover:bg-line bg-sunken transition-colors">{k === "youtube" ? "YouTube" : k === "tiktok" ? "TikTok" : k[0].toUpperCase() + k.slice(1)}</a></li>)}
           </ul>
         ) : null}
       </section>

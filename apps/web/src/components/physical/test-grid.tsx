@@ -31,7 +31,7 @@ export function TestGrid({ tests, rows, date }: { tests: Test[]; rows: Row[]; da
   const invalid = changed.some((k) => Number.isNaN(parse(vals[k])));
   return (
     <div className="space-y-3">
-      <div className="overflow-x-auto rounded-[var(--radius-card)] border border-line bg-surface">
+      <div className="overflow-x-auto rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]">
         <table className="w-full text-left" style={{ minWidth: `${12 + tests.length * 8}rem` }}>
           <thead className="border-b border-line bg-canvas text-sm text-ink-2">
             <tr>

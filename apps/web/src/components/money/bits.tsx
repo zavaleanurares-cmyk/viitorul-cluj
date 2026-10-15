@@ -12,9 +12,9 @@ type ChipState = "open" | "partial" | "paid" | "waived" | "cancelled" | "overdue
 
 const CHIP: Record<ChipState, { cls: string; Icon: typeof Ban }> = {
   paid: { cls: "bg-st-green text-white", Icon: CircleCheck },
-  partial: { cls: "bg-st-yellow text-ink", Icon: CircleDot },
+  partial: { cls: "bg-st-yellow-soft text-ink", Icon: CircleDot },
   overdue: { cls: "bg-st-red text-white", Icon: CircleAlert },
-  open: { cls: "border border-border-control bg-surface text-ink", Icon: Clock },
+  open: { cls: "bg-sunken text-ink", Icon: Clock },
   waived: { cls: "bg-st-blue-soft text-ink", Icon: BadgePercent },
   cancelled: { cls: "bg-sunken text-ink-3 line-through", Icon: Ban },
   future: { cls: "bg-sunken text-ink-3", Icon: CircleDashed },
@@ -26,7 +26,7 @@ export function ChargeStateChip({ state, dueOn, today, size = "sm", className }:
   const s = (dueOn && today ? chargeDisplayState(state, dueOn, today) : state) as ChipState;
   const cfg = CHIP[s] ?? CHIP.open;
   return (
-    <span className={cn("inline-flex items-center gap-1 whitespace-nowrap rounded-md font-semibold", size === "sm" ? "h-6 px-1.5 text-xs" : "h-8 px-2.5 text-sm", cfg.cls, className)}>
+    <span className={cn("inline-flex items-center gap-1 whitespace-nowrap rounded-full font-semibold", size === "sm" ? "h-6 px-2.5 text-xs" : "h-7 px-3 text-[0.8125rem]", cfg.cls, className)}>
       <cfg.Icon className={size === "sm" ? "size-3.5" : "size-4"} aria-hidden />
       {t[s] ?? s}
     </span>
@@ -35,7 +35,7 @@ export function ChargeStateChip({ state, dueOn, today, size = "sm", className }:
 
 const PR: Record<string, { cls: string; Icon: typeof Ban }> = {
   draft: { cls: "bg-sunken text-ink-2", Icon: CircleDashed },
-  submitted: { cls: "bg-st-yellow text-ink", Icon: Hourglass },
+  submitted: { cls: "bg-st-yellow-soft text-ink", Icon: Hourglass },
   approved: { cls: "bg-st-green text-white", Icon: FileCheck },
   rejected: { cls: "bg-st-red text-white", Icon: FileX },
   completed: { cls: "bg-st-blue-soft text-ink", Icon: ShoppingBag },
@@ -45,7 +45,7 @@ const PR: Record<string, { cls: string; Icon: typeof Ban }> = {
 export function PurchaseStatusChip({ status, label, size = "sm" }: { status: string; label: string; size?: "sm" | "md" }) {
   const cfg = PR[status] ?? PR.draft;
   return (
-    <span className={cn("inline-flex items-center gap-1 whitespace-nowrap rounded-md font-semibold", size === "sm" ? "h-6 px-1.5 text-xs" : "h-8 px-2.5 text-sm", cfg.cls)}>
+    <span className={cn("inline-flex items-center gap-1 whitespace-nowrap rounded-full font-semibold", size === "sm" ? "h-6 px-2.5 text-xs" : "h-7 px-3 text-[0.8125rem]", cfg.cls)}>
       <cfg.Icon className={size === "sm" ? "size-3.5" : "size-4"} aria-hidden />
       {label}
     </span>
@@ -64,7 +64,7 @@ export function CollectedMeter({ collected, expected, lowLabel }: { collected: n
       </span>
       <span className="tabular-nums">{pct}%</span>
       {low && lowLabel ? (
-        <span className="inline-flex h-6 items-center gap-1 rounded-md bg-st-red px-1.5 text-xs font-semibold text-white">
+        <span className="inline-flex h-6 items-center gap-1 rounded-full bg-st-red px-2.5 text-xs font-semibold text-white">
           <CircleAlert className="size-3.5" aria-hidden />{lowLabel}
         </span>
       ) : null}

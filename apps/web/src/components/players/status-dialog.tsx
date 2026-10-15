@@ -100,7 +100,7 @@ function StatusForm({ player, statuses, onClose, fileHref }: {
                 onClick={() => setStatusId(s.id)}
                 className={cn(
                   "flex h-14 items-center gap-2 rounded-[var(--radius-control)] border px-3 text-left font-bold tracking-wide disabled:opacity-50",
-                  on ? cn(TONE_SOLID[tone] ?? TONE_SOLID.gray, "border-ink ring-2 ring-ink") : "border-line-strong bg-surface hover:bg-canvas",
+                  on ? cn(TONE_SOLID[tone] ?? TONE_SOLID.gray, "border-ink ring-2 ring-ink") : "border-transparent bg-sunken hover:bg-line",
                 )}
               >
                 {on ? null : <span className={cn("size-3 shrink-0 rounded-full", TONE_BAR[tone] ?? TONE_BAR.gray)} aria-hidden />}

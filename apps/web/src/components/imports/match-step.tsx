@@ -16,9 +16,9 @@ import type { Decisions, ImportContext, ImportPlayer, NameItem } from "./types";
 const choice =
   "inline-flex min-h-11 items-center gap-2 rounded-[var(--radius-control)] border px-3 py-1.5 text-left text-sm font-semibold";
 const action =
-  "inline-flex h-10 items-center gap-2 rounded-[var(--radius-control)] border px-3 text-sm font-semibold whitespace-nowrap";
+  "inline-flex h-10 items-center gap-2 rounded-full px-3 text-sm font-medium whitespace-nowrap";
 const choiceOn = "border-brand bg-brand text-brand-ink";
-const choiceOff = "border-line-strong bg-surface text-ink hover:bg-canvas";
+const choiceOff = "border-transparent bg-sunken text-ink hover:bg-line";
 
 /**
  * Pasul 3: fiecare nume distinct din fișier este legat de un jucător din evidență, creat ca
@@ -98,7 +98,7 @@ export function MatchStep({ names, proposals, user, effective, context, onDecide
             </Button>
           ) : null}
         >
-          <ul data-list="pending" className="divide-y divide-line rounded-[var(--radius-card)] border border-line bg-surface">{sections.pending.map((n) => row(n, false))}</ul>
+          <ul data-list="pending" className="divide-y divide-line rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]">{sections.pending.map((n) => row(n, false))}</ul>
         </Section>
       ) : (
         <Notice tone="green" title={m.nothingPending} className="mt-4" />
@@ -109,7 +109,7 @@ export function MatchStep({ names, proposals, user, effective, context, onDecide
         ["created", m.autoCreatedTitle, m.autoCreatedDescription],
         ["skipped", m.autoSkippedTitle, m.autoSkippedDescription],
       ] as const).map(([key, title, description]) => sections[key].length ? (
-        <details key={key} className="group mt-4 rounded-[var(--radius-card)] border border-line bg-surface">
+        <details key={key} className="group mt-4 rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]">
           <summary className="flex min-h-12 cursor-pointer items-center justify-between gap-3 px-4 py-2 font-semibold">
             <span>{title(sections[key].length)}</span>
             <span className="text-sm font-normal text-ink-3 group-open:hidden">{m.open}</span>

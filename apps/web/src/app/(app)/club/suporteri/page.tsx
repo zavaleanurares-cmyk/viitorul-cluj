@@ -36,7 +36,7 @@ export default async function SupportersPage({ searchParams }: { searchParams: P
             <p className="font-semibold">{t.sponsors.total(formatLei(sum))}</p>
             <ul className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
               {data.map((s) => (
-                <li key={s.id} className="flex gap-3 rounded-[var(--radius-card)] border border-line bg-surface p-4">
+                <li key={s.id} className="flex gap-3 rounded-[var(--radius-card)] border border-line/70 bg-surface p-4 shadow-[var(--shadow-card)]">
                   {s.logo_path ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={`/api/files/site/${s.logo_path}`} alt="" className="h-14 w-20 shrink-0 rounded-md border border-line bg-white object-contain p-1" />
@@ -76,7 +76,7 @@ export default async function SupportersPage({ searchParams }: { searchParams: P
   return (
     <>
       {header(<div className="flex flex-wrap gap-2">
-        <a href={`/c/${ctx.club.slug}/sustine`} target="_blank" rel="noreferrer" className="inline-flex h-12 items-center gap-2 rounded-[var(--radius-control)] border border-border-control bg-surface px-4 font-semibold hover:bg-canvas"><ExternalLink className="size-5" aria-hidden />{t.campaign.publicPage}</a>
+        <a href={`/c/${ctx.club.slug}/sustine`} target="_blank" rel="noreferrer" className="inline-flex h-11 items-center gap-2 rounded-full px-4 font-medium hover:bg-line bg-sunken transition-colors"><ExternalLink className="size-5" aria-hidden />{t.campaign.publicPage}</a>
         {active ? <CampaignButton suggestedYear={year} campaign={{ id: active.id, incomeYear: active.income_year, title: active.title, goal: active.goal ? String(active.goal) : "", deadline: active.deadline ?? "", active: active.is_active }} /> : null}
         {!active || active.income_year < year ? <CampaignButton suggestedYear={year} /> : null}
       </div>)}
@@ -96,7 +96,7 @@ export default async function SupportersPage({ searchParams }: { searchParams: P
           </Card>
           <div className="flex flex-wrap gap-2">
             <AddPledgeButton />
-            <a href="/api/club/suporteri" className="inline-flex h-12 items-center gap-2 rounded-[var(--radius-control)] border border-border-control bg-surface px-4 font-semibold hover:bg-canvas"><FileDown className="size-5" aria-hidden />{t.pledges.csv}</a>
+            <a href="/api/club/suporteri" className="inline-flex h-11 items-center gap-2 rounded-full px-4 font-medium hover:bg-line bg-sunken transition-colors"><FileDown className="size-5" aria-hidden />{t.pledges.csv}</a>
           </div>
           <PledgeTable rows={(pledges ?? []) as never} />
         </div>

@@ -6,18 +6,19 @@ import { ClearOfflinePages } from "@/components/auth/clear-offline-pages";
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   const t = getT().common;
   return (
-    <main className="flex min-h-dvh flex-col bg-surface md:grid md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
-      <div className="flex flex-col justify-end bg-brand px-6 pb-6 pt-10 text-brand-ink pt-safe md:justify-center md:p-12">
-        <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden className="mb-4 md:mb-6 md:size-20">
-          <path d="M2 12h4l2.5-6 4 12 2.5-6h7" />
-        </svg>
-        <p className="text-4xl font-bold md:text-6xl">{APP_NAME}</p>
-        <p className="mt-2 max-w-xs text-lg opacity-90 md:text-xl">{t.appTagline}</p>
+    // o singură coloană centrată, ca ecranele de conectare Apple: semnul aplicației, numele, apoi formularul într-un card
+    <main className="flex min-h-dvh flex-col items-center bg-canvas px-4 pb-10 pt-[calc(3rem+env(safe-area-inset-top,0px))] md:justify-center md:py-16">
+      <div className="mb-8 flex flex-col items-center text-center">
+        <span aria-hidden className="mb-4 inline-flex size-16 items-center justify-center rounded-[1.125rem] bg-brand text-brand-ink shadow-[var(--shadow-card)]">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M2 12h4l2.5-6 4 12 2.5-6h7" />
+          </svg>
+        </span>
+        <p className="text-[1.75rem] font-semibold tracking-tight">{APP_NAME}</p>
+        <p className="mt-1 max-w-xs text-[0.9375rem] text-ink-3">{t.appTagline}</p>
       </div>
-      <div className="flex flex-1 items-start justify-center p-6 md:items-center md:p-12">
-        <div className="w-full max-w-sm">{children}</div>
-        <ClearOfflinePages />
-      </div>
+      <div className="w-full max-w-md rounded-[var(--radius-sheet)] bg-surface p-6 shadow-[var(--shadow-card)] md:p-8">{children}</div>
+      <ClearOfflinePages />
     </main>
   );
 }

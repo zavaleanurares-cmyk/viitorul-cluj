@@ -40,7 +40,7 @@ export function BodyGrid({ rows, date, today, dateHref }: { rows: Row[]; date: s
         </Field>
         <p className="max-w-prose text-sm text-ink-3">{t.entryHint}</p>
       </div>
-      <div className="overflow-x-auto rounded-[var(--radius-card)] border border-line bg-surface">
+      <div className="overflow-x-auto rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]">
         <table className="w-full min-w-[34rem] text-left">
           <thead className="border-b border-line bg-canvas text-sm text-ink-2">
             <tr>

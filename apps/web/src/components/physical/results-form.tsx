@@ -93,7 +93,7 @@ export function ResultsForm({ groups, groupId, tests, testId, date, today, playe
           })}
         </ul>
       ) : (
-        <p className="rounded-[var(--radius-card)] border border-dashed border-line-strong bg-surface p-6 text-center text-ink-3">{t.noPlayers}</p>
+        <p className="rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)] p-6 text-center text-ink-3">{t.noPlayers}</p>
       )}
 
       <FormError>{problem ?? save.error}</FormError>

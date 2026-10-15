@@ -83,7 +83,7 @@ export function BankImportButton() {
         {step === 1 ? (
           <div className="space-y-3">
             <p className="text-ink-2">{t.fileHint}</p>
-            <label className="inline-flex h-12 cursor-pointer items-center gap-2 rounded-[var(--radius-control)] border border-border-control bg-surface px-4 font-semibold hover:bg-canvas">
+            <label className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-full px-4 font-medium hover:bg-line bg-sunken transition-colors">
               <Upload className="size-5" aria-hidden /> {t.choose}
               <input type="file" accept=".xlsx,.csv,.txt,.tsv" className="sr-only" onChange={async (e) => {
                 const f = e.target.files?.[0];

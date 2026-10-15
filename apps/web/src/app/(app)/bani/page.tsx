@@ -36,7 +36,7 @@ export default async function MoneyOverviewPage({ searchParams }: { searchParams
       <div className="mb-4 w-72"><PrevNext prevHref={shift(-1)} nextHref={shift(1)} label={monthLabel(month)} /></div>
       {!finance ? <Notice tone="gray" className="mb-4">{t.readOnly}</Notice> : null}
 
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Stat label={t.receivedMonth(monthName)} value={<Money value={cur.collected_for_month} />} hint={t.expectedHint(pct, formatLei(cur.expected))} tone={cur.expected === 0 ? undefined : pct >= 85 ? "green" : pct >= 50 ? "yellow" : "red"} />
         <Stat label={t.overdue} value={<Money value={s.kpi.overdue} />} hint={t.overdueHint(s.kpi.overdue_families)} tone={s.kpi.overdue ? "red" : "green"} />
         <Stat label={t.unallocated} value={s.kpi.unallocated_count} hint={t.unallocatedHint} tone={s.kpi.unallocated_count ? "yellow" : "green"} />
@@ -44,7 +44,7 @@ export default async function MoneyOverviewPage({ searchParams }: { searchParams
       </div>
 
       {s.kpi.requests_pending ? (
-        <Link href="/bani/referate?stare=submitted" className="mt-4 flex min-h-12 items-center gap-3 rounded-[var(--radius-control)] bg-st-yellow-soft px-4 py-3 font-semibold hover:underline">
+        <Link href="/bani/referate?stare=submitted" className="mt-4 flex min-h-12 items-center gap-3 rounded-[var(--radius-card)] bg-st-yellow-soft px-4 py-3 font-medium transition-[filter] hover:brightness-[0.98]">
           <ClipboardList className="size-5" aria-hidden /> {t.pendingRequests(s.kpi.requests_pending)}
         </Link>
       ) : null}
@@ -65,7 +65,7 @@ export default async function MoneyOverviewPage({ searchParams }: { searchParams
           <CardHeader title={t.teamsTitle(monthLabel(month))} />
           <CardBody>
             {s.teams.length === 0 ? <EmptyState title={t.teamsEmpty} /> : (
-              <TableWrap>
+              <TableWrap flush>
                 <>
                   <thead><tr><th scope="col">{t.teamCols.team}</th><th scope="col" className="text-right">{t.teamCols.payers}</th><th scope="col" className="text-right">{t.teamCols.collected}</th><th scope="col">{t.teamCols.pct}</th></tr></thead>
                   <tbody>

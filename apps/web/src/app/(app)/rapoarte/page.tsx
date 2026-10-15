@@ -15,16 +15,14 @@ function ReportCard({ icon, title, formats, summary, items, containsLabel, child
   return (
     <Card>
       <CardBody className="grid gap-4">
-        <header className="flex items-start gap-3">
-          <span className="mt-0.5 inline-flex size-10 shrink-0 items-center justify-center rounded-lg bg-sunken text-ink-2">{icon}</span>
-          <div className="min-w-0">
-            <h2 className="flex flex-wrap items-center gap-2 text-lg">
-              {title}
-              {formats.map((f) => <Badge key={f} tone="outline">{f}</Badge>)}
-            </h2>
-            <p className="mt-0.5 text-ink-2">{summary}</p>
-          </div>
+        <header className="flex items-center gap-3">
+          <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-[0.75rem] bg-sunken text-ink-2">{icon}</span>
+          <h2 className="flex min-w-0 flex-wrap items-center gap-2 text-lg">
+            {title}
+            {formats.map((f) => <Badge key={f} tone="outline">{f}</Badge>)}
+          </h2>
         </header>
+        <p className="-mt-2 text-ink-2">{summary}</p>
         <div>
           <p className="text-sm font-semibold text-ink-3">{containsLabel}</p>
           <ul className="mt-1 list-disc pl-5 text-ink-2 marker:text-ink-3">

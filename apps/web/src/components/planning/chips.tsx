@@ -25,9 +25,9 @@ export function ChipToggles<T extends string | number>({ label, options, value, 
             title={o.title}
             onClick={() => toggle(o.value)}
             className={cn(
-              "inline-flex h-12 items-center justify-center gap-1.5 rounded-[var(--radius-control)] border font-semibold",
+              "inline-flex h-11 items-center justify-center gap-1.5 rounded-full font-medium",
               compact ? "px-0" : "px-3",
-              on ? "border-ink bg-ink text-white" : "border-line-strong bg-surface text-ink hover:bg-canvas",
+              on ? "border-brand bg-brand text-brand-ink" : "border-transparent bg-sunken text-ink hover:bg-line",
             )}
           >
             {on && !compact ? <Check className="size-4" strokeWidth={3} aria-hidden /> : null}

@@ -25,13 +25,13 @@ export default async function FamilyCampsPage() {
   const minorPlayer = ctx.role === "player" && (!ctx.player?.birth_date || ctx.player.birth_date > `${Number(ctx.today.slice(0, 4)) - 18}${ctx.today.slice(4)}`);
   const mine = (regs ?? []) as Array<{ id: string; camp_id: string; player_id: string | null; child_name: string; status: string; camps: { title: string; starts_on: string; ends_on: string } | null }>;
   return (
-    <div className="mx-auto max-w-2xl space-y-4">
+    <div className="max-w-2xl space-y-6">
       <FamilyClubTabs current="camps" />
       <PageHeader title={t.family.title} description={t.family.description} />
       {mine.length ? (
         <section>
           <h2 className="mb-2 text-lg">{t.family.mine}</h2>
-          <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface">
+          <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]">
             {mine.map((r) => (
               <li key={r.id} className="flex flex-wrap items-center gap-3 px-4 py-3">
                 <span className="min-w-0 flex-1">

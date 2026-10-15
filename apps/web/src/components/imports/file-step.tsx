@@ -53,7 +53,7 @@ export function FileStep({ kind, file, sheetIndex, knownFiles, timezone, onFile,
         className={cn(
           "flex cursor-pointer flex-col items-center gap-2 rounded-[var(--radius-card)] border-2 border-dashed px-6 py-8 text-center",
           "focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-brand",
-          over ? "border-brand bg-sunken" : "border-line-strong bg-surface hover:bg-canvas",
+          over ? "border-brand bg-sunken" : "border-transparent bg-sunken hover:bg-line",
         )}
       >
         <Upload className="size-8 text-ink-3" aria-hidden />

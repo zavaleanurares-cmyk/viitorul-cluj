@@ -90,8 +90,8 @@ export function PaymentDialog({ payment, families, canRefund, onClose }: { payme
     <Dialog open onClose={onClose} title={`${t.title} · ${formatLei(payment.amount)}`} wide
       footer={mode === "view" ? (
         <>
-          <a href={`/api/bani/dovada/${payment.id}`} className="inline-flex h-12 items-center gap-2 rounded-[var(--radius-control)] px-4 font-semibold hover:bg-sunken"><FileDown className="size-5" aria-hidden />{m.family.confirmation}</a>
-          {payment.receiptId ? <a href={`/api/bani/chitanta/${payment.receiptId}`} className="inline-flex h-12 items-center gap-2 rounded-[var(--radius-control)] px-4 font-semibold hover:bg-sunken"><FileDown className="size-5" aria-hidden />{m.family.receipt}</a> : null}
+          <a href={`/api/bani/dovada/${payment.id}`} className="inline-flex h-11 items-center gap-2 rounded-full px-4 font-medium hover:bg-sunken"><FileDown className="size-5" aria-hidden />{m.family.confirmation}</a>
+          {payment.receiptId ? <a href={`/api/bani/chitanta/${payment.receiptId}`} className="inline-flex h-11 items-center gap-2 rounded-full px-4 font-medium hover:bg-sunken"><FileDown className="size-5" aria-hidden />{m.family.receipt}</a> : null}
           {active && payment.method !== "online" ? <Button variant="ghost" onClick={() => setMode("void")}>{t.void}</Button> : null}
           {active && payment.method === "online" && canRefund && payment.refunded_amount < payment.amount ? <Button variant="ghost" icon={<Undo2 className="size-5" aria-hidden />} onClick={() => setMode("refund")}>{t.refund}</Button> : null}
           {active ? <Button variant="secondary" onClick={() => setMode("allocate")}>{t.reallocate}</Button> : null}
@@ -158,7 +158,7 @@ export function PaymentList({ rows, families, canRefund }: { rows: PaymentRow[];
   const [open, setOpen] = useState<PaymentRow | null>(null);
   return (
     <>
-      <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface">
+      <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]">
         {rows.map((p) => (
           <li key={p.id}>
             <button type="button" onClick={() => setOpen(p)} className="grid min-h-16 w-full grid-cols-[1fr_auto] items-center gap-x-4 gap-y-0.5 px-4 py-2 text-left hover:bg-canvas sm:grid-cols-[6rem_minmax(0,1fr)_8rem_9rem_7rem]">
@@ -170,9 +170,9 @@ export function PaymentList({ rows, families, canRefund }: { rows: PaymentRow[];
               </span>
               <span className="text-sm text-ink-2 sm:order-3">{PAYMENT_METHOD_LABELS[p.method] ?? p.method}</span>
               <span className="flex flex-wrap justify-end gap-1 sm:order-4">
-                {p.status === "void" ? <span className="inline-flex h-6 items-center rounded-md bg-sunken px-1.5 text-xs font-semibold text-ink-3">{t.voidChip}</span> : null}
-                {p.status !== "void" && p.unallocated > 0 ? <span className="inline-flex h-6 items-center rounded-md bg-st-yellow px-1.5 text-xs font-semibold">{t.unallocatedChip(formatLei(p.unallocated))}</span> : null}
-                {p.refunded_amount > 0 ? <span className="inline-flex h-6 items-center rounded-md bg-st-blue-soft px-1.5 text-xs font-semibold">{t.refundedChip(formatLei(p.refunded_amount))}</span> : null}
+                {p.status === "void" ? <span className="inline-flex h-6 items-center rounded-full bg-sunken px-2.5 text-xs font-semibold text-ink-3">{t.voidChip}</span> : null}
+                {p.status !== "void" && p.unallocated > 0 ? <span className="inline-flex h-6 items-center rounded-full bg-st-yellow px-2.5 text-xs font-semibold">{t.unallocatedChip(formatLei(p.unallocated))}</span> : null}
+                {p.refunded_amount > 0 ? <span className="inline-flex h-6 items-center rounded-full bg-st-blue-soft px-2.5 text-xs font-semibold">{t.refundedChip(formatLei(p.refunded_amount))}</span> : null}
               </span>
             </button>
           </li>

@@ -38,10 +38,9 @@ export async function PlayerToday({ db, ctx }: Pick<Session, "db" | "ctx">) {
   const status = ctx.statuses.find((s) => s.id === player.status_id) ?? null;
 
   return (
-    <div className="mx-auto max-w-2xl space-y-4">
+    <div className="max-w-2xl space-y-6">
       <header>
-        <p className="text-ink-3">{t.today.title}</p>
-        <h1 className="text-2xl md:text-3xl">{capitalize(formatDate(ctx.today, { weekday: true, year: false }))}</h1>
+        <h1 className="text-[1.75rem] leading-tight md:text-[2.125rem]">{capitalize(formatDate(ctx.today, { weekday: true, year: false }))}</h1>
       </header>
 
       <StatusCard player={player} status={status} today={ctx.today} />

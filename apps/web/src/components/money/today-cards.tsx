@@ -21,9 +21,9 @@ export async function MoneyTodayCard({ db, ctx }: { db: Db; ctx: AppContext }) {
   const approver = (settings.data?.approver_roles ?? []).includes(ctx.role);
   const toApprove = approver ? (pending.data ?? []).filter((r) => r.requested_by !== ctx.userId).length : 0;
   const items = [
-    ...(owed ? [{ key: "o", href: "/bani/taxe", icon: Wallet, text: t.overdue(formatLei(owed), families), tone: "bg-st-red text-white" }] : []),
-    ...((unalloc.count ?? 0) ? [{ key: "u", href: "/bani/incasari?vedere=asociat", icon: CircleAlert, text: t.unallocated(unalloc.count ?? 0), tone: "bg-st-yellow text-ink" }] : []),
-    ...((bank.count ?? 0) ? [{ key: "b", href: "/bani/banca", icon: Landmark, text: t.bank(bank.count ?? 0), tone: "bg-st-yellow text-ink" }] : []),
+    ...(owed ? [{ key: "o", href: "/bani/taxe", icon: Wallet, text: t.overdue(formatLei(owed), families), tone: "bg-st-red-soft text-st-red" }] : []),
+    ...((unalloc.count ?? 0) ? [{ key: "u", href: "/bani/incasari?vedere=asociat", icon: CircleAlert, text: t.unallocated(unalloc.count ?? 0), tone: "bg-st-yellow-soft text-ink" }] : []),
+    ...((bank.count ?? 0) ? [{ key: "b", href: "/bani/banca", icon: Landmark, text: t.bank(bank.count ?? 0), tone: "bg-st-yellow-soft text-ink" }] : []),
     ...(toApprove ? [{ key: "r", href: "/bani/referate?stare=submitted", icon: ClipboardList, text: t.requests(toApprove), tone: "bg-st-blue-soft text-ink" }] : []),
   ];
   if (!items.length) return null;

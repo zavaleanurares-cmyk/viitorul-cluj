@@ -206,7 +206,7 @@ export function AccountDialog({ account, onClose, groups, freePlayers }: {
 
         {isPlayer && !anonymized ? (
           <section className="space-y-2 border-t border-line pt-4">
-            <h3 className="font-bold">{t.linkedPlayer}</h3>
+            <h3 className="">{t.linkedPlayer}</h3>
             {account.player ? (
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <a href={`/lot/jucatori/${account.player.id}`} className="font-semibold underline underline-offset-4">{account.player.displayName}</a>
@@ -230,7 +230,7 @@ export function AccountDialog({ account, onClose, groups, freePlayers }: {
 
         {!disabled ? (
           <section className="space-y-3 border-t border-line pt-4">
-            <h3 className="font-bold">{t.accessTitle}</h3>
+            <h3 className="">{t.accessTitle}</h3>
             <p className="text-sm text-ink-3">
               {account.state === "invited" ? t.accessInvited : t.accessActive}
               {account.inviteExpires ? ` ${t.linkValidUntil(account.inviteExpires)}` : ""}
@@ -250,7 +250,7 @@ export function AccountDialog({ account, onClose, groups, freePlayers }: {
 
         {!account.isSelf ? (
           <section className="space-y-3 border-t border-line pt-4">
-            <h3 className="font-bold">{t.dangerTitle}</h3>
+            <h3 className="">{t.dangerTitle}</h3>
             <div className="grid gap-2 sm:grid-cols-2">
               {anonymized ? null : disabled ? (
                 <Button variant="secondary" pending={active.pending} icon={<UserCheck className="size-5" aria-hidden />} onClick={() => active.run({ userId: account.id, active: true })}>

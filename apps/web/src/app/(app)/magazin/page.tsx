@@ -30,13 +30,13 @@ export default async function FamilyShop() {
   })).filter((p) => p.kind === "item" ? p.variants.length > 0 : p.components.length > 0);
   const minorPlayer = ctx.role === "player" && (!ctx.player?.birth_date || ctx.player.birth_date > `${Number(ctx.today.slice(0, 4)) - 18}${ctx.today.slice(4)}`);
   return (
-    <div className="mx-auto max-w-6xl space-y-4">
-      <div className="mx-auto max-w-2xl lg:max-w-none"><FamilyClubTabs current="shop" /></div>
+    <div className="space-y-6">
+      <div className="max-w-2xl"><FamilyClubTabs current="shop" /></div>
       <PageHeader title={t.family.title} description={t.family.description} />
       {orders?.length ? (
         <section>
           <h2 className="mb-2 text-lg">{t.family.mine}</h2>
-          <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface">
+          <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]">
             {orders.map((o) => (
               <li key={o.id} className="flex flex-wrap items-center gap-3 px-4 py-3">
                 <span className="min-w-0 flex-1">

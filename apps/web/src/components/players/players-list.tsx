@@ -108,7 +108,7 @@ export function PlayersList({ players, groups, statuses, photos, canManage, toda
           action={filtered ? <Button variant="secondary" onClick={() => update({ q: "", grupa: "", stare: "" })}>{t.resetFilters}</Button> : undefined}
         />
       ) : (
-        <div className="overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface">
+        <div className="overflow-hidden rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]">
           <div className={cn("hidden border-b border-line bg-canvas px-3 py-2 text-sm font-semibold text-ink-3 md:grid md:gap-x-3", GRID)}>
             <span>{t.colPlayer}</span>
             <span>{t.colGroup}</span>

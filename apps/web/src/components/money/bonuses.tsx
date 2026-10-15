@@ -81,7 +81,7 @@ export type BonusEntry = { id: string; who: string; match: string; date: string;
 
 const STATUS_ICON = { pending: Hourglass, approved: Check, paid: CircleCheck, cancelled: Ban } as const;
 const STATUS_CLS: Record<string, string> = {
-  pending: "bg-st-yellow text-ink", approved: "bg-st-blue-soft text-ink", paid: "bg-st-green text-white", cancelled: "bg-sunken text-ink-3",
+  pending: "bg-st-yellow-soft text-ink", approved: "bg-st-blue-soft text-ink", paid: "bg-st-green-soft text-ink", cancelled: "bg-sunken text-ink-3",
 };
 
 export function BonusEntries({ entries }: { entries: BonusEntry[] }) {
@@ -99,16 +99,16 @@ export function BonusEntries({ entries }: { entries: BonusEntry[] }) {
           <Button size="sm" variant="ghost" pending={a.pending} onClick={() => a.run({ ids: [...sel], status: "cancelled" })}>{t.cancelEntries}</Button>
         </div>
       ) : null}
-      <ul className="divide-y divide-line rounded-[var(--radius-control)] border border-line">
+      <ul className="divide-y divide-line border-y border-line">
         {entries.map((e) => (
           <li key={e.id}>
-            <label className="flex min-h-14 cursor-pointer flex-wrap items-center gap-x-3 gap-y-1 px-3 py-2">
+            <label className="flex min-h-14 cursor-pointer flex-wrap items-center gap-x-3 gap-y-1 py-2">
               <input type="checkbox" className="size-5 accent-[var(--color-brand)]" checked={sel.has(e.id)} onChange={(ev) => { const n = new Set(sel); if (ev.target.checked) n.add(e.id); else n.delete(e.id); setSel(n); }} />
               <span className="min-w-0 flex-1 basis-48">
                 <span className="block font-semibold">{e.who}</span>
                 <span className="block text-sm text-ink-3">{formatDateShort(e.date)} · {e.match} · {e.rule}{e.quantity > 1 ? ` × ${e.quantity}` : ""}</span>
               </span>
-              <span className={cn("inline-flex h-6 shrink-0 items-center gap-1 rounded-md px-1.5 text-xs font-semibold", STATUS_CLS[e.status])}>
+              <span className={cn("inline-flex h-6 shrink-0 items-center gap-1 rounded-full px-2.5 text-xs font-semibold", STATUS_CLS[e.status])}>
                 {(() => { const I = STATUS_ICON[e.status as keyof typeof STATUS_ICON] ?? Hourglass; return <I className="size-3.5" aria-hidden />; })()}
                 {t.status[e.status as keyof typeof t.status]}
               </span>

@@ -86,7 +86,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ g
         description={t.description(group.name)}
         action={
           canEdit ? (
-            <div className="grid w-full gap-2 sm:flex sm:w-auto sm:flex-wrap">
+            <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto sm:flex-wrap [&>:last-child:nth-child(odd)]:col-span-2">
               <LinkButton href="/import?tip=fizic" icon={<Upload className="size-5" aria-hidden />}>{t.importKsport}</LinkButton>
               <LinkButton href={`/fizic/sesiuni/nou${groupParam}`} variant="primary" icon={<Plus className="size-5" aria-hidden />}>{t.addSession}</LinkButton>
             </div>
@@ -101,12 +101,12 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ g
       />
 
       {/* pe telefon lista de sesiuni vine prima; sinteza, după ea */}
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-6">
         {hasSummary ? (
           <section className="space-y-3 max-md:order-last">
             <div>
               <h2 className="text-xl">{t.summary.title}</h2>
-              <p className="text-sm text-ink-3">{t.summary.hint(SUMMARY_WEEKS)}</p>
+              <p className="mt-1 text-sm text-ink-3">{t.summary.hint(SUMMARY_WEEKS)}</p>
             </div>
             <div className="grid gap-4 lg:grid-cols-3">
               <Card>
@@ -135,7 +135,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ g
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
               <h2 className="text-xl">{t.list.title}</h2>
-              <p className="text-sm text-ink-3">{t.list.hint(sessions.length, formatDateShort(from, false), formatDateShort(today))}</p>
+              <p className="mt-1 text-sm text-ink-3">{t.list.hint(sessions.length, formatDateShort(from, false), formatDateShort(today))}</p>
             </div>
             <IntervalNav
               label={t.list.interval}

@@ -19,12 +19,12 @@ export default async function InboxPage() {
   const rows = (data ?? []).map((r) => ({ read: !!r.read_at, ...(r.messages as unknown as { id: string; title: string; body: string; sent_at: string }) }))
     .sort((a, b) => (b.sent_at ?? "").localeCompare(a.sent_at ?? ""));
   return (
-    <div className="mx-auto max-w-2xl">
+    <div className="max-w-2xl">
       {ctx.role === "guardian" || ctx.role === "player" ? <FamilyClubTabs current="messages" /> : null}
       <PageHeader title={t.inbox} description={t.inboxDescription} />
       <div className="mb-4"><FamilyNewsCard db={db} today={ctx.today} days={60} limit={3} /></div>
       {!rows.length ? <EmptyState icon={<Megaphone className="size-8" aria-hidden />} title={t.inboxEmpty} /> : (
-        <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface">
+        <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]">
           {rows.map((m) => (
             <li key={m.id}>
               <Link href={`/mesaje/${m.id}`} className="flex min-h-16 items-center gap-3 px-4 py-2 hover:bg-canvas">

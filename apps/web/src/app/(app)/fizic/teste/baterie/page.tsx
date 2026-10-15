@@ -54,7 +54,7 @@ export default async function BatteryEntryPage({ searchParams }: { searchParams:
         <form action="/fizic/teste/baterie" className="flex items-end gap-2">
           <input type="hidden" name="grupa" value={group.id} /><input type="hidden" name="baterie" value={battery.id} />
           <Field label={t.date} className="flex-1"><Input type="date" name="data" defaultValue={date} max={ctx.today} /></Field>
-          <button type="submit" className="h-12 rounded-[var(--radius-control)] border border-border-control bg-surface px-3 font-semibold hover:bg-canvas">{getT().common.actions.open}</button>
+          <button type="submit" className="h-11 rounded-full bg-sunken px-4 font-medium transition-colors hover:bg-line">{getT().common.actions.open}</button>
         </form>
       </div>
       <TestGrid key={`${group.id}:${battery.id}:${date}`} tests={tests.map(({ id, name, unit }) => ({ id, name, unit }))} rows={rows} date={date} />

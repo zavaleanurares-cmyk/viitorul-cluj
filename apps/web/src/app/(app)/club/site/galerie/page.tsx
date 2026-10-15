@@ -23,7 +23,7 @@ export default async function GalleryPage() {
             const photos = [...((a.site_photos ?? []) as Array<{ path: string; sort: number }>)].sort((x, y) => x.sort - y.sort);
             return (
               <li key={a.id}>
-                <Link href={`/club/site/galerie/${a.id}`} className="block overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface hover:border-line-strong">
+                <Link href={`/club/site/galerie/${a.id}`} className="block overflow-hidden rounded-[var(--radius-card)] border border-line/70 bg-surface hover:border-line-strong shadow-[var(--shadow-card)]">
                   {photos[0] ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={`/api/files/site/${photos[0].path}`} alt="" loading="lazy" className="aspect-[4/3] w-full object-cover" />

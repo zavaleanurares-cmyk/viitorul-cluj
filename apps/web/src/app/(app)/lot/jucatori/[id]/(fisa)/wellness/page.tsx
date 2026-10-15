@@ -123,7 +123,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
         ) : null}
       </div>
 
-      <div className="grid grid-cols-2 gap-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <Stat label={p.avgFatigue} value={fmt1(average(entries.map((e) => e.fatigue)))} hint={p.threshold(thresholds.fatigue)} />
         <Stat label={p.avgMuscle} value={fmt1(average(entries.map((e) => e.muscle_load)))} hint={p.threshold(thresholds.muscle)} />
         <Stat label={p.completion} value={`${percent(filled, days) ?? 0}%`} hint={p.completionHint(filled, days)} />
@@ -188,7 +188,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
           <CardHeader title={p.tableTitle} description={p.tableHint(filled, days)} />
           {sorted.length ? (
             <div className="mt-3 max-h-[34rem] overflow-y-auto border-t border-line">
-              <TableWrap className="mx-0! md:rounded-none! md:border-0!">
+              <TableWrap flush>
                 <thead>
                   <tr>
                     <th scope="col" className="sticky top-0 z-10">{p.colDate}</th>
@@ -253,7 +253,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
           <div className="relative overflow-hidden">
             <BarsChart data={loads} label={p.rpeLabel} caption={p.rpeCaption(player.display_name, days)} horizontal={days === 90} />
           </div>
-          <div className="grid gap-2 sm:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-3">
             <Stat label={p.acute} value={nf.format(acwr.acute)} hint={p.acuteHint} />
             <Stat label={p.chronic} value={nf.format(acwr.chronic)} hint={p.chronicHint} />
             {acwr.ratio !== null ? <Stat label={p.ratio} value={nf.format(acwr.ratio)} hint={p.ratioShort} /> : null}
@@ -262,7 +262,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
           {rpeRows.length ? (
             <details>
               <summary className="flex h-12 cursor-pointer items-center font-semibold text-ink-2">{p.rpeRows(rpeRows.length)}</summary>
-              <TableWrap>
+              <TableWrap flush>
                 <thead>
                   <tr>
                     <th scope="col">{p.colDate}</th>

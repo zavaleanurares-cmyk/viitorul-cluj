@@ -31,7 +31,7 @@ export function WeekStrip({ days, marks, selected, today, hrefFor }: {
                 aria-label={`${WEEKDAYS_RO[wd]}, ${formatDate(d, { year: false })}${isToday ? ` (${t.todayTag})` : ""}: ${what}`}
                 className={cn(
                   "flex h-[4.5rem] flex-col items-center justify-center gap-0.5 rounded-lg border",
-                  isSelected ? "border-brand bg-brand text-brand-ink" : "border-line bg-surface text-ink active:bg-sunken",
+                  isSelected ? "border-brand bg-brand text-brand-ink" : "border-transparent bg-sunken text-ink active:bg-line",
                   isToday && !isSelected && "border-2 border-ink",
                 )}
               >

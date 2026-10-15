@@ -12,7 +12,7 @@ export function ScheduleTabs() {
   const current = pathname.startsWith("/program/terenuri") ? "venues" : pathname.startsWith("/program/competitii") ? "competitions" : "calendar";
   return (
     <TabLinks
-      className="mb-5"
+      className="mb-6"
       current={current}
       tabs={[
         { key: "calendar", href: "/program", label: t.calendar },

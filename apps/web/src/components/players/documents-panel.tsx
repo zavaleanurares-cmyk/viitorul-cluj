@@ -60,7 +60,7 @@ export function DocumentsPanel({ title, description, docs, upload, emptyTitle, e
       {!docs.length ? (
         <EmptyState icon={<FileText className="size-8" aria-hidden />} title={emptyTitle} description={emptyDescription} />
       ) : (
-        <ul className="overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface">
+        <ul className="overflow-hidden rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]">
           {docs.map((d) => (
             <li key={d.id} className="flex flex-wrap items-center gap-x-3 gap-y-1 border-b border-line py-2 pl-3 pr-2 last:border-b-0 md:flex-nowrap">
               <FileText className="hidden size-6 shrink-0 text-ink-3 md:block" aria-hidden />

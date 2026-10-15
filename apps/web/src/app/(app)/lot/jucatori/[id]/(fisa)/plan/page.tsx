@@ -85,7 +85,7 @@ export default async function PlayerPlanPage({ params, searchParams }: {
                     <Link href={`/planuri/${id}/${d}`}
                       className={cn(
                         "flex min-h-12 items-center gap-2 rounded-[var(--radius-control)] border px-3 py-1.5",
-                        cell ? "border-line-strong bg-surface hover:bg-canvas" : "border-dashed border-line-strong text-ink-2 hover:bg-sunken",
+                        cell ? "border-transparent bg-sunken hover:bg-line" : "border-dashed border-line-strong text-ink-2 hover:bg-sunken",
                       )}>
                       {cell ? (
                         <>
@@ -165,7 +165,7 @@ export default async function PlayerPlanPage({ params, searchParams }: {
                   <div className="flex items-center justify-between gap-2">
                     <DayStrip days={adherence.days} total={a.program.exerciseIds.length} labels={all.adherence.dayStates} empty="" />
                     <Link href={`/programe/${a.program.id}/aderenta?alocare=${a.id}`} aria-label={`${t.adherence}: ${a.program.name}`} title={t.adherence}
-                      className="inline-flex size-12 shrink-0 items-center justify-center rounded-[var(--radius-control)] border border-line-strong hover:bg-canvas">
+                      className="inline-flex size-11 shrink-0 items-center justify-center rounded-full hover:bg-line bg-sunken transition-colors">
                       <BarChart3 className="size-5" aria-hidden />
                     </Link>
                   </div>

@@ -19,7 +19,7 @@ export function ClipPlayer({ source, url, storagePath, start, end, title }: {
     return <video src={src} controls preload="metadata" className="aspect-video w-full rounded-[var(--radius-control)] bg-black" />;
   }
   return url ? (
-    <a href={url} target="_blank" rel="noreferrer" className="inline-flex h-12 items-center gap-2 rounded-[var(--radius-control)] border border-border-control px-4 font-semibold hover:bg-canvas">
+    <a href={url} target="_blank" rel="noreferrer" className="inline-flex h-11 items-center gap-2 rounded-full px-4 font-medium hover:bg-line bg-sunken transition-colors">
       <ExternalLink className="size-5" aria-hidden />{t.openExternal(t.sources[source])} · {formatClock(start)}{end ? `–${formatClock(end)}` : ""}
     </a>
   ) : null;

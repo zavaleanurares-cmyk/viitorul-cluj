@@ -37,7 +37,7 @@ export function ShopFront({ products, kids }: { products: FrontProduct[]; kids: 
       <ul className="grid gap-4 sm:grid-cols-2 2xl:grid-cols-3">
         {products.map((p) => <ProductCard key={p.id} product={p} kitSize={kitSize} onAdd={add} />)}
       </ul>
-      <aside className="space-y-3 rounded-[var(--radius-card)] border border-line bg-surface p-4 lg:sticky lg:top-4 lg:self-start" aria-labelledby="cos">
+      <aside className="space-y-3 rounded-[var(--radius-card)] border border-line/70 bg-surface p-4 lg:sticky lg:top-4 lg:self-start shadow-[var(--shadow-card)]" aria-labelledby="cos">
         <h2 id="cos" className="flex items-center gap-2 text-lg"><ShoppingCart className="size-5" aria-hidden />{t.family.cart}</h2>
         {!cart.length ? <p className="text-ink-3">{t.family.cartEmpty}</p> : (
           <>
@@ -84,7 +84,7 @@ function ProductCard({ product: p, kitSize, onAdd }: { product: FrontProduct; ki
   const soldOut = p.kind === "item" ? p.variants.every((x) => x.stock === 0) : p.components.some((c) => c.variants.every((x) => x.stock === 0));
   const ready = p.kind === "item" ? !!v && v.stock >= qty : p.components.every((c) => (c.variants.find((x) => x.id === comps[c.id])?.stock ?? 0) >= qty);
   return (
-    <li className={cn("flex flex-col overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface", soldOut && "opacity-70")}>
+    <li className={cn("flex flex-col overflow-hidden rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]", soldOut && "opacity-70")}>
       {p.photo ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={`/api/files/shop/${p.photo}`} alt="" loading="lazy" className="aspect-square w-full object-cover" />

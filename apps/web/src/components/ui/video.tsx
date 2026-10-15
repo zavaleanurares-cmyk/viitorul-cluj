@@ -42,7 +42,7 @@ export function ExerciseMedia({ title, fileUrl, url, imageUrl, attribution }: {
     );
   }
   return (
-    <figure className="overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface">
+    <figure className="overflow-hidden rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]">
       {media}
       {src?.kind === "link" ? (
         <a href={src.url} target="_blank" rel="noopener noreferrer" className="flex h-12 items-center gap-2 px-3 font-semibold underline">

@@ -24,20 +24,20 @@ export function Dialog({ open, onClose, title, children, footer, wide }: {
       onClose={onClose}
       onClick={(e) => { if (e.target === ref.current) onClose(); }}
       className={cn(
-        "m-0 mt-auto max-h-[92dvh] w-full max-w-none rounded-t-2xl bg-surface p-0 text-ink backdrop:bg-ink/50",
-        "md:m-auto md:rounded-2xl", wide ? "md:max-w-3xl" : "md:max-w-lg",
+        "m-0 mt-auto max-h-[92dvh] w-full max-w-none rounded-t-[var(--radius-sheet)] bg-surface p-0 text-ink shadow-[var(--shadow-float)] backdrop:bg-black/30 backdrop:backdrop-blur-[2px]",
+        "md:m-auto md:rounded-[var(--radius-sheet)]", wide ? "md:max-w-3xl" : "md:max-w-lg",
       )}
     >
       {open ? (
         <div className="flex max-h-[92dvh] flex-col">
-          <header className="flex items-center justify-between gap-3 border-b border-line py-2 pl-4 pr-2">
-            <h2 className="text-lg">{title}</h2>
-            <button type="button" onClick={onClose} aria-label="Închide" className="inline-flex size-12 items-center justify-center rounded-lg hover:bg-sunken">
-              <X className="size-6" aria-hidden />
+          <header className="flex items-center justify-between gap-3 py-3 pl-5 pr-3">
+            <h2 className="text-[1.0625rem]">{title}</h2>
+            <button type="button" onClick={onClose} aria-label="Închide" className="inline-flex size-8 items-center justify-center rounded-full bg-sunken text-ink-2 transition-colors hover:bg-line">
+              <X className="size-4" strokeWidth={2.5} aria-hidden />
             </button>
           </header>
-          <div className="overflow-y-auto p-4">{children}</div>
-          {footer ? <footer className="flex flex-wrap justify-end gap-2 border-t border-line p-4 pb-safe">{footer}</footer> : null}
+          <div className="overflow-y-auto px-5 pb-5 pt-1">{children}</div>
+          {footer ? <footer className="flex flex-wrap justify-end gap-2 border-t border-line px-5 py-4 pb-safe">{footer}</footer> : null}
         </div>
       ) : null}
     </dialog>

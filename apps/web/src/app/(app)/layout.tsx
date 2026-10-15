@@ -54,7 +54,7 @@ function DemoNotice() {
     <p className="flex flex-wrap items-center gap-x-3 gap-y-1 border-b border-line bg-st-blue-soft px-4 py-2.5 text-sm md:px-8">
       <FlaskConical className="size-4 shrink-0 text-st-blue" aria-hidden />
       <span className="min-w-0 flex-1">{t.banner}</span>
-      <Link href="/demo" className="font-semibold underline">{t.switchRole}</Link>
+      <Link href="/demo" className="font-medium text-st-blue hover:underline">{t.switchRole}</Link>
     </p>
   );
 }

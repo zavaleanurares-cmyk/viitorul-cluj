@@ -60,7 +60,7 @@ export function StepNav({ back, onBack, next, onNext, disabled, pending, hint, f
 export function Problems({ items }: { items: string[] }) {
   if (!items.length) return null;
   return (
-    <ul role="alert" className="mt-4 space-y-1 rounded-[var(--radius-control)] border-l-4 border-st-red bg-st-red-soft px-4 py-3 font-semibold">
+    <ul role="alert" className="mt-4 space-y-1 rounded-[var(--radius-control)] bg-st-red-soft px-4 py-3 font-medium">
       {items.map((p) => <li key={p}>{p}</li>)}
     </ul>
   );
@@ -122,7 +122,7 @@ export function FilterTabs<T extends string>({ label, value, onChange, options }
           key={o.value} type="button" role="radio" aria-checked={value === o.value} onClick={() => onChange(o.value)}
           className={cn(
             "h-10 rounded-[var(--radius-control)] border px-3 text-sm font-semibold whitespace-nowrap",
-            value === o.value ? "border-brand bg-brand text-brand-ink" : "border-line-strong bg-surface text-ink hover:bg-canvas",
+            value === o.value ? "border-brand bg-brand text-brand-ink" : "border-transparent bg-sunken text-ink hover:bg-line",
           )}
         >
           {o.label}

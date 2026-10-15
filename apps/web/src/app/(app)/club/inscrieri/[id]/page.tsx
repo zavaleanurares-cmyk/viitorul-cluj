@@ -61,7 +61,7 @@ export default async function EnrolmentRequestPage({ params }: { params: Promise
       />
 
       {open ? (
-        <div className="flex flex-wrap items-center gap-2 rounded-[var(--radius-card)] border border-line bg-surface p-3">
+        <div className="flex flex-wrap items-center gap-2 rounded-[var(--radius-card)] border border-line/70 bg-surface p-3 shadow-[var(--shadow-card)]">
           {r.status === "new" ? <BookTrialButton id={r.id} events={trialEvents} /> : null}
           {r.status === "trial" ? <><RecordTrialButton id={r.id} /><BookTrialButton id={r.id} events={trialEvents} again /></> : null}
           {r.status === "trial_done" ? <><EnrolButton id={r.id} groupId={r.group_id} groups={groups} /><RecordTrialButton id={r.id} rating={r.trial_rating} note={r.trial_note} /></> : null}
@@ -70,7 +70,7 @@ export default async function EnrolmentRequestPage({ params }: { params: Promise
           <CloseButtons id={r.id} />
         </div>
       ) : r.status !== "enrolled" ? (
-        <div className="flex flex-wrap items-center gap-3 rounded-[var(--radius-card)] border border-line bg-surface p-3">
+        <div className="flex flex-wrap items-center gap-3 rounded-[var(--radius-card)] border border-line/70 bg-surface p-3 shadow-[var(--shadow-card)]">
           <p className="flex-1 text-ink-2">{t.status[r.status as "declined"]}{r.decline_reason ? `: ${r.decline_reason}` : ""}</p>
           <ReopenButton id={r.id} />
         </div>

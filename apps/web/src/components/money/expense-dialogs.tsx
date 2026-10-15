@@ -82,7 +82,7 @@ export function ExpenseButton({ clubId, today, depts, teams, players, expense }:
           <div>
             <p className="mb-1 text-sm font-semibold text-ink-2">{t.fields.document}</p>
             {v.document_path ? <p className="mb-2 flex items-center gap-2"><FileText className="size-5" aria-hidden /><a className="font-semibold underline" href={`/api/files/finance/${v.document_path.split("/").map(encodeURIComponent).join("/")}`} target="_blank" rel="noreferrer">{v.document_path.split("/").pop()}</a></p> : null}
-            <label className="inline-flex h-12 cursor-pointer items-center gap-2 rounded-[var(--radius-control)] border border-border-control bg-surface px-4 font-semibold hover:bg-canvas">
+            <label className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-full px-4 font-medium hover:bg-line bg-sunken transition-colors">
               <Upload className="size-5" aria-hidden /> {v.document_path ? t.fields.replaceDocument : t.fields.document}
               <input type="file" accept="application/pdf,image/*" className="sr-only" onChange={async (e) => {
                 const f = e.target.files?.[0];

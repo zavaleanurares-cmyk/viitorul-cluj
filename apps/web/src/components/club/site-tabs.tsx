@@ -9,7 +9,7 @@ export function SiteHeader({ slug, current, action }: { slug: string; current: "
     <>
       <PageHeader title={t.title} description={t.description}
         action={<div className="flex flex-wrap gap-2">
-          <a href={`/c/${slug}`} target="_blank" rel="noreferrer" className="inline-flex h-12 items-center gap-2 rounded-[var(--radius-control)] border border-border-control bg-surface px-4 font-semibold hover:bg-canvas"><ExternalLink className="size-5" aria-hidden />{t.open}</a>
+          <a href={`/c/${slug}`} target="_blank" rel="noreferrer" className="inline-flex h-11 items-center gap-2 rounded-full px-4 font-medium hover:bg-line bg-sunken transition-colors"><ExternalLink className="size-5" aria-hidden />{t.open}</a>
           {action}
         </div>} />
       <TabLinks className="mb-4" current={current} tabs={[

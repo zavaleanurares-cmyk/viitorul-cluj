@@ -112,7 +112,7 @@ async function AttendanceView({ db, ctx, groupIds, season, period, href }: {
       <TabLinks current={period} tabs={[{ key: "d30", href: href({ perioada: null }), label: t.period.d30 }, { key: "season", href: href({ perioada: "sezon" }), label: t.period.season }]} />
       {!rows.length ? <EmptyState title={t.att.noData} /> : (
         <>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-4">
             <Stat label={t.att.teamRate} value={`${pct(tot.present, tot.total)}%`} hint={t.att.sessions(ids.length)} tone={(pct(tot.present, tot.total) ?? 0) < UNDER ? "red" : "green"} />
             <Stat label={t.att.under(UNDER)} value={under.length} tone={under.length ? "red" : undefined} />
           </div>
@@ -221,7 +221,7 @@ async function DisciplineView({ db, ctx, groups, season }: { db: Db; ctx: AppCon
         <CardHeader title={t.cards} />
         <CardBody>
           {!cardRows.length ? <p className="text-ink-3">{t.noCards}</p> : (
-            <TableWrap>
+            <TableWrap flush>
               <>
                 <thead><tr><th scope="col">{t.cols.player}</th><th scope="col" className="text-right">{t.cols.yellow}</th><th scope="col" className="text-right">{t.cols.red}</th></tr></thead>
                 <tbody>{cardRows.map((r) => (
@@ -277,7 +277,7 @@ async function GoalsView({ db, team, season }: { db: Db; team: AppContext["group
   }).filter((x): x is NonNullable<typeof x> => !!x);
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-3">
         <Stat label={t.for} value={gf} hint={t.perMatch(dec(gf / n))} />
         <Stat label={t.against} value={ga} hint={t.perMatch(dec(ga / n))} />
         <Stat label={t.matchesLabel} value={n} />

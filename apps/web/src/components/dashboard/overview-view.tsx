@@ -68,7 +68,7 @@ export function OverviewView({ overview, groupLinks }: { overview: Overview; gro
         </CardBody>
       </Card>
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <Stat
           label={o.activeInjuries} value={totals.active_injuries} tone={totals.active_injuries > 0 ? "red" : undefined}
           hint={totals.active_injuries > 0 ? o.injuredNow(totals.active_injuries) : undefined}

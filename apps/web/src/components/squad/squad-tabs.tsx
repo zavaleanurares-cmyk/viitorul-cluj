@@ -11,7 +11,7 @@ export function SquadTabs({ visas }: { visas: boolean }) {
   const current = pathname.startsWith("/lot/echipe") ? "teams" : pathname.startsWith("/lot/parinti") ? "guardians" : pathname.startsWith("/lot/vize") ? "visas" : "players";
   return (
     <TabLinks
-      className="mb-5"
+      className="mb-6"
       current={current}
       tabs={[
         { key: "players", href: "/lot", label: t.players },

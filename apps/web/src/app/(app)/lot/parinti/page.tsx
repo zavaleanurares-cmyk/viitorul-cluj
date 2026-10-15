@@ -30,14 +30,14 @@ export default async function GuardiansPage({ searchParams }: { searchParams: Pr
       <form action="/lot/parinti" method="get" role="search" className="mb-4 flex max-w-md gap-2">
         <label className="sr-only" htmlFor="g-q">{t.search}</label>
         <input id="g-q" name="q" defaultValue={q} placeholder={t.search}
-          className="h-12 min-w-0 flex-1 rounded-[var(--radius-control)] border border-border-control bg-surface px-3" />
-        <button type="submit" aria-label={t.search} className="inline-flex size-12 items-center justify-center rounded-[var(--radius-control)] border border-border-control bg-surface hover:bg-canvas">
+          className="h-11 min-w-0 flex-1 rounded-[var(--radius-control)] border border-border-control/70 bg-surface px-3.5 transition-[border-color,box-shadow] hover:border-border-control focus:border-st-blue focus:outline-none focus:ring-4 focus:ring-st-blue/15" />
+        <button type="submit" aria-label={t.search} className="inline-flex size-11 items-center justify-center rounded-full hover:bg-line bg-sunken transition-colors">
           <Search className="size-5" aria-hidden />
         </button>
       </form>
 
       {guardians.length === 0 ? <EmptyState title={t.emptyTitle} description={t.emptyText} /> : (
-        <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface">
+        <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]">
           {guardians.map((g) => (
             <li key={g.id} className="flex flex-wrap items-center gap-3 px-4 py-3">
               <div className="min-w-48 flex-1">
@@ -56,7 +56,7 @@ export default async function GuardiansPage({ searchParams }: { searchParams: Pr
               <div className="flex flex-wrap items-center gap-2">
               {g.phone ? (
                 <a href={`tel:${g.phone.replace(/\s+/g, "")}`} aria-label={t.phoneLink(g.phone)}
-                  className="inline-flex h-11 items-center gap-2 rounded-[var(--radius-control)] border border-border-control px-3 font-semibold hover:bg-canvas">
+                  className="inline-flex h-11 items-center gap-2 rounded-full px-3 font-medium hover:bg-line bg-sunken transition-colors">
                   <Phone className="size-4" aria-hidden /> {g.phone}
                 </a>
               ) : null}

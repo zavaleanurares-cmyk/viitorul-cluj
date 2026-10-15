@@ -179,7 +179,7 @@ async function PlansView({ db, ctx }: { db: Db; ctx: AppContext }) {
       <Card>
         <CardHeader title={t.teamsTitle} description={t.teamsDescription} />
         <CardBody>
-          <TableWrap>
+          <TableWrap flush>
             <>
               <thead>
                 <tr><th scope="col">{t.teamCols.team}</th><th scope="col" className="text-right">{t.teamCols.amount}</th><th scope="col">{t.teamCols.since}</th><th scope="col" className="text-right">{t.teamCols.players}</th><th scope="col"><span className="sr-only">{getT().money.common.edit}</span></th></tr>
@@ -229,7 +229,7 @@ async function PlansView({ db, ctx }: { db: Db; ctx: AppContext }) {
         <CardBody className="space-y-3">
           <p className="text-sm text-ink-3">{t.siblingAuto(settings?.sibling_discount_pct ?? 0)}</p>
           {adjs.length === 0 ? <p className="text-ink-3">{t.adjustmentsEmpty}</p> : (
-            <TableWrap>
+            <TableWrap flush>
               <>
                 <thead><tr><th scope="col">{t.adjCols.player}</th><th scope="col">{t.adjCols.what}</th><th scope="col">{t.adjCols.reason}</th><th scope="col">{t.adjCols.period}</th><th scope="col"><span className="sr-only">{t.remove}</span></th></tr></thead>
                 <tbody>

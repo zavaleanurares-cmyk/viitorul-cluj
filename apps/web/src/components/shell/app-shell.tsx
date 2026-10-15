@@ -86,22 +86,22 @@ export function AppShell({ items, sectionGroups, clubName, logoUrl, userName, ro
     <span className="flex min-w-0 items-center gap-2.5">
       {logoUrl ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={logoUrl} alt="" className="size-9 shrink-0 rounded-md bg-white object-contain p-0.5" />
+        <img src={logoUrl} alt="" className="size-8 shrink-0 rounded-[0.5rem] bg-white object-contain p-0.5 ring-1 ring-line" />
       ) : (
-        <span aria-hidden className="inline-flex size-9 shrink-0 items-center justify-center rounded-md bg-brand-ink/15 text-lg font-bold">
+        <span aria-hidden className="inline-flex size-8 shrink-0 items-center justify-center rounded-[0.5rem] bg-brand text-[0.9375rem] font-semibold text-brand-ink">
           {clubName.slice(0, 1)}
         </span>
       )}
-      <span className="truncate text-lg font-bold">{clubName}</span>
+      <span className="truncate text-[1.0625rem] font-semibold tracking-tight">{clubName}</span>
     </span>
   );
 
   const BellLink = (
     <Link href="/notificari" aria-label={unread ? `${t.nav.notifications}: ${unread} necitite` : t.nav.notifications}
-      className="relative inline-flex size-12 items-center justify-center rounded-lg hover:bg-brand-ink/10">
-      <Bell className="size-6" aria-hidden />
+      className="relative inline-flex size-10 items-center justify-center rounded-full text-ink-2 transition-colors hover:bg-sunken hover:text-ink">
+      <Bell className="size-5" aria-hidden />
       {unread > 0 ? (
-        <span className="absolute right-1.5 top-1.5 inline-flex min-w-5 items-center justify-center rounded-full bg-st-red px-1 text-xs font-bold text-white">
+        <span className="absolute right-0.5 top-0.5 inline-flex h-[1.125rem] min-w-[1.125rem] items-center justify-center rounded-full bg-st-red px-1 text-[0.6875rem] font-semibold text-white ring-2 ring-surface">
           {unread > 99 ? "99+" : unread}
         </span>
       ) : null}
@@ -110,49 +110,49 @@ export function AppShell({ items, sectionGroups, clubName, logoUrl, userName, ro
 
   const SearchButton = searchable ? (
     <button type="button" onClick={() => setSearchOpen(true)} aria-label={t.search.open} title={t.search.open}
-      className="inline-flex size-12 items-center justify-center rounded-lg hover:bg-brand-ink/10 md:hidden">
-      <Search className="size-6" aria-hidden />
+      className="inline-flex size-10 items-center justify-center rounded-full text-ink-2 transition-colors hover:bg-sunken hover:text-ink md:hidden">
+      <Search className="size-5" aria-hidden />
     </button>
   ) : null;
 
   return (
-    <div className="min-h-dvh md:grid md:grid-cols-[15.5rem_1fr]">
-      {/* Ecrane mari: meniu lateral */}
-      <aside className="no-print sticky top-0 hidden h-dvh flex-col bg-brand text-brand-ink md:flex">
-        <div className="flex items-center justify-between gap-2 p-3">
+    <div className="min-h-dvh md:grid md:grid-cols-[16rem_1fr]">
+      {/* Ecrane mari: meniu lateral luminos, ca bara laterală din aplicațiile Apple */}
+      <aside className="no-print sticky top-0 hidden h-dvh flex-col border-r border-line/70 bg-surface/80 backdrop-blur-xl md:flex">
+        <div className="flex h-16 items-center justify-between gap-2 pl-5 pr-3">
           {Brand}
           {BellLink}
         </div>
         {searchable ? (
-          <div className="px-3 pb-2">
+          <div className="px-3 pb-3">
             <button type="button" onClick={() => setSearchOpen(true)}
-              className="flex h-11 w-full items-center gap-2 rounded-lg bg-brand-ink/10 px-3 text-left font-semibold hover:bg-brand-ink/15">
-              <Search className="size-5 shrink-0" aria-hidden />
+              className="flex h-9 w-full items-center gap-2 rounded-[var(--radius-control)] bg-sunken px-3 text-left text-[0.9375rem] text-ink-3 transition-colors hover:bg-line">
+              <Search className="size-4 shrink-0" aria-hidden />
               <span className="flex-1">{t.search.open}</span>
-              <kbd className="rounded border border-brand-ink/30 px-1.5 text-xs font-semibold">⌘K</kbd>
+              <kbd className="font-sans text-xs text-ink-3">⌘K</kbd>
             </button>
           </div>
         ) : null}
-        <nav aria-label="Meniu principal" className="flex-1 overflow-y-auto px-2 py-1">
+        <nav aria-label="Meniu principal" className="flex-1 space-y-0.5 overflow-y-auto px-3 py-1">
           {items.map((it) => {
             const Icon = ICONS[it.icon] ?? House;
             return (
               <Link key={it.href + it.key} href={it.href} aria-current={isActive(it) ? "page" : undefined}
-                className={cn("mb-0.5 flex h-11 items-center gap-3 rounded-lg px-3 font-semibold",
-                  isActive(it) ? "bg-brand-ink text-brand" : "hover:bg-brand-ink/10")}>
-                <Icon className="size-5 shrink-0" aria-hidden />
+                className={cn("flex h-9 items-center gap-3 rounded-[var(--radius-control)] px-3 text-[0.9375rem] transition-colors",
+                  isActive(it) ? "bg-brand/10 font-semibold text-brand" : "font-medium text-ink-2 hover:bg-sunken hover:text-ink")}>
+                <Icon className={cn("size-[1.125rem] shrink-0", isActive(it) ? "text-brand" : "text-ink-3")} aria-hidden />
                 {label(it.key)}
               </Link>
             );
           })}
         </nav>
-        <div className="border-t border-brand-ink/20 p-3">
-          <p className="truncate font-semibold">{userName}</p>
-          <p className="truncate text-sm opacity-80">{roleLabel}</p>
-          {memberships.length > 1 ? <RoleSwitcher memberships={memberships} tone="brand" /> : null}
+        <div className="m-3 rounded-[0.75rem] bg-canvas p-3">
+          <p className="truncate text-[0.9375rem] font-semibold">{userName}</p>
+          <p className="truncate text-[0.8125rem] text-ink-3">{roleLabel}</p>
+          {memberships.length > 1 ? <RoleSwitcher memberships={memberships} tone="plain" /> : null}
           <form action={signOut} onSubmit={clearOfflinePages}>
-            <button type="submit" className="mt-2 flex h-10 w-full items-center gap-2 rounded-lg px-2 font-semibold hover:bg-brand-ink/10">
-              <LogOut className="size-5" aria-hidden /> {t.actions.signOut}
+            <button type="submit" className="-mx-1 mt-2 flex h-8 w-[calc(100%+0.5rem)] items-center gap-2 rounded-[0.5rem] px-1 text-[0.875rem] font-medium text-ink-2 transition-colors hover:bg-sunken hover:text-ink">
+              <LogOut className="size-4" aria-hidden /> {t.actions.signOut}
             </button>
           </form>
         </div>
@@ -160,7 +160,7 @@ export function AppShell({ items, sectionGroups, clubName, logoUrl, userName, ro
 
       <div className="flex min-h-dvh min-w-0 flex-col">
         {/* Telefon: bară de sus */}
-        <header className="no-print sticky top-0 z-30 flex items-center justify-between gap-2 bg-brand pl-3 pr-1 text-brand-ink pt-safe md:hidden">
+        <header className="no-print sticky top-0 z-30 flex items-center justify-between gap-2 border-b border-line/70 bg-surface/80 pl-4 pr-2 backdrop-blur-xl pt-safe md:hidden">
           <div className="flex h-14 min-w-0 items-center">{Brand}</div>
           <div className="flex items-center">
             {SearchButton}
@@ -168,28 +168,29 @@ export function AppShell({ items, sectionGroups, clubName, logoUrl, userName, ro
           </div>
         </header>
 
-        <main className="mx-auto w-full max-w-6xl flex-1 px-4 pb-28 pt-4 md:px-8 md:pb-10 md:pt-8">
-          {notice ? <div className="no-print -mx-4 -mt-4 mb-4 md:-mx-8 md:-mt-8">{notice}</div> : null}
+        {notice ? <div className="no-print">{notice}</div> : null}
+        <main className="mx-auto w-full max-w-6xl flex-1 px-4 pb-28 pt-6 md:px-10 md:pb-12 md:pt-8">
           {showSections ? (
-            <nav aria-label={label(sectionMatch?.group.key ?? "performance")} className="no-print -mx-4 mb-4 overflow-x-auto px-4 md:mx-0 md:px-0">
-              <ul className="flex gap-1 border-b border-line">
+            <nav aria-label={label(sectionMatch?.group.key ?? "performance")} className="no-print -mx-4 mb-6 overflow-x-auto px-4 md:mx-0 md:px-0">
+              {/* secțiunile: control segmentat; sub-filele: capsule sub el */}
+              <ul className="inline-flex gap-1 rounded-[0.75rem] bg-sunken p-1">
                 {sections.map((s) => (
                   <li key={s.href}>
                     <Link href={s.href} aria-current={currentSection === s.key ? "page" : undefined}
-                      className={cn("flex h-11 items-center whitespace-nowrap border-b-[3px] px-3 font-semibold",
-                        currentSection === s.key ? "border-brand text-ink" : "border-transparent text-ink-3 hover:text-ink")}>
+                      className={cn("flex h-8 items-center whitespace-nowrap rounded-[0.5rem] px-3.5 text-[0.875rem] transition-colors",
+                        currentSection === s.key ? "bg-surface font-medium text-ink shadow-[0_1px_3px_rgb(0_0_0/0.12)]" : "font-medium text-ink-2 hover:text-ink")}>
                       {label(s.key)}
                     </Link>
                   </li>
                 ))}
               </ul>
               {subTabs.length ? (
-                <ul className="mt-2 flex gap-1" aria-label={label(currentSection ?? "")}>
+                <ul className="mt-3 flex gap-1" aria-label={label(currentSection ?? "")}>
                   {subTabs.map((x) => (
                     <li key={x.href}>
                       <Link href={x.href} aria-current={currentSub === x.key ? "page" : undefined}
-                        className={cn("inline-flex h-10 items-center whitespace-nowrap rounded-full px-3.5 text-[0.9375rem] font-semibold",
-                          currentSub === x.key ? "bg-ink text-surface" : "text-ink-2 hover:bg-sunken")}>
+                        className={cn("inline-flex h-8 items-center whitespace-nowrap rounded-full px-3.5 text-[0.875rem] transition-colors",
+                          currentSub === x.key ? "bg-brand/10 font-semibold text-brand" : "font-medium text-ink-2 hover:bg-sunken hover:text-ink")}>
                         {label(x.key)}
                       </Link>
                     </li>
@@ -202,7 +203,7 @@ export function AppShell({ items, sectionGroups, clubName, logoUrl, userName, ro
         </main>
 
         {/* Telefon: bară de jos */}
-        <nav aria-label="Meniu principal" className="no-print fixed inset-x-0 bottom-0 z-30 border-t border-line bg-surface pb-safe md:hidden">
+        <nav aria-label="Meniu principal" className="no-print fixed inset-x-0 bottom-0 z-30 border-t border-line/70 bg-surface/85 pb-safe backdrop-blur-xl md:hidden">
           <ul className="mx-auto flex max-w-lg">
             {primary.map((it) => {
               const Icon = ICONS[it.icon] ?? House;
@@ -210,10 +211,8 @@ export function AppShell({ items, sectionGroups, clubName, logoUrl, userName, ro
               return (
                 <li key={it.href + it.key} className="flex-1">
                   <Link href={it.href} aria-current={on ? "page" : undefined}
-                    className={cn("flex h-16 flex-col items-center justify-center gap-0.5 text-xs font-semibold", on ? "text-brand" : "text-ink-3")}>
-                    <span className={cn("flex h-8 w-14 items-center justify-center rounded-full", on && "bg-brand text-brand-ink")}>
-                      <Icon className="size-5" aria-hidden />
-                    </span>
+                    className={cn("flex h-14 flex-col items-center justify-center gap-1 text-[0.6875rem] font-medium", on ? "text-brand" : "text-ink-3")}>
+                    <Icon className="size-6" strokeWidth={on ? 2.25 : 1.75} aria-hidden />
                     {label(it.key)}
                   </Link>
                 </li>
@@ -222,11 +221,9 @@ export function AppShell({ items, sectionGroups, clubName, logoUrl, userName, ro
             {overflow.length ? (
               <li className="flex-1">
                 <button type="button" onClick={() => setMoreOpen(true)} aria-expanded={moreOpen}
-                  className={cn("flex h-16 w-full flex-col items-center justify-center gap-0.5 text-xs font-semibold",
+                  className={cn("flex h-14 w-full flex-col items-center justify-center gap-1 text-[0.6875rem] font-medium",
                     overflow.some(isActive) ? "text-brand" : "text-ink-3")}>
-                  <span className={cn("flex h-8 w-14 items-center justify-center rounded-full", overflow.some(isActive) && "bg-brand text-brand-ink")}>
-                    <Ellipsis className="size-5" aria-hidden />
-                  </span>
+                  <Ellipsis className="size-6" strokeWidth={overflow.some(isActive) ? 2.25 : 1.75} aria-hidden />
                   {t.nav.more}
                 </button>
               </li>
@@ -236,27 +233,28 @@ export function AppShell({ items, sectionGroups, clubName, logoUrl, userName, ro
 
         {moreOpen ? (
           <div className="fixed inset-0 z-40 md:hidden" role="dialog" aria-modal="true" aria-label={t.nav.more}>
-            <button type="button" aria-label={t.actions.close} className="absolute inset-0 bg-ink/50" onClick={() => setMoreOpen(false)} />
-            <div className="absolute inset-x-0 bottom-0 max-h-[85dvh] overflow-y-auto rounded-t-2xl bg-surface p-3 pb-safe">
-              <div className="flex items-center justify-between pb-1 pl-2">
+            <button type="button" aria-label={t.actions.close} className="absolute inset-0 bg-black/30" onClick={() => setMoreOpen(false)} />
+            <div className="absolute inset-x-0 bottom-0 max-h-[85dvh] overflow-y-auto rounded-t-[var(--radius-sheet)] bg-canvas p-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))] shadow-[var(--shadow-float)]">
+              <div className="mx-auto mb-3 h-1 w-9 rounded-full bg-line-strong" aria-hidden />
+              <div className="flex items-center justify-between pb-2 pl-1">
                 <div>
-                  <p className="font-bold">{userName}</p>
+                  <p className="font-semibold">{userName}</p>
                   <p className="text-sm text-ink-3">{roleLabel}</p>
                 </div>
-                <button type="button" onClick={() => setMoreOpen(false)} aria-label={t.actions.close} className="inline-flex size-12 items-center justify-center rounded-lg hover:bg-sunken">
-                  <X className="size-6" aria-hidden />
+                <button type="button" onClick={() => setMoreOpen(false)} aria-label={t.actions.close} className="inline-flex size-8 items-center justify-center rounded-full bg-sunken text-ink-2 hover:bg-line">
+                  <X className="size-4" strokeWidth={2.5} aria-hidden />
                 </button>
               </div>
               {memberships.length > 1 ? <div className="px-2 pb-2"><RoleSwitcher memberships={memberships} tone="plain" /></div> : null}
-              <ul className="grid grid-cols-2 gap-2 py-2">
+              <ul className="my-2 divide-y divide-line overflow-hidden rounded-[0.75rem] bg-surface">
                 {overflow.map((it) => {
                   const Icon = ICONS[it.icon] ?? House;
                   return (
                     <li key={it.href + it.key}>
                       <Link href={it.href} onClick={() => setMoreOpen(false)} aria-current={isActive(it) ? "page" : undefined}
-                        className={cn("flex h-14 items-center gap-3 rounded-lg border px-3 font-semibold",
-                          isActive(it) ? "border-brand bg-brand text-brand-ink" : "border-line bg-surface")}>
-                        <Icon className="size-5 shrink-0" aria-hidden />
+                        className={cn("flex h-12 items-center gap-3 px-4 text-[0.9375rem] font-medium active:bg-sunken",
+                          isActive(it) ? "text-brand" : "text-ink")}>
+                        <Icon className={cn("size-5 shrink-0", isActive(it) ? "text-brand" : "text-ink-3")} aria-hidden />
                         {label(it.key)}
                       </Link>
                     </li>
@@ -264,7 +262,7 @@ export function AppShell({ items, sectionGroups, clubName, logoUrl, userName, ro
                 })}
               </ul>
               <form action={signOut} onSubmit={clearOfflinePages}>
-                <button type="submit" className="flex h-12 w-full items-center justify-center gap-2 rounded-lg border border-border-control font-semibold">
+                <button type="submit" className="mt-2 flex h-12 w-full items-center justify-center gap-2 rounded-[0.75rem] bg-surface font-medium text-st-red">
                   <LogOut className="size-5" aria-hidden /> {t.actions.signOut}
                 </button>
               </form>

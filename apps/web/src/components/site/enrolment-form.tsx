@@ -36,7 +36,7 @@ export function PublicEnrolmentForm({ slug, groups, privacyHref }: { slug: strin
     if (res.ok) setDone(true); else setError(res.error || errs.generic);
   };
   return (
-    <form className="space-y-5 rounded-[var(--radius-card)] border border-line bg-surface p-4 md:p-6" onSubmit={(e) => { e.preventDefault(); void submit(); }}>
+    <form className="space-y-5 rounded-[var(--radius-card)] border border-line/70 bg-surface p-4 md:p-6 shadow-[var(--shadow-card)]" onSubmit={(e) => { e.preventDefault(); void submit(); }}>
       <RequestFields v={v} set={(p) => setV({ ...v, ...p })} groups={groups} />
       {/* capcană pentru roboți: ascunsă vizual și pentru cititoarele de ecran */}
       <div aria-hidden className="absolute -left-[9999px] h-0 overflow-hidden">

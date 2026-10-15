@@ -71,7 +71,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
           { label: p.avgDistance, value: avgDistance === null ? "—" : formatNumber(avgDistance), hint: p.perSession },
           { label: p.topSpeed, value: topSpeed === null ? "—" : formatNumber(topSpeed, 1), hint: topSpeedOn ? formatDateShort(topSpeedOn) : "" },
         ].map((s) => (
-          <div key={s.label} className="flex min-w-0 flex-col rounded-[var(--radius-card)] border border-line bg-surface p-3">
+          <div key={s.label} className="flex min-w-0 flex-col rounded-[var(--radius-card)] border border-line/70 bg-surface p-3 shadow-[var(--shadow-card)]">
             <dt className="text-sm leading-tight text-ink-3">{s.label}</dt>
             <dd className="mt-1 text-2xl font-bold leading-none">{s.value}</dd>
             <dd className="mt-1.5 text-sm leading-tight text-ink-3">{s.hint}</dd>
@@ -98,7 +98,7 @@ export default async function Page({ params, searchParams }: { params: Promise<{
         <CardHeader title={p.sessionsTitle} description={p.sessionsHint(sessions.length, weeks)} />
         {sessions.length ? (
           <div className="mt-3 max-h-[34rem] overflow-y-auto border-t border-line">
-            <TableWrap className="mx-0! md:rounded-none! md:border-0!">
+            <TableWrap flush>
               <thead>
                 <tr>
                   <th scope="col">{p.colDate}</th>

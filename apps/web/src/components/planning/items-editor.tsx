@@ -58,7 +58,7 @@ export function ItemsEditor({ items, onChange, exercises, completions, showProbl
           ))}
         </ol>
       ) : (
-        <p className="rounded-[var(--radius-card)] border border-dashed border-line-strong bg-surface px-4 py-8 text-center text-ink-3">{t.empty}</p>
+        <p className="rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)] px-4 py-8 text-center text-ink-3">{t.empty}</p>
       )}
       <div className="mt-3 flex flex-wrap gap-2">
         <Button variant="secondary" icon={<Plus className="size-5" aria-hidden />} onClick={() => setPicking(true)}>{t.add}</Button>
@@ -94,7 +94,7 @@ function ItemCard({ item, index, count, exercise, completion, showCompletion, sh
   const numeric = { inputMode: "numeric" as const, pattern: "[0-9]*", autoComplete: "off", className: "px-2 text-center font-semibold" };
 
   return (
-    <li className="rounded-[var(--radius-card)] border border-line bg-surface p-3">
+    <li className="rounded-[var(--radius-card)] border border-line/70 bg-surface p-3 shadow-[var(--shadow-card)]">
       <div className="flex items-start gap-2">
         <span className="mt-0.5 inline-flex size-7 shrink-0 items-center justify-center rounded-full bg-sunken text-sm font-bold" aria-hidden>{index + 1}</span>
         <div className="min-w-0 flex-1">
@@ -154,7 +154,7 @@ function ItemCard({ item, index, count, exercise, completion, showCompletion, sh
 
       <div className="mt-1 flex items-center justify-between gap-2">
         <button type="button" onClick={() => setMore((m) => !m)} aria-expanded={more}
-          className="inline-flex h-12 items-center gap-1 rounded-[var(--radius-control)] px-1 text-sm font-semibold text-ink-2 hover:bg-sunken">
+          className="inline-flex h-11 items-center gap-1 rounded-full px-1 text-sm font-medium text-ink-2 hover:bg-sunken">
           <ChevronDown className={cn("size-4", more && "rotate-180")} aria-hidden />
           {t.more}
         </button>

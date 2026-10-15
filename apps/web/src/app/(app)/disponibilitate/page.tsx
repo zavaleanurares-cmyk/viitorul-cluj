@@ -137,11 +137,11 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ g
       {multi ? <TabLinks tabs={tabs} current={selected} className="no-print mb-3" /> : null}
 
       {/* Sumarul selecției */}
-      <dl aria-label={b.summaryLabel} className="mb-3 grid grid-cols-3 gap-2">
+      <dl aria-label={b.summaryLabel} className="mb-4 grid grid-cols-3 gap-4">
         {AVAILABILITY_ORDER.slice().reverse().map((a) => (
-          <div key={a} className="flex min-w-0 flex-col-reverse rounded-[var(--radius-card)] border border-line bg-surface px-2.5 py-2">
-            <dd className="text-2xl font-bold leading-none md:text-3xl">{counts[a]}</dd>
-            <dt className="mb-1 flex min-w-0 items-center gap-1 text-xs text-ink-2 sm:gap-1.5 sm:text-sm" title={AVAILABILITY_LABELS[a]}>
+          <div key={a} className="flex min-w-0 flex-col-reverse rounded-[var(--radius-card)] border border-line/70 bg-surface p-3 shadow-[var(--shadow-card)] md:p-5">
+            <dd className="text-[1.75rem] font-semibold leading-none tracking-tight md:text-[2rem]">{counts[a]}</dd>
+            <dt className="mb-2 flex min-w-0 items-center gap-1.5 text-xs font-medium text-ink-3 sm:text-sm" title={AVAILABILITY_LABELS[a]}>
               <span className={cn("size-2.5 shrink-0 rounded-full [print-color-adjust:exact]", TILE_BAR[a])} aria-hidden />{t.availability[a]}
             </dt>
           </div>
@@ -155,8 +155,8 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ g
             href={href(selected, f.key)}
             aria-current={filter === f.key ? "true" : undefined}
             className={cn(
-              "inline-flex h-12 items-center rounded-full border px-4 font-semibold whitespace-nowrap",
-              filter === f.key ? "border-ink bg-ink text-white" : "border-line-strong bg-surface text-ink hover:bg-canvas",
+              "inline-flex h-10 items-center rounded-full border px-4 text-[0.9375rem] font-medium transition-colors whitespace-nowrap",
+              filter === f.key ? "border-brand bg-brand text-brand-ink" : "border-transparent bg-sunken text-ink hover:bg-line",
             )}
           >
             {f.label}

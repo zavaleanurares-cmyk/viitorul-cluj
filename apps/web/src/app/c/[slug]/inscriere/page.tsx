@@ -23,7 +23,7 @@ export default async function PublicEnrolmentPage({ params }: { params: Promise<
       {teams.length ? (
         <aside className="lg:pt-24">
           <h2 className="mb-2 text-lg">{t.groupsTitle}</h2>
-          <ul className="divide-y divide-line rounded-[var(--radius-card)] border border-line bg-surface">
+          <ul className="divide-y divide-line rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]">
             {teams.map((g) => (
               <li key={g.id} className="flex items-baseline justify-between gap-3 px-4 py-2.5">
                 <span className="font-semibold">{g.name}</span>

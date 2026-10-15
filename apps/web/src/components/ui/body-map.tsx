@@ -93,7 +93,7 @@ function Figure({ view, value, highlights, onPick, interactive }: {
           const selected = !!value && matches(r, value.zone, value.side);
           const hl = highlights.find((h) => matches(r, h.zone, h.side));
           const fill = selected ? "var(--color-brand)" : hl ? TONE_HEX[hl.tone ?? "red"] : "#e3e8ed";
-          const stroke = selected ? "var(--color-ink)" : hl ? "var(--color-ink)" : "#a9b3bf";
+          const stroke = selected ? "var(--color-ink)" : hl ? "var(--color-ink)" : "#d2d2d7";
           const label = zoneLabel(r.zone, r.side);
           const common = {
             fill,

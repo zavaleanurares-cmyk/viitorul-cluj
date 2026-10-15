@@ -172,7 +172,7 @@ export function PostComposer({ clubId, initial, status, groups }: { clubId: stri
           </fieldset>
         </div>
 
-        <article className={cn("space-y-4 rounded-[var(--radius-card)] border border-line bg-surface p-5 lg:sticky lg:top-4 lg:max-h-[calc(100dvh-2rem)] lg:self-start lg:overflow-y-auto", view === "edit" && "hidden lg:block")} aria-label={t.preview}>
+        <article className={cn("space-y-4 rounded-[var(--radius-card)] border border-line/70 bg-surface p-5 lg:sticky lg:top-4 lg:max-h-[calc(100dvh-2rem)] lg:self-start lg:overflow-y-auto shadow-[var(--shadow-card)]", view === "edit" && "hidden lg:block")} aria-label={t.preview}>
           <p className="text-sm font-semibold uppercase tracking-wide text-ink-3">{t.preview}</p>
           {d.coverPath ? (
             // eslint-disable-next-line @next/next/no-img-element

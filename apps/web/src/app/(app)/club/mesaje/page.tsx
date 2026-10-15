@@ -26,7 +26,7 @@ export default async function MessagesPage() {
     <>
       <PageHeader title={t.title} description={t.description} action={<LinkButton href="/club/mesaje/nou" variant="primary" icon={<Plus className="size-5" aria-hidden />}>{t.new}</LinkButton>} />
       {!data?.length ? <EmptyState icon={<Megaphone className="size-8" aria-hidden />} title={t.empty} description={t.emptyText} /> : (
-        <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface">
+        <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]">
           {data.map((m) => {
             const read = readCount.get(m.id) ?? 0;
             const pct = m.recipient_count ? Math.round((read / m.recipient_count) * 100) : 0;
@@ -36,7 +36,7 @@ export default async function MessagesPage() {
                   <span className="min-w-0">
                     <span className="flex flex-wrap items-center gap-2">
                       <span className="font-bold">{m.title}</span>
-                      <span className={cn("inline-flex h-6 items-center rounded-md px-2 text-xs font-semibold", m.status === "sent" ? "bg-st-green-soft" : m.status === "scheduled" ? "bg-st-blue-soft" : "bg-sunken text-ink-3")}>{t.status[m.status as "sent"]}</span>
+                      <span className={cn("inline-flex h-6 items-center rounded-full px-2.5 text-xs font-semibold", m.status === "sent" ? "bg-st-green-soft" : m.status === "scheduled" ? "bg-st-blue-soft" : "bg-sunken text-ink-3")}>{t.status[m.status as "sent"]}</span>
                     </span>
                     <span className="block text-sm text-ink-3">
                       {m.status === "scheduled" ? t.scheduledFor(formatDateTime(m.scheduled_at, tz)) : formatDateTime(m.sent_at ?? m.created_at, tz)}

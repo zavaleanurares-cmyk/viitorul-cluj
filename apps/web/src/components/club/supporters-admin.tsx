@@ -91,7 +91,7 @@ export function PledgeTable({ rows }: { rows: Pledge[] }) {
           <Button key={s} size="sm" variant="secondary" pending={mark.pending} onClick={() => mark.run({ ids: sel, status: s })}>{t.mark}: {t.status[s]}</Button>
         )) : null}
       </div>
-      <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface">
+      <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]">
         {rows.map((r) => (
           <li key={r.id} className="flex flex-wrap items-center gap-3 px-3 py-2">
             <input type="checkbox" aria-label={r.full_name} className="size-5 accent-[var(--color-brand)]" checked={sel.includes(r.id)} onChange={() => setSel(sel.includes(r.id) ? sel.filter((x) => x !== r.id) : [...sel, r.id])} />

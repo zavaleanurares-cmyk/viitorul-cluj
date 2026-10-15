@@ -55,3 +55,13 @@ Cod: migrarea în `packages/shared/src/import/tfb.ts` (citire, potrivire, plan),
   - etichete care împingeau cifrele Stat pe rânduri diferite;
   - pastile cu înălțime fixă care se rupeau;
   - acțiunile din antet pe telefon.
+
+## Aspect în stilul Apple
+
+- Fontul sistemului (SF Pro pe dispozitivele Apple), Inter pe celelalte. Griurile și culorile de stare sunt cele de sistem Apple, în variantele cu contrast suficient.
+- Carduri albe pe fundal `#f5f5f7`, colțuri de 16 px, margine fină și umbră abia vizibilă. Butoanele sunt capsule: principalul în culoarea clubului, restul pe fond gri, fără butoane conturate. Câmpurile au 44 px înălțime.
+- Filele sunt controale segmentate; nivelul al doilea folosește capsule, iar filtrele sunt capsule gri cu selecția în culoarea clubului. Etichetele de stare sunt rotunjite; cele care se repetă pe fiecare rând (vize care expiră, prime, plăți parțiale) au fond pal, iar alarmele reale rămân pline.
+- Ritmul spațierii: 8 px între elemente înrudite, 16 px în carduri (20 px pe ecran lat) și între carduri, 24 px între secțiuni și sub antetul paginii. Cifrele din cardurile Stat stau pe aceeași linie (subgrid).
+- Bara laterală e luminoasă, iar bara de jos de pe telefon e translucidă, ca în iOS. Ecranele de conectare sunt o coloană centrată cu semnul aplicației, iar site-ul public are antetul alb translucid.
+- „Bold" înseamnă semibold (600) în toată aplicația.
+- Numele afișate cu majuscule („BĂLAN P.") vin din date, nu din stiluri. Rămân așa până la o eventuală conversie a datelor.

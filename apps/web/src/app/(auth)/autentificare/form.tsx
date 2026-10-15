@@ -40,7 +40,7 @@ export function SignInForm({ next }: { next: string | null }) {
         {t.auth.signIn.submit}
       </Button>
       <p className="text-center">
-        <Link href="/parola-uitata" className="inline-flex h-12 items-center font-semibold underline">
+        <Link href="/parola-uitata" className="inline-flex h-11 items-center font-medium text-st-blue hover:underline">
           {t.auth.signIn.forgot}
         </Link>
       </p>

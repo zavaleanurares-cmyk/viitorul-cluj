@@ -51,7 +51,7 @@ export default async function VideosPage({ searchParams }: { searchParams: Promi
           </div>
         } />
       {!videos?.length ? <EmptyState icon={<Clapperboard className="size-8" aria-hidden />} title={t.empty} description={t.emptyText} /> : (
-        <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface">
+        <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]">
           {videos.map((v) => {
             const ms = v.video_markers ?? [];
             const shared = ms.filter((m) => m.shared).length;

@@ -33,7 +33,7 @@ export default async function ProfilePage({ searchParams }: { searchParams: Prom
   const href = (s: Section) => (s === sections[0] ? "/profil" : `/profil?sectiune=${s}`);
 
   return (
-    <div className="mx-auto max-w-2xl">
+    <div className="max-w-2xl">
       <PageHeader title={t.profile.title} description={isPlayer ? undefined : ROLE_LABELS[ctx.role]} />
       <TabLinks className="mb-4" current={section} tabs={sections.map((s) => ({ key: s, href: href(s), label: t.profile.sections[s] }))} />
 

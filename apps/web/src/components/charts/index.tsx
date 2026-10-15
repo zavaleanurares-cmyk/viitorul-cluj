@@ -11,21 +11,22 @@ import type { ReactNode } from "react";
  *  - o singură axă Y; legendă doar de la două serii în sus; textul rămâne în culorile de text;
  *  - fiecare grafic are și un tabel echivalent pentru cititoarele de ecran.
  */
-export const SERIES_COLORS = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100"] as const;
-export const AVAILABILITY_COLORS = { full: "#1b7a3d", limited: "#ef8a1d", out: "#c3281c" } as const;
+// culorile de sistem Apple (albastru, portocaliu, verde-mentă, violet), distincte și pentru daltonism
+export const SERIES_COLORS = ["#0071e3", "#ff9500", "#00a99d", "#af52de"] as const;
+export const AVAILABILITY_COLORS = { full: "#248a3d", limited: "#ff9500", out: "#d70015" } as const;
 
-export const AXIS = { stroke: "#a9b3bf", tick: { fill: "#596575", fontSize: 12 }, tickLine: false } as const;
-export const GRID = "#e3e7ec";
+export const AXIS = { stroke: "#d2d2d7", tick: { fill: "#6e6e73", fontSize: 12 }, tickLine: false } as const;
+export const GRID = "#ececf0";
 
 export type Series = { key: string; label: string; color?: string };
 export type Row = Record<string, string | number | null | undefined>;
 
 export function tooltipStyle() {
   return {
-    contentStyle: { background: "#fff", border: "1px solid #a9b3bf", borderRadius: 8, color: "#0e1726", fontSize: 14, padding: "8px 10px" },
-    labelStyle: { fontWeight: 700, marginBottom: 4 },
-    itemStyle: { color: "#0e1726" },
-    cursor: { stroke: "#a9b3bf", strokeWidth: 1 },
+    contentStyle: { background: "rgba(255,255,255,0.96)", border: "none", borderRadius: 12, boxShadow: "0 8px 28px rgba(0,0,0,0.12), 0 1px 3px rgba(0,0,0,0.06)", color: "#1d1d1f", fontSize: 13, padding: "8px 12px" },
+    labelStyle: { fontWeight: 600, marginBottom: 4 },
+    itemStyle: { color: "#1d1d1f" },
+    cursor: { stroke: "#d2d2d7", strokeWidth: 1 },
   };
 }
 
@@ -75,7 +76,7 @@ export function TrendChart({ data, xKey = "x", series, caption, height = 220, do
             <XAxis dataKey={xKey} {...AXIS} minTickGap={24} />
             <YAxis {...AXIS} axisLine={false} domain={domain ?? ["auto", "auto"]} allowDecimals={false} width={48} />
             <Tooltip {...tooltipStyle()} />
-            {series.length > 1 ? <Legend iconType="plainline" wrapperStyle={{ fontSize: 13, color: "#36414f" }} formatter={(v) => <span style={{ color: "#36414f" }}>{v}</span>} /> : null}
+            {series.length > 1 ? <Legend iconType="plainline" wrapperStyle={{ fontSize: 13, color: "#424245" }} formatter={(v) => <span style={{ color: "#424245" }}>{v}</span>} /> : null}
             {threshold ? (
               <ReferenceLine y={threshold.value} stroke="#c3281c" strokeWidth={1} label={{ value: threshold.label, position: "insideTopRight", fill: "#596575", fontSize: 12 }} />
             ) : null}
@@ -111,7 +112,7 @@ export function BarsChart({ data, xKey = "x", valueKey = "value", label, caption
             {horizontal ? (
               <>
                 <XAxis type="number" {...AXIS} axisLine={false} allowDecimals={false} />
-                <YAxis type="category" dataKey={xKey} {...AXIS} width={120} tick={{ fill: "#36414f", fontSize: 13 }} />
+                <YAxis type="category" dataKey={xKey} {...AXIS} width={120} tick={{ fill: "#424245", fontSize: 13 }} />
               </>
             ) : (
               <>
@@ -148,7 +149,7 @@ export function StackedBarsChart({ data, xKey = "x", series, caption, height = 2
             <XAxis dataKey={xKey} {...AXIS} minTickGap={8} />
             <YAxis {...AXIS} axisLine={false} allowDecimals={false} width={48} />
             <Tooltip {...tooltipStyle()} cursor={{ fill: "#f2f4f6" }} />
-            <Legend iconType="square" wrapperStyle={{ fontSize: 13 }} formatter={(v) => <span style={{ color: "#36414f" }}>{v}</span>} />
+            <Legend iconType="square" wrapperStyle={{ fontSize: 13 }} formatter={(v) => <span style={{ color: "#424245" }}>{v}</span>} />
             {series.map((s, i) => (
               <Bar key={s.key} dataKey={s.key} name={s.label} stackId={grouped ? undefined : "a"} fill={s.color ?? SERIES_COLORS[i % SERIES_COLORS.length]}
                 maxBarSize={28} stroke="#fff" strokeWidth={2} isAnimationActive={false} />

@@ -88,7 +88,7 @@ export function ExercisePicker({ open, onClose, exercises, onAdd, countInList }:
                   </span>
                   <span className={cn(
                     "inline-flex h-9 shrink-0 items-center gap-1 rounded-[var(--radius-control)] border px-2.5 text-sm font-semibold",
-                    n ? "border-ink bg-ink text-white" : "border-line-strong bg-surface",
+                    n ? "border-brand bg-brand text-brand-ink" : "border-transparent bg-sunken",
                   )}>
                     {n ? <Check className="size-4" aria-hidden /> : <Plus className="size-4" aria-hidden />}
                     {n ? t.inList(n) : t.add}
@@ -99,7 +99,7 @@ export function ExercisePicker({ open, onClose, exercises, onAdd, countInList }:
           })}
         </ul>
       ) : (
-        <p className="mt-2 rounded-[var(--radius-control)] border border-dashed border-line-strong px-4 py-6 text-center text-ink-3">
+        <p className="mt-2 rounded-[var(--radius-control)] bg-sunken px-4 py-6 text-center text-ink-3">
           {active.length ? t.noResults : t.noExercises}
         </p>
       )}

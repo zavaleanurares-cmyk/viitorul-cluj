@@ -28,7 +28,7 @@ export default async function SiteSettingsPage() {
         <aside>
           <h2 className="mb-2 text-lg">{t.log}</h2>
           {!log?.length ? <p className="text-ink-3">{t.logEmpty}</p> : (
-            <ol className="divide-y divide-line rounded-[var(--radius-card)] border border-line bg-surface text-sm">
+            <ol className="divide-y divide-line rounded-[var(--radius-card)] border border-line/70 bg-surface text-sm shadow-[var(--shadow-card)]">
               {log.map((e) => (
                 <li key={e.id} className="space-y-0.5 px-3 py-2">
                   <p className="font-semibold">{t.fieldNames[e.field] ?? e.field}: <span className="font-normal text-ink-2">{e.field === "policy" ? `v${e.new_value}` : `${show(e.old_value)} → ${show(e.new_value)}`}</span></p>

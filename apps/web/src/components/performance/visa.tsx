@@ -77,7 +77,7 @@ export function VisaDecision({ doc, playerName, validityMonths, today }: {
   const href = `/api/files/visas/${doc.path.split("/").map(encodeURIComponent).join("/")}`;
   return (
     <div className="flex flex-wrap gap-2">
-      <a href={href} target="_blank" rel="noreferrer" className="inline-flex h-9 items-center rounded-[var(--radius-control)] border border-border-control bg-surface px-3 text-sm font-semibold hover:bg-canvas">{t.viewDoc}</a>
+      <a href={href} target="_blank" rel="noreferrer" className="inline-flex h-9 items-center rounded-full px-3 text-sm font-medium hover:bg-line bg-sunken transition-colors">{t.viewDoc}</a>
       <Button size="sm" icon={<Check className="size-4" aria-hidden />} onClick={() => setMode("approve")}>{t.approve}</Button>
       <Button size="sm" variant="secondary" icon={<X className="size-4" aria-hidden />} onClick={() => setMode("reject")}>{t.reject}</Button>
       <Dialog open={mode === "approve"} onClose={() => setMode(null)} title={t.approveTitle(playerName)}

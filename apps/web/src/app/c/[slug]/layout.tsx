@@ -38,16 +38,16 @@ export default async function PublicLayout({ children, params }: { children: Rea
   ].filter((i) => i.on && PUBLIC_PAGES.has(i.href.slice(base.length) || "/"));
   return (
     <div style={clubThemeStyle(club)} className="flex min-h-dvh flex-col bg-canvas">
-      <header className="bg-brand text-brand-ink">
-        <div className="mx-auto flex max-w-5xl items-center gap-3 px-4 py-4">
+      <header className="sticky top-0 z-30 border-b border-line/70 bg-surface/80 backdrop-blur-xl">
+        <div className="mx-auto flex h-16 max-w-5xl items-center gap-3 px-4">
           <Link href={base} className="flex min-w-0 items-center gap-3">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            {club.has_logo ? <img src={`${base}/sigla`} alt="" className="size-12 shrink-0 rounded-lg bg-white object-contain p-1" /> : null}
-            <span className="truncate text-xl font-bold md:text-2xl">{club.name}</span>
+            {club.has_logo ? <img src={`${base}/sigla`} alt="" className="size-9 shrink-0 rounded-[0.625rem] bg-white object-contain p-0.5 ring-1 ring-line" /> : null}
+            <span className="truncate text-[1.0625rem] font-semibold tracking-tight md:text-xl">{club.name}</span>
           </Link>
           <span className="flex-1" />
-          <Link href="/autentificare" className="inline-flex h-11 shrink-0 items-center gap-2 rounded-[var(--radius-control)] border border-current/30 px-3 font-semibold hover:bg-white/10">
-            <LogIn className="size-5" aria-hidden /><span className="hidden sm:inline">{t.enter}</span>
+          <Link href="/autentificare" className="inline-flex h-9 shrink-0 items-center gap-2 rounded-full bg-brand px-4 text-sm font-medium text-brand-ink transition-[filter] hover:brightness-110">
+            <LogIn className="size-4" aria-hidden /><span className="hidden sm:inline">{t.enter}</span>
           </Link>
         </div>
         <PublicNav items={items.map(({ href, label }) => ({ href, label }))} base={base} />

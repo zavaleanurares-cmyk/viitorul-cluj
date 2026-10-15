@@ -56,7 +56,7 @@ export default async function PurchasePage({ params, searchParams }: { params: P
         back={<Link href="/bani/referate" className="font-semibold underline">{t.title}</Link>}
         description={<PurchaseStatusChip status={r.status} label={PURCHASE_STATUS_LABELS[r.status] ?? r.status} size="md" />}
         action={<>
-          <a href={`/api/bani/referat/${id}`} className="inline-flex h-12 items-center gap-2 rounded-[var(--radius-control)] border border-border-control bg-surface px-4 font-semibold hover:bg-canvas"><FileDown className="size-5" aria-hidden />{t.detail.pdf}</a>
+          <a href={`/api/bani/referat/${id}`} className="inline-flex h-11 items-center gap-2 rounded-full px-4 font-medium hover:bg-line bg-sunken transition-colors"><FileDown className="size-5" aria-hidden />{t.detail.pdf}</a>
           {canEdit ? <LinkButton href={`/bani/referate/${id}?modifica=1`} icon={<Pencil className="size-5" aria-hidden />}>{getT().money.common.edit}</LinkButton> : null}
         </>}
       />

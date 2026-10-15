@@ -5,19 +5,21 @@ import { cn } from "@/lib/cn";
 type Variant = "primary" | "secondary" | "ghost" | "danger";
 type Size = "sm" | "md" | "lg";
 
+// butoane în formă de capsulă, ca pe apple.com: acțiunea principală plină, restul pe fond gri
 const base =
-  "inline-flex items-center justify-center gap-2 rounded-[var(--radius-control)] font-semibold select-none " +
-  "transition-colors disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap";
+  "inline-flex items-center justify-center gap-2 rounded-full font-medium select-none " +
+  "transition-[background-color,filter,transform] duration-150 active:scale-[0.98] " +
+  "disabled:opacity-40 disabled:pointer-events-none whitespace-nowrap [&_svg]:shrink-0";
 const variants: Record<Variant, string> = {
   primary: "bg-brand text-brand-ink hover:brightness-110 active:brightness-95",
-  secondary: "bg-surface text-ink border border-border-control hover:bg-canvas active:bg-sunken",
+  secondary: "bg-sunken text-ink hover:bg-line active:bg-line-strong",
   ghost: "text-ink hover:bg-sunken active:bg-line",
   danger: "bg-st-red text-white hover:brightness-110 active:brightness-95",
 };
 const sizes: Record<Size, string> = {
-  sm: "h-9 px-3 text-sm",
-  md: "h-12 px-4 text-base",
-  lg: "h-14 px-6 text-lg",
+  sm: "h-8 px-3.5 text-sm [&_svg]:size-4",
+  md: "h-11 px-5 text-[0.9375rem] [&_svg]:size-[1.125rem]",
+  lg: "h-12 px-6 text-base",
 };
 
 export function buttonClass(variant: Variant = "primary", size: Size = "md", className?: string) {
@@ -53,7 +55,7 @@ export function IconButton({ label, className, children, ...props }: ComponentPr
       type="button"
       aria-label={label}
       title={label}
-      className={cn("inline-flex size-12 items-center justify-center rounded-[var(--radius-control)] text-ink hover:bg-sunken active:bg-line disabled:opacity-50", className)}
+      className={cn("inline-flex size-11 items-center justify-center rounded-full text-ink transition-colors hover:bg-sunken active:bg-line disabled:opacity-40", className)}
       {...props}
     >
       {children}

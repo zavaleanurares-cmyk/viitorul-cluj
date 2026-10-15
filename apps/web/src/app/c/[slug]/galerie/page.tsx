@@ -20,7 +20,7 @@ export default async function PublicGallery({ params }: { params: Promise<{ slug
         <ul className="grid grid-cols-2 gap-4 md:grid-cols-3">
           {albums.map((a) => (
             <li key={a.id}>
-              <Link href={`/c/${club.slug}/galerie/${a.id}`} className="group block overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface">
+              <Link href={`/c/${club.slug}/galerie/${a.id}`} className="group block overflow-hidden rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 {a.cover_path ? <img src={`/c/${club.slug}/media/${a.cover_path}`} alt="" loading="lazy" className="aspect-[4/3] w-full object-cover" /> : null}
                 <span className="block p-3">

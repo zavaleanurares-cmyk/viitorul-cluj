@@ -16,7 +16,7 @@ export default async function PlayerEvaluations({ params }: { params: Promise<{ 
     .eq("player_id", id).order("updated_at", { ascending: false });
   if (!data?.length) return <EmptyState title={t.playerTabEmpty} />;
   return (
-    <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface">
+    <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]">
       {data.map((e) => {
         const r = e.evaluation_rounds as { name: string; status: string; published_at: string | null } | null;
         const href = e.status === "submitted" ? `/evaluari/${e.id}` : r?.status === "open" ? `/performanta/evaluari/${e.round_id}/${id}` : null;

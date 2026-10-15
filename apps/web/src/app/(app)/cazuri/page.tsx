@@ -22,7 +22,7 @@ export default async function Page() {
       ) : (
         <>
           <p className="mb-2 text-sm text-ink-3">{t.count(cases.length)}</p>
-          <ul className="overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface">
+          <ul className="overflow-hidden rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]">
             {cases.map((c) => {
               const p = c.players!;
               return (

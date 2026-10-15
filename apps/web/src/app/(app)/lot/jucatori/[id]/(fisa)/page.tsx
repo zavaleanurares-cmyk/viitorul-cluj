@@ -88,7 +88,7 @@ export default async function SquadPlayerPage({ params }: { params: Promise<{ id
                       </div>
                       {g.phone ? (
                         <a href={`tel:${g.phone.replace(/\s+/g, "")}`} aria-label={p.call(g.full_name)}
-                          className="inline-flex h-11 shrink-0 items-center gap-2 rounded-[var(--radius-control)] border border-border-control px-3 font-semibold hover:bg-canvas">
+                          className="inline-flex h-11 shrink-0 items-center gap-2 rounded-full px-3 font-medium hover:bg-line bg-sunken transition-colors">
                           <Phone className="size-4" aria-hidden /> {g.phone}
                         </a>
                       ) : null}
@@ -119,7 +119,7 @@ export default async function SquadPlayerPage({ params }: { params: Promise<{ id
 
       <section aria-labelledby="t-season">
         <h2 id="t-season" className="mb-2 text-xl">{p.season}</h2>
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
           <Stat label={p.apps} value={stats.apps} />
           <Stat label={p.minutes} value={stats.minutes} />
           <Stat label={p.goals} value={stats.goals} />

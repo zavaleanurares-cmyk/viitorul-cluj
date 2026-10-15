@@ -11,12 +11,12 @@ export default function DemoPage() {
   const t = getT().auth;
   return (
     <>
-      <h1 className="text-3xl">{t.demo.title}</h1>
-      <p className="mb-6 mt-1 text-ink-3">{t.demo.intro}</p>
+      <h1 className="text-2xl">{t.demo.title}</h1>
+      <p className="mb-6 mt-2 text-[0.9375rem] text-ink-3">{t.demo.intro}</p>
       <DemoRoles roles={[...DEMO_ROLES]} />
       <div className="mt-6 grid gap-1 text-center">
-        <Link href={`/c/${DEMO_SLUG}`} className="inline-flex h-11 items-center justify-center font-semibold underline">{t.demo.site}</Link>
-        <Link href="/autentificare" className="inline-flex h-11 items-center justify-center text-ink-2 underline">{t.demo.signIn}</Link>
+        <Link href={`/c/${DEMO_SLUG}`} className="inline-flex h-11 items-center justify-center font-medium text-st-blue hover:underline">{t.demo.site}</Link>
+        <Link href="/autentificare" className="inline-flex h-11 items-center justify-center text-ink-2 hover:underline">{t.demo.signIn}</Link>
       </div>
     </>
   );

@@ -27,7 +27,7 @@ export function AlertsList({ alerts, today, collapseAfter = 6 }: { alerts: Alert
       </ul>
       {rest.length ? (
         <details className="border-t border-line">
-          <summary className="flex h-12 cursor-pointer items-center px-4 font-semibold text-ink-2 hover:bg-canvas">{t.more(rest.length)}</summary>
+          <summary className="flex h-12 cursor-pointer items-center px-4 md:px-5 font-semibold text-ink-2 hover:bg-canvas">{t.more(rest.length)}</summary>
           <ul className="divide-y divide-line border-t border-line">
             {rest.map((a) => <Row key={a.id} alert={a} today={today} />)}
           </ul>
@@ -42,7 +42,7 @@ function Row({ alert: a, today }: { alert: AlertItem; today: string }) {
   const resolve = useAction(resolveAlert);
   const tone = SEVERITY_TONE[a.severity as keyof typeof SEVERITY_TONE] ?? "gray";
   return (
-    <li className="flex flex-wrap items-center gap-x-3 gap-y-2 px-4 py-3">
+    <li className="flex flex-wrap items-center gap-x-3 gap-y-2 px-4 md:px-5 py-3">
       <div className="min-w-0 flex-1 basis-56">
         <p className="flex flex-wrap items-center gap-x-2 gap-y-1">
           <Badge tone={tone}>{t.severity[a.severity as keyof typeof t.severity] ?? a.severity}</Badge>

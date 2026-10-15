@@ -71,7 +71,7 @@ export default async function CampPage({ params }: { params: Promise<{ id: strin
           <span>{t.years(c.birth_year_from, c.birth_year_to)} · {c.price ? formatLei(c.price) : t.free}</span>
         </span>}
         action={<div className="flex flex-wrap gap-2">
-          <a href={`/api/club/tabara/${c.id}`} className="inline-flex h-12 items-center gap-2 rounded-[var(--radius-control)] border border-border-control bg-surface px-4 font-semibold hover:bg-canvas"><FileDown className="size-5" aria-hidden />{t.actions.pdf}</a>
+          <a href={`/api/club/tabara/${c.id}`} className="inline-flex h-11 items-center gap-2 rounded-full px-4 font-medium hover:bg-line bg-sunken transition-colors"><FileDown className="size-5" aria-hidden />{t.actions.pdf}</a>
           <CampFormButton camp={camp} />
         </div>}
       />

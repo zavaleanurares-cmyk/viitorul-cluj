@@ -42,7 +42,7 @@ export default async function BudgetPage({ searchParams }: { searchParams: Promi
           <MoneyChart data={chart} caption={t.cashflowTitle(year)} series={[
             { key: "income", label: t.income, kind: "bar", color: "#2a78d6" },
             { key: "spent", label: t.expenses, kind: "bar", color: "#eb6834" },
-            { key: "net", label: t.net, kind: "line", color: "#0e1726" },
+            { key: "net", label: t.net, kind: "line", color: "#1d1d1f" },
           ]} />
         </CardBody>
       </Card>

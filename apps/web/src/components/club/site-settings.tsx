@@ -21,14 +21,14 @@ export function SiteSettingsForm({ initial, groups }: { initial: SiteSettingsInp
   );
   return (
     <div className="space-y-6">
-      <section className="space-y-3 rounded-[var(--radius-card)] border border-line bg-surface p-4">
+      <section className="space-y-3 rounded-[var(--radius-card)] border border-line/70 bg-surface p-4 shadow-[var(--shadow-card)]">
         <h2 className="text-lg">{t.sections}</h2>
         <p className="text-sm text-ink-3">{t.sectionsHint}</p>
         <div className="grid gap-3 md:grid-cols-2">
           {SECTIONS.map((k) => <Checkbox key={k} label={t.section[k].label} description={t.section[k].hint} checked={!!v[k]} onChange={(e) => set({ [k]: e.target.checked } as Partial<SiteSettingsInput>)} />)}
         </div>
       </section>
-      <section className="space-y-3 rounded-[var(--radius-card)] border border-line bg-surface p-4">
+      <section className="space-y-3 rounded-[var(--radius-card)] border border-line/70 bg-surface p-4 shadow-[var(--shadow-card)]">
         <h2 className="text-lg">{t.privacyTitle}</h2>
         <Checkbox label={t.showStaff} checked={v.show_staff} onChange={(e) => set({ show_staff: e.target.checked })} />
         <Checkbox label={t.indexable} checked={v.indexable} onChange={(e) => set({ indexable: e.target.checked })} />
@@ -44,12 +44,12 @@ export function SiteSettingsForm({ initial, groups }: { initial: SiteSettingsInp
           </div>
         </fieldset>
       </section>
-      <section className="space-y-3 rounded-[var(--radius-card)] border border-line bg-surface p-4">
+      <section className="space-y-3 rounded-[var(--radius-card)] border border-line/70 bg-surface p-4 shadow-[var(--shadow-card)]">
         <h2 className="text-lg">{t.texts}</h2>
         {text("tagline", t.tagline)}
         <Field label={t.about} optional><Textarea rows={5} value={v.about} maxLength={4000} onChange={(e) => set({ about: e.target.value })} /></Field>
       </section>
-      <section className="space-y-3 rounded-[var(--radius-card)] border border-line bg-surface p-4">
+      <section className="space-y-3 rounded-[var(--radius-card)] border border-line/70 bg-surface p-4 shadow-[var(--shadow-card)]">
         <h2 className="text-lg">{t.contactTitle}</h2>
         <div className="grid gap-3 md:grid-cols-2">
           {text("address", t.address)}{text("map_url", t.mapUrl, "url")}{text("email", t.email, "email")}{text("phone", t.phone, "tel")}
@@ -73,7 +73,7 @@ export function PolicyEditor({ initial, starter }: { initial: string; starter: s
   return (
     <div className="space-y-3">
       {!initial ? (
-        <div className="flex flex-wrap items-center gap-3 rounded-[var(--radius-control)] border border-dashed border-line-strong p-3">
+        <div className="flex flex-wrap items-center gap-3 rounded-[var(--radius-control)] bg-sunken p-3">
           <p className="flex-1 text-sm text-ink-2">{t.starterNote}</p>
           <Button variant="secondary" onClick={() => setBody(starter)}>{t.starter}</Button>
         </div>

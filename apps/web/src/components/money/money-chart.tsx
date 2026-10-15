@@ -3,7 +3,7 @@ import { Bar, CartesianGrid, ComposedChart, Legend, Line, ResponsiveContainer, T
 import { formatLei } from "@club/shared";
 import { SERIES_COLORS } from "@/components/charts";
 
-const AXIS = { stroke: "#a9b3bf", tick: { fill: "#596575", fontSize: 12 }, tickLine: false } as const;
+const AXIS = { stroke: "#d2d2d7", tick: { fill: "#6e6e73", fontSize: 12 }, tickLine: false } as const;
 
 export type MoneyChartRow = { label: string; [key: string]: string | number | null };
 export type MoneySeries = { key: string; label: string; kind: "bar" | "line"; color?: string };
@@ -25,8 +25,8 @@ export function MoneyChart({ data, series, caption, height = 260 }: { data: Mone
             <XAxis dataKey="label" {...AXIS} />
             <YAxis {...AXIS} width={64} tickFormatter={(v: number) => formatLei(v * 100, { currency: false })} />
             <Tooltip formatter={(v) => formatLei(Number(v) * 100)}
-              contentStyle={{ background: "#fff", border: "1px solid #a9b3bf", borderRadius: 8, color: "#0e1726", fontSize: 14 }} />
-            <Legend wrapperStyle={{ fontSize: 13, color: "#36414f" }} />
+              contentStyle={{ background: "rgba(255,255,255,0.96)", border: "none", borderRadius: 12, boxShadow: "0 8px 28px rgba(0,0,0,0.12)", color: "#1d1d1f", fontSize: 14 }} />
+            <Legend wrapperStyle={{ fontSize: 13 }} formatter={(v) => <span style={{ color: "#424245" }}>{v}</span>} />
             {series.map((s, i) => s.kind === "bar"
               ? <Bar key={s.key} dataKey={s.key} name={s.label} fill={s.color ?? colors[i]} radius={[3, 3, 0, 0]} maxBarSize={28} />
               : <Line key={s.key} dataKey={s.key} name={s.label} stroke={s.color ?? SERIES_COLORS[1]} strokeWidth={2.5} dot={{ r: 3 }} type="linear" connectNulls={false} />)}

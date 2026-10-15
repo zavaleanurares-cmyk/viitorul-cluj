@@ -146,7 +146,7 @@ export function SessionEditor({ session, groups, defaultGroupId, players, existi
           </TableWrap>
         </>
       ) : (
-        <p className="rounded-[var(--radius-card)] border border-dashed border-line-strong bg-surface p-6 text-center text-ink-3">{ed.noPlayers}</p>
+        <p className="rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)] p-6 text-center text-ink-3">{ed.noPlayers}</p>
       )}
 
       <FormError>{problem ?? save.error}</FormError>

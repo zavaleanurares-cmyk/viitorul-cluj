@@ -32,7 +32,7 @@ export default async function ContractPage({ params }: { params: Promise<{ id: s
         <Notice tone="green" title={t.family.signedOn(formatDateTime(c.signed_at!, ctx.settings.timezone))}>
           <p className="flex items-center gap-1"><CircleCheck className="size-4" aria-hidden />{c.signed_name}</p>
           <p className="mt-1 break-all text-sm">{t.family.hash}: {c.document_hash}</p>
-          <a href={`/api/club/contract/${c.id}`} className="mt-2 inline-flex h-11 items-center gap-2 rounded-[var(--radius-control)] border border-border-control bg-surface px-3 font-semibold"><FileDown className="size-5" aria-hidden />{t.family.downloadPdf}</a>
+          <a href={`/api/club/contract/${c.id}`} className="mt-2 inline-flex h-11 items-center gap-2 rounded-full bg-sunken px-3 font-medium"><FileDown className="size-5" aria-hidden />{t.family.downloadPdf}</a>
         </Notice>
       ) : c.status !== "sent" ? <Notice tone="gray" title={t.status[c.status as "voided"]} /> : null}
       <Card><CardBody><div className="whitespace-pre-line leading-relaxed">{c.body}</div></CardBody></Card>
@@ -41,7 +41,7 @@ export default async function ContractPage({ params }: { params: Promise<{ id: s
       {trail?.length ? (
         <section>
           <h2 className="mb-2 text-lg">{t.trail}</h2>
-          <ol className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface">
+          <ol className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]">
             {trail.map((e) => (
               <li key={e.id} className="flex flex-wrap items-baseline gap-x-3 px-4 py-2">
                 <span className="w-36 shrink-0 text-sm tabular-nums text-ink-3">{formatDateTime(e.at, ctx.settings.timezone)}</span>

@@ -52,7 +52,7 @@ export function Form230({ slug }: { slug: string }) {
     </Field>
   );
   return (
-    <form className="space-y-4 rounded-[var(--radius-card)] border border-line bg-surface p-4 md:p-6" onSubmit={(e) => { e.preventDefault(); if (ready) void submit(); }}>
+    <form className="space-y-4 rounded-[var(--radius-card)] border border-line/70 bg-surface p-4 md:p-6 shadow-[var(--shadow-card)]" onSubmit={(e) => { e.preventDefault(); if (ready) void submit(); }}>
       {done ? (
         <p role="status" className="flex items-start gap-2 rounded-[var(--radius-control)] bg-st-green/10 p-3 font-semibold"><CircleCheck className="mt-0.5 size-5 shrink-0 text-st-green" aria-hidden />{t.done}</p>
       ) : null}

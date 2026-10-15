@@ -35,7 +35,7 @@ export default async function CampsPage({ searchParams }: { searchParams: Promis
             const pending = regs.filter((r) => r.status === "pending").length;
             return (
               <li key={c.id}>
-                <Link href={`/club/tabere/${c.id}`} className="block space-y-3 rounded-[var(--radius-card)] border border-line bg-surface p-4 hover:border-line-strong">
+                <Link href={`/club/tabere/${c.id}`} className="block space-y-3 rounded-[var(--radius-card)] border border-line/70 bg-surface p-4 hover:border-line-strong shadow-[var(--shadow-card)]">
                   <div className="flex items-start justify-between gap-3">
                     <span className="text-lg font-bold">{c.title}</span>
                     <Badge tone={TONE[c.status as keyof typeof TONE]}>{t.status[c.status as keyof typeof t.status]}</Badge>

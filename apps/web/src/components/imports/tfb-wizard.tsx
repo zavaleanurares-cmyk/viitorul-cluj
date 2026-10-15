@@ -133,7 +133,7 @@ function FilesStep({ loaded, bundle, onChoose }: { loaded: Loaded[]; bundle: Tfb
   return (
     <div className="grid gap-5 lg:grid-cols-2 [&>section]:mt-0">
       <Section title={t.title} description={t.intro}>
-        <ul className="divide-y divide-line rounded-[var(--radius-card)] border border-line bg-surface">
+        <ul className="divide-y divide-line rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]">
           {t.expected.map(([name, what]) => (
             <li key={name} className="px-4 py-2">
               <span className="font-semibold">{name}</span>
@@ -150,7 +150,7 @@ function FilesStep({ loaded, bundle, onChoose }: { loaded: Loaded[]; bundle: Tfb
       <Section title={t.found} description={loaded.length ? t.chosen(loaded.length) : undefined}>
         {loaded.length ? (
           <>
-            <ul className="divide-y divide-line rounded-[var(--radius-card)] border border-line bg-surface">
+            <ul className="divide-y divide-line rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]">
               {loaded.map((f) => (
                 <li key={f.name} className="flex items-center gap-3 px-4 py-2">
                   {f.kind ? <FileSpreadsheet className="size-5 shrink-0 text-st-green" aria-hidden /> : <FileX className="size-5 shrink-0 text-st-red" aria-hidden />}
@@ -226,7 +226,7 @@ function MatchStep({ preview, bundle, decisions, onChange }: {
 
       <Section title={t.playersTitle} description={unclear.length ? t.playersText(unclear.length) : t.playersAllClear}>
         {unclear.length ? (
-          <ul className="divide-y divide-line rounded-[var(--radius-card)] border border-line bg-surface">
+          <ul className="divide-y divide-line rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]">
             {unclear.map((p) => (
               <li key={p.id} className="grid gap-2 px-4 py-3 md:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)] md:items-center">
                 <label htmlFor={`p-${p.id}`} className="min-w-0">
@@ -249,7 +249,7 @@ function MatchStep({ preview, bundle, decisions, onChange }: {
           </ul>
         ) : null}
         {sure.length ? (
-          <details className="mt-3 rounded-[var(--radius-card)] border border-line bg-surface">
+          <details className="mt-3 rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]">
             <summary className="flex min-h-12 cursor-pointer items-center gap-2 px-4 font-semibold">
               <CircleCheck className="size-5 text-st-green" aria-hidden />{t.sure(sure.length)}
             </summary>
@@ -358,7 +358,7 @@ function ReviewStep({ preview, warnings }: { preview: TfbPreview; warnings: stri
       <div className="mt-5 grid gap-5 lg:grid-cols-2 [&>section]:mt-0">
         {s.multiTeam.length ? (
           <Section title={t.multiTitle(s.multiTeam.length)}>
-            <ul className="max-h-80 divide-y divide-line overflow-y-auto rounded-[var(--radius-card)] border border-line bg-surface text-sm">
+            <ul className="max-h-80 divide-y divide-line overflow-y-auto rounded-[var(--radius-card)] border border-line/70 bg-surface text-sm shadow-[var(--shadow-card)]">
               {s.multiTeam.map((m) => (
                 <li key={m.name} className="px-4 py-2">
                   <span className="font-semibold">{m.name}</span>
@@ -370,7 +370,7 @@ function ReviewStep({ preview, warnings }: { preview: TfbPreview; warnings: stri
         ) : null}
         {s.staff.length ? (
           <Section title={t.staffTitle(s.staff.length)} description={t.staffText}>
-            <ul className="max-h-80 divide-y divide-line overflow-y-auto rounded-[var(--radius-card)] border border-line bg-surface text-sm">
+            <ul className="max-h-80 divide-y divide-line overflow-y-auto rounded-[var(--radius-card)] border border-line/70 bg-surface text-sm shadow-[var(--shadow-card)]">
               {s.staff.map((m) => (
                 <li key={`${m.name}-${m.role}`} className="flex justify-between gap-3 px-4 py-2">
                   <span className="font-semibold">{m.name}</span>

@@ -52,7 +52,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
         }
       />
 
-      <form method="get" className="mb-4 rounded-[var(--radius-card)] border border-line bg-surface p-4">
+      <form method="get" className="mb-4 rounded-[var(--radius-card)] border border-line/70 bg-surface p-4 shadow-[var(--shadow-card)]">
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           <div className="grid grid-cols-2 gap-2">
             <Field label={c.fields.from}><Input type="date" name="de" defaultValue={f.de ?? ""} max={ctx.today} /></Field>
@@ -103,7 +103,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Rec
       {!rows.length ? (
         <EmptyState title={t.emptyTitle} description={filtered ? t.emptyFiltered : t.empty} action={filtered ? <LinkButton href="/administrare/audit">{t.reset}</LinkButton> : undefined} />
       ) : (
-        <div className="overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface">
+        <div className="overflow-hidden rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]">
           <div className={cn("hidden gap-x-3 border-b border-line bg-canvas px-3 py-2 text-sm font-semibold text-ink-3 lg:grid", GRID)}>
             <span>{t.colWhen}</span>
             <span>{t.colWho}</span>

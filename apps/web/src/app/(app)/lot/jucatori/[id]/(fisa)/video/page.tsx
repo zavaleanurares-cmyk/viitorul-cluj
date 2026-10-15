@@ -17,7 +17,7 @@ export default async function PlayerVideo({ params }: { params: Promise<{ id: st
   const rows = (data ?? []).map((r) => r.video_markers as unknown as M).sort((a, b) => b.videos.recorded_on.localeCompare(a.videos.recorded_on) || a.t_sec - b.t_sec);
   if (!rows.length) return <EmptyState title={t.playerTabEmpty} />;
   return (
-    <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface">
+    <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]">
       {rows.map((m) => (
         <li key={m.id}>
           <Link href={`/performanta/video/${m.video_id}`} className="flex min-h-14 items-center gap-3 px-4 py-2 hover:bg-canvas">

@@ -24,7 +24,7 @@ export function ContractTemplates({ templates }: { templates: ContractTemplateRo
     <div className="space-y-4">
       <div className="flex justify-end"><Button icon={<Plus className="size-5" aria-hidden />} onClick={() => setDraft({ id: null, name: "", kind: "other", body: "" })}>{t.newTemplate}</Button></div>
       {templates.length ? (
-        <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface">
+        <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]">
           {templates.map((x) => (
             <li key={x.id} className="flex items-center gap-3 px-4 py-3">
               <FileText className="size-6 shrink-0 text-ink-3" aria-hidden />

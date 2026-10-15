@@ -121,7 +121,7 @@ export function AttendanceSheet({ eventId, title, subtitle, players, savedAt, lo
           )}
         </Card>
         <div className="flex flex-col gap-2">
-          <a href="/azi" className="inline-flex h-12 items-center justify-center rounded-[var(--radius-control)] bg-brand px-4 font-semibold text-brand-ink hover:brightness-110">{t.backToToday}</a>
+          <a href="/azi" className="inline-flex h-11 items-center justify-center rounded-full bg-brand px-4 font-medium text-brand-ink hover:brightness-110">{t.backToToday}</a>
           <Button variant="ghost" onClick={() => setScreen("list")}>{t.edit}</Button>
         </div>
       </div>
@@ -141,7 +141,7 @@ export function AttendanceSheet({ eventId, title, subtitle, players, savedAt, lo
       <p className="mt-4 text-xl font-bold">{t.counts(present, absentees.length)}</p>
       <p className="mb-3 text-sm text-ink-3">{t.hint}</p>
 
-      <ul aria-label={title} className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface">
+      <ul aria-label={title} className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]">
         {players.map((p) => {
           const m = marks[p.id];
           const out = isOut(m);
@@ -184,10 +184,10 @@ export function AttendanceSheet({ eventId, title, subtitle, players, savedAt, lo
             <h2 id="why-title" className="mb-3 text-lg">{t.why(sheetFor.name)}</h2>
             <div className="grid gap-2">
               <button type="button" autoFocus onClick={() => { mark(sheetFor.id, { status: "late", reason: null }); setSheetFor(null); }}
-                className="flex h-14 items-center rounded-[var(--radius-control)] border border-border-control px-4 text-left font-semibold hover:bg-canvas">{t.late}</button>
+                className="flex h-14 items-center rounded-[var(--radius-control)] bg-sunken px-4 text-left font-medium transition-colors hover:bg-line">{t.late}</button>
               {ABSENCE_REASONS.map((r) => (
                 <button key={r} type="button" onClick={() => { mark(sheetFor.id, { status: r === "injured" ? "injured" : "absent", reason: r }); setSheetFor(null); }}
-                  className="flex h-14 items-center rounded-[var(--radius-control)] border border-border-control px-4 text-left font-semibold hover:bg-canvas">{ABSENCE_REASON_LABELS[r]}</button>
+                  className="flex h-14 items-center rounded-[var(--radius-control)] bg-sunken px-4 text-left font-medium transition-colors hover:bg-line">{ABSENCE_REASON_LABELS[r]}</button>
               ))}
               <Button variant="ghost" onClick={() => setSheetFor(null)}>{messages.common.actions.cancel}</Button>
             </div>

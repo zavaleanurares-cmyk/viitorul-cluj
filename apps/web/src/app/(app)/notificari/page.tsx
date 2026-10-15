@@ -60,12 +60,12 @@ export default async function Page() {
     const hasLink = !!safeInternalLink(n.link);
     const body = (
       <>
-        <span className={cn("mt-0.5 inline-flex size-10 shrink-0 items-center justify-center rounded-full", isUnread ? "border border-line-strong bg-surface text-ink" : "bg-sunken text-ink-3")}>
+        <span className={cn("mt-0.5 inline-flex size-10 shrink-0 items-center justify-center rounded-full", isUnread ? "bg-st-blue-soft text-st-blue" : "bg-sunken text-ink-3")}>
           <Icon className="size-5" aria-hidden />
         </span>
         <span className="min-w-0 flex-1">
           <span className="flex flex-wrap items-baseline gap-x-2">
-            <span className={cn("break-words", isUnread ? "font-bold" : "font-semibold text-ink-2")}>{n.title}</span>
+            <span className={cn("break-words", isUnread ? "font-semibold" : "font-medium text-ink-2")}>{n.title}</span>
             {isUnread ? <span className="sr-only">({t.unread})</span> : null}
           </span>
           {n.body ? <span className="block break-words text-ink-2">{n.body}</span> : null}
@@ -75,7 +75,7 @@ export default async function Page() {
         {hasLink ? <ChevronRight className="mt-1.5 size-5 shrink-0 text-ink-3" aria-hidden /> : null}
       </>
     );
-    const cls = cn("flex min-h-16 items-start gap-3 px-4 py-3", isUnread && "bg-st-blue-soft/50");
+    const cls = "flex min-h-16 items-start gap-3 px-4 py-3 md:px-5";
     return (
       <li key={n.id} className="border-t border-line first:border-t-0">
         {/* link simplu, fără preîncărcare: deschiderea marchează notificarea ca citită */}
@@ -98,13 +98,13 @@ export default async function Page() {
           {unread.length ? (
             <section aria-labelledby="notif-necitite">
               <h2 id="notif-necitite" className="mb-2 text-sm font-semibold text-ink-3">{t.unreadSection} · {unread.length}</h2>
-              <ul className="overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface">{unread.map(renderItem)}</ul>
+              <ul className="overflow-hidden rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]">{unread.map(renderItem)}</ul>
             </section>
           ) : null}
           {read.length ? (
             <section aria-labelledby="notif-citite">
               <h2 id="notif-citite" className="mb-2 text-sm font-semibold text-ink-3">{t.readSection}</h2>
-              <ul className="overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface">{read.map(renderItem)}</ul>
+              <ul className="overflow-hidden rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]">{read.map(renderItem)}</ul>
             </section>
           ) : null}
           {items.length >= LIMIT ? <p className="text-sm text-ink-3">{t.limitNote(LIMIT)}</p> : null}

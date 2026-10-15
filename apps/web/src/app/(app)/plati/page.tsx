@@ -31,7 +31,7 @@ export default async function FamilyPaymentsPage({ searchParams }: { searchParam
   const noFamily = ctx.role === "guardian" && i.refs.length === 0;
 
   return (
-    <div className="mx-auto max-w-2xl space-y-4">
+    <div className="max-w-2xl space-y-6">
       <PageHeader title={t.title} />
       {intent ? <PaymentResult intentId={intent} /> : null}
       {noFamily ? <Notice tone="yellow">{t.noFamily}</Notice> : (
@@ -54,7 +54,7 @@ export default async function FamilyPaymentsPage({ searchParams }: { searchParam
                           <span className="block text-sm text-ink-3">{PAYMENT_METHOD_LABELS[p.method] ?? p.method}</span>
                         </span>
                         <Money value={p.amount - p.refunded_amount} className="font-bold" />
-                        <a href={r ? `/api/bani/chitanta/${r.id}` : `/api/bani/dovada/${p.id}`} className="inline-flex h-11 items-center gap-1 rounded-lg border border-border-control px-3 text-sm font-semibold hover:bg-canvas">
+                        <a href={r ? `/api/bani/chitanta/${r.id}` : `/api/bani/dovada/${p.id}`} className="inline-flex h-11 items-center gap-1 rounded-full px-3 text-sm font-medium hover:bg-line bg-sunken transition-colors">
                           <FileDown className="size-4" aria-hidden />{r ? t.receipt : t.confirmation}
                         </a>
                       </li>

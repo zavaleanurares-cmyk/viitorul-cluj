@@ -19,7 +19,7 @@ export default async function PublicTeams({ params }: { params: Promise<{ slug: 
       <h1 className="text-3xl md:text-4xl">{t.teams}</h1>
       <ul className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {teams.map((g) => (
-          <li key={g.id} className="space-y-3 rounded-[var(--radius-card)] border border-line bg-surface p-5">
+          <li key={g.id} className="space-y-3 rounded-[var(--radius-card)] border border-line/70 bg-surface p-5 shadow-[var(--shadow-card)]">
             <div>
               <h2 className="text-2xl">{g.name}</h2>
               {g.from ? <p className="text-ink-3">{years(g.from, g.to)}</p> : null}

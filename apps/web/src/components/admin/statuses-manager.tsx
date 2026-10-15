@@ -32,7 +32,7 @@ export function StatusesManager({ statuses }: { statuses: StatusItem[] }) {
       <div className="mb-4 flex justify-end">
         <Button icon={<Plus className="size-5" aria-hidden />} onClick={() => setEditing("new")}>{t.add}</Button>
       </div>
-      <ul className="overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface">
+      <ul className="overflow-hidden rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]">
         {statuses.map((s, i) => (
           <li key={s.id} className={cn("flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-line py-3 pl-4 pr-2 last:border-b-0", !s.isActive && "bg-canvas")}>
             <div className="shrink-0 sm:w-36"><StatusChip status={{ label: s.label, short_label: s.shortLabel, tone: s.tone, icon: s.icon }} /></div>
@@ -131,7 +131,7 @@ function StatusDialog({ status, onClose }: { status: StatusItem | null; onClose:
             {ICONS.map((x) => (
               <button
                 key={x} type="button" role="radio" aria-checked={icon === x} aria-label={t.icons[x]} title={t.icons[x]} onClick={() => setIcon(x)}
-                className={cn("inline-flex size-12 items-center justify-center rounded-[var(--radius-control)] border", icon === x ? "border-ink bg-ink text-white" : "border-line-strong bg-surface hover:bg-canvas")}
+                className={cn("inline-flex size-12 items-center justify-center rounded-[var(--radius-control)] border", icon === x ? "border-brand bg-brand text-brand-ink" : "border-transparent bg-sunken hover:bg-line")}
               >
                 <StatusIcon icon={x} className="size-6" />
               </button>

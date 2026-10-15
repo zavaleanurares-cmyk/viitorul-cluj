@@ -61,7 +61,7 @@ export default async function LibraryPage({ searchParams }: { searchParams: Prom
         <ul className="grid gap-2 md:grid-cols-2 xl:grid-cols-3">
           {shown.map((e) => (
             <li key={e.id}>
-              <Link href={`/biblioteca/${e.id}`} className="flex h-full gap-3 rounded-[var(--radius-card)] border border-line bg-surface p-3 hover:border-line-strong hover:bg-canvas">
+              <Link href={`/biblioteca/${e.id}`} className="flex h-full gap-3 rounded-[var(--radius-card)] border border-line/70 bg-surface p-4 shadow-[var(--shadow-card)] transition-colors hover:bg-canvas">
                 <ExerciseThumb imageUrl={e.image_url} hasVideo={e.has_video} className="w-24 self-start" />
                 <span className="min-w-0 flex-1">
                   <span className="block font-bold leading-snug">{e.name}</span>

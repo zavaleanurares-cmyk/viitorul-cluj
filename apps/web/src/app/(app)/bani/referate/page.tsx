@@ -32,7 +32,7 @@ export default async function PurchasesPage({ searchParams }: { searchParams: Pr
       <PageHeader title={t.title} description={t.description} action={<LinkButton href="/bani/referate/nou" variant="primary" icon={<Plus className="size-5" aria-hidden />}>{t.add}</LinkButton>} />
       <div className="mb-4"><FilterLinks label={t.filters.all} items={items} /></div>
       {rows.length === 0 ? <EmptyState title={t.empty} description={t.emptyText} /> : (
-        <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface">
+        <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line/70 bg-surface shadow-[var(--shadow-card)]">
           {rows.map((r) => (
             <li key={r.id}>
               <Link href={`/bani/referate/${r.id}`} className="grid min-h-16 grid-cols-[3.5rem_1fr_auto] items-center gap-x-3 gap-y-1 px-4 py-3 hover:bg-canvas sm:grid-cols-[3.5rem_1fr_auto_auto_auto]">

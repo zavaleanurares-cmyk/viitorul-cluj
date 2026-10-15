@@ -25,20 +25,20 @@ export function DemoRoles({ roles }: { roles: string[] }) {
   }
   return (
     <div className="space-y-3">
-      <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface">
+      <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] bg-canvas">
         {roles.map((r) => {
           const Icon = ICONS[r] ?? Users;
           const [name, what] = t.roles[r] ?? [r, ""];
           return (
             <li key={r}>
               <button type="button" disabled={!!pending} onClick={() => go(r)}
-                className="flex min-h-16 w-full items-center gap-3 px-4 py-3 text-left hover:bg-sunken focus-visible:bg-sunken disabled:opacity-60">
-                <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand/10 text-brand"><Icon className="size-5" aria-hidden /></span>
+                className="flex min-h-14 w-full items-center gap-3 px-4 py-2.5 text-left transition-colors hover:bg-sunken focus-visible:bg-sunken disabled:opacity-60">
+                <span className="flex size-9 shrink-0 items-center justify-center rounded-[0.625rem] bg-brand text-brand-ink"><Icon className="size-[1.125rem]" aria-hidden /></span>
                 <span className="min-w-0 flex-1">
-                  <span className="block font-semibold">{name}</span>
+                  <span className="block font-medium">{name}</span>
                   <span className="block truncate text-sm text-ink-3">{what}</span>
                 </span>
-                {pending === r ? <Loader2 className="size-5 animate-spin text-ink-3" aria-hidden /> : <ChevronRight className="size-5 text-ink-3" aria-hidden />}
+                {pending === r ? <Loader2 className="size-5 animate-spin text-ink-3" aria-hidden /> : <ChevronRight className="size-4 text-ink-3" aria-hidden />}
               </button>
             </li>
           );

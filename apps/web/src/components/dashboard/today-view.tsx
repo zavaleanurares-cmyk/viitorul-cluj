@@ -23,7 +23,7 @@ function Tile({ href, children }: { href: string; children: ReactNode }) {
 function Row({ href, children, label: aria }: { href: string; children: ReactNode; label?: string }) {
   return (
     <li className="border-t border-line first:border-t-0">
-      <Link href={href} aria-label={aria} className="flex min-h-12 items-center gap-3 px-4 py-2 hover:bg-canvas">
+      <Link href={href} aria-label={aria} className="flex min-h-12 items-center gap-3 px-4 md:px-5 py-2 hover:bg-canvas">
         <span className="min-w-0 flex-1">{children}</span>
         <ChevronRight className="size-5 shrink-0 text-ink-3" aria-hidden />
       </Link>
@@ -48,7 +48,7 @@ export function TodayView({ day, ctx, showAllAlerts }: { day: PhysioDay; ctx: Ap
 
   return (
     <div className="grid gap-4">
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <Tile href="#alerte">
           <Stat
             label={t.today.tiles.alerts} value={day.alerts.length}
@@ -91,7 +91,7 @@ export function TodayView({ day, ctx, showAllAlerts }: { day: PhysioDay; ctx: Ap
                     const Icon = SEVERITY_ICON[sev];
                     return (
                       <section key={sev} className="mb-2 last:mb-0">
-                        <h3 className="flex items-center gap-2 px-4 py-1.5 text-sm">
+                        <h3 className="flex items-center gap-2 px-4 md:px-5 py-1.5 text-sm">
                           <Badge tone={SEVERITY_TONE[sev]}><Icon className="size-3.5" aria-hidden />{t.alerts.severity[sev]}</Badge>
                           <span className="font-normal text-ink-3">{t.alerts.count(all.length)}</span>
                         </h3>
@@ -112,7 +112,7 @@ export function TodayView({ day, ctx, showAllAlerts }: { day: PhysioDay; ctx: Ap
                     );
                   })}
                   {day.alerts.length > ALERT_PREVIEW ? (
-                    <div className="px-4 pb-2 pt-1">
+                    <div className="px-4 md:px-5 pb-2 pt-1">
                       <LinkButton href={showAllAlerts ? "/tablou#alerte" : "/tablou?alerte=toate#alerte"} scroll={false} className="w-full">
                         {showAllAlerts ? t.alerts.showLess : t.alerts.showAll(day.alerts.length)}
                       </LinkButton>
@@ -186,7 +186,7 @@ export function TodayView({ day, ctx, showAllAlerts }: { day: PhysioDay; ctx: Ap
                 <ul className="pt-2">
                   {day.returns.slice(0, LIST_PREVIEW).map((r) => (
                     <Row key={r.id} href={`/lot/jucatori/${r.id}/stare`}>
-                      <span className="flex items-center justify-between gap-3">
+                      <span className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
                         <span className="min-w-0">
                           <span className="block truncate font-bold">{r.name}</span>
                           <span className="block text-sm text-ink-3">{r.groupName ?? "—"}</span>
@@ -201,7 +201,7 @@ export function TodayView({ day, ctx, showAllAlerts }: { day: PhysioDay; ctx: Ap
                     </Row>
                   ))}
                   {day.returns.length > LIST_PREVIEW ? (
-                    <li className="border-t border-line px-4 py-3 text-sm text-ink-3">
+                    <li className="border-t border-line px-4 md:px-5 py-3 text-sm text-ink-3">
                       <Link href="/disponibilitate?grupa=toate&filtru=nu-apti" className="font-semibold text-ink underline underline-offset-4">
                         {t.returns.more(day.returns.length - LIST_PREVIEW)}
                       </Link>
@@ -218,7 +218,7 @@ export function TodayView({ day, ctx, showAllAlerts }: { day: PhysioDay; ctx: Ap
                 <ul className="pt-2">
                   {day.visas.slice(0, LIST_PREVIEW).map((v) => (
                     <Row key={v.id} href={`/lot/jucatori/${v.id}/stare`}>
-                      <span className="flex items-center justify-between gap-3">
+                      <span className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
                         <span className="min-w-0">
                           <span className="block truncate font-bold">{v.name}</span>
                           <span className="block text-sm text-ink-3">{v.groupName ?? "—"}</span>
@@ -233,7 +233,7 @@ export function TodayView({ day, ctx, showAllAlerts }: { day: PhysioDay; ctx: Ap
                     </Row>
                   ))}
                   {day.visas.length > LIST_PREVIEW ? (
-                    <li className="border-t border-line px-4 py-3 text-sm text-ink-3">
+                    <li className="border-t border-line px-4 md:px-5 py-3 text-sm text-ink-3">
                       {t.visas.more(day.visas.length - LIST_PREVIEW)} ·{" "}
                       <Link href="/lot/vize" className="font-semibold text-ink underline underline-offset-4">{t.visas.all}</Link>
                     </li>
