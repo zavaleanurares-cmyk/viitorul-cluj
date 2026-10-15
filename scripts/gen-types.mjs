@@ -92,7 +92,44 @@ for (const [name, cs] of Object.entries(tables)) {
   }
   out += `        ];\n      };\n`;
 }
-out += `    };\n    Views: { [_ in never]: never };\n    Functions: {\n`;
+// Vederi: coloanele moștenesc nulabilitatea coloanei cu același nume din tabelele de bază; coloanele calculate
+// (fără corespondent) sunt nenule, cu excepția celor listate. Relațiile: cheile străine ale bazelor, ca în meta.ts.
+const VIEW_NULLABLE = new Set(["last_paid_on"]);
+const viewCols = (await db.query(`
+  select c.table_name, c.column_name, c.udt_name
+  from information_schema.columns c
+  join information_schema.tables t on t.table_schema = c.table_schema and t.table_name = c.table_name
+  where c.table_schema = 'public' and t.table_type = 'VIEW'
+  order by c.table_name, c.ordinal_position`)).rows;
+const viewBases = (await db.query(`
+  select distinct v.relname as view, t.relname as base
+  from pg_depend d join pg_rewrite r on r.oid = d.objid
+  join pg_class v on v.oid = r.ev_class and v.relkind = 'v' join pg_namespace vn on vn.oid = v.relnamespace and vn.nspname = 'public'
+  join pg_class t on t.oid = d.refobjid and t.relkind in ('r','p') and t.oid <> v.oid
+  where d.classid = 'pg_rewrite'::regclass`)).rows;
+const views = {};
+for (const c of viewCols) (views[c.table_name] ??= []).push(c);
+let viewOut = "";
+for (const [name, cs] of Object.entries(views)) {
+  const bases = viewBases.filter((b) => b.view === name).map((b) => b.base);
+  viewOut += `      ${name}: {\n        Row: {\n`;
+  for (const c of cs) {
+    const baseCol = bases.map((b) => (tables[b] ?? []).find((x) => x.column_name === c.column_name)).find(Boolean);
+    const nullable = VIEW_NULLABLE.has(c.column_name) || (baseCol ? baseCol.is_nullable === "YES" : false);
+    viewOut += `          ${c.column_name}: ${tsType(c.udt_name)}${nullable ? " | null" : ""};\n`;
+  }
+  viewOut += `        };\n        Relationships: [\n`;
+  const seen = new Set();
+  for (const f of fks.filter((f) => bases.includes(f.tbl))) {
+    if (!f.cols.every((col) => cs.some((c) => c.column_name === col))) continue;
+    const key = f.cols.join(",") + ">" + f.ftbl;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    viewOut += `          { foreignKeyName: "${name}_${f.cols.join("_")}_fkey"; columns: ${JSON.stringify(f.cols)}; isOneToOne: false; referencedRelation: "${f.ftbl}"; referencedColumns: ${JSON.stringify(f.fcols)} },\n`;
+  }
+  viewOut += `        ];\n      };\n`;
+}
+out += `    };\n    Views: {\n${viewOut}    };\n    Functions: {\n`;
 for (const f of fns) {
   const inArgs = [];
   const outCols = [];

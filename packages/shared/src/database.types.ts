@@ -50,6 +50,37 @@ export type Database = {
           { foreignKeyName: "alerts_resolved_by_fkey"; columns: ["resolved_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
         ];
       };
+      allocations: {
+        Row: {
+          id: string;
+          payment_id: string;
+          charge_id: string;
+          amount: number;
+          created_by: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          payment_id: string;
+          charge_id: string;
+          amount: number;
+          created_by?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          payment_id?: string;
+          charge_id?: string;
+          amount?: number;
+          created_by?: string | null;
+          created_at?: string;
+        };
+        Relationships: [
+          { foreignKeyName: "allocations_charge_id_fkey"; columns: ["charge_id"]; isOneToOne: false; referencedRelation: "charges"; referencedColumns: ["id"] },
+          { foreignKeyName: "allocations_created_by_fkey"; columns: ["created_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
+          { foreignKeyName: "allocations_payment_id_fkey"; columns: ["payment_id"]; isOneToOne: false; referencedRelation: "payments"; referencedColumns: ["id"] },
+        ];
+      };
       anthropometrics: {
         Row: {
           id: string;
@@ -168,6 +199,358 @@ export type Database = {
         };
         Relationships: [
           { foreignKeyName: "audit_log_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
+        ];
+      };
+      bank_lines: {
+        Row: {
+          id: string;
+          club_id: string;
+          statement_id: string;
+          booked_on: string;
+          amount: number;
+          description: string | null;
+          counterparty: string | null;
+          line_hash: string;
+          status: string;
+          payment_id: string | null;
+          expense_id: string | null;
+          matched_by: string | null;
+          matched_at: string | null;
+          note: string | null;
+        };
+        Insert: {
+          id?: string;
+          club_id: string;
+          statement_id: string;
+          booked_on: string;
+          amount: number;
+          description?: string | null;
+          counterparty?: string | null;
+          line_hash: string;
+          status?: string;
+          payment_id?: string | null;
+          expense_id?: string | null;
+          matched_by?: string | null;
+          matched_at?: string | null;
+          note?: string | null;
+        };
+        Update: {
+          id?: string;
+          club_id?: string;
+          statement_id?: string;
+          booked_on?: string;
+          amount?: number;
+          description?: string | null;
+          counterparty?: string | null;
+          line_hash?: string;
+          status?: string;
+          payment_id?: string | null;
+          expense_id?: string | null;
+          matched_by?: string | null;
+          matched_at?: string | null;
+          note?: string | null;
+        };
+        Relationships: [
+          { foreignKeyName: "bank_lines_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
+          { foreignKeyName: "bank_lines_expense_fk"; columns: ["expense_id"]; isOneToOne: false; referencedRelation: "expenses"; referencedColumns: ["id"] },
+          { foreignKeyName: "bank_lines_matched_by_fkey"; columns: ["matched_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
+          { foreignKeyName: "bank_lines_payment_id_fkey"; columns: ["payment_id"]; isOneToOne: false; referencedRelation: "payments"; referencedColumns: ["id"] },
+          { foreignKeyName: "bank_lines_statement_id_fkey"; columns: ["statement_id"]; isOneToOne: false; referencedRelation: "bank_statements"; referencedColumns: ["id"] },
+        ];
+      };
+      bank_statements: {
+        Row: {
+          id: string;
+          club_id: string;
+          file_name: string;
+          bank: string | null;
+          period_from: string | null;
+          period_to: string | null;
+          line_count: number;
+          imported_by: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          club_id: string;
+          file_name: string;
+          bank?: string | null;
+          period_from?: string | null;
+          period_to?: string | null;
+          line_count?: number;
+          imported_by?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          club_id?: string;
+          file_name?: string;
+          bank?: string | null;
+          period_from?: string | null;
+          period_to?: string | null;
+          line_count?: number;
+          imported_by?: string | null;
+          created_at?: string;
+        };
+        Relationships: [
+          { foreignKeyName: "bank_statements_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
+          { foreignKeyName: "bank_statements_imported_by_fkey"; columns: ["imported_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
+        ];
+      };
+      bonus_entries: {
+        Row: {
+          id: string;
+          club_id: string;
+          rule_id: string;
+          event_id: string;
+          player_id: string | null;
+          profile_id: string | null;
+          quantity: number;
+          amount: number;
+          status: string;
+          decided_by: string | null;
+          decided_at: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          club_id: string;
+          rule_id: string;
+          event_id: string;
+          player_id?: string | null;
+          profile_id?: string | null;
+          quantity?: number;
+          amount: number;
+          status?: string;
+          decided_by?: string | null;
+          decided_at?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          club_id?: string;
+          rule_id?: string;
+          event_id?: string;
+          player_id?: string | null;
+          profile_id?: string | null;
+          quantity?: number;
+          amount?: number;
+          status?: string;
+          decided_by?: string | null;
+          decided_at?: string | null;
+          created_at?: string;
+        };
+        Relationships: [
+          { foreignKeyName: "bonus_entries_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
+          { foreignKeyName: "bonus_entries_decided_by_fkey"; columns: ["decided_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
+          { foreignKeyName: "bonus_entries_event_id_fkey"; columns: ["event_id"]; isOneToOne: false; referencedRelation: "events"; referencedColumns: ["id"] },
+          { foreignKeyName: "bonus_entries_player_id_fkey"; columns: ["player_id"]; isOneToOne: false; referencedRelation: "players"; referencedColumns: ["id"] },
+          { foreignKeyName: "bonus_entries_profile_id_fkey"; columns: ["profile_id"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
+          { foreignKeyName: "bonus_entries_rule_id_fkey"; columns: ["rule_id"]; isOneToOne: false; referencedRelation: "bonus_rules"; referencedColumns: ["id"] },
+        ];
+      };
+      bonus_rules: {
+        Row: {
+          id: string;
+          club_id: string;
+          name: string;
+          target: string;
+          group_id: string | null;
+          competition_id: string | null;
+          trigger: string;
+          amount: number;
+          is_active: boolean;
+          created_at: string;
+          deleted_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          club_id: string;
+          name: string;
+          target: string;
+          group_id?: string | null;
+          competition_id?: string | null;
+          trigger: string;
+          amount: number;
+          is_active?: boolean;
+          created_at?: string;
+          deleted_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          club_id?: string;
+          name?: string;
+          target?: string;
+          group_id?: string | null;
+          competition_id?: string | null;
+          trigger?: string;
+          amount?: number;
+          is_active?: boolean;
+          created_at?: string;
+          deleted_at?: string | null;
+        };
+        Relationships: [
+          { foreignKeyName: "bonus_rules_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
+          { foreignKeyName: "bonus_rules_competition_id_fkey"; columns: ["competition_id"]; isOneToOne: false; referencedRelation: "competitions"; referencedColumns: ["id"] },
+          { foreignKeyName: "bonus_rules_group_id_fkey"; columns: ["group_id"]; isOneToOne: false; referencedRelation: "groups"; referencedColumns: ["id"] },
+        ];
+      };
+      budget_lines: {
+        Row: {
+          id: string;
+          club_id: string;
+          year: number;
+          month: number;
+          kind: string;
+          department_id: string | null;
+          amount: number;
+        };
+        Insert: {
+          id?: string;
+          club_id: string;
+          year: number;
+          month: number;
+          kind: string;
+          department_id?: string | null;
+          amount: number;
+        };
+        Update: {
+          id?: string;
+          club_id?: string;
+          year?: number;
+          month?: number;
+          kind?: string;
+          department_id?: string | null;
+          amount?: number;
+        };
+        Relationships: [
+          { foreignKeyName: "budget_lines_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
+          { foreignKeyName: "budget_lines_department_id_fkey"; columns: ["department_id"]; isOneToOne: false; referencedRelation: "departments"; referencedColumns: ["id"] },
+        ];
+      };
+      charge_requests: {
+        Row: {
+          id: string;
+          club_id: string;
+          title: string;
+          description: string | null;
+          kind: string;
+          amount: number;
+          due_on: string;
+          created_by: string | null;
+          created_at: string;
+          deleted_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          club_id: string;
+          title: string;
+          description?: string | null;
+          kind?: string;
+          amount: number;
+          due_on: string;
+          created_by?: string | null;
+          created_at?: string;
+          deleted_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          club_id?: string;
+          title?: string;
+          description?: string | null;
+          kind?: string;
+          amount?: number;
+          due_on?: string;
+          created_by?: string | null;
+          created_at?: string;
+          deleted_at?: string | null;
+        };
+        Relationships: [
+          { foreignKeyName: "charge_requests_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
+          { foreignKeyName: "charge_requests_created_by_fkey"; columns: ["created_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
+        ];
+      };
+      charges: {
+        Row: {
+          id: string;
+          club_id: string;
+          player_id: string;
+          guardian_id: string | null;
+          kind: string;
+          request_id: string | null;
+          period: string | null;
+          title: string;
+          amount: number;
+          discount: number;
+          discount_note: string | null;
+          due_on: string;
+          status: string;
+          cancel_reason: string | null;
+          issued_at: string;
+          created_by: string | null;
+        };
+        Insert: {
+          id?: string;
+          club_id: string;
+          player_id: string;
+          guardian_id?: string | null;
+          kind: string;
+          request_id?: string | null;
+          period?: string | null;
+          title: string;
+          amount: number;
+          discount?: number;
+          discount_note?: string | null;
+          due_on: string;
+          status?: string;
+          cancel_reason?: string | null;
+          issued_at?: string;
+          created_by?: string | null;
+        };
+        Update: {
+          id?: string;
+          club_id?: string;
+          player_id?: string;
+          guardian_id?: string | null;
+          kind?: string;
+          request_id?: string | null;
+          period?: string | null;
+          title?: string;
+          amount?: number;
+          discount?: number;
+          discount_note?: string | null;
+          due_on?: string;
+          status?: string;
+          cancel_reason?: string | null;
+          issued_at?: string;
+          created_by?: string | null;
+        };
+        Relationships: [
+          { foreignKeyName: "charges_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
+          { foreignKeyName: "charges_created_by_fkey"; columns: ["created_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
+          { foreignKeyName: "charges_guardian_id_fkey"; columns: ["guardian_id"]; isOneToOne: false; referencedRelation: "guardians"; referencedColumns: ["id"] },
+          { foreignKeyName: "charges_player_id_fkey"; columns: ["player_id"]; isOneToOne: false; referencedRelation: "players"; referencedColumns: ["id"] },
+          { foreignKeyName: "charges_request_id_fkey"; columns: ["request_id"]; isOneToOne: false; referencedRelation: "charge_requests"; referencedColumns: ["id"] },
+        ];
+      };
+      club_counters: {
+        Row: {
+          club_id: string;
+          name: string;
+          value: number;
+        };
+        Insert: {
+          club_id: string;
+          name: string;
+          value?: number;
+        };
+        Update: {
+          club_id?: string;
+          name?: string;
+          value?: number;
+        };
+        Relationships: [
+          { foreignKeyName: "club_counters_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
         ];
       };
       club_statuses: {
@@ -520,6 +903,39 @@ export type Database = {
           { foreignKeyName: "data_requests_user_id_fkey"; columns: ["user_id"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
         ];
       };
+      departments: {
+        Row: {
+          id: string;
+          club_id: string;
+          parent_id: string | null;
+          name: string;
+          sort: number;
+          created_at: string;
+          deleted_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          club_id: string;
+          parent_id?: string | null;
+          name: string;
+          sort?: number;
+          created_at?: string;
+          deleted_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          club_id?: string;
+          parent_id?: string | null;
+          name?: string;
+          sort?: number;
+          created_at?: string;
+          deleted_at?: string | null;
+        };
+        Relationships: [
+          { foreignKeyName: "departments_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
+          { foreignKeyName: "departments_parent_id_fkey"; columns: ["parent_id"]; isOneToOne: false; referencedRelation: "departments"; referencedColumns: ["id"] },
+        ];
+      };
       event_series: {
         Row: {
           id: string;
@@ -771,6 +1187,245 @@ export type Database = {
           { foreignKeyName: "exercises_created_by_fkey"; columns: ["created_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
         ];
       };
+      expenses: {
+        Row: {
+          id: string;
+          club_id: string;
+          department_id: string | null;
+          description: string;
+          supplier: string | null;
+          invoice_no: string | null;
+          amount: number;
+          spent_on: string;
+          method: string;
+          purchase_request_id: string | null;
+          group_id: string | null;
+          player_id: string | null;
+          event_id: string | null;
+          document_path: string | null;
+          bank_line_id: string | null;
+          created_by: string | null;
+          created_at: string;
+          deleted_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          club_id: string;
+          department_id?: string | null;
+          description: string;
+          supplier?: string | null;
+          invoice_no?: string | null;
+          amount: number;
+          spent_on: string;
+          method?: string;
+          purchase_request_id?: string | null;
+          group_id?: string | null;
+          player_id?: string | null;
+          event_id?: string | null;
+          document_path?: string | null;
+          bank_line_id?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+          deleted_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          club_id?: string;
+          department_id?: string | null;
+          description?: string;
+          supplier?: string | null;
+          invoice_no?: string | null;
+          amount?: number;
+          spent_on?: string;
+          method?: string;
+          purchase_request_id?: string | null;
+          group_id?: string | null;
+          player_id?: string | null;
+          event_id?: string | null;
+          document_path?: string | null;
+          bank_line_id?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+          deleted_at?: string | null;
+        };
+        Relationships: [
+          { foreignKeyName: "expenses_bank_line_id_fkey"; columns: ["bank_line_id"]; isOneToOne: false; referencedRelation: "bank_lines"; referencedColumns: ["id"] },
+          { foreignKeyName: "expenses_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
+          { foreignKeyName: "expenses_created_by_fkey"; columns: ["created_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
+          { foreignKeyName: "expenses_department_id_fkey"; columns: ["department_id"]; isOneToOne: false; referencedRelation: "departments"; referencedColumns: ["id"] },
+          { foreignKeyName: "expenses_event_id_fkey"; columns: ["event_id"]; isOneToOne: false; referencedRelation: "events"; referencedColumns: ["id"] },
+          { foreignKeyName: "expenses_group_id_fkey"; columns: ["group_id"]; isOneToOne: false; referencedRelation: "groups"; referencedColumns: ["id"] },
+          { foreignKeyName: "expenses_player_id_fkey"; columns: ["player_id"]; isOneToOne: false; referencedRelation: "players"; referencedColumns: ["id"] },
+          { foreignKeyName: "expenses_purchase_request_id_fkey"; columns: ["purchase_request_id"]; isOneToOne: false; referencedRelation: "purchase_requests"; referencedColumns: ["id"] },
+        ];
+      };
+      fee_adjustments: {
+        Row: {
+          id: string;
+          club_id: string;
+          player_id: string;
+          kind: string;
+          value: number;
+          reason: string;
+          note: string | null;
+          from_month: string;
+          to_month: string | null;
+          created_by: string | null;
+          created_at: string;
+          deleted_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          club_id: string;
+          player_id: string;
+          kind: string;
+          value?: number;
+          reason: string;
+          note?: string | null;
+          from_month: string;
+          to_month?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+          deleted_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          club_id?: string;
+          player_id?: string;
+          kind?: string;
+          value?: number;
+          reason?: string;
+          note?: string | null;
+          from_month?: string;
+          to_month?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+          deleted_at?: string | null;
+        };
+        Relationships: [
+          { foreignKeyName: "fee_adjustments_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
+          { foreignKeyName: "fee_adjustments_created_by_fkey"; columns: ["created_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
+          { foreignKeyName: "fee_adjustments_player_id_fkey"; columns: ["player_id"]; isOneToOne: false; referencedRelation: "players"; referencedColumns: ["id"] },
+        ];
+      };
+      fee_plans: {
+        Row: {
+          id: string;
+          club_id: string;
+          group_id: string | null;
+          player_id: string | null;
+          amount: number;
+          valid_from: string;
+          valid_to: string | null;
+          reason: string | null;
+          created_by: string | null;
+          created_at: string;
+          deleted_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          club_id: string;
+          group_id?: string | null;
+          player_id?: string | null;
+          amount: number;
+          valid_from: string;
+          valid_to?: string | null;
+          reason?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+          deleted_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          club_id?: string;
+          group_id?: string | null;
+          player_id?: string | null;
+          amount?: number;
+          valid_from?: string;
+          valid_to?: string | null;
+          reason?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+          deleted_at?: string | null;
+        };
+        Relationships: [
+          { foreignKeyName: "fee_plans_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
+          { foreignKeyName: "fee_plans_created_by_fkey"; columns: ["created_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
+          { foreignKeyName: "fee_plans_group_id_fkey"; columns: ["group_id"]; isOneToOne: false; referencedRelation: "groups"; referencedColumns: ["id"] },
+          { foreignKeyName: "fee_plans_player_id_fkey"; columns: ["player_id"]; isOneToOne: false; referencedRelation: "players"; referencedColumns: ["id"] },
+        ];
+      };
+      finance_settings: {
+        Row: {
+          club_id: string;
+          currency: string;
+          issue_day: number;
+          due_day: number;
+          reminder_days: number[];
+          fee_months: number[];
+          sibling_discount_pct: number;
+          auto_issue: boolean;
+          beneficiary: string | null;
+          fiscal_code: string | null;
+          address: string | null;
+          iban: string | null;
+          bank_name: string | null;
+          receipt_prefix: string;
+          ref_prefix: string;
+          provider: string;
+          online_enabled: boolean;
+          vat_rates: number[];
+          approver_roles: Database["public"]["Enums"]["app_role"][];
+          updated_at: string;
+        };
+        Insert: {
+          club_id: string;
+          currency?: string;
+          issue_day?: number;
+          due_day?: number;
+          reminder_days?: number[];
+          fee_months?: number[];
+          sibling_discount_pct?: number;
+          auto_issue?: boolean;
+          beneficiary?: string | null;
+          fiscal_code?: string | null;
+          address?: string | null;
+          iban?: string | null;
+          bank_name?: string | null;
+          receipt_prefix?: string;
+          ref_prefix?: string;
+          provider?: string;
+          online_enabled?: boolean;
+          vat_rates?: number[];
+          approver_roles?: Database["public"]["Enums"]["app_role"][];
+          updated_at?: string;
+        };
+        Update: {
+          club_id?: string;
+          currency?: string;
+          issue_day?: number;
+          due_day?: number;
+          reminder_days?: number[];
+          fee_months?: number[];
+          sibling_discount_pct?: number;
+          auto_issue?: boolean;
+          beneficiary?: string | null;
+          fiscal_code?: string | null;
+          address?: string | null;
+          iban?: string | null;
+          bank_name?: string | null;
+          receipt_prefix?: string;
+          ref_prefix?: string;
+          provider?: string;
+          online_enabled?: boolean;
+          vat_rates?: number[];
+          approver_roles?: Database["public"]["Enums"]["app_role"][];
+          updated_at?: string;
+        };
+        Relationships: [
+          { foreignKeyName: "finance_settings_club_id_fkey"; columns: ["club_id"]; isOneToOne: true; referencedRelation: "clubs"; referencedColumns: ["id"] },
+        ];
+      };
       fitness_test_results: {
         Row: {
           id: string;
@@ -942,6 +1597,7 @@ export type Database = {
           created_at: string;
           updated_at: string;
           deleted_at: string | null;
+          payment_ref: string | null;
         };
         Insert: {
           id?: string;
@@ -954,6 +1610,7 @@ export type Database = {
           created_at?: string;
           updated_at?: string;
           deleted_at?: string | null;
+          payment_ref?: string | null;
         };
         Update: {
           id?: string;
@@ -966,6 +1623,7 @@ export type Database = {
           created_at?: string;
           updated_at?: string;
           deleted_at?: string | null;
+          payment_ref?: string | null;
         };
         Relationships: [
           { foreignKeyName: "guardians_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
@@ -1508,6 +2166,173 @@ export type Database = {
           { foreignKeyName: "partner_notes_referral_id_fkey"; columns: ["referral_id"]; isOneToOne: false; referencedRelation: "referrals"; referencedColumns: ["id"] },
         ];
       };
+      payment_intents: {
+        Row: {
+          id: string;
+          club_id: string;
+          guardian_id: string | null;
+          player_id: string | null;
+          provider: string;
+          provider_ref: string | null;
+          amount: number;
+          charge_ids: string[];
+          status: string;
+          checkout_url: string | null;
+          save_method: boolean;
+          payment_id: string | null;
+          failure: string | null;
+          created_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          club_id: string;
+          guardian_id?: string | null;
+          player_id?: string | null;
+          provider: string;
+          provider_ref?: string | null;
+          amount: number;
+          charge_ids?: string[];
+          status?: string;
+          checkout_url?: string | null;
+          save_method?: boolean;
+          payment_id?: string | null;
+          failure?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          club_id?: string;
+          guardian_id?: string | null;
+          player_id?: string | null;
+          provider?: string;
+          provider_ref?: string | null;
+          amount?: number;
+          charge_ids?: string[];
+          status?: string;
+          checkout_url?: string | null;
+          save_method?: boolean;
+          payment_id?: string | null;
+          failure?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          { foreignKeyName: "payment_intents_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
+          { foreignKeyName: "payment_intents_created_by_fkey"; columns: ["created_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
+          { foreignKeyName: "payment_intents_guardian_id_fkey"; columns: ["guardian_id"]; isOneToOne: false; referencedRelation: "guardians"; referencedColumns: ["id"] },
+          { foreignKeyName: "payment_intents_payment_id_fkey"; columns: ["payment_id"]; isOneToOne: false; referencedRelation: "payments"; referencedColumns: ["id"] },
+          { foreignKeyName: "payment_intents_player_id_fkey"; columns: ["player_id"]; isOneToOne: false; referencedRelation: "players"; referencedColumns: ["id"] },
+        ];
+      };
+      payment_methods: {
+        Row: {
+          id: string;
+          club_id: string;
+          guardian_id: string;
+          provider: string;
+          provider_ref: string;
+          label: string;
+          auto_pay: boolean;
+          created_at: string;
+          revoked_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          club_id: string;
+          guardian_id: string;
+          provider: string;
+          provider_ref: string;
+          label: string;
+          auto_pay?: boolean;
+          created_at?: string;
+          revoked_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          club_id?: string;
+          guardian_id?: string;
+          provider?: string;
+          provider_ref?: string;
+          label?: string;
+          auto_pay?: boolean;
+          created_at?: string;
+          revoked_at?: string | null;
+        };
+        Relationships: [
+          { foreignKeyName: "payment_methods_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
+          { foreignKeyName: "payment_methods_guardian_id_fkey"; columns: ["guardian_id"]; isOneToOne: false; referencedRelation: "guardians"; referencedColumns: ["id"] },
+        ];
+      };
+      payments: {
+        Row: {
+          id: string;
+          club_id: string;
+          guardian_id: string | null;
+          player_id: string | null;
+          amount: number;
+          method: string;
+          provider: string | null;
+          provider_ref: string | null;
+          received_on: string;
+          payer_name: string | null;
+          reference: string | null;
+          note: string | null;
+          status: string;
+          refunded_amount: number;
+          void_reason: string | null;
+          recorded_by: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          club_id: string;
+          guardian_id?: string | null;
+          player_id?: string | null;
+          amount: number;
+          method: string;
+          provider?: string | null;
+          provider_ref?: string | null;
+          received_on: string;
+          payer_name?: string | null;
+          reference?: string | null;
+          note?: string | null;
+          status?: string;
+          refunded_amount?: number;
+          void_reason?: string | null;
+          recorded_by?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          club_id?: string;
+          guardian_id?: string | null;
+          player_id?: string | null;
+          amount?: number;
+          method?: string;
+          provider?: string | null;
+          provider_ref?: string | null;
+          received_on?: string;
+          payer_name?: string | null;
+          reference?: string | null;
+          note?: string | null;
+          status?: string;
+          refunded_amount?: number;
+          void_reason?: string | null;
+          recorded_by?: string | null;
+          created_at?: string;
+        };
+        Relationships: [
+          { foreignKeyName: "payments_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
+          { foreignKeyName: "payments_guardian_id_fkey"; columns: ["guardian_id"]; isOneToOne: false; referencedRelation: "guardians"; referencedColumns: ["id"] },
+          { foreignKeyName: "payments_player_id_fkey"; columns: ["player_id"]; isOneToOne: false; referencedRelation: "players"; referencedColumns: ["id"] },
+          { foreignKeyName: "payments_recorded_by_fkey"; columns: ["recorded_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
+        ];
+      };
       physical_metrics: {
         Row: {
           id: string;
@@ -1972,6 +2797,163 @@ export type Database = {
           { foreignKeyName: "programs_created_by_fkey"; columns: ["created_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
         ];
       };
+      provider_events: {
+        Row: {
+          id: string;
+          club_id: string | null;
+          provider: string;
+          event_id: string;
+          type: string;
+          payload: Json;
+          received_at: string;
+          processed_at: string | null;
+          error: string | null;
+        };
+        Insert: {
+          id?: string;
+          club_id?: string | null;
+          provider: string;
+          event_id: string;
+          type: string;
+          payload: Json;
+          received_at?: string;
+          processed_at?: string | null;
+          error?: string | null;
+        };
+        Update: {
+          id?: string;
+          club_id?: string | null;
+          provider?: string;
+          event_id?: string;
+          type?: string;
+          payload?: Json;
+          received_at?: string;
+          processed_at?: string | null;
+          error?: string | null;
+        };
+        Relationships: [
+          { foreignKeyName: "provider_events_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
+        ];
+      };
+      purchase_request_items: {
+        Row: {
+          id: string;
+          request_id: string;
+          position: number;
+          name: string;
+          details: string | null;
+          unit: string;
+          quantity: number;
+          unit_price: number;
+          vat_rate: number;
+          price_includes_vat: boolean;
+          line_net: number;
+          line_vat: number;
+        };
+        Insert: {
+          id?: string;
+          request_id: string;
+          position: number;
+          name: string;
+          details?: string | null;
+          unit?: string;
+          quantity: number;
+          unit_price: number;
+          vat_rate: number;
+          price_includes_vat?: boolean;
+          line_net: number;
+          line_vat: number;
+        };
+        Update: {
+          id?: string;
+          request_id?: string;
+          position?: number;
+          name?: string;
+          details?: string | null;
+          unit?: string;
+          quantity?: number;
+          unit_price?: number;
+          vat_rate?: number;
+          price_includes_vat?: boolean;
+          line_net?: number;
+          line_vat?: number;
+        };
+        Relationships: [
+          { foreignKeyName: "purchase_request_items_request_id_fkey"; columns: ["request_id"]; isOneToOne: false; referencedRelation: "purchase_requests"; referencedColumns: ["id"] },
+        ];
+      };
+      purchase_requests: {
+        Row: {
+          id: string;
+          club_id: string;
+          number: number;
+          department_id: string | null;
+          group_id: string | null;
+          justification: string;
+          needed_by: string | null;
+          status: string;
+          total_net: number;
+          total_vat: number;
+          total: number;
+          spec_path: string | null;
+          requested_by: string | null;
+          submitted_at: string | null;
+          decided_by: string | null;
+          decided_at: string | null;
+          decision_note: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          club_id: string;
+          number: number;
+          department_id?: string | null;
+          group_id?: string | null;
+          justification: string;
+          needed_by?: string | null;
+          status?: string;
+          total_net?: number;
+          total_vat?: number;
+          total?: number;
+          spec_path?: string | null;
+          requested_by?: string | null;
+          submitted_at?: string | null;
+          decided_by?: string | null;
+          decided_at?: string | null;
+          decision_note?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          club_id?: string;
+          number?: number;
+          department_id?: string | null;
+          group_id?: string | null;
+          justification?: string;
+          needed_by?: string | null;
+          status?: string;
+          total_net?: number;
+          total_vat?: number;
+          total?: number;
+          spec_path?: string | null;
+          requested_by?: string | null;
+          submitted_at?: string | null;
+          decided_by?: string | null;
+          decided_at?: string | null;
+          decision_note?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          { foreignKeyName: "purchase_requests_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
+          { foreignKeyName: "purchase_requests_decided_by_fkey"; columns: ["decided_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
+          { foreignKeyName: "purchase_requests_department_id_fkey"; columns: ["department_id"]; isOneToOne: false; referencedRelation: "departments"; referencedColumns: ["id"] },
+          { foreignKeyName: "purchase_requests_group_id_fkey"; columns: ["group_id"]; isOneToOne: false; referencedRelation: "groups"; referencedColumns: ["id"] },
+          { foreignKeyName: "purchase_requests_requested_by_fkey"; columns: ["requested_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
+        ];
+      };
       push_tokens: {
         Row: {
           id: string;
@@ -1996,6 +2978,55 @@ export type Database = {
         };
         Relationships: [
           { foreignKeyName: "push_tokens_user_id_fkey"; columns: ["user_id"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
+        ];
+      };
+      receipts: {
+        Row: {
+          id: string;
+          club_id: string;
+          payment_id: string;
+          series: string;
+          number: number;
+          issued_on: string;
+          payer_name: string;
+          amount: number;
+          description: string;
+          issued_by: string | null;
+          cancelled_at: string | null;
+          cancel_reason: string | null;
+        };
+        Insert: {
+          id?: string;
+          club_id: string;
+          payment_id: string;
+          series: string;
+          number: number;
+          issued_on: string;
+          payer_name: string;
+          amount: number;
+          description: string;
+          issued_by?: string | null;
+          cancelled_at?: string | null;
+          cancel_reason?: string | null;
+        };
+        Update: {
+          id?: string;
+          club_id?: string;
+          payment_id?: string;
+          series?: string;
+          number?: number;
+          issued_on?: string;
+          payer_name?: string;
+          amount?: number;
+          description?: string;
+          issued_by?: string | null;
+          cancelled_at?: string | null;
+          cancel_reason?: string | null;
+        };
+        Relationships: [
+          { foreignKeyName: "receipts_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
+          { foreignKeyName: "receipts_issued_by_fkey"; columns: ["issued_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
+          { foreignKeyName: "receipts_payment_id_fkey"; columns: ["payment_id"]; isOneToOne: true; referencedRelation: "payments"; referencedColumns: ["id"] },
         ];
       };
       referrals: {
@@ -2328,21 +3359,92 @@ export type Database = {
         ];
       };
     };
-    Views: { [_ in never]: never };
+    Views: {
+      charge_balances: {
+        Row: {
+          id: string;
+          club_id: string;
+          player_id: string;
+          guardian_id: string | null;
+          kind: string;
+          request_id: string | null;
+          period: string | null;
+          title: string;
+          amount: number;
+          discount: number;
+          discount_note: string | null;
+          net: number;
+          due_on: string;
+          status: string;
+          issued_at: string;
+          paid: number;
+          balance: number;
+          state: string;
+          last_paid_on: string | null;
+        };
+        Relationships: [
+          { foreignKeyName: "charge_balances_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
+          { foreignKeyName: "charge_balances_guardian_id_fkey"; columns: ["guardian_id"]; isOneToOne: false; referencedRelation: "guardians"; referencedColumns: ["id"] },
+          { foreignKeyName: "charge_balances_player_id_fkey"; columns: ["player_id"]; isOneToOne: false; referencedRelation: "players"; referencedColumns: ["id"] },
+          { foreignKeyName: "charge_balances_request_id_fkey"; columns: ["request_id"]; isOneToOne: false; referencedRelation: "charge_requests"; referencedColumns: ["id"] },
+        ];
+      };
+      payment_balances: {
+        Row: {
+          id: string;
+          club_id: string;
+          guardian_id: string | null;
+          player_id: string | null;
+          amount: number;
+          method: string;
+          provider: string | null;
+          provider_ref: string | null;
+          received_on: string;
+          payer_name: string | null;
+          reference: string | null;
+          note: string | null;
+          status: string;
+          refunded_amount: number;
+          created_at: string;
+          allocated: number;
+          unallocated: number;
+        };
+        Relationships: [
+          { foreignKeyName: "payment_balances_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
+          { foreignKeyName: "payment_balances_guardian_id_fkey"; columns: ["guardian_id"]; isOneToOne: false; referencedRelation: "guardians"; referencedColumns: ["id"] },
+          { foreignKeyName: "payment_balances_player_id_fkey"; columns: ["player_id"]; isOneToOne: false; referencedRelation: "players"; referencedColumns: ["id"] },
+        ];
+      };
+    };
     Functions: {
       add_match_event: { Args: { p_event: string | null; p: Json | null }; Returns: string };
       admin_accounts: { Args: Record<PropertyKey, never>; Returns: { user_id: string; has_password: boolean; disabled: boolean; anonymized: boolean; last_sign_in_at: string; invite_expires_at: string }[] };
+      allocate_payment: { Args: { p_payment: string | null; p_rows: Json | null; p_guardian?: string | null; p_player?: string | null }; Returns: number };
       anonymize_player: { Args: { p_player: string | null }; Returns: undefined };
+      apply_provider_event: { Args: { p: Json | null }; Returns: Json };
       assign_program: { Args: { p_program: string | null; p_target_type: string | null; p_group: string | null; p_position: string | null; p_player_ids: string[] | null; p_start: string | null; p_end: string | null; p_weekdays: number[] | null; p_notes: string | null }; Returns: string };
+      attach_intent_checkout: { Args: { p_intent: string | null; p_provider_ref: string | null; p_url: string | null }; Returns: undefined };
+      auto_pay_candidates: { Args: { p_club: string | null }; Returns: { guardian_id: string; method_ref: string; provider: string; charge_ids: string[]; amount: number }[] };
+      budget_report: { Args: { p_year: number | null }; Returns: Json };
+      cancel_charge: { Args: { p_charge: string | null; p_reason: string | null }; Returns: undefined };
+      cancel_purchase_request: { Args: { p_id: string | null }; Returns: undefined };
       clear_must_change_password: { Args: Record<PropertyKey, never>; Returns: undefined };
       close_match: { Args: { p_event: string | null; p_ratings?: Json | null; p_report?: string | null }; Returns: undefined };
       club_overview: { Args: Record<PropertyKey, never>; Returns: Json };
+      complete_purchase_request: { Args: { p_id: string | null; p: Json | null }; Returns: string };
+      compute_bonuses: { Args: { p_from: string | null; p_to: string | null }; Returns: number };
       copy_daily_plan: { Args: { p_plan: string | null; p_dates: string[] | null; p_players?: string[] | null }; Returns: number };
+      create_auto_pay_intent: { Args: { p_guardian: string | null; p_charge_ids: string[] | null }; Returns: Json };
+      create_payment_intent: { Args: { p_charge_ids: string[] | null; p_save_method?: boolean | null }; Returns: Json };
+      decide_bonus_entries: { Args: { p_ids: string[] | null; p_status: string | null }; Returns: number };
+      decide_purchase_request: { Args: { p_id: string | null; p_decision: string | null; p_note?: string | null }; Returns: undefined };
       delete_match_event: { Args: { p_id: string | null }; Returns: undefined };
       erase_player: { Args: { p_player: string | null }; Returns: string };
       export_player_data: { Args: { p_player?: string | null }; Returns: Json };
+      family_payment_info: { Args: Record<PropertyKey, never>; Returns: Json };
       file_access: { Args: { p_bucket: string | null; p_path: string | null; p_action: string | null }; Returns: boolean };
       group_test_averages: { Args: { p_group: string | null }; Returns: { test_id: string; average: number; best: number; players: number }[] };
+      import_bank_statement: { Args: { p: Json | null }; Returns: Json };
       import_fixtures: { Args: { p_competition: string | null; p_rows: Json | null; p_duration_min?: number | null }; Returns: Json };
       import_health_status: { Args: { p_payload: Json | null }; Returns: Json };
       import_physical: { Args: { p_payload: Json | null }; Returns: Json };
@@ -2350,25 +3452,38 @@ export type Database = {
       import_standings: { Args: { p_competition: string | null; p_rows: Json | null }; Returns: number };
       import_tests: { Args: { p_payload: Json | null }; Returns: Json };
       import_wellness: { Args: { p_payload: Json | null }; Returns: Json };
+      issue_monthly_charges: { Args: { p_period: string | null; p_club?: string | null }; Returns: Json };
       log_event: { Args: { p_action: string | null; p_entity: string | null; p_details?: Json | null }; Returns: undefined };
       log_medical_access: { Args: { p_player: string | null; p_section?: string | null }; Returns: undefined };
       match_eligibility: { Args: { p_event: string | null }; Returns: { player_id: string; reason: string; detail: string; until_date: string }[] };
+      money_summary: { Args: { p_year: number | null; p_month?: number | null }; Returns: Json };
       players_past_retention: { Args: Record<PropertyKey, never>; Returns: { player_id: string; display_name: string; inactive_since: string }[] };
+      preview_bank_lines: { Args: { p_lines: Json | null }; Returns: Json };
+      preview_monthly_charges: { Args: { p_period: string | null }; Returns: Json };
+      record_payment: { Args: { p: Json | null }; Returns: Json };
       refresh_daily_alerts: { Args: { p_club?: string | null }; Returns: number };
       reopen_match: { Args: { p_event: string | null }; Returns: undefined };
+      resolve_bank_line: { Args: { p_line: string | null; p: Json | null }; Returns: undefined };
+      revoke_payment_method: { Args: { p_method: string | null }; Returns: undefined };
       save_attendance: { Args: { p_event: string | null; p_rows: Json | null }; Returns: number };
+      save_charge_request: { Args: { p: Json | null }; Returns: Json };
       save_daily_plan: { Args: { p_player: string | null; p_date: string | null; p_title: string | null; p_notes: string | null; p_injury: string | null; p_rtp_stage: number | null; p_items: Json | null }; Returns: string };
       save_event: { Args: { p: Json | null }; Returns: string };
       save_match_squad: { Args: { p_event: string | null; p_formation: string | null; p_rows: Json | null }; Returns: number };
       save_program: { Args: { p_id: string | null; p_name: string | null; p_description: string | null; p_kind: string | null; p_is_template: boolean | null; p_items: Json | null }; Returns: string };
+      save_purchase_request: { Args: { p: Json | null }; Returns: Json };
       search_club: { Args: { p_query: string | null; p_limit?: number | null }; Returns: Json };
+      send_fee_reminders: { Args: Record<PropertyKey, never>; Returns: number };
       send_wellness_reminders: { Args: Record<PropertyKey, never>; Returns: number };
+      set_auto_pay: { Args: { p_method: string | null; p_on: boolean | null }; Returns: undefined };
+      set_charge_discount: { Args: { p_charge: string | null; p_discount: number | null; p_note: string | null }; Returns: undefined };
       set_event_state: { Args: { p_event: string | null; p_state: string | null; p_scope?: string | null }; Returns: number };
       set_my_photo: { Args: { p_path: string | null }; Returns: undefined };
       setup_club: { Args: { p_slug: string | null; p_name: string | null; p_short_name: string | null; p_groups: string[] | null; p_settings?: Json | null }; Returns: string };
       switch_membership: { Args: { p_membership: string | null }; Returns: undefined };
       unaccent_ro: { Args: { p: string | null }; Returns: string };
       update_my_profile: { Args: { p_full_name?: string | null; p_phone?: string | null; p_email_notifications?: boolean | null }; Returns: undefined };
+      void_payment: { Args: { p_payment: string | null; p_reason: string | null }; Returns: undefined };
     };
     Enums: {
       app_role: "owner" | "sporting_director" | "physio" | "coach" | "player" | "medical_partner" | "admin" | "secretary" | "accountant" | "guardian";

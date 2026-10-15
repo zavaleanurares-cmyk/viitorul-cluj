@@ -28,11 +28,11 @@ export type SchemaMeta = {
 };
 
 export async function loadSchemaMeta(query: Query): Promise<SchemaMeta> {
-  const [cols, cons, fks, fns] = await Promise.all([
+  const [cols, cons, fks, fns, viewBases] = await Promise.all([
     query(`
       select c.relname as table, a.attname as name, format_type(a.atttypid, a.atttypmod) as type
       from pg_attribute a
-      join pg_class c on c.oid = a.attrelid and c.relkind in ('r', 'p')
+      join pg_class c on c.oid = a.attrelid and c.relkind in ('r', 'p', 'v')
       join pg_namespace n on n.oid = c.relnamespace and n.nspname = 'public'
       where a.attnum > 0 and not a.attisdropped
       order by c.relname, a.attnum`),
@@ -82,6 +82,16 @@ export async function loadSchemaMeta(query: Query): Promise<SchemaMeta> {
       join pg_namespace n on n.oid = p.pronamespace and n.nspname = 'public'
       join pg_type rt on rt.oid = p.prorettype
       where p.prokind = 'f'`),
+    // vederile și tabelele din care citesc (pentru îmbinări: o vedere moștenește cheile străine ale tabelelor ei)
+    query(`
+      select distinct v.relname as view, t.relname as base
+      from pg_depend d
+      join pg_rewrite r on r.oid = d.objid
+      join pg_class v on v.oid = r.ev_class and v.relkind = 'v'
+      join pg_namespace vn on vn.oid = v.relnamespace and vn.nspname = 'public'
+      join pg_class t on t.oid = d.refobjid and t.relkind in ('r', 'p') and t.oid <> v.oid
+      join pg_namespace tn on tn.oid = t.relnamespace and tn.nspname = 'public'
+      where d.classid = 'pg_rewrite'::regclass`),
   ]);
 
   const tables = new Map<string, TableMeta>();
@@ -97,9 +107,26 @@ export async function loadSchemaMeta(query: Query): Promise<SchemaMeta> {
     if (r.kind === "p") t.primaryKey = r.columns;
     t.unique.push(r.columns);
   }
-  const foreignKeys = (fks.rows as Array<{ name: string; table: string; ref_table: string; columns: string[]; ref_columns: string[] }>)
+  const foreignKeys: ForeignKey[] = (fks.rows as Array<{ name: string; table: string; ref_table: string; columns: string[]; ref_columns: string[] }>)
     .filter((f) => tables.has(f.table) && tables.has(f.ref_table))
     .map((f) => ({ name: f.name, table: f.table, columns: f.columns, refTable: f.ref_table, refColumns: f.ref_columns }));
+
+  // Cheile străine ale unei vederi: cele ale tabelelor de bază ale căror coloane apar, cu același nume, în vedere.
+  // Ca la PostgREST, o vedere se poate îmbina cu tabelele la care trimit coloanele ei.
+  const bases = new Map<string, string[]>();
+  for (const r of viewBases.rows as Array<{ view: string; base: string }>) bases.set(r.view, [...(bases.get(r.view) ?? []), r.base]);
+  for (const [view, baseTables] of bases) {
+    const v = tables.get(view);
+    if (!v) continue;
+    const seen = new Set<string>();
+    for (const f of foreignKeys.filter((x) => baseTables.includes(x.table))) {
+      if (!f.columns.every((c) => v.columns.has(c))) continue;
+      const key = `${f.columns.join(",")}>${f.refTable}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      foreignKeys.push({ name: `${view}_${f.columns.join("_")}_fkey`, table: view, columns: f.columns, refTable: f.refTable, refColumns: f.refColumns });
+    }
+  }
 
   const functions = new Map<string, FunctionMeta>();
   for (const r of fns.rows as Array<{
