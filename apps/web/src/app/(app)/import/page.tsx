@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Activity, ChevronLeft, ChevronRight, ClipboardList, HeartPulse, Timer, Upload, Users } from "lucide-react";
+import { Activity, ChevronLeft, DatabaseZap, ChevronRight, ClipboardList, HeartPulse, Timer, Upload, Users } from "lucide-react";
 import { IMPORT_KINDS, formatDateTime } from "@club/shared";
 import { requireRole } from "@/lib/auth";
 import { EmptyState, PageHeader } from "@/components/ui/card";
@@ -24,6 +24,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ t
   const { db, ctx } = await requireRole("physio");
   const { tip } = await searchParams;
   const t = getT().imports;
+  const tfb = getT().tfb;
 
   if (isKindSlug(tip)) {
     const kind = KIND_BY_SLUG[tip];
@@ -70,6 +71,19 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ t
             </li>
           );
         })}
+        <li>
+          <Link
+            href="/import/tfb"
+            className="flex h-full min-h-24 items-start gap-3 rounded-[var(--radius-card)] border border-line bg-surface p-4 hover:border-line-strong hover:bg-canvas"
+          >
+            <DatabaseZap className="mt-0.5 size-6 shrink-0 text-ink-3" aria-hidden />
+            <span className="min-w-0 flex-1">
+              <span className="block text-lg font-semibold">{tfb.cardTitle}</span>
+              <span className="mt-0.5 block text-sm text-ink-3">{tfb.cardText}</span>
+            </span>
+            <ChevronRight className="mt-1 size-5 shrink-0 text-ink-3" aria-hidden />
+          </Link>
+        </li>
       </ul>
 
       <h2 className="mb-2 mt-8 text-lg">{t.history.title}</h2>
@@ -87,7 +101,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ t
               <li key={i.id}>
                 <Link href={`/import/${i.id}`} className={`grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 px-4 py-3 hover:bg-canvas md:py-2 ${GRID}`}>
                   <span className="order-2 col-span-2 text-sm text-ink-3 md:order-none md:col-span-1 md:text-base md:text-ink">{formatDateTime(i.created_at, ctx.settings.timezone)}</span>
-                  <span className="order-1 font-semibold md:order-none">{IMPORT_KINDS[i.kind] ?? i.kind}</span>
+                  <span className="order-1 font-semibold md:order-none">{(i.kind as string) === "tfb" ? tfb.kindLabel : IMPORT_KINDS[i.kind] ?? i.kind}</span>
                   <span className="order-3 col-span-2 min-w-0 truncate md:order-none md:col-span-1">{i.filename ?? "—"}</span>
                   <span className="hidden min-w-0 truncate text-ink-3 md:block">{i.created_by_name ?? "—"}</span>
                   <span className="order-4 col-span-2 flex flex-wrap gap-1.5 md:hidden">

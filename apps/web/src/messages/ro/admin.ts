@@ -335,6 +335,9 @@ const club = {
   saveSettings: "Salvează regulile",
   settingsSaved: "Regulile clubului au fost salvate.",
   testsElsewhere: "Testele fizice ale clubului se configurează în „Date fizice”.",
+  exportTitle: "Exportul datelor clubului",
+  exportText: "Toate datele clubului într-o arhivă ZIP: câte un fișier CSV pentru fiecare tabel (jucători, familii, program, prezență, taxe, plăți, contracte și restul), care se deschide direct în Excel. Documentele încărcate nu intră în arhivă. Exportul apare în jurnalul de audit.",
+  exportButton: "Descarcă arhiva",
 } as const;
 
 const audit = {

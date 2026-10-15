@@ -298,7 +298,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<Sea
             ) : null}
 
             <section className="space-y-3">
-              <div className="flex flex-wrap items-end justify-between gap-3">
+              <div className="flex flex-wrap items-center justify-between gap-3">
                 <h2 className="text-xl">{t.charts.title}</h2>
                 <IntervalNav
                   label={t.charts.interval}

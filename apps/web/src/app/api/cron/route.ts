@@ -6,6 +6,7 @@ import { emailConfigured, sendEmail } from "@/lib/email";
 import { APP_NAME, SITE_URL } from "@/lib/env";
 import { buildDigest } from "@/components/notifications/digest";
 import { getAdapter } from "@/lib/payments/registry";
+import { DEMO_SLUG } from "@/lib/demo";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -152,7 +153,7 @@ export async function GET(request: NextRequest) {
     if (!emailConfigured()) return { skipped: "e-mail neconfigurat" };
     const since = new Date(Date.now() - 24 * 3600 * 1000).toISOString();
     const { data, error } = await admin.from("notifications")
-      .select("id, user_id, kind, profiles!inner ( email, role, is_active, email_notifications )")
+      .select("id, user_id, kind, profiles!inner ( email, role, is_active, email_notifications, clubs ( slug ) )")
       .is("emailed_at", null).is("read_at", null).gte("created_at", since)
       .order("created_at").limit(5000);
     if (error) throw new Error(error.message);
@@ -161,6 +162,7 @@ export async function GET(request: NextRequest) {
     for (const n of data ?? []) {
       const p = n.profiles;
       if (!p?.email || !p.is_active || !p.email_notifications) continue;
+      if ((p.clubs as { slug: string } | null)?.slug === DEMO_SLUG) continue; // clubul demo nu trimite e-mailuri
       const u = byUser.get(n.user_id) ?? { email: p.email, role: p.role, ids: [], kinds: [] };
       u.ids.push(n.id);
       u.kinds.push(n.kind);
@@ -197,6 +199,21 @@ export async function GET(request: NextRequest) {
       sessions: sessions.rowCount ?? 0, tokens: tokens.rowCount ?? 0, login_attempts: attempts.rowCount ?? 0,
       read_notifications: data?.length ?? 0,
     };
+  });
+
+  await step("exports_cleanup", result, async () => {
+    // arhivele de export ale cluburilor stau în depozit cel mult o zi
+    if (!process.env.BLOB_READ_WRITE_TOKEN) return { skipped: "fără Vercel Blob" };
+    const { list, del } = await import("@vercel/blob");
+    const old: string[] = [];
+    let cursor: string | undefined;
+    do {
+      const page = await list({ prefix: "exports/", cursor, limit: 1000 });
+      for (const b of page.blobs) if (Date.now() - new Date(b.uploadedAt).getTime() > 24 * 3600 * 1000) old.push(b.url);
+      cursor = page.hasMore ? page.cursor : undefined;
+    } while (cursor);
+    if (old.length) await del(old);
+    return { deleted: old.length };
   });
 
   const failed = Object.values(result).some((r) => "error" in r);

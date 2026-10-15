@@ -161,7 +161,7 @@ export function PaymentList({ rows, families, canRefund }: { rows: PaymentRow[];
       <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface">
         {rows.map((p) => (
           <li key={p.id}>
-            <button type="button" onClick={() => setOpen(p)} className="grid min-h-16 w-full grid-cols-[1fr_auto] items-center gap-x-4 gap-y-0.5 px-4 py-2 text-left hover:bg-canvas sm:grid-cols-[6rem_1fr_auto_auto_7rem]">
+            <button type="button" onClick={() => setOpen(p)} className="grid min-h-16 w-full grid-cols-[1fr_auto] items-center gap-x-4 gap-y-0.5 px-4 py-2 text-left hover:bg-canvas sm:grid-cols-[6rem_minmax(0,1fr)_8rem_9rem_7rem]">
               <span className="tabular-nums text-ink-2">{formatDateShort(p.received_on)}</span>
               <Money value={p.amount} className="text-right font-bold sm:order-5" />
               <span className="col-span-2 min-w-0 sm:order-2 sm:col-span-1">

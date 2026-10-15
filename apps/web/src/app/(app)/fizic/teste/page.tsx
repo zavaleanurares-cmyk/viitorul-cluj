@@ -82,7 +82,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ g
         description={tt.description(group.name)}
         action={
           canEdit ? (
-            <div className="flex max-w-[calc(100vw-2rem)] flex-wrap gap-2">
+            <div className="grid w-full gap-2 sm:flex sm:w-auto sm:flex-wrap">
               <TestsManager tests={allTests.map((x) => ({ id: x.id, name: x.name, unit: x.unit, lower_is_better: x.lower_is_better, is_active: x.is_active }))} />
               <BatteriesManager
                 batteries={(batteries ?? []).map((b) => ({ id: b.id, name: b.name, tests: [...(b.fitness_battery_tests ?? [])].sort((a, c) => a.sort - c.sort).map((x) => (x.fitness_tests as { name: string } | null)?.name ?? "") }))}

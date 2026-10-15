@@ -35,8 +35,8 @@ export function StatusesManager({ statuses }: { statuses: StatusItem[] }) {
       <ul className="overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface">
         {statuses.map((s, i) => (
           <li key={s.id} className={cn("flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-line py-3 pl-4 pr-2 last:border-b-0", !s.isActive && "bg-canvas")}>
-            <div className="w-36 shrink-0"><StatusChip status={{ label: s.label, short_label: s.shortLabel, tone: s.tone, icon: s.icon }} /></div>
-            <div className="min-w-0 flex-1 basis-40">
+            <div className="shrink-0 sm:w-36"><StatusChip status={{ label: s.label, short_label: s.shortLabel, tone: s.tone, icon: s.icon }} /></div>
+            <div className="order-last min-w-0 basis-full sm:order-none sm:flex-1 sm:basis-40">
               <p className="flex flex-wrap items-center gap-2 font-bold">
                 {s.label}
                 {!s.isActive ? <Badge tone="outline">{t.inactive}</Badge> : null}

@@ -33,6 +33,8 @@ type Props = {
   /** Utilizatorul a cărui coadă offline de prezență o sincronizăm (null: rolul nu face prezență). */
   syncUserId: string | null;
   signOut: () => Promise<void>;
+  /** o bandă deasupra conținutului (de exemplu, în clubul demo) */
+  notice?: ReactNode;
   children: ReactNode;
 };
 
@@ -41,7 +43,7 @@ function clearOfflinePages() {
   navigator.serviceWorker?.controller?.postMessage({ type: "clear-pages" });
 }
 
-export function AppShell({ items, sectionGroups, clubName, logoUrl, userName, roleLabel, unread, memberships, searchable, syncUserId, signOut, children }: Props) {
+export function AppShell({ items, sectionGroups, clubName, logoUrl, userName, roleLabel, unread, memberships, searchable, syncUserId, signOut, notice, children }: Props) {
   const t = useT().common;
   const pathname = usePathname();
   const [moreOpen, setMoreOpen] = useState(false);
@@ -167,6 +169,7 @@ export function AppShell({ items, sectionGroups, clubName, logoUrl, userName, ro
         </header>
 
         <main className="mx-auto w-full max-w-6xl flex-1 px-4 pb-28 pt-4 md:px-8 md:pb-10 md:pt-8">
+          {notice ? <div className="no-print -mx-4 -mt-4 mb-4 md:-mx-8 md:-mt-8">{notice}</div> : null}
           {showSections ? (
             <nav aria-label={label(sectionMatch?.group.key ?? "performance")} className="no-print -mx-4 mb-4 overflow-x-auto px-4 md:mx-0 md:px-0">
               <ul className="flex gap-1 border-b border-line">

@@ -102,7 +102,7 @@ export default async function VisasPage({ searchParams }: { searchParams: Promis
                     {pending.map((d) => {
                       const p = roster.find((x) => x.id === d.player_id)!;
                       return (
-                        <li key={d.id} className="grid gap-2 py-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
+                        <li key={d.id} className="grid justify-items-start gap-2 py-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:justify-items-stretch">
                           <span className="min-w-0">
                             <PlayerCell id={p.id} name={p.display_name} gid={p.group_id} />
                             <span className="block text-sm text-ink-3">
@@ -146,7 +146,7 @@ export default async function VisasPage({ searchParams }: { searchParams: Promis
                 <CardBody>
                   <ul className="divide-y divide-line">
                     {expiring.map((p) => (
-                      <li key={p.id} className="grid gap-2 py-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
+                      <li key={p.id} className="grid justify-items-start gap-2 py-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:justify-items-stretch">
                         <PlayerCell id={p.id} name={p.display_name} gid={p.group_id} />
                         <VisaChip {...p.visa} expires={p.medical_visa_expires_on} />
                       </li>

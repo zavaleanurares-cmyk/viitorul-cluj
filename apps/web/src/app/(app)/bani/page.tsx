@@ -49,7 +49,7 @@ export default async function MoneyOverviewPage({ searchParams }: { searchParams
         </Link>
       ) : null}
 
-      <div className="mt-6 grid gap-6">
+      <div className="mt-6 grid grid-cols-1 gap-6">
         <Card>
           <CardHeader title={t.chartTitle(year)} />
           <CardBody>

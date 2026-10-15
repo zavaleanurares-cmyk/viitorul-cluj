@@ -3,14 +3,9 @@
  * Totul prin funcțiile aplicației, cu identitatea conturilor demo. Totul inventat.
  */
 import crypto from "node:crypto";
-import fs from "node:fs";
-import os from "node:os";
-import path from "node:path";
-import { execFileSync } from "node:child_process";
-import zlib from "node:zlib";
 import { createDb, type Db } from "@club/db";
 import { PRIVACY_POLICY_STARTER, STANDARD_CONTRACTS, addDays, slugify, todayIn } from "@club/shared";
-import { writeLocalFile } from "./perf";
+import { encodePng, storeDemoFile } from "./perf";
 import { must } from "./common";
 
 async function rpc<T>(db: Db, fn: string, args: Record<string, unknown>, label: string): Promise<T> {
@@ -36,19 +31,7 @@ export function demoSignaturePng(): Buffer {
     dot(x, y);
   }
   for (let t = 0; t <= 1; t += 0.002) dot(150 + t * 190, 98 - t * 6); // sublinierea
-  const raw = Buffer.alloc((w + 1) * h);
-  for (let y = 0; y < h; y++) { raw[y * (w + 1)] = 0; Buffer.from(px.subarray(y * w, (y + 1) * w)).copy(raw, y * (w + 1) + 1); }
-  const crcTable = Array.from({ length: 256 }, (_, n) => { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1; return c >>> 0; });
-  const crc = (b: Buffer) => { let c = 0xffffffff; for (const x of b) c = crcTable[(c ^ x) & 0xff] ^ (c >>> 8); return (c ^ 0xffffffff) >>> 0; };
-  const chunk = (type: string, data: Buffer) => {
-    const len = Buffer.alloc(4); len.writeUInt32BE(data.length);
-    const td = Buffer.concat([Buffer.from(type, "latin1"), data]);
-    const c = Buffer.alloc(4); c.writeUInt32BE(crc(td));
-    return Buffer.concat([len, td, c]);
-  };
-  const ihdr = Buffer.alloc(13);
-  ihdr.writeUInt32BE(w, 0); ihdr.writeUInt32BE(h, 4); ihdr[8] = 8; ihdr[9] = 0; ihdr[10] = 0; ihdr[11] = 0; ihdr[12] = 0;
-  return Buffer.concat([Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]), chunk("IHDR", ihdr), chunk("IDAT", zlib.deflateSync(raw)), chunk("IEND", Buffer.alloc(0))]);
+  return encodePng(w, h, 1, px);
 }
 
 export async function seedClubDemo(admin: Db, clubId: string, ids: Record<string, string>): Promise<void> {
@@ -75,15 +58,13 @@ async function seedSupporters(admin: Db, clubId: string, ids: Record<string, str
   for (const name of ["Toma Radu", "Lazăr Elena"]) {
     await rpc(createDb({ role: "anon" }), "record_support_pledge", { p_slug: club!.slug, p_ip: `203.0.113.${name.length}`, p: { full_name: name, two_years: true, keep_contact: false } }, "formular de pe site");
   }
-  const logo = (c0: string, c1: string) => {
-    const img = demoImage(c0, c1);
-    if (!img) return "";
-    const p = `${clubId}/sponsor/${crypto.randomUUID()}.jpg`;
-    return writeLocalFile("site", p, img) ? p : "";
+  const logo = async (c0: string, c1: string) => {
+    const p = `${clubId}/sponsor/${crypto.randomUUID()}.png`;
+    return (await storeDemoFile("site", p, demoImage(c0, c1))) ? p : "";
   };
   await rpc(acc, "save_sponsor", { p: { name: "Construct Nord SRL", fiscal_code: "RO10000001", contact_name: "Andrei Mureșan", email: "contact@example.com", kind: "money", amount: 2500000,
-    status: "signed", starts_on: `${year + 1}-01-01`, ends_on: `${year + 1}-12-31`, tier: "main", url: "https://example.com", logo_path: logo("12305a", "f2c14e"), show_on_site: true } }, "sponsor 1");
-  await rpc(acc, "save_sponsor", { p: { name: "Farmacia Centrală", kind: "goods", amount: 300000, status: "paid", tier: "partner", logo_path: logo("0e5c3a", "ffffff"), show_on_site: true,
+    status: "signed", starts_on: `${year + 1}-01-01`, ends_on: `${year + 1}-12-31`, tier: "main", url: "https://example.com", logo_path: await logo("12305a", "f2c14e"), show_on_site: true } }, "sponsor 1");
+  await rpc(acc, "save_sponsor", { p: { name: "Farmacia Centrală", kind: "goods", amount: 300000, status: "paid", tier: "partner", logo_path: await logo("0e5c3a", "ffffff"), show_on_site: true,
     notes: "Truse medicale pentru toate echipele." } }, "sponsor 2");
   await rpc(acc, "save_sponsor", { p: { name: "Transport Rapid", kind: "services", status: "negotiating", tier: "partner", contact_name: "Ioana Pop", phone: "0744000111" } }, "sponsor 3");
 }
@@ -93,20 +74,18 @@ async function seedShop(admin: Db, clubId: string, ids: Record<string, string>) 
   const { count } = await admin.from("shop_products").select("id", { count: "exact", head: true }).eq("club_id", clubId);
   if (count || !ids.secretariat) return;
   const office = createDb({ sub: ids.secretariat, role: "authenticated" });
-  const photo = (c0: string, c1: string) => {
-    const img = demoImage(c0, c1);
-    if (!img) return [];
-    const p = `${clubId}/${crypto.randomUUID()}.jpg`;
-    return writeLocalFile("shop", p, img) ? [p] : [];
+  const photo = async (c0: string, c1: string) => {
+    const p = `${clubId}/${crypto.randomUUID()}.png`;
+    return (await storeDemoFile("shop", p, demoImage(c0, c1))) ? [p] : [];
   };
   const sizes = (stock: number[]) => ["128", "140", "152", "164", "S", "M", "L"].map((size, i) => ({ size, stock: stock[i] ?? 0 }));
   const product = (p: Record<string, unknown>) => rpc<string>(office, "save_product", { p }, `produs ${p.name}`);
-  const jersey = await product({ name: "Tricou de joc", description: "Tricoul oficial, cu emblema clubului. Numărul se imprimă la club.", category: "kit", price: 12000, kind: "item", size_kind: "apparel", photo_paths: photo("0e5c3a", "1f8a5a"), variants: sizes([4, 8, 6, 2, 3, 5, 1]) });
-  const shorts = await product({ name: "Șort de joc", category: "kit", price: 6000, kind: "item", size_kind: "apparel", photo_paths: photo("ffffff", "0e5c3a"), variants: sizes([5, 9, 7, 4, 3, 2, 0]) });
-  const socks = await product({ name: "Jambiere", category: "kit", price: 2500, kind: "item", size_kind: "none", photo_paths: photo("0e5c3a", "f2c14e"), variants: [{ size: null, stock: 40 }] });
-  await product({ name: "Trening de prezentare", description: "Bluză și pantaloni, pentru deplasări.", category: "training", price: 24000, kind: "item", size_kind: "apparel", photo_paths: photo("12305a", "0e5c3a"), variants: sizes([2, 3, 3, 1, 2, 2, 1]) });
-  await product({ name: "Rucsac", category: "accessories", price: 9000, kind: "item", size_kind: "none", photo_paths: photo("3a3a3a", "0e5c3a"), variants: [{ size: null, stock: 12 }] });
-  const kit = await product({ name: "Pachet echipament de joc", description: "Tricou, șort și jambiere, cu 15 lei mai ieftin decât separat.", category: "kit", price: 17000, kind: "bundle", size_kind: "none", photo_paths: photo("f2c14e", "0e5c3a"), bundle_items: [jersey, shorts, socks] });
+  const jersey = await product({ name: "Tricou de joc", description: "Tricoul oficial, cu emblema clubului. Numărul se imprimă la club.", category: "kit", price: 12000, kind: "item", size_kind: "apparel", photo_paths: await photo("0e5c3a", "1f8a5a"), variants: sizes([4, 8, 6, 2, 3, 5, 1]) });
+  const shorts = await product({ name: "Șort de joc", category: "kit", price: 6000, kind: "item", size_kind: "apparel", photo_paths: await photo("ffffff", "0e5c3a"), variants: sizes([5, 9, 7, 4, 3, 2, 0]) });
+  const socks = await product({ name: "Jambiere", category: "kit", price: 2500, kind: "item", size_kind: "none", photo_paths: await photo("0e5c3a", "f2c14e"), variants: [{ size: null, stock: 40 }] });
+  await product({ name: "Trening de prezentare", description: "Bluză și pantaloni, pentru deplasări.", category: "training", price: 24000, kind: "item", size_kind: "apparel", photo_paths: await photo("12305a", "0e5c3a"), variants: sizes([2, 3, 3, 1, 2, 2, 1]) });
+  await product({ name: "Rucsac", category: "accessories", price: 9000, kind: "item", size_kind: "none", photo_paths: await photo("3a3a3a", "0e5c3a"), variants: [{ size: null, stock: 12 }] });
+  const kit = await product({ name: "Pachet echipament de joc", description: "Tricou, șort și jambiere, cu 15 lei mai ieftin decât separat.", category: "kit", price: 17000, kind: "bundle", size_kind: "none", photo_paths: await photo("f2c14e", "0e5c3a"), bundle_items: [jersey, shorts, socks] });
   if (!ids.parinte) return;
   const { data: g } = await admin.from("guardians").select("guardian_players(player_id)").eq("user_id", ids.parinte).eq("club_id", clubId).maybeSingle();
   const child = (g?.guardian_players as Array<{ player_id: string }> | undefined)?.[0]?.player_id;
@@ -125,23 +104,40 @@ async function seedShop(admin: Db, clubId: string, ids: Record<string, string>) 
   await rpc(parent, "place_order", { p_player: child, p_note: "Dacă se poate, cu numărul 7.", p_items: [{ product_id: jersey, variant_id: await v(jersey, "164"), qty: 1 }] }, "comanda 2");
 }
 
-/** O imagine demo (degrade între două culori), doar dacă ffmpeg există. */
-function demoImage(c0: string, c1: string): Buffer | null {
-  try {
-    const out = path.join(os.tmpdir(), `lr-img-${process.pid}-${crypto.randomUUID()}.jpg`);
-    execFileSync("ffmpeg", ["-y", "-loglevel", "error", "-f", "lavfi", "-i", `gradients=s=1280x800:c0=0x${c0}:c1=0x${c1}:x0=0:y0=0:x1=1280:y1=800`, "-frames:v", "1", out], { stdio: "ignore", timeout: 30000 });
-    const buf = fs.readFileSync(out);
-    fs.unlinkSync(out);
-    return buf;
-  } catch {
-    return null;
+/**
+ * O imagine demo (PNG 960×600): degrade diagonal între două culori, cu liniile unui teren de fotbal.
+ * Generată în cod, ca seed-ul să meargă și unde nu există ffmpeg (build-ul Vercel).
+ */
+export function demoImage(c0: string, c1: string): Buffer {
+  const w = 960, h = 600;
+  const a = [0, 2, 4].map((i) => parseInt(c0.slice(i, i + 2), 16));
+  const b = [0, 2, 4].map((i) => parseInt(c1.slice(i, i + 2), 16));
+  const px = new Uint8Array(w * h * 3);
+  const line = (x: number, y: number) => {
+    const fx = x / w, fy = y / h;
+    const mx = Math.abs(fx - 0.5) * w, cy = Math.abs(fy - 0.5) * h;
+    const r = Math.hypot(mx, cy);
+    if (x < 40 || x > w - 40 || y < 40 || y > h - 40) return x >= 38 && x <= w - 38 && y >= 38 && y <= h - 38 && (x < 42 || x > w - 42 || y < 42 || y > h - 42);
+    if (Math.abs(fx - 0.5) * w < 1.5) return true; // linia de mijloc
+    if (Math.abs(r - 90) < 1.5) return true; // cercul central
+    if ((x < 190 || x > w - 190) && Math.abs(cy - 160) < 1.5) return true; // careurile
+    if (Math.abs(mx - (w / 2 - 190)) < 1.5 && cy < 160) return true;
+    return false;
+  };
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const t = (x / w + y / h) / 2;
+    const stripe = Math.floor(x / 80) % 2 ? 1 : 0.93;
+    const on = line(x, y);
+    for (let c = 0; c < 3; c++) {
+      const v = (a[c] + (b[c] - a[c]) * t) * stripe;
+      px[(y * w + x) * 3 + c] = Math.round(on ? v + (255 - v) * 0.45 : v);
+    }
   }
+  return encodePng(w, h, 3, px);
 }
-function storeImage(clubId: string, kind: "post" | "foto", c0: string, c1: string): string | null {
-  const img = demoImage(c0, c1);
-  if (!img) return null;
-  const p = `${clubId}/${kind}/${crypto.randomUUID()}.jpg`;
-  return writeLocalFile("site", p, img) ? p : null;
+async function storeImage(clubId: string, kind: "post" | "foto", c0: string, c1: string): Promise<string | null> {
+  const p = `${clubId}/${kind}/${crypto.randomUUID()}.png`;
+  return (await storeDemoFile("site", p, demoImage(c0, c1))) ? p : null;
 }
 
 /** Site: setări, politica (textul model), trei știri (site, aplicație, ciornă), o galerie cu acord foto. */
@@ -159,8 +155,8 @@ async function seedWebsite(admin: Db, clubId: string, ids: Record<string, string
     facebook: "https://facebook.com/", instagram: "https://instagram.com/", show_staff: true, roster_groups: [g("Seniori")].filter(Boolean),
   } }, "setările site-ului");
   await rpc(office, "publish_site_policy", { p_body: PRIVACY_POLICY_STARTER.replaceAll("{{club}}", club?.name ?? "Clubul") }, "politica");
-  const cover1 = storeImage(clubId, "post", "0e5c3a", "f2c14e");
-  const inline = storeImage(clubId, "post", "12305a", "7cc4e8");
+  const cover1 = await storeImage(clubId, "post", "0e5c3a", "f2c14e");
+  const inline = await storeImage(clubId, "post", "12305a", "7cc4e8");
   const p1 = await rpc<string>(office, "save_site_post", { p: {
     title: "Victorie în derby-ul U17", slug: slugify("Victorie în derby-ul U17"), cover_path: cover1 ?? "", to_site: true, to_app: true, app_group_ids: [g("U17")].filter(Boolean),
     blocks: [
@@ -194,7 +190,7 @@ async function seedWebsite(admin: Db, clubId: string, ids: Record<string, string
     ["3a3a3a", "f2c14e", "Medaliile.", []],
   ];
   for (const [c0, c1, caption, players] of shots) {
-    const p = storeImage(clubId, "foto", c0, c1);
+    const p = await storeImage(clubId, "foto", c0, c1);
     if (!p) continue;
     const id = await rpc<string>(office, "save_photo", { p: { album_id: album, path: p, caption, player_ids: players } }, "fotografie");
     await rpc(office, "save_photo", { p: { id, caption, player_ids: players } }, "fotografie verificată");
@@ -324,7 +320,7 @@ async function seedContracts(admin: Db, clubId: string, ids: Record<string, stri
   if (photo) {
     const parent = createDb({ sub: ids.parinte, role: "authenticated" });
     const p = `${clubId}/${photo.id}/semnatura-${crypto.randomUUID()}.png`;
-    if (writeLocalFile("contracts", p, demoSignaturePng())) {
+    if (await storeDemoFile("contracts", p, demoSignaturePng())) {
       await rpc(parent, "view_contract", { p_id: photo.id, p_ip: "192.0.2.10" }, "deschidere");
       await rpc(parent, "sign_contract", { p_id: photo.id, p_name: photo.signer_name, p_signature_path: p, p_ip: "192.0.2.10", p_user_agent: "Demo" }, "semnare");
     }

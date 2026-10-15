@@ -79,9 +79,9 @@ export function FlagNote({ children }: { children: ReactNode }) {
 const STAT_BAR = { green: "bg-st-green", orange: "bg-st-orange", red: "bg-st-red", gray: "bg-st-gray" } as const;
 
 /** Cifrele unui import, dense; valorile zero rămân vizibile, dar fără accent. */
-export function StatRow({ stats }: { stats: SummaryStat[] }) {
+export function StatRow({ stats, className }: { stats: SummaryStat[]; className?: string }) {
   return (
-    <dl className="grid grid-cols-2 gap-2 md:grid-cols-[repeat(auto-fit,minmax(9rem,1fr))]">
+    <dl className={cn("grid grid-cols-2 gap-2 md:grid-cols-[repeat(auto-fit,minmax(9rem,1fr))]", className)}>
       {stats.map((s) => (
         <div key={s.label} className="relative overflow-hidden rounded-[var(--radius-control)] border border-line bg-surface py-2 pl-4 pr-3">
           <span className={cn("absolute inset-y-0 left-0 w-1.5", s.value > 0 ? STAT_BAR[s.tone ?? "gray"] : "bg-line")} aria-hidden />

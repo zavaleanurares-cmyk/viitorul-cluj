@@ -122,33 +122,37 @@ export function TodayView({ day, ctx, showAllAlerts }: { day: PhysioDay; ctx: Ap
               )}
             </Card>
 
-            {/* Vize medicale */}
-            <Card className="order-4 lg:order-none">
-              <CardHeader title={t.visas.title} description={t.visas.description(ctx.settings.alerts.visa_days_before)} />
-              {day.visas.length === 0 ? <Empty>{t.visas.empty}</Empty> : (
+            {/* Aderența la programe */}
+            <Card className="order-5 lg:order-none">
+              <CardHeader title={t.adherence.title} description={t.adherence.description} />
+              {day.adherence.length === 0 ? (
+                <CardBody className="pt-2">
+                  <p className="mb-3 text-ink-3">{t.adherence.empty}</p>
+                  <LinkButton href="/programe">{t.adherence.emptyAction}</LinkButton>
+                </CardBody>
+              ) : (
                 <ul className="pt-2">
-                  {day.visas.slice(0, LIST_PREVIEW).map((v) => (
-                    <Row key={v.id} href={`/lot/jucatori/${v.id}/stare`}>
-                      <span className="flex items-center justify-between gap-3">
-                        <span className="min-w-0">
-                          <span className="block truncate font-bold">{v.name}</span>
-                          <span className="block text-sm text-ink-3">{v.groupName ?? "—"}</span>
+                  {day.adherence.map((a) => {
+                    const target =
+                      a.targetType === "group" && a.groupName ? t.adherence.targetGroup(a.groupName)
+                      : a.targetType === "player" ? t.adherence.targetPlayer
+                      : a.targetType === "position" ? t.adherence.targetPosition
+                      : t.adherence.targetManual;
+                    return (
+                      <Row key={a.assignmentId} href={`/programe/${a.programId}`}>
+                        <span className="flex items-baseline justify-between gap-3">
+                          <span className="truncate font-bold">{a.programName}</span>
+                          <strong className="shrink-0 text-lg leading-none">{a.percent === null ? "—" : `${a.percent}%`}</strong>
                         </span>
-                        <span className="flex shrink-0 items-center gap-2 text-sm text-ink-2">
-                          {formatDateShort(v.expiresOn)}
-                          {v.daysLeft < 0
-                            ? <Badge tone="red"><CircleAlert className="size-3.5" aria-hidden />{t.visas.expired}</Badge>
-                            : <Badge tone="orange">{relativeDay(v.expiresOn, today)}</Badge>}
+                        <span className="block text-sm text-ink-3">
+                          {target} · {t.adherence.players(a.players)} · {a.percent === null ? t.adherence.notScheduled : (
+                            <span className={a.under50 > 0 ? "font-semibold text-ink" : undefined}>{t.adherence.under(a.under50)}</span>
+                          )}
                         </span>
-                      </span>
-                    </Row>
-                  ))}
-                  {day.visas.length > LIST_PREVIEW ? (
-                    <li className="border-t border-line px-4 py-3 text-sm text-ink-3">
-                      {t.visas.more(day.visas.length - LIST_PREVIEW)} ·{" "}
-                      <Link href="/lot/vize" className="font-semibold text-ink underline underline-offset-4">{t.visas.all}</Link>
-                    </li>
-                  ) : null}
+                        {a.percent !== null ? <ProgressBar className="mt-1.5" value={a.percent} max={100} label={t.adherence.progress(a.programName)} /> : null}
+                      </Row>
+                    );
+                  })}
                 </ul>
               )}
             </Card>
@@ -207,37 +211,33 @@ export function TodayView({ day, ctx, showAllAlerts }: { day: PhysioDay; ctx: Ap
               )}
             </Card>
 
-            {/* Aderența la programe */}
-            <Card className="order-5 lg:order-none">
-              <CardHeader title={t.adherence.title} description={t.adherence.description} />
-              {day.adherence.length === 0 ? (
-                <CardBody className="pt-2">
-                  <p className="mb-3 text-ink-3">{t.adherence.empty}</p>
-                  <LinkButton href="/programe">{t.adherence.emptyAction}</LinkButton>
-                </CardBody>
-              ) : (
+            {/* Vize medicale */}
+            <Card className="order-4 lg:order-none">
+              <CardHeader title={t.visas.title} description={t.visas.description(ctx.settings.alerts.visa_days_before)} />
+              {day.visas.length === 0 ? <Empty>{t.visas.empty}</Empty> : (
                 <ul className="pt-2">
-                  {day.adherence.map((a) => {
-                    const target =
-                      a.targetType === "group" && a.groupName ? t.adherence.targetGroup(a.groupName)
-                      : a.targetType === "player" ? t.adherence.targetPlayer
-                      : a.targetType === "position" ? t.adherence.targetPosition
-                      : t.adherence.targetManual;
-                    return (
-                      <Row key={a.assignmentId} href={`/programe/${a.programId}`}>
-                        <span className="flex items-baseline justify-between gap-3">
-                          <span className="truncate font-bold">{a.programName}</span>
-                          <strong className="shrink-0 text-lg leading-none">{a.percent === null ? "—" : `${a.percent}%`}</strong>
+                  {day.visas.slice(0, LIST_PREVIEW).map((v) => (
+                    <Row key={v.id} href={`/lot/jucatori/${v.id}/stare`}>
+                      <span className="flex items-center justify-between gap-3">
+                        <span className="min-w-0">
+                          <span className="block truncate font-bold">{v.name}</span>
+                          <span className="block text-sm text-ink-3">{v.groupName ?? "—"}</span>
                         </span>
-                        <span className="block text-sm text-ink-3">
-                          {target} · {t.adherence.players(a.players)} · {a.percent === null ? t.adherence.notScheduled : (
-                            <span className={a.under50 > 0 ? "font-semibold text-ink" : undefined}>{t.adherence.under(a.under50)}</span>
-                          )}
+                        <span className="flex shrink-0 items-center gap-2 text-sm text-ink-2">
+                          {formatDateShort(v.expiresOn)}
+                          {v.daysLeft < 0
+                            ? <Badge tone="red"><CircleAlert className="size-3.5" aria-hidden />{t.visas.expired}</Badge>
+                            : <Badge tone="orange">{relativeDay(v.expiresOn, today)}</Badge>}
                         </span>
-                        {a.percent !== null ? <ProgressBar className="mt-1.5" value={a.percent} max={100} label={t.adherence.progress(a.programName)} /> : null}
-                      </Row>
-                    );
-                  })}
+                      </span>
+                    </Row>
+                  ))}
+                  {day.visas.length > LIST_PREVIEW ? (
+                    <li className="border-t border-line px-4 py-3 text-sm text-ink-3">
+                      {t.visas.more(day.visas.length - LIST_PREVIEW)} ·{" "}
+                      <Link href="/lot/vize" className="font-semibold text-ink underline underline-offset-4">{t.visas.all}</Link>
+                    </li>
+                  ) : null}
                 </ul>
               )}
             </Card>

@@ -50,7 +50,7 @@ export function RequestFields({ v, set, groups }: { v: RequestInput; set: (patch
           </Select>
         </Field>
       </div>
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid gap-3 sm:grid-cols-[2fr_1fr]">
         <Field label={t.fields.email} hint={t.fields.contactHint}><Input type="email" value={v.email ?? ""} maxLength={200} autoComplete="off" onChange={(e) => set({ email: e.target.value })} /></Field>
         <Field label={t.fields.phone}><Input type="tel" value={v.phone ?? ""} maxLength={20} autoComplete="off" onChange={(e) => set({ phone: e.target.value })} /></Field>
       </div>

@@ -5017,6 +5017,7 @@ export type Database = {
       import_roster: { Args: { p_payload: Json | null }; Returns: Json };
       import_standings: { Args: { p_competition: string | null; p_rows: Json | null }; Returns: number };
       import_tests: { Args: { p_payload: Json | null }; Returns: Json };
+      import_tfb: { Args: { p: Json | null; p_report?: Json | null }; Returns: Json };
       import_wellness: { Args: { p_payload: Json | null }; Returns: Json };
       issue_monthly_charges: { Args: { p_period: string | null; p_club?: string | null }; Returns: Json };
       log_event: { Args: { p_action: string | null; p_entity: string | null; p_details?: Json | null }; Returns: undefined };

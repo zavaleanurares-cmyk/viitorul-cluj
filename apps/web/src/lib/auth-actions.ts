@@ -3,9 +3,10 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { CONSENT_VERSION, homePath, isMinor } from "@club/shared";
 import {
-  AuthError, checkPassword, consumeOneTimeToken, createOneTimeToken, createSession, deleteSession, findUserByEmail,
+  AuthError, checkPassword, consumeOneTimeToken, createOneTimeToken, createServiceDb, createSession, deleteSession, findUserByEmail,
   setPassword as setUserPassword, signInWithPassword,
 } from "@club/db";
+import { DEMO_ROLES, DEMO_SLUG, demoEmail, demoLoginEnabled, type DemoRole } from "./demo";
 import { getSession } from "./auth";
 import { clearSessionCookie, readSessionToken, requestMeta, setSessionCookie } from "./session";
 import { SITE_URL, APP_NAME } from "./env";
@@ -35,6 +36,32 @@ export async function signIn(input: { email: string; password: string; next?: st
   return { ok: true, data: { to: safeNext(input.next) ?? homePath(session.ctx.role) } };
 }
 
+/** Conturile clubului demo nu primesc e-mailuri (oricine poate schimba adresa unui cont demo). */
+async function isDemoAccount(userId: string): Promise<boolean> {
+  const { data } = await createServiceDb().from("profiles").select("clubs!inner(slug)").eq("id", userId).maybeSingle();
+  return (data?.clubs as { slug: string } | null)?.slug === DEMO_SLUG;
+}
+
+/**
+ * Intrarea în clubul demo, fără parolă. Merge doar pentru conturile demo fixe, care aparțin
+ * exclusiv clubului demo; orice alt cont cere parola.
+ */
+export async function enterDemo(input: { role: string }): Promise<ActionResult<{ to: string }>> {
+  if (!demoLoginEnabled() || !(DEMO_ROLES as readonly string[]).includes(input.role)) return { ok: false, error: t.demo.unavailable };
+  const user = await findUserByEmail(demoEmail(input.role as DemoRole));
+  if (!user || user.disabled) return { ok: false, error: t.demo.unavailable };
+  const admin = createServiceDb();
+  const { data: club } = await admin.from("clubs").select("id").eq("slug", DEMO_SLUG).maybeSingle();
+  const { data: profile } = await admin.from("profiles").select("club_id, role, is_active").eq("id", user.id).maybeSingle();
+  const { count: elsewhere } = await admin.from("memberships").select("id", { count: "exact", head: true }).eq("user_id", user.id).neq("club_id", club?.id ?? "");
+  if (!club || !profile?.is_active || profile.club_id !== club.id || elsewhere) return { ok: false, error: t.demo.unavailable };
+  await deleteSession(await readSessionToken());
+  await setSessionCookie(await createSession(user.id, await requestMeta()));
+  const session = await getSession();
+  if (!session) return { ok: false, error: t.demo.unavailable };
+  return { ok: true, data: { to: homePath(session.ctx.role) } };
+}
+
 export async function signOut() {
   await deleteSession(await readSessionToken());
   await clearSessionCookie();
@@ -46,7 +73,8 @@ export async function requestPasswordReset(input: { email: string }): Promise<Ac
   const parsed = z.object({ email: z.email() }).safeParse(input);
   if (parsed.success) {
     const user = await findUserByEmail(parsed.data.email);
-    if (user && !user.disabled) {
+    const demo = user ? await isDemoAccount(user.id) : false;
+    if (user && !user.disabled && !demo) {
       const { token } = await createOneTimeToken(user.id, "recovery", 2);
       await sendEmail({
         to: user.email,

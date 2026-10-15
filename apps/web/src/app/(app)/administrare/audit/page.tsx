@@ -14,7 +14,7 @@ import { getT } from "@/messages";
 
 export const metadata = { title: "Jurnal de audit" };
 
-const GRID = "lg:grid-cols-[9.5rem_minmax(0,11rem)_8rem_minmax(0,9rem)_minmax(0,9rem)_minmax(0,1.6fr)]";
+const GRID = "lg:grid-cols-[9.5rem_minmax(0,1fr)_8rem_minmax(0,9rem)_minmax(0,9rem)_minmax(0,1.6fr)]";
 const ACTION_TONE: Record<string, "gray" | "blue" | "red" | "yellow" | "green"> = {
   READ: "blue", EXPORT: "blue", DOWNLOAD: "blue", DELETE: "red", ERASE: "red", ANONYMIZE: "red", UPDATE: "yellow", INSERT: "green",
 };

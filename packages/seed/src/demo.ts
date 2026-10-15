@@ -4,7 +4,7 @@
  * Folosit pentru prezentări și teste; nu conține nicio persoană reală.
  */
 import { deleteUser, findUserByEmail, type Db } from "@club/db";
-import { addDays, isoWeekday, todayIn, weekStart } from "@club/shared";
+import { CONSENT_VERSION, addDays, isoWeekday, todayIn, weekStart } from "@club/shared";
 import { ensureAccount, must, randomPassword, type SeededAccount } from "./common";
 import { seedLibrary } from "./library";
 import { seedLotDemo } from "./lot";
@@ -12,7 +12,13 @@ import { seedBaniDemo } from "./bani";
 import { seedPerfDemo } from "./perf";
 import { seedClubDemo } from "./club-demo";
 
-const SLUG = "club-demo";
+export const DEMO_SLUG = "club-demo";
+const SLUG = DEMO_SLUG;
+/**
+ * Versiunea conținutului demo. Build-ul de producție reface clubul demo când versiunea salvată
+ * în setările clubului diferă (scripts/demo-build.ts); se schimbă când seed-ul adaugă sau modifică date.
+ */
+export const DEMO_VERSION = "5.1";
 
 // generator determinist: aceleași date la fiecare rulare
 let seed = 20261007;
@@ -33,8 +39,11 @@ export async function seedDemo(admin: Db, opts: { reset?: boolean; domain?: stri
     const { data: old } = await admin.from("clubs").select("id").eq("slug", SLUG).maybeSingle();
     if (old) {
       const { data: users } = await admin.from("profiles").select("id").eq("club_id", old.id);
+      // un cont care are roluri și în alt club nu se șterge odată cu demo-ul
+      const { data: elsewhere } = await admin.from("memberships").select("user_id").in("user_id", (users ?? []).map((u) => u.id)).neq("club_id", old.id);
+      const keep = new Set((elsewhere ?? []).map((m) => m.user_id));
       await admin.from("clubs").delete().eq("id", old.id);
-      for (const u of users ?? []) await deleteUser(u.id);
+      for (const u of users ?? []) if (!keep.has(u.id)) await deleteUser(u.id);
     }
   }
 
@@ -302,9 +311,28 @@ export async function seedDemo(admin: Db, opts: { reset?: boolean; domain?: stri
   for (const a of accounts) {
     const email = `${a.key}.demo@${DOMAIN}`;
     const password = opts.password ?? randomPassword();
+    // adresa demo nu are voie să fie a unui cont real: altfel semănarea i-ar schimba parola și clubul
+    const taken = await findUserByEmail(email);
+    if (taken) {
+      const { data: other } = await admin.from("memberships").select("club_id").eq("user_id", taken.id).neq("club_id", clubId).limit(1);
+      if (other?.length) throw new Error(`Adresa ${email} aparține unui cont din alt club; alege alt DEMO_EMAIL_DOMAIN.`);
+    }
     ids[a.key] = await ensureAccount(admin, { email, password, full_name: a.full_name, role: a.role, club_id: clubId, group_ids: a.group_ids, player_id: a.player_id });
     seeded.push({ label: a.note ? `${a.full_name} — ${a.note}` : a.full_name, email, password });
   }
+  // Conturile demo intră direct (fără ecranul de acord): acordul e înregistrat la semănare.
+  const minorIds = new Set([minor.id]);
+  const { data: hasConsent } = await admin.from("consents").select("user_id").in("user_id", Object.values(ids)).eq("text_version", CONSENT_VERSION);
+  const consented = new Set((hasConsent ?? []).map((c) => c.user_id));
+  const consentRows = accounts.filter((a) => !consented.has(ids[a.key])).map((a) => ({
+    user_id: ids[a.key],
+    player_id: a.player_id ?? null,
+    kind: a.role !== "player" ? "staff_confidentiality" : a.player_id && minorIds.has(a.player_id) ? "guardian_digital" : "self",
+    text_version: CONSENT_VERSION,
+    guardian_name: a.player_id && minorIds.has(a.player_id) ? "Părinte Demo" : null,
+    guardian_relation: a.player_id && minorIds.has(a.player_id) ? "părinte" : null,
+  }));
+  if (consentRows.length) must(await admin.from("consents").insert(consentRows).select("id"), "acordurile demo");
   const injuredOpen = openInjuries.find((i) => i.player_id === injuredPlayer.id);
   if (injuredOpen) {
     const { data: has } = await admin.from("referrals").select("id").eq("partner_user_id", ids.partener).limit(1);
@@ -317,6 +345,8 @@ export async function seedDemo(admin: Db, opts: { reset?: boolean; domain?: stri
   await seedBaniDemo(admin, clubId, ids);
   await seedPerfDemo(admin, clubId, ids);
   await seedClubDemo(admin, clubId, ids);
+  const { data: fin } = await admin.from("clubs").select("settings").eq("id", clubId).single();
+  must(await admin.from("clubs").update({ settings: { ...((fin?.settings as Record<string, unknown> | null) ?? {}), demo_version: DEMO_VERSION } }).eq("id", clubId).select("id"), "versiunea demo");
 
   return { clubName: club.name, players: allPlayers.length, accounts: seeded };
 }

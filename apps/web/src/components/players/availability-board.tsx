@@ -27,7 +27,7 @@ export function AvailabilityBoard({ sections, statuses, canEdit, today }: {
   return (
     <>
       <div className="overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface print:hidden">
-        <div className={cn("hidden border-b border-line bg-canvas py-2 pl-5 pr-3 text-sm font-semibold text-ink-3 md:grid md:gap-x-3", GRID)}>
+        <div className={cn("hidden border-b border-line bg-canvas px-4 py-2 text-sm font-semibold text-ink-3 md:grid md:gap-x-3", GRID)}>
           <span>{t.colPlayer}</span>
           <span>{t.colStatus}</span>
           <span>{t.colZone}</span>
@@ -100,7 +100,7 @@ export function AvailabilityBoard({ sections, statuses, canEdit, today }: {
                 );
                 const rowClass = cn(
                   "grid min-h-13 w-full flex-1 grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3 gap-y-1 px-4 py-2 text-left",
-                  "hover:bg-canvas active:bg-sunken md:items-start md:gap-y-0 md:py-2.5",
+                  "hover:bg-canvas active:bg-sunken md:items-baseline md:gap-y-0 md:py-2.5",
                   GRID,
                 );
                 return (

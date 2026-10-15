@@ -93,10 +93,10 @@ function ProgramCard({ program: p }: { program: ProgramSummary }) {
   return (
     <li>
       <Link href={`/programe/${p.id}`}
-        className={cn("flex h-full items-center gap-3 rounded-[var(--radius-card)] border border-line p-3 hover:border-line-strong hover:bg-canvas", p.is_active ? "bg-surface" : "bg-canvas")}>
+        className={cn("flex h-full items-start gap-3 rounded-[var(--radius-card)] border border-line p-3 hover:border-line-strong hover:bg-canvas", p.is_active ? "bg-surface" : "bg-canvas")}>
         <span className="min-w-0 flex-1">
           <span className="block font-bold leading-snug">{p.name}</span>
-          {p.description ? <span className="mt-0.5 line-clamp-2 block text-sm text-ink-3">{p.description}</span> : null}
+          {p.description ? <span className="mt-0.5 line-clamp-2 text-sm text-ink-3">{p.description}</span> : null}
           <span className="mt-2 flex flex-wrap items-center gap-1.5">
             <Badge tone="outline">{label(PROGRAM_KINDS, p.kind)}</Badge>
             <Badge tone="gray">{t.exercises(p.exerciseCount)}</Badge>
@@ -104,7 +104,7 @@ function ProgramCard({ program: p }: { program: ProgramSummary }) {
             {!p.is_active ? <Badge tone="gray">{t.archived}</Badge> : null}
           </span>
         </span>
-        <ChevronRight className="size-5 shrink-0 text-ink-3" aria-hidden />
+        <ChevronRight className="size-5 shrink-0 self-center text-ink-3" aria-hidden />
       </Link>
     </li>
   );

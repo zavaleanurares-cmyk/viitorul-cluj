@@ -75,6 +75,8 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ g
     if (v !== null && v > (topSpeed.get(m.player_id) ?? 0)) topSpeed.set(m.player_id, v);
   }
   const speedRows = [...topSpeed.entries()].sort((a, b) => b[1] - a[1]).slice(0, 8).map(([id, value]) => ({ x: nameOf.get(id) ?? "—", value }));
+  // cele trei grafice ale sintezei au aceeași înălțime (barele orizontale cresc cu numărul de jucători)
+  const chartH = Math.max(220, speedRows.length * 34 + 24);
   const hasSummary = metrics.length > 0;
 
   return (
@@ -84,7 +86,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ g
         description={t.description(group.name)}
         action={
           canEdit ? (
-            <div className="flex max-w-[calc(100vw-2rem)] flex-wrap gap-2">
+            <div className="grid w-full gap-2 sm:flex sm:w-auto sm:flex-wrap">
               <LinkButton href="/import?tip=fizic" icon={<Upload className="size-5" aria-hidden />}>{t.importKsport}</LinkButton>
               <LinkButton href={`/fizic/sesiuni/nou${groupParam}`} variant="primary" icon={<Plus className="size-5" aria-hidden />}>{t.addSession}</LinkButton>
             </div>
@@ -110,13 +112,13 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ g
               <Card>
                 <CardHeader title={t.summary.totalTitle} description={t.summary.perSession} />
                 <CardBody className="relative overflow-hidden">
-                  <TrendChart data={weekly} series={[{ key: "total", label: t.summary.totalLabel }]} caption={t.summary.totalCaption(group.name)} connectNulls />
+                  <TrendChart data={weekly} series={[{ key: "total", label: t.summary.totalLabel }]} caption={t.summary.totalCaption(group.name)} connectNulls height={chartH} />
                 </CardBody>
               </Card>
               <Card>
                 <CardHeader title={t.summary.hsrTitle} description={t.summary.perSession} />
                 <CardBody className="relative overflow-hidden">
-                  <TrendChart data={weekly} series={[{ key: "hsr", label: t.summary.hsrLabel }]} caption={t.summary.hsrCaption(group.name)} connectNulls />
+                  <TrendChart data={weekly} series={[{ key: "hsr", label: t.summary.hsrLabel }]} caption={t.summary.hsrCaption(group.name)} connectNulls height={chartH} />
                 </CardBody>
               </Card>
               <Card>

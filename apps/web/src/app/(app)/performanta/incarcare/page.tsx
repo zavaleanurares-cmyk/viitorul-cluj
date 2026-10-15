@@ -121,12 +121,12 @@ export default async function LoadPage({ searchParams }: { searchParams: Promise
               <tbody>
                 {rows.map((r) => (
                   <tr key={r.id}>
-                    <td>
+                    <td className="whitespace-nowrap">
                       <Link href={`/lot/jucatori/${r.id}/wellness`} className="font-semibold hover:underline">{r.display_name}</Link>
                       {!team ? <span className="block text-sm text-ink-3">{teamName(r.group_id)}</span> : null}
                       {r.missing ? (
                         <span className="mt-0.5 flex items-center gap-1 text-sm font-semibold text-st-red">
-                          <CircleAlert className="size-4" aria-hidden />{t.missing(r.missing)}{!r.user_id ? ` · ${t.noAccount}` : ""}
+                          <CircleAlert className="size-4 shrink-0" aria-hidden />{t.missing(r.missing)}{!r.user_id ? ` · ${t.noAccount}` : ""}
                         </span>
                       ) : null}
                     </td>

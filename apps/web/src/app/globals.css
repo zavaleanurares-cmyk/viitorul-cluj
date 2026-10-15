@@ -50,6 +50,11 @@
 }
 
 @layer base {
+  /* Un element de grilă nu se lățește după conținut (tabel lat, text trunchiat): rămâne în coloana lui,
+     iar conținutul derulează sau se trunchiază. Altfel paginile cu grile depășesc ecranul telefonului. */
+  .grid > * {
+    min-width: 0;
+  }
   html {
     -webkit-text-size-adjust: 100%;
     font-family: var(--font-sans);
@@ -106,4 +111,12 @@
   .no-print {
     display: none !important;
   }
+}
+
+/* Textul pentru cititoarele de ecran (sr-only) stă la originea blocului care îl conține. Altfel, într-un tabel
+   derulabil, rămâne la poziția lui „naturală" din afara zonei vizibile și lărgește pagina pe telefon.
+   Regula e în afara straturilor ca să bată utilitarul; `not-sr-only` (position: static) o ignoră. */
+.sr-only {
+  top: 0;
+  left: 0;
 }

@@ -48,9 +48,9 @@ export function EventItem({ e, teams, timezone, today, now, compact }: { e: Cale
         <span className="block text-sm font-bold tabular-nums">{t.event.score(e.match.goals_for, e.match.goals_against)}</span>
       ) : null}
       {!compact && e.venue ? <span className="block truncate text-xs text-ink-3">{e.venue.name}</span> : null}
-      {cancelled ? <span className="mt-1 inline-flex h-5 items-center rounded bg-st-gray px-1.5 text-2xs font-bold text-white">{t.cancelled}</span> : null}
+      {cancelled ? <span className="mt-1 inline-flex min-h-5 items-center rounded bg-st-gray py-0.5 leading-tight px-1.5 text-2xs font-bold text-white">{t.cancelled}</span> : null}
       {needsAttendance ? (
-        <span className="mt-1 inline-flex h-5 items-center gap-1 rounded bg-st-orange px-1.5 text-2xs font-bold text-ink"><Clock className="size-3" aria-hidden />{t.attendanceMissing}</span>
+        <span className="mt-1 inline-flex min-h-5 items-center gap-1 rounded bg-st-orange px-1.5 py-0.5 text-2xs font-bold leading-tight text-ink"><Clock className="size-3 shrink-0" aria-hidden />{t.attendanceMissing}</span>
       ) : e.kind === "training" && e.attendance_saved_at ? (
         <span className="mt-1 inline-flex items-center gap-1 text-2xs font-semibold text-st-green"><CircleCheck className="size-3" aria-hidden />{t.attendanceDone}</span>
       ) : null}

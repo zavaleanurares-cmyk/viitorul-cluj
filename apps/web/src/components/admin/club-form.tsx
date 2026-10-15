@@ -181,8 +181,8 @@ function NumberRow({ label, hint, value, onChange, min, max, unit }: { label: st
         <span className="block text-sm text-ink-3">{hint}</span>
       </span>
       <span className="flex items-center gap-2">
-        <Input type="number" inputMode="numeric" min={min} max={max} step={1} value={value} onChange={(e) => onChange(e.target.value)} className="w-20 text-center font-bold" />
-        {unit ? <span className="w-14 whitespace-nowrap text-sm text-ink-3">{unit}</span> : null}
+        <Input type="number" inputMode="numeric" min={min} max={max} step={1} value={value} onChange={(e) => onChange(e.target.value)} className="w-20 shrink-0 text-center font-bold" />
+        {unit ? <span className="w-14 shrink-0 whitespace-nowrap text-sm text-ink-3">{unit}</span> : null}
       </span>
     </label>
   );

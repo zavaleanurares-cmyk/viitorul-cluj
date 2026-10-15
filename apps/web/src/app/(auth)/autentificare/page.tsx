@@ -3,6 +3,8 @@ import { homePath } from "@club/shared";
 import { getSession } from "@/lib/auth";
 import { getT } from "@/messages";
 import { SignInForm } from "./form";
+import Link from "next/link";
+import { demoLoginEnabled } from "@/lib/demo";
 
 export const metadata = { title: "Autentificare" };
 
@@ -16,6 +18,11 @@ export default async function SignInPage({ searchParams }: { searchParams: Promi
       <h1 className="text-3xl">{t.title}</h1>
       <p className="mb-6 mt-1 text-ink-3">{t.intro}</p>
       <SignInForm next={inapoi ?? null} />
+      {demoLoginEnabled() ? (
+        <p className="mt-4 border-t border-line pt-4 text-center">
+          <Link href="/demo" className="inline-flex min-h-12 items-center font-semibold underline">{t.demo}</Link>
+        </p>
+      ) : null}
     </>
   );
 }

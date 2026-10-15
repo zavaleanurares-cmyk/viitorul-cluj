@@ -34,11 +34,12 @@ export function MoneyChart({ data, series, caption, height = 260 }: { data: Mone
         </ResponsiveContainer>
       </div>
       <figcaption className="sr-only">{caption}</figcaption>
-      <table className="sr-only">
+      {/* tabelul ignoră lățimea de 1px a lui sr-only și ar lărgi pagina pe telefon; îl închidem într-un bloc */}
+      <div className="sr-only"><table>
         <caption>{caption}</caption>
         <thead><tr><th scope="col">Luna</th>{series.map((s) => <th key={s.key} scope="col">{s.label}</th>)}</tr></thead>
         <tbody>{data.map((r) => <tr key={r.label}><th scope="row">{r.label}</th>{series.map((s) => <td key={s.key}>{r[s.key] === null ? "—" : formatLei(Number(r[s.key] ?? 0))}</td>)}</tr>)}</tbody>
-      </table>
+      </table></div>
     </figure>
   );
 }

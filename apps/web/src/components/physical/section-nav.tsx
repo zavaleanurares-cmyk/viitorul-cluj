@@ -12,7 +12,7 @@ export function SectionNav({ current, groups, groupId, hrefFor }: {
   const t = getT().physical.nav;
   if (groups.length < 2) return null;
   return (
-    <div className="no-print mb-4 flex justify-end">
+    <div className="no-print mb-4 flex">
       <NavSelect
         label={t.group}
         value={groupId}

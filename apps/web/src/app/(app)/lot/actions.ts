@@ -4,6 +4,7 @@ import { AuthError, createServiceDb, createUser, deleteUser, findUserByEmail, ge
 import { fail, run } from "@/lib/actions";
 import { issueAccessLink, type AccessLink } from "@/components/admin/server";
 import { getT } from "@/messages";
+import { demoEmailAllowed, demoEmailDomain, isDemoClub } from "@/lib/demo";
 
 const t = getT().squad;
 const OFFICE = ["admin", "secretary", "sporting_director", "physio"] as const;
@@ -200,6 +201,7 @@ export async function inviteGuardian(id: string) {
     if (error) throw error;
     if (!g) fail("Părintele nu a fost găsit.");
     if (!g.email) fail(t.guardians.inviteNeedsEmail);
+    if (!demoEmailAllowed(ctx.club, g.email)) fail(getT().auth.demo.emailOnly(demoEmailDomain()));
     const service = createServiceDb();
     const addGuardianRole = (userId: string) =>
       service.from("memberships").upsert({ user_id: userId, club_id: ctx.club.id, role: "guardian", is_active: true }, { onConflict: "user_id,club_id,role" });
@@ -215,7 +217,9 @@ export async function inviteGuardian(id: string) {
 
     const existing = await findUserByEmail(g.email);
     if (existing) {
-      const { data: profile } = await service.from("profiles").select("id").eq("id", existing.id).maybeSingle();
+      const { data: profile } = await service.from("profiles").select("id, clubs(slug)").eq("id", existing.id).maybeSingle();
+      // un cont creat în clubul demo nu se leagă niciodată de un club adevărat
+      if (!isDemoClub(ctx.club) && isDemoClub(profile?.clubs as { slug: string } | null)) fail(getT().auth.demo.demoAccount);
       if (!profile) {
         const { error: pErr } = await service.from("profiles").insert({ id: existing.id, club_id: ctx.club.id, role: "guardian", full_name: g.full_name, email: existing.email });
         if (pErr) throw pErr;

@@ -112,7 +112,7 @@ async function AttendanceView({ db, ctx, groupIds, season, period, href }: {
       <TabLinks current={period} tabs={[{ key: "d30", href: href({ perioada: null }), label: t.period.d30 }, { key: "season", href: href({ perioada: "sezon" }), label: t.period.season }]} />
       {!rows.length ? <EmptyState title={t.att.noData} /> : (
         <>
-          <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
+          <div className="grid grid-cols-2 gap-3">
             <Stat label={t.att.teamRate} value={`${pct(tot.present, tot.total)}%`} hint={t.att.sessions(ids.length)} tone={(pct(tot.present, tot.total) ?? 0) < UNDER ? "red" : "green"} />
             <Stat label={t.att.under(UNDER)} value={under.length} tone={under.length ? "red" : undefined} />
           </div>
@@ -128,14 +128,14 @@ async function AttendanceView({ db, ctx, groupIds, season, period, href }: {
               <tbody>
                 {rows.map((r) => (
                   <tr key={r.id}>
-                    <td><Link href={`/lot/jucatori/${r.id}`} className="font-semibold hover:underline">{r.display_name}</Link><span className="block text-sm text-ink-3">{teamName(r.group_id)}</span></td>
+                    <td className="whitespace-nowrap"><Link href={`/lot/jucatori/${r.id}`} className="font-semibold hover:underline">{r.display_name}</Link><span className="block text-sm text-ink-3">{teamName(r.group_id)}</span></td>
                     <td className="text-right">
                       <span className={cn("inline-flex items-center gap-1 font-bold tabular-nums", r.rate < UNDER ? "text-st-red" : "")}>
                         {r.rate < UNDER ? <CircleAlert className="size-4" aria-hidden /> : null}{r.rate}%
                       </span>
                     </td>
                     <td className="text-right tabular-nums">{r.present}/{r.total}</td>
-                    <td className="text-sm text-ink-2">{[...r.reasons.entries()].map(([k, n]) => `${reasonLabel(k)} ${n}`).join(", ") || "—"}</td>
+                    <td className="min-w-40 text-sm text-ink-2">{[...r.reasons.entries()].map(([k, n]) => `${reasonLabel(k)} ${n}`).join(", ") || "—"}</td>
                   </tr>
                 ))}
               </tbody>
@@ -277,7 +277,7 @@ async function GoalsView({ db, team, season }: { db: Db; team: AppContext["group
   }).filter((x): x is NonNullable<typeof x> => !!x);
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-3">
         <Stat label={t.for} value={gf} hint={t.perMatch(dec(gf / n))} />
         <Stat label={t.against} value={ga} hint={t.perMatch(dec(ga / n))} />
         <Stat label={t.matchesLabel} value={n} />

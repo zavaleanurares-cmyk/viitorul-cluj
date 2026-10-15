@@ -49,7 +49,7 @@ export function LibraryFilters({ values, zones, categories, equipment }: {
             timer.current = setTimeout(() => go({ q: value }), 300);
           }}
         />
-        <div className="grid grid-cols-3 gap-2 md:contents">
+        <div className="grid gap-2 sm:grid-cols-3 md:contents">
           <Select aria-label={t.zone} value={values.zona} onChange={(e) => go({ zona: e.target.value })}>
             <option value="">{t.allZones}</option>
             {zones.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}

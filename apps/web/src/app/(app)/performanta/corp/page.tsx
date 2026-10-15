@@ -92,7 +92,7 @@ export default async function BodyPage({ searchParams }: { searchParams: Promise
             <tbody>
               {rows.map((r) => (
                 <tr key={r.p.id}>
-                  <td>
+                  <td className="whitespace-nowrap">
                     <Link href={`/lot/jucatori/${r.p.id}/stare`} className="font-semibold hover:underline">{r.p.display_name}</Link>
                     {r.rapid ? (
                       <span className="mt-0.5 flex items-center gap-1 text-sm font-semibold text-ink" title={t.rapidHelp}>

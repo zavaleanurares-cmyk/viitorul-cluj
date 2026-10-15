@@ -3,6 +3,7 @@ import { issueSignedToken } from "@vercel/blob";
 import { handleUploadPresigned, type HandleUploadPresignedBody } from "@vercel/blob/client";
 import { getSession } from "@/lib/auth";
 import { BUCKETS, canAccess, isBucket, isSafePath, storageMode } from "@/lib/files";
+import { DEMO_MAX_UPLOAD, isDemoClub } from "@/lib/demo";
 
 /**
  * Încărcare directă din browser în Vercel Blob (fișiere mari: documente, clipuri).
@@ -30,7 +31,7 @@ export async function POST(request: Request) {
         const validUntil = Date.now() + 10 * 60 * 1000;
         const token = await issueSignedToken({
           pathname, operations: ["put"], validUntil,
-          allowedContentTypes: [...rules.types], maximumSizeInBytes: rules.maxBytes,
+          allowedContentTypes: [...rules.types], maximumSizeInBytes: isDemoClub(session.ctx.club) ? Math.min(rules.maxBytes, DEMO_MAX_UPLOAD) : rules.maxBytes,
         });
         return { token, urlOptions: { allowOverwrite: true, addRandomSuffix: false, validUntil } };
       },

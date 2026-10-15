@@ -266,6 +266,15 @@ try {
   check("antrenorul NU vede primele altora", (await rows(coach.from("bonus_entries").select("id").not("player_id", "is", null))) === 0);
 
   // -------------------------------------------------------------------------
+  console.log("\nMigrarea din TFB");
+  const emptyPlan = { groups: { create: [], rename: [] }, players: { create: [], update: [], deactivate: [] }, guardians: { create: [], link: [] }, contacts: [], feePlans: [], charges: [], payments: [], paymentsExisting: [], runs_seen: 0 };
+  check("antrenorul NU rulează importul TFB", await errored(coach.rpc("import_tfb", { p: emptyPlan })));
+  check("secretariatul NU rulează importul TFB", await errored(secretary.rpc("import_tfb", { p: emptyPlan })));
+  const tfbRun = await adminU.rpc("import_tfb", { p: { ...emptyPlan, players: { create: [], update: [], deactivate: [pB] } } });
+  check("administratorul rulează importul TFB", !tfbRun.error, tfbRun.error);
+  check("importul TFB nu atinge alt club", (await admin.from("players").select("is_active").eq("id", pB).single()).data?.is_active === true);
+  check("un plan vechi (după altă migrare) e refuzat", await errored(adminU.rpc("import_tfb", { p: emptyPlan })));
+
   console.log("\nȘtergere");
   const gone = await admin.from("clubs").delete().eq("id", clubA).select("id");
   check("ștergerea clubului șterge tot registrul", !gone.error && (gone.data ?? []).length === 1, gone.error);

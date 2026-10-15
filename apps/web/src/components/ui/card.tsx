@@ -8,8 +8,8 @@ export function Card({ className, ...props }: ComponentProps<"section">) {
 
 export function CardHeader({ title, description, action, className }: { title: ReactNode; description?: ReactNode; action?: ReactNode; className?: string }) {
   return (
-    <header className={cn("flex items-start justify-between gap-3 px-4 pt-4", className)}>
-      <div className="min-w-0">
+    <header className={cn("flex flex-wrap items-start justify-between gap-x-3 gap-y-2 px-4 pt-4", className)}>
+      <div className="min-w-0 flex-1 basis-56">
         <h2 className="text-lg">{title}</h2>
         {description ? <p className="mt-0.5 text-sm text-ink-3">{description}</p> : null}
       </div>
@@ -31,7 +31,7 @@ export function PageHeader({ title, description, action, back }: { title: ReactN
         <h1 className="text-2xl md:text-3xl">{title}</h1>
         {description ? <p className="mt-1 max-w-prose text-ink-3">{description}</p> : null}
       </div>
-      {action ? <div className="flex shrink-0 flex-wrap gap-2">{action}</div> : null}
+      {action ? <div className="flex flex-wrap gap-2 max-sm:w-full sm:shrink-0">{action}</div> : null}
     </header>
   );
 }
@@ -40,7 +40,7 @@ export function EmptyState({ title, description, action, icon }: { title: ReactN
   return (
     <div className="flex flex-col items-center gap-2 rounded-[var(--radius-card)] border border-dashed border-line-strong bg-surface px-6 py-10 text-center">
       {icon ? <div className="text-ink-3">{icon}</div> : null}
-      <p className="text-lg font-semibold">{title}</p>
+      <p className="max-w-md text-lg font-semibold">{title}</p>
       {description ? <p className="max-w-sm text-ink-3">{description}</p> : null}
       {action ? <div className="mt-2">{action}</div> : null}
     </div>
@@ -51,12 +51,13 @@ export function EmptyState({ title, description, action, icon }: { title: ReactN
 export function Stat({ label, value, hint, tone }: { label: ReactNode; value: ReactNode; hint?: ReactNode; tone?: "green" | "yellow" | "orange" | "red" | "gray" }) {
   const dot = { green: "bg-st-green", yellow: "bg-st-yellow", orange: "bg-st-orange", red: "bg-st-red", gray: "bg-st-gray" } as const;
   return (
-    <div className="rounded-[var(--radius-card)] border border-line bg-surface p-4">
-      <p className="flex items-center gap-2 text-sm text-ink-3">
-        {tone ? <span className={cn("size-2.5 shrink-0 rounded-full", dot[tone])} aria-hidden /> : null}
+    <div className="flex flex-col rounded-[var(--radius-card)] border border-line bg-surface p-4">
+      <p className="flex items-start gap-2 text-sm text-ink-3">
+        {tone ? <span className={cn("mt-1.5 size-2.5 shrink-0 rounded-full", dot[tone])} aria-hidden /> : null}
         {label}
       </p>
-      <p className="mt-1 text-3xl font-bold leading-none">{value}</p>
+      {/* cifrele stau pe aceeași linie chiar dacă o etichetă are două rânduri */}
+      <p className="mt-auto pt-1 text-3xl font-bold leading-none">{value}</p>
       {hint ? <p className="mt-2 text-sm text-ink-3">{hint}</p> : null}
     </div>
   );

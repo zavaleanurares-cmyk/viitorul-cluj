@@ -115,8 +115,8 @@ export async function StaffToday({ db, ctx }: { db: Db; ctx: AppContext }) {
             return (
               <Card key={e.id}>
                 <CardBody className="space-y-3">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
+                  <div className="flex flex-wrap items-start justify-between gap-x-3 gap-y-1">
+                    <div className="min-w-0">
                       <p className="flex items-center gap-1.5 text-sm text-ink-3">{Icon ? <Icon className="size-4" aria-hidden /> : null}{teamsOf(e) || e.title}</p>
                       <h2 className={cn("text-lg", cancelled && "text-ink-3 line-through")}>
                         <Link href={`/program/${e.id}`} className="hover:underline">

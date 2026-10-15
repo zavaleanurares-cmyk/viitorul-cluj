@@ -29,7 +29,7 @@ export default async function BonusesPage() {
   return (
     <>
       <PageHeader title={t.title} description={t.description} />
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:items-start">
         <Card>
           <CardHeader title={t.rulesTitle} action={<BonusRuleButton teams={teams} competitions={(comps.data ?? []).map((c) => ({ id: c.id, label: c.name }))} />} />
           <CardBody>

@@ -15,7 +15,7 @@ export default async function FinanceSettingsPage() {
   const s = await getFinanceSettings(db);
   if (!s) notFound();
   return (
-    <div className="mx-auto max-w-3xl">
+    <div className="max-w-3xl">
       <PageHeader title={t.title} description={t.description} />
       <FinanceSettingsForm providers={availableProviders()} canSetApprovers={ctx.role === "admin"} initial={{
         beneficiary: s.beneficiary ?? "", fiscal_code: s.fiscal_code ?? "", address: s.address ?? "", iban: s.iban ? formatIban(s.iban) : "", bank_name: s.bank_name ?? "",

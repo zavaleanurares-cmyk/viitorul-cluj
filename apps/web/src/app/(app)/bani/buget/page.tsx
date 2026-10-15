@@ -51,7 +51,7 @@ export default async function BudgetPage({ searchParams }: { searchParams: Promi
         <CardBody>
           {rep.departments.length === 0 ? <EmptyState title={t.empty} /> : (
             <div className="-mx-4 overflow-x-auto md:mx-0">
-              <table className="w-full min-w-[1100px] border-collapse text-sm">
+              <table className="w-full min-w-[960px] border-collapse text-sm">
                 <thead>
                   <tr className="bg-canvas text-left text-xs font-semibold text-ink-3">
                     <th scope="col" className="sticky left-0 z-10 bg-canvas px-3 py-2">{t.departmentsTitle}</th>

@@ -19,7 +19,7 @@ export default async function PublicSupport({ params }: { params: Promise<{ slug
   const open = !!s?.campaign && !!s.fiscal_code && !!s.iban;
   return (
     <div className="space-y-10">
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)]">
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.3fr)] lg:items-start">
         <section className="space-y-4">
           <h1 className="text-3xl md:text-4xl">{t.title}</h1>
           <p className="text-lg text-ink-2">{t.lead}</p>

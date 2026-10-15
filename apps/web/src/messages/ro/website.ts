@@ -148,6 +148,7 @@ export const website = {
     gallery: "Galerie",
     noAlbums: "Niciun album încă.",
     contact: "Contact",
+    contactEmpty: "Clubul nu și-a publicat încă datele de contact.",
     about: "Despre club",
     back: "Înapoi",
     policyVersion: (v: number, d: string) => `Versiunea ${v}, publicată pe ${d}`,

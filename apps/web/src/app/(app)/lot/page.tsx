@@ -77,7 +77,7 @@ export default async function SquadPage({ searchParams }: { searchParams: Promis
                     <span aria-hidden className="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-sunken text-sm font-bold text-ink-2">{p.shirt_number ?? "–"}</span>
                     <span className="min-w-0 flex-1">
                       <span className="block truncate font-semibold">{p.full_name}</span>
-                      <span className="flex flex-wrap items-center gap-1.5 pt-0.5 text-sm text-ink-3">
+                      <span className="flex flex-col items-start gap-1 pt-0.5 text-sm text-ink-3">
                         {p.group_id ? groupName.get(p.group_id) : t.list.noTeam}
                         {visa.state !== "ok" ? <VisaChip {...visa} expires={p.medical_visa_expires_on} /> : null}
                         {p.suspended ? <span className="inline-flex h-6 items-center gap-1 rounded-md bg-st-red px-1.5 text-xs font-semibold text-white"><Ban className="size-3.5" aria-hidden />{t.player.suspended}</span> : null}

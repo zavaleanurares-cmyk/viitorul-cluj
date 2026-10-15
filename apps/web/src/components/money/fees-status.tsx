@@ -107,7 +107,7 @@ export async function FeesStatus({ db, ctx }: { db: Db; ctx: AppContext }) {
         </div>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <Stat label={f.kpiCollected(monthLabel(period).split(" ")[0])} value={<Money value={month.collected_for_month} />} hint={f.kpiCollectedHint(pct, formatLei(month.expected))} tone={pct >= 85 ? "green" : pct >= 50 ? "yellow" : "red"} />
         <Stat label={f.kpiOutstanding} value={<Money value={outstanding} />} hint={f.kpiOutstandingHint(debtPlayers, debtList.length)} tone={outstanding > 0 ? "red" : "green"} />
         <Stat label={f.kpiUnallocated} value={summary.kpi.unallocated_count} hint={f.kpiUnallocatedHint} tone={summary.kpi.unallocated_count ? "yellow" : "green"} />
@@ -129,7 +129,7 @@ export async function FeesStatus({ db, ctx }: { db: Db; ctx: AppContext }) {
                 {todos.map((it) => (
                   <li key={it.key} className="flex flex-wrap items-center gap-3 py-3">
                     <span aria-hidden className={`inline-flex size-10 shrink-0 items-center justify-center rounded-full ${toneCls[it.tone]}`}><it.icon className="size-5" /></span>
-                    <div className="min-w-0 flex-1">
+                    <div className="min-w-0 flex-1 basis-48">
                       <p className="font-semibold">{it.title}</p>
                       <p className="text-sm text-ink-3">{it.detail}</p>
                     </div>

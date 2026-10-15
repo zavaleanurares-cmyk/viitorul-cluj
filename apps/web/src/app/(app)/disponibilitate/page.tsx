@@ -139,9 +139,9 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ g
       {/* Sumarul selecției */}
       <dl aria-label={b.summaryLabel} className="mb-3 grid grid-cols-3 gap-2">
         {AVAILABILITY_ORDER.slice().reverse().map((a) => (
-          <div key={a} className="flex flex-col-reverse rounded-[var(--radius-card)] border border-line bg-surface px-3 py-2">
+          <div key={a} className="flex min-w-0 flex-col-reverse rounded-[var(--radius-card)] border border-line bg-surface px-2.5 py-2">
             <dd className="text-2xl font-bold leading-none md:text-3xl">{counts[a]}</dd>
-            <dt className="mb-1 flex items-center gap-1.5 truncate text-sm text-ink-2" title={AVAILABILITY_LABELS[a]}>
+            <dt className="mb-1 flex min-w-0 items-center gap-1 text-xs text-ink-2 sm:gap-1.5 sm:text-sm" title={AVAILABILITY_LABELS[a]}>
               <span className={cn("size-2.5 shrink-0 rounded-full [print-color-adjust:exact]", TILE_BAR[a])} aria-hidden />{t.availability[a]}
             </dt>
           </div>

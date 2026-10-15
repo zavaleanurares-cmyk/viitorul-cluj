@@ -33,6 +33,8 @@ export const BUCKETS = {
   site: { maxBytes: 8 * 1024 * 1024, types: ["image/jpeg", "image/png", "image/webp"] },
   /** fotografiile produselor din magazin: <club>/<uuid>.<ext> */
   shop: { maxBytes: 5 * 1024 * 1024, types: ["image/jpeg", "image/png", "image/webp"] },
+  /** exporturile complete ale clubului (ZIP), scrise de server și șterse după o zi: <club>/<fișier>.zip */
+  exports: { maxBytes: 500 * 1024 * 1024, types: ["application/zip"] },
 } as const;
 
 export type Bucket = keyof typeof BUCKETS;

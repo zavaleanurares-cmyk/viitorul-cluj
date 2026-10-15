@@ -53,6 +53,7 @@ export default async function GuardiansPage({ searchParams }: { searchParams: Pr
                 </p>
                 {g.email ? <p className="text-sm text-ink-3">{g.email}</p> : null}
               </div>
+              <div className="flex flex-wrap items-center gap-2">
               {g.phone ? (
                 <a href={`tel:${g.phone.replace(/\s+/g, "")}`} aria-label={t.phoneLink(g.phone)}
                   className="inline-flex h-11 items-center gap-2 rounded-[var(--radius-control)] border border-border-control px-3 font-semibold hover:bg-canvas">
@@ -65,6 +66,7 @@ export default async function GuardiansPage({ searchParams }: { searchParams: Pr
                   children: g.guardian_players.map((gp) => ({ playerId: gp.player_id, relation: gp.relation as "parent", isBilling: gp.is_billing })),
                 }} />
               ) : null}
+              </div>
             </li>
           ))}
         </ul>

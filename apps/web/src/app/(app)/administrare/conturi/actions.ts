@@ -6,6 +6,7 @@ import { fail, run } from "@/lib/actions";
 import type { Session } from "@/lib/auth";
 import { issueAccessLink, otherActivePhysios, setAccountState, targetProfile, type AccessLink } from "@/components/admin/server";
 import { getT } from "@/messages";
+import { demoEmailAllowed, demoEmailDomain } from "@/lib/demo";
 
 const t = getT().admin;
 const PATHS = ["/administrare", "/administrare/conturi"];
@@ -38,6 +39,7 @@ async function createAccount(
   a: { email: string; fullName: string; role: AppRole; groupIds?: string[]; playerId?: string },
 ): Promise<string> {
   const { db, ctx } = session;
+  if (!demoEmailAllowed(ctx.club, a.email)) fail(getT().auth.demo.emailOnly(demoEmailDomain()));
   let userId: string;
   try {
     userId = (await createUser({ email: a.email })).id;
@@ -146,6 +148,7 @@ export async function updateAccount(input: z.infer<typeof Update>) {
       const user = await getUser(p.id);
       if (!user) fail(t.errors.accountNotFound);
       if (user.email.toLowerCase() !== v.email) {
+        if (!demoEmailAllowed(session.ctx.club, v.email)) fail(getT().auth.demo.emailOnly(demoEmailDomain()));
         try {
           await setUserEmail(p.id, v.email);
         } catch (e) {

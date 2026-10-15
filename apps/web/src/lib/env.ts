@@ -5,4 +5,6 @@ export const SITE_URL = (
 ).replace(/\/$/, "");
 
 /** Numele afișat înainte de autentificare și la instalarea ca aplicație. */
-export const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME ?? "Locker Room";
+// „Vestiar" e numele vechi, rămas în variabilele proiectului Vercel; îl tratăm ca nesetat.
+const envName = process.env.NEXT_PUBLIC_APP_NAME?.trim();
+export const APP_NAME = envName && envName !== "Vestiar" ? envName : "Locker Room";

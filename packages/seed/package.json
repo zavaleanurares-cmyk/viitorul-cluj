@@ -13,7 +13,8 @@
   },
   "dependencies": {
     "@club/db": "0.1.0",
-    "@club/shared": "0.1.0"
+    "@club/shared": "0.1.0",
+    "@vercel/blob": "^2.8.1"
   },
   "devDependencies": {
     "typescript": "^5",

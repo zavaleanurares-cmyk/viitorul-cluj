@@ -4,6 +4,7 @@ import type { Db, Profile } from "@club/shared";
 import { fail } from "@/lib/actions";
 import type { Session } from "@/lib/auth";
 import { sendEmail } from "@/lib/email";
+import { isDemoClub } from "@/lib/demo";
 import { APP_NAME, SITE_URL } from "@/lib/env";
 import { getT } from "@/messages";
 
@@ -48,7 +49,8 @@ export async function issueAccessLink(
   const hours = kind === "invite" ? INVITE_HOURS : RESET_HOURS;
   const { token, expiresAt } = await createOneTimeToken(user.id, kind, hours);
   const link = `${SITE_URL}/auth/link?t=${token}`;
-  const emailed = await sendEmail({
+  // din clubul demo nu pleacă e-mailuri: linkul se arată doar pe ecran
+  const emailed = isDemoClub(ctx.club) ? false : await sendEmail({
     to: user.email,
     subject: kind === "invite" ? t.inviteSubject(ctx.club.name) : t.resetSubject(APP_NAME),
     text: kind === "invite" ? t.inviteText(ctx.club.name, link, hours / 24) : t.resetText(link, hours),

@@ -7,6 +7,7 @@ import path from "node:path";
 import crypto from "node:crypto";
 import os from "node:os";
 import { execFileSync } from "node:child_process";
+import zlib from "node:zlib";
 import { createDb, type Db } from "@club/db";
 import { STANDARD_BATTERIES, STANDARD_TEMPLATES, addDays, todayIn } from "@club/shared";
 import { must } from "./common";
@@ -31,17 +32,48 @@ export function tinyPdf(title: string): Buffer {
   return Buffer.from(out, "latin1");
 }
 
-/** Scrie un fișier demo în depozitul local (doar în dezvoltare; în producție depozitul e Vercel Blob). */
-export function writeLocalFile(bucket: string, p: string, body: Buffer): boolean {
-  if (process.env.BLOB_READ_WRITE_TOKEN) return false;
+const CONTENT_TYPES: Record<string, string> = { pdf: "application/pdf", png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", webp: "image/webp", mp4: "video/mp4" };
+
+/**
+ * Pune un fișier demo în depozit: Vercel Blob privat când e configurat (producție),
+ * altfel directorul local al mediului de dezvoltare. Întoarce false dacă nu s-a putut scrie.
+ */
+export async function storeDemoFile(bucket: string, p: string, body: Buffer): Promise<boolean> {
+  const type = CONTENT_TYPES[p.split(".").pop()?.toLowerCase() ?? ""] ?? "application/octet-stream";
+  if (process.env.BLOB_READ_WRITE_TOKEN) {
+    try {
+      const { put } = await import("@vercel/blob");
+      await put(`${bucket}/${p}`, body, { access: "private", contentType: type, allowOverwrite: true, addRandomSuffix: false });
+      return true;
+    } catch (e) {
+      console.warn(`[seed] fișierul ${bucket}/${p} nu s-a putut încărca: ${(e as Error).message}`);
+      return false;
+    }
+  }
   const root = process.env.LOCAL_FILES_DIR ?? path.resolve(import.meta.dirname, "../../../tools/local-stack/.data/files");
   const file = path.join(root, bucket, ...p.split("/"));
   fs.mkdirSync(path.dirname(file), { recursive: true });
   fs.writeFileSync(file, body);
-  const ext = p.split(".").pop()?.toLowerCase();
-  const type = { pdf: "application/pdf", png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", webp: "image/webp", mp4: "video/mp4" }[ext ?? ""];
-  if (type) fs.writeFileSync(file + ".type", type);
+  fs.writeFileSync(file + ".type", type);
   return true;
+}
+
+/** Codează un PNG necomprimat-pe-filtre (gri: 1 canal, color: 3 canale). */
+export function encodePng(w: number, h: number, channels: 1 | 3, px: Uint8Array): Buffer {
+  const stride = w * channels;
+  const raw = Buffer.alloc((stride + 1) * h);
+  for (let y = 0; y < h; y++) { raw[y * (stride + 1)] = 0; Buffer.from(px.buffer, px.byteOffset + y * stride, stride).copy(raw, y * (stride + 1) + 1); }
+  const crcTable = Array.from({ length: 256 }, (_, n) => { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1; return c >>> 0; });
+  const crc = (b: Buffer) => { let c = 0xffffffff; for (const x of b) c = crcTable[(c ^ x) & 0xff] ^ (c >>> 8); return (c ^ 0xffffffff) >>> 0; };
+  const chunk = (type: string, data: Buffer) => {
+    const len = Buffer.alloc(4); len.writeUInt32BE(data.length);
+    const td = Buffer.concat([Buffer.from(type, "latin1"), data]);
+    const c = Buffer.alloc(4); c.writeUInt32BE(crc(td));
+    return Buffer.concat([len, td, c]);
+  };
+  const ihdr = Buffer.alloc(13);
+  ihdr.writeUInt32BE(w, 0); ihdr.writeUInt32BE(h, 4); ihdr[8] = 8; ihdr[9] = channels === 3 ? 2 : 0; ihdr[10] = 0; ihdr[11] = 0; ihdr[12] = 0;
+  return Buffer.concat([Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]), chunk("IHDR", ihdr), chunk("IDAT", zlib.deflateSync(raw, { level: 9 })), chunk("IEND", Buffer.alloc(0))]);
 }
 
 async function rpc<T>(db: Db, fn: string, args: Record<string, unknown>, label: string): Promise<T> {
@@ -99,7 +131,7 @@ async function seedVideo(admin: Db, clubId: string, ids: Record<string, string>,
   let videoId: string | null = null;
   if (u17 && mp4) {
     const p = `${clubId}/${crypto.randomUUID()}-meci-u17.mp4`;
-    if (writeLocalFile("videos", p, mp4)) {
+    if (await storeDemoFile("videos", p, mp4)) {
       videoId = must(await coach.from("videos").insert({ club_id: clubId, group_id: u17, event_id: m17?.id ?? null, title: m17?.title ?? "Meci U17", source: "upload",
         storage_path: p, recorded_on: m17 ? m17.starts_at.slice(0, 10) : addDays(today, -4), created_by: ids["antrenor.juniori"] }).select("id").single(), "video U17").id;
     }
@@ -222,7 +254,7 @@ async function seedVisas(admin: Db, clubId: string, ids: Record<string, string>,
   if (!child) return;
   must(await admin.from("players").update({ medical_visa_expires_on: addDays(today, 10) }).eq("id", child).select("id"), "viza copilului");
   const p = `${child}/${crypto.randomUUID()}-aviz-medical.pdf`;
-  if (!writeLocalFile("visas", p, tinyPdf("Aviz medical sportiv - demo"))) return;
+  if (!(await storeDemoFile("visas", p, tinyPdf("Aviz medical sportiv - demo")))) return;
   const parent = createDb({ sub: ids.parinte, role: "authenticated" });
   await rpc(parent, "submit_visa_document", {
     p_player: child, p_path: p, p_file_name: "aviz-medical.pdf", p_mime: "application/pdf", p_size: 900, p_issued_on: addDays(today, -2),

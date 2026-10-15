@@ -71,7 +71,7 @@ export default async function Page() {
     <>
       <PageHeader title={t.title} description={t.description} />
       <Notice tone="yellow" className="mb-4">{t.confidential}</Notice>
-      <div className="grid items-start gap-4 lg:grid-cols-2">
+      <div className="grid gap-4 lg:grid-cols-2 xl:grid-cols-3">
         <ReportCard icon={<FileText className="size-5" aria-hidden />} title={t.playerSheet.title} formats={["PDF"]}
           summary={t.playerSheet.summary} items={t.playerSheet.items} containsLabel={t.contains}>
           {byGroup.length ? <PlayerSheetForm groups={byGroup} playerLabel={t.playerSheet.player} labels={labels} /> : <p className="text-ink-3">{t.noPlayers}</p>}
