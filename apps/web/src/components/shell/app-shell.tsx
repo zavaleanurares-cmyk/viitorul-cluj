@@ -11,6 +11,7 @@ import { useT } from "@/messages";
 import { cn } from "@/lib/cn";
 import { CommandPalette } from "./command-palette";
 import { RoleSwitcher, type MembershipOption } from "./role-switcher";
+import { AttendanceSync } from "@/components/schedule/attendance-sync";
 
 const ICONS: Record<string, typeof House> = {
   home: House, clipboard: ClipboardCheck, calendar: CalendarDays, user: User, pulse: HeartPulse, users: Users,
@@ -29,11 +30,18 @@ type Props = {
   unread: number;
   memberships: MembershipOption[];
   searchable: boolean;
+  /** antrenorul și biroul: trimitem prezențele rămase în coada offline */
+  syncsAttendance: boolean;
   signOut: () => Promise<void>;
   children: ReactNode;
 };
 
-export function AppShell({ items, sections, clubName, logoUrl, userName, roleLabel, unread, memberships, searchable, signOut, children }: Props) {
+/** La ieșirea din cont, ștergem paginile păstrate pentru lucrul offline (conțin numele jucătorilor). */
+function clearOfflinePages() {
+  navigator.serviceWorker?.controller?.postMessage({ type: "clear-pages" });
+}
+
+export function AppShell({ items, sections, clubName, logoUrl, userName, roleLabel, unread, memberships, searchable, syncsAttendance, signOut, children }: Props) {
   const t = useT().common;
   const pathname = usePathname();
   const [moreOpen, setMoreOpen] = useState(false);
@@ -130,7 +138,7 @@ export function AppShell({ items, sections, clubName, logoUrl, userName, roleLab
           <p className="truncate font-semibold">{userName}</p>
           <p className="truncate text-sm opacity-80">{roleLabel}</p>
           {memberships.length > 1 ? <RoleSwitcher memberships={memberships} tone="brand" /> : null}
-          <form action={signOut}>
+          <form action={signOut} onSubmit={clearOfflinePages}>
             <button type="submit" className="mt-2 flex h-10 w-full items-center gap-2 rounded-lg px-2 font-semibold hover:bg-brand-ink/10">
               <LogOut className="size-5" aria-hidden /> {t.actions.signOut}
             </button>
@@ -229,7 +237,7 @@ export function AppShell({ items, sections, clubName, logoUrl, userName, roleLab
                   );
                 })}
               </ul>
-              <form action={signOut}>
+              <form action={signOut} onSubmit={clearOfflinePages}>
                 <button type="submit" className="flex h-12 w-full items-center justify-center gap-2 rounded-lg border border-border-control font-semibold">
                   <LogOut className="size-5" aria-hidden /> {t.actions.signOut}
                 </button>
@@ -239,6 +247,7 @@ export function AppShell({ items, sections, clubName, logoUrl, userName, roleLab
         ) : null}
       </div>
       {searchable && searchOpen ? <CommandPalette onClose={() => setSearchOpen(false)} /> : null}
+      {syncsAttendance ? <AttendanceSync /> : null}
     </div>
   );
 }

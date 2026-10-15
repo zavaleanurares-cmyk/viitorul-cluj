@@ -1,9 +1,11 @@
+import { plural } from "@club/shared";
+
 /** Spațiul Lot: jucători, echipe, părinți. */
 export const squad = {
   title: "Lot",
   tabs: { players: "Jucători", teams: "Echipe", guardians: "Părinți" },
   list: {
-    description: (n: number) => (n === 1 ? "1 jucător" : n < 20 ? `${n} jucători` : `${n} de jucători`),
+    description: (n: number) => plural(n, "jucător", "jucători"),
     add: "Adaugă jucător",
     all: "Toate echipele",
     search: "Caută după nume",
@@ -18,7 +20,7 @@ export const squad = {
   },
   visa: {
     ok: (d: string) => `Valabilă până la ${d}`,
-    expiring: (days: number) => (days === 0 ? "Viza expiră azi" : days === 1 ? "Viza expiră mâine" : `Viza expiră în ${days} ${days < 20 ? "zile" : "de zile"}`),
+    expiring: (days: number) => (days === 0 ? "Viza expiră azi" : days === 1 ? "Viza expiră mâine" : `Viza expiră în ${plural(days, "zi", "zile")}`),
     expired: "Viză expirată",
     missing: "Fără viză",
     chipOk: "Viză valabilă",
@@ -48,7 +50,7 @@ export const squad = {
       photoConsent: "Acord pentru fotografii",
       photoConsentText: "Părintele sau jucătorul a acceptat folosirea fotografiilor pe site și în materialele clubului.",
     },
-    years: (n: number) => (n === 1 ? "1 an" : n < 20 ? `${n} ani` : `${n} de ani`),
+    years: (n: number) => plural(n, "an", "ani"),
     guardians: "Părinți",
     noGuardians: "Niciun părinte adăugat.",
     addGuardian: "Adaugă părinte",

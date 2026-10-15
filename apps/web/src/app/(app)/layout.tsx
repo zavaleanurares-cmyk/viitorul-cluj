@@ -34,6 +34,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         unread={unread}
         memberships={options}
         searchable={can(ctx.role, "viewSquad") || can(ctx.role, "viewSchedule")}
+        syncsAttendance={can(ctx.role, "runEvents")}
         signOut={signOut}
       >
         {children}
