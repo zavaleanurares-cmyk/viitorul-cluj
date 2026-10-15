@@ -24,7 +24,7 @@ export default async function NewEventPage({ searchParams }: { searchParams: Pro
     <>
       <PageHeader title={t.form.newTitle} />
       <EventForm kinds={kinds} teams={teams} venues={venues.filter((v) => v.is_active).map((v) => ({ id: v.id, name: v.name }))}
-        competitions={competitions.filter((c) => c.is_active).map((c) => ({ id: c.id, name: c.name, groupId: c.group_id }))}
+        competitions={(office ? competitions : []).filter((c) => c.is_active).map((c) => ({ id: c.id, name: c.name, groupId: c.group_id }))}
         opponents={opponents.map((o) => o.name)}
         initial={{ kind, title: "", date, start: "17:30", end: "19:00", venueId: "", groupIds: preset, notes: "", repeat: null, match: null }} />
     </>

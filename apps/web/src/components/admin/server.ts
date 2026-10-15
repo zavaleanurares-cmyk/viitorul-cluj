@@ -1,5 +1,5 @@
 import "server-only";
-import { createOneTimeToken, deleteUserSessions, setUserDisabled } from "@club/db";
+import { createOneTimeToken, createServiceDb, deleteUserSessions, setUserDisabled } from "@club/db";
 import type { Db, Profile } from "@club/shared";
 import { fail } from "@/lib/actions";
 import type { Session } from "@/lib/auth";
@@ -22,6 +22,10 @@ export async function targetProfile({ db, ctx }: Session, userId: string): Promi
   const { data, error } = await db.from("profiles").select("*").eq("id", userId).maybeSingle();
   if (error) throw error;
   if (!data || data.club_id !== ctx.club.id) fail(getT().admin.errors.accountNotFound);
+  // un cont cu roluri și în alt club nu poate fi șters, resetat sau modificat de un singur club
+  const { count } = await createServiceDb().from("memberships").select("id", { count: "exact", head: true })
+    .eq("user_id", userId).eq("is_active", true).neq("club_id", ctx.club.id);
+  if (count) fail(getT().admin.errors.otherClub);
   return data;
 }
 

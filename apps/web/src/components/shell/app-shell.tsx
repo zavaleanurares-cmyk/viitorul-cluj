@@ -11,7 +11,7 @@ import { useT } from "@/messages";
 import { cn } from "@/lib/cn";
 import { CommandPalette } from "./command-palette";
 import { RoleSwitcher, type MembershipOption } from "./role-switcher";
-import { AttendanceSync } from "@/components/schedule/attendance-sync";
+import { AttendanceSync, QueueUserContext } from "@/components/schedule/attendance-sync";
 
 const ICONS: Record<string, typeof House> = {
   home: House, clipboard: ClipboardCheck, calendar: CalendarDays, user: User, pulse: HeartPulse, users: Users,
@@ -31,7 +31,8 @@ type Props = {
   memberships: MembershipOption[];
   searchable: boolean;
   /** antrenorul și biroul: trimitem prezențele rămase în coada offline */
-  syncsAttendance: boolean;
+  /** Utilizatorul a cărui coadă offline de prezență o sincronizăm (null: rolul nu face prezență). */
+  syncUserId: string | null;
   signOut: () => Promise<void>;
   children: ReactNode;
 };
@@ -41,7 +42,7 @@ function clearOfflinePages() {
   navigator.serviceWorker?.controller?.postMessage({ type: "clear-pages" });
 }
 
-export function AppShell({ items, sections, clubName, logoUrl, userName, roleLabel, unread, memberships, searchable, syncsAttendance, signOut, children }: Props) {
+export function AppShell({ items, sections, clubName, logoUrl, userName, roleLabel, unread, memberships, searchable, syncUserId, signOut, children }: Props) {
   const t = useT().common;
   const pathname = usePathname();
   const [moreOpen, setMoreOpen] = useState(false);
@@ -172,7 +173,7 @@ export function AppShell({ items, sections, clubName, logoUrl, userName, roleLab
               </ul>
             </nav>
           ) : null}
-          {children}
+          <QueueUserContext.Provider value={syncUserId}>{children}</QueueUserContext.Provider>
         </main>
 
         {/* Telefon: bară de jos */}
@@ -247,7 +248,7 @@ export function AppShell({ items, sections, clubName, logoUrl, userName, roleLab
         ) : null}
       </div>
       {searchable && searchOpen ? <CommandPalette onClose={() => setSearchOpen(false)} /> : null}
-      {syncsAttendance ? <AttendanceSync /> : null}
+      {syncUserId ? <AttendanceSync userId={syncUserId} /> : null}
     </div>
   );
 }

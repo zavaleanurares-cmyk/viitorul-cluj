@@ -161,14 +161,103 @@ try {
   check("scorul se calculează din evenimente", score.goals_for === 1 && score.goals_against === 0 && score.status === "live", score);
   check("jucătorul NU poate adăuga evenimente de meci", await errored(player1.rpc("add_match_event", { p_event: match, p: { minute: 1, kind: "goal_against" } })));
   check("meciul se închide", !(await errored(coach.rpc("close_match", { p_event: match, p_ratings: { [p1]: 4 } }))));
-  const squad = must(await admin.from("match_squad").select("player_id, minutes, rating").eq("event_id", match), "lot");
+  const squad = must(await admin.from("match_squad").select("player_id, minutes").eq("event_id", match), "lot");
   const m1 = squad.find((s) => s.player_id === p1);
   const m2 = squad.find((s) => s.player_id === p2);
-  check("minutele: titularul până la ieșire, rezerva de la intrare", m1?.minutes === 50 && m2?.minutes === 20 && m1?.rating === 4, squad);
+  const r1 = must(await admin.from("match_ratings").select("rating").eq("event_id", match).eq("player_id", p1).single(), "notă");
+  check("minutele: titularul până la ieșire, rezerva de la intrare", m1?.minutes === 50 && m2?.minutes === 20 && r1.rating === 4, { squad, r1 });
+  check("jucătorul nu vede notele de meci", (await rows(player1.from("match_ratings").select("player_id"))) === 0);
   const susp = must(await admin.from("suspensions").select("player_id, matches_remaining").eq("player_id", p1), "suspendări");
   check("galbenul la prag creează suspendare", susp.length === 1 && susp[0].matches_remaining === 1, susp);
   check("după închidere nu se mai adaugă evenimente", await errored(coach.rpc("add_match_event", { p_event: match, p: { minute: 60, kind: "goal_against" } })));
   check("antrenorul NU redeschide meciul", await errored(coach.rpc("reopen_match", { p_event: match })));
+
+  // -------------------------------------------------------------------------
+  console.log("\nSuspendări, minute, redeschidere");
+  const p5 = await mkPlayer(clubA, G1, "CINCI");
+  const match2 = must(await secretary.rpc("save_event", { p: {
+    kind: "match", starts_at: iso(inDays(5, 8)), ends_at: iso(inDays(5, 10)), group_ids: [G1],
+    match: { competition_id: comp, opponent_name: "CS Vest", round: "9", is_home: true },
+  } }), "meci 2");
+  const elig2 = must(await coach.rpc("match_eligibility", { p_event: match2 }), "eligibilitate 2");
+  check("suspendatul apare ca indisponibil", elig2.some((e: { player_id: string; reason: string }) => e.player_id === p1 && e.reason === "suspended"), elig2);
+  check("antrenorul poate chema un jucător din altă echipă", !(await errored(coach.rpc("save_match_squad", { p_event: match2, p_formation: "4-3-3", p_rows: [
+    { player_id: p2, role: "starter", slot: 0 }, { player_id: p3, role: "sub" }] }))));
+  await admin.from("players").update({ medical_visa_expires_on: "2020-01-01" }).eq("id", p3);
+  check("…dar și pentru el se verifică viza", await errored(coach.rpc("save_match_squad", { p_event: match2, p_formation: "4-3-3", p_rows: [
+    { player_id: p2, role: "starter", slot: 0 }, { player_id: p3, role: "sub" }] })));
+  await admin.from("players").update({ medical_visa_expires_on: visa }).eq("id", p3);
+  must(await coach.rpc("save_match_squad", { p_event: match2, p_formation: "4-3-3", p_rows: [
+    { player_id: p2, role: "starter", slot: 0 }, { player_id: p5, role: "sub" }] }), "lot 2");
+  check("schimbarea cere jucătorul care intră", await errored(coach.rpc("add_match_event", { p_event: match2, p: { minute: 60, kind: "sub", player_id: p2 } })));
+  check("tipurile necunoscute de eveniment sunt refuzate", await errored(coach.rpc("add_match_event", { p_event: match2, p: { minute: 5, kind: "penalty" } })));
+  must(await coach.rpc("add_match_event", { p_event: match2, p: { minute: 10, kind: "yellow", player_id: p2 } }), "galben 1");
+  must(await coach.rpc("add_match_event", { p_event: match2, p: { minute: 20, kind: "yellow", player_id: p2 } }), "galben 2");
+  must(await coach.rpc("add_match_event", { p_event: match2, p: { minute: 40, kind: "opp_own_goal" } }), "autogol adversar");
+  must(await coach.rpc("add_match_event", { p_event: match2, p: { minute: 75, kind: "sub", player_id: p2, related_player_id: p5 } }), "schimbare în prelungiri");
+  const sc2 = must(await coach.from("matches").select("goals_for").eq("event_id", match2).single(), "scor 2");
+  check("autogolul adversarului ne crește scorul", sc2.goals_for === 1, sc2);
+  must(await coach.rpc("close_match", { p_event: match2, p_ratings: { [p3]: 5 } }), "închidere 2");
+  const sq2 = must(await admin.from("match_squad").select("player_id, minutes").eq("event_id", match2), "lot 2");
+  check("minutele se opresc la durata meciului (prelungiri)", sq2.find((x) => x.player_id === p2)?.minutes === 70 && sq2.find((x) => x.player_id === p5)?.minutes === 0, sq2);
+  check("nota pentru un jucător din afara lotului e ignorată", (await rows(admin.from("match_ratings").select("player_id").eq("event_id", match2))) === 0);
+  const s1 = must(await admin.from("suspensions").select("matches_remaining, served_event_ids").eq("player_id", p1).single(), "suspendare p1");
+  check("suspendarea se ispășește în meciul fără jucător", s1.matches_remaining === 0 && (s1.served_event_ids as string[]).includes(match2), s1);
+  const s2 = must(await admin.from("suspensions").select("reason").eq("player_id", p2).eq("source_event_id", match2), "suspendare p2");
+  check("două galbene în același meci = o singură suspendare", s2.length === 1 && s2[0].reason.startsWith("Două galbene"), s2);
+  must(await secretary.rpc("reopen_match", { p_event: match2 }), "redeschidere");
+  const s1b = must(await admin.from("suspensions").select("matches_remaining, served_event_ids").eq("player_id", p1).single(), "suspendare p1 după");
+  check("redeschiderea anulează ispășirea", s1b.matches_remaining === 1 && !(s1b.served_event_ids as string[]).includes(match2), s1b);
+  check("redeschiderea șterge suspendările generate de meci", (await rows(admin.from("suspensions").select("id").eq("source_event_id", match2))) === 0);
+
+  const comp2 = must(await secretary.from("competitions").insert({ club_id: clubA, group_id: G1, name: "Cupa U13", yellow_limit: 2, own_name: "Lot A", half_minutes: 30 }).select("id").single(), "cupa").id;
+  const cupMatch = async (day: number) => {
+    const id = must(await secretary.rpc("save_event", { p: { kind: "match", starts_at: iso(inDays(day, 8)), ends_at: iso(inDays(day, 10)), group_ids: [G1],
+      match: { competition_id: comp2, opponent_name: "Cupa " + day, is_home: true } } }), "meci cupă");
+    must(await coach.rpc("save_match_squad", { p_event: id, p_formation: "4-3-3", p_rows: [{ player_id: p5, role: "starter", slot: 0 }] }), "lot cupă");
+    must(await coach.rpc("add_match_event", { p_event: id, p: { minute: 15, kind: "yellow", player_id: p5 } }), "galben cupă");
+    must(await coach.rpc("close_match", { p_event: id, p_ratings: {} }), "închidere cupă");
+    return id;
+  };
+  await cupMatch(6);
+  check("sub pragul de galbene: fără suspendare", (await rows(admin.from("suspensions").select("id").eq("player_id", p5))) === 0);
+  await cupMatch(7);
+  check("la prag (2 galbene): o suspendare", (await rows(admin.from("suspensions").select("id").eq("player_id", p5).eq("competition_id", comp2))) === 1);
+  const friendly = must(await secretary.rpc("save_event", { p: { kind: "match", starts_at: iso(inDays(8, 8)), ends_at: iso(inDays(8, 10)), group_ids: [G1],
+    match: { opponent_name: "Amical", is_home: true } } }), "amical");
+  must(await coach.rpc("save_match_squad", { p_event: friendly, p_formation: "4-3-3", p_rows: [{ player_id: p2, role: "starter", slot: 0 }] }), "lot amical");
+  must(await coach.rpc("add_match_event", { p_event: friendly, p: { minute: 15, kind: "red", player_id: p2 } }), "roșu amical");
+  must(await coach.rpc("close_match", { p_event: friendly, p_ratings: {} }), "închidere amical");
+  check("roșul dintr-un amical nu suspendă", (await rows(admin.from("suspensions").select("id").eq("source_event_id", friendly))) === 0);
+
+  // -------------------------------------------------------------------------
+  console.log("\nLimitele antrenorului și schimbarea rolului");
+  check("antrenorul anulează antrenamentul echipei lui", (await coach.rpc("set_event_state", { p_event: coachOwn.data as string, p_state: "cancelled", p_scope: "one" })).data === 1);
+  check("antrenorul NU anulează un meci", await errored(coach.rpc("set_event_state", { p_event: match2, p_state: "cancelled", p_scope: "one" })));
+  check("antrenorul NU mută un meci oficial al echipei lui", await errored(coach.rpc("save_event", { p: { id: match2, kind: "match", starts_at: iso(inDays(9, 8)), ends_at: iso(inDays(9, 10)), group_ids: [G1],
+    match: { competition_id: comp, opponent_name: "CS Vest", is_home: true } } })));
+  const coachFriendly = await coach.rpc("save_event", { p: { kind: "match", starts_at: iso(inDays(9, 8)), ends_at: iso(inDays(9, 10)), group_ids: [G1], match: { opponent_name: "Prieteni", is_home: true } } });
+  check("antrenorul își programează un amical", !coachFriendly.error, coachFriendly.error);
+  check("…și îl poate muta", !(await errored(coach.rpc("save_event", { p: { id: coachFriendly.data, kind: "match", starts_at: iso(inDays(10, 8)), ends_at: iso(inDays(10, 10)), group_ids: [G1], match: { opponent_name: "Prieteni", is_home: false } } }))));
+  check("antrenorul NU programează un meci oficial", await errored(coach.rpc("save_event", { p: { kind: "match", starts_at: iso(inDays(9, 8)), ends_at: iso(inDays(9, 10)), group_ids: [G1], match: { competition_id: comp, opponent_name: "X", is_home: true } } })));
+  check("antrenorul NU anulează un amical deja jucat", await errored(coach.rpc("set_event_state", { p_event: friendly, p_state: "cancelled", p_scope: "one" })));
+  const compB = must(await admin.from("competitions").insert({ club_id: clubB, group_id: H1, name: "Liga B", own_name: "Lot B" }).select("id").single(), "competiție B").id;
+  check("nu se poate folosi competiția altui club", await errored(secretary.rpc("save_event", { p: { kind: "match", starts_at: iso(inDays(9, 8)), ends_at: iso(inDays(9, 10)), group_ids: [G1],
+    match: { competition_id: compB, opponent_name: "X", is_home: true } } })));
+  const pB = must(await admin.from("players").select("id").eq("club_id", clubB).limit(1).single(), "jucător B").id;
+  check("părintele nu se poate lega de un copil din alt club", await errored(secretary.from("guardian_players").insert({ guardian_id: gId, player_id: pB })));
+
+  check("în clubul B, antrenorul din A nu mai face prezența în A", await errored(multi.rpc("save_attendance", { p_event: ev1, p_rows: [{ player_id: p1, status: "present" }] })));
+  must(await admin.from("memberships").update({ is_active: false }).eq("id", mB).select("id"), "dezactivare B");
+  const back = must(await admin.from("profiles").select("club_id, role, is_active").eq("id", uMulti).single(), "profil multi");
+  check("dezactivarea rolului curent trece contul pe rolul rămas", back.club_id === clubA && back.role === "coach" && back.is_active, back);
+  check("echipele antrenorului rămân după schimbarea clubului", !(await errored(multi.rpc("save_attendance", { p_event: ev1, p_rows: [{ player_id: p1, status: "present", recorded_at: new Date().toISOString() }] }))));
+  const uDemote = await acc("demote", "secretary", clubA);
+  const demote = await userClient(mail("demote"));
+  must(await admin.from("profiles").update({ role: "coach" }).eq("id", uDemote).select("id"), "retrogradare");
+  const active = must(await admin.from("memberships").select("role").eq("user_id", uDemote).eq("is_active", true), "roluri active");
+  check("schimbarea rolului închide rolul vechi", active.length === 1 && active[0].role === "coach", active);
+  check("fostul secretar nu mai adaugă terenuri", await errored(demote.from("venues").insert({ club_id: clubA, name: "Teren Y" })));
 
   // -------------------------------------------------------------------------
   console.log("\nImport din lista federației");

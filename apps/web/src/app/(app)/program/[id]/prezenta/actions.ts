@@ -7,7 +7,7 @@ const Rows = z.array(z.object({
   status: z.enum(["present", "late", "absent", "injured"]),
   reason: z.enum(["sick", "injured", "school", "family", "unexcused", "other"]).nullable(),
   recorded_at: z.iso.datetime({ offset: true }),
-})).max(80);
+})).max(200);
 
 /** Trimite prezența (din ecran sau din coada offline). Idempotent: aceeași variantă trimisă de două ori nu schimbă nimic. */
 export async function syncAttendance(input: { eventId: string; rows: z.input<typeof Rows> }) {

@@ -26,7 +26,15 @@ export function GuardianDialogButton({ guardian, players, hasAccount, autoOpen, 
   const [pick, setPick] = useState("");
   const [link, setLink] = useState<string | null>(null);
   const save = useAction(saveGuardian, { onSuccess: () => setOpen(false) });
-  const invite = useAction(inviteGuardian, { onSuccess: (r) => { if (!r.emailed) setLink(r.link); } });
+  const [existingNote, setExistingNote] = useState<string | null>(null);
+  const invite = useAction(inviteGuardian, {
+    successMessage: false,
+    onSuccess: (r) => {
+      if ("existing" in r) { setExistingNote(t.inviteExisting(r.email)); return; }
+      toast(t.inviteSent);
+      if (!r.emailed) setLink(r.link);
+    },
+  });
   const remove = useAction(deleteGuardian, { successMessage: false, onSuccess: () => {
     setOpen(false);
     toast(t.deleted, "ok", { undo: async () => { await restoreGuardian(guardian!.id!); router.refresh(); } });
@@ -91,6 +99,7 @@ export function GuardianDialogButton({ guardian, players, hasAccount, autoOpen, 
             <Button variant="secondary" className="mt-2" icon={<Mail className="size-5" aria-hidden />} pending={invite.pending} disabled={!v.email}
               onClick={() => invite.run(guardian.id!)}>{t.invite}</Button>
             {!v.email ? <p className="mt-1 text-sm text-ink-2">{t.inviteNeedsEmail}</p> : null}
+            {existingNote ? <p className="mt-2 text-sm">{existingNote}</p> : null}
             {link ? (
               <Field label={t.inviteLink} className="mt-3"><Input readOnly value={link} onFocus={(e) => e.currentTarget.select()} /></Field>
             ) : null}

@@ -527,6 +527,7 @@ const errors = {
   emailInvalid: "Adresa de e-mail nu este validă.",
   emailRepeated: "Aceeași adresă de e-mail apare la doi jucători. Fiecare cont are nevoie de o adresă a lui.",
   accountNotFound: "Contul nu există sau nu aparține clubului tău.",
+  otherClub: "Contul are roluri și în alt club, așa că nu poate fi modificat, resetat sau șters de aici. Persoana își schimbă singură parola din „Am uitat parola”.",
   accountDisabled: "Contul este dezactivat. Reactivează-l înainte de a trimite un link.",
   anonymizedAccount: "Contul a aparținut unui jucător anonimizat și nu poate fi reactivat.",
   notYourself: "Nu poți face asta cu propriul cont.",

@@ -1,6 +1,6 @@
 "use server";
 import { z } from "zod";
-import { AuthError, createServiceDb, createUser, deleteUser, findUserByEmail } from "@club/db";
+import { AuthError, createServiceDb, createUser, deleteUser, findUserByEmail, getUser } from "@club/db";
 import { fail, run } from "@/lib/actions";
 import { issueAccessLink, type AccessLink } from "@/components/admin/server";
 import { getT } from "@/messages";
@@ -186,46 +186,62 @@ export async function restoreGuardian(id: string) {
 }
 
 /**
- * Cont în aplicație pentru părinte: utilizator + profil cu rolul „guardian", legat de fișa părintelui.
- * Profilul se scrie cu clientul de serviciu (secretariatul nu are drept pe conturi), după verificarea
- * explicită a rolului și a clubului; fișa părintelui se leagă cu identitatea utilizatorului (RLS).
+ * Cont în aplicație pentru părinte. Linkul de activare se emite DOAR pentru un cont nou, creat acum
+ * (sau creat anterior de aceeași fișă și încă neactivat, pe aceeași adresă). Dacă adresa aparține unui
+ * cont existent, doar adăugăm rolul de părinte în club: persoana intră cu parola ei (sau „Am uitat parola”).
+ * Așa biroul nu poate obține acces la contul altcuiva scriind adresa lui în fișa unui părinte.
+ * Profilul și rolul se scriu cu clientul de serviciu, după verificarea explicită a rolului și a clubului.
  */
 export async function inviteGuardian(id: string) {
-  return run<AccessLink>({ roles: [...OFFICE], revalidate: PATHS, message: t.guardians.inviteSent }, async (session) => {
+  return run<AccessLink | { link: null; existing: true; email: string; name: string }>({ roles: [...OFFICE], revalidate: PATHS }, async (session) => {
     const { db, ctx } = session;
     const gid = z.uuid().parse(id);
     const { data: g, error } = await db.from("guardians").select("id, full_name, email, user_id").eq("id", gid).is("deleted_at", null).maybeSingle();
     if (error) throw error;
     if (!g) fail("Părintele nu a fost găsit.");
     if (!g.email) fail(t.guardians.inviteNeedsEmail);
-    let userId = g.user_id;
-    if (!userId) {
-      const existing = await findUserByEmail(g.email);
-      if (existing) {
-        userId = existing.id;
-      } else {
-        try {
-          userId = (await createUser({ email: g.email })).id;
-        } catch (e) {
-          if (e instanceof AuthError) fail(e.message);
-          throw e;
-        }
+    const service = createServiceDb();
+    const addGuardianRole = (userId: string) =>
+      service.from("memberships").upsert({ user_id: userId, club_id: ctx.club.id, role: "guardian", is_active: true }, { onConflict: "user_id,club_id,role" });
+
+    // fișa e deja legată de un cont
+    if (g.user_id) {
+      const linked = await getUser(g.user_id);
+      if (linked && !linked.hasPassword && linked.email.toLowerCase() === g.email.toLowerCase()) {
+        return issueAccessLink(session, { id: linked.id, email: linked.email, name: g.full_name }, "invite");
       }
-      const service = createServiceDb();
-      const { data: profile } = await service.from("profiles").select("id, club_id").eq("id", userId).maybeSingle();
-      if (!profile) {
-        const { error: pErr } = await service.from("profiles").insert({ id: userId, club_id: ctx.club.id, role: "guardian", full_name: g.full_name, email: g.email });
-        if (pErr) {
-          if (!existing) await deleteUser(userId).catch(() => {});
-          throw pErr;
-        }
-      } else {
-        // contul există deja (alt rol sau alt club): adăugăm doar rolul de părinte în acest club
-        await service.from("memberships").upsert({ user_id: userId, club_id: ctx.club.id, role: "guardian", is_active: true }, { onConflict: "user_id,club_id,role" });
-      }
-      const { error: lErr } = await db.from("guardians").update({ user_id: userId }).eq("id", gid);
-      if (lErr) throw lErr;
+      return { link: null, existing: true as const, email: linked?.email ?? g.email, name: g.full_name };
     }
+
+    const existing = await findUserByEmail(g.email);
+    if (existing) {
+      const { data: profile } = await service.from("profiles").select("id").eq("id", existing.id).maybeSingle();
+      if (!profile) {
+        const { error: pErr } = await service.from("profiles").insert({ id: existing.id, club_id: ctx.club.id, role: "guardian", full_name: g.full_name, email: existing.email });
+        if (pErr) throw pErr;
+      } else {
+        const { error: mErr } = await addGuardianRole(existing.id);
+        if (mErr) throw mErr;
+      }
+      const { error: lErr } = await db.from("guardians").update({ user_id: existing.id }).eq("id", gid);
+      if (lErr) throw lErr;
+      return { link: null, existing: true as const, email: existing.email, name: g.full_name };
+    }
+
+    let userId: string;
+    try {
+      userId = (await createUser({ email: g.email })).id;
+    } catch (e) {
+      if (e instanceof AuthError) fail(e.message);
+      throw e;
+    }
+    const { error: pErr } = await service.from("profiles").insert({ id: userId, club_id: ctx.club.id, role: "guardian", full_name: g.full_name, email: g.email });
+    if (pErr) {
+      await deleteUser(userId).catch(() => {});
+      throw pErr;
+    }
+    const { error: lErr } = await db.from("guardians").update({ user_id: userId }).eq("id", gid);
+    if (lErr) throw lErr;
     return issueAccessLink(session, { id: userId, email: g.email, name: g.full_name }, "invite");
   });
 }

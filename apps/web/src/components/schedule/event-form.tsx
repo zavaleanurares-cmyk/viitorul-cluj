@@ -58,12 +58,14 @@ export function EventForm({ initial, kinds, teams, venues, competitions, opponen
                 <Input list="opponents" value={match.opponentName} onChange={(e) => set("match", { ...match, opponentName: e.target.value })} autoComplete="off" />
                 <datalist id="opponents">{opponents.map((o) => <option key={o} value={o} />)}</datalist>
               </Field>
-              <Field label={t.competition}>
-                <Select value={match.competitionId ?? ""} onChange={(e) => set("match", { ...match, competitionId: e.target.value })}>
-                  <option value="">{t.noCompetition}</option>
-                  {competitions.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-                </Select>
-              </Field>
+              {competitions.length ? (
+                <Field label={t.competition}>
+                  <Select value={match.competitionId ?? ""} onChange={(e) => set("match", { ...match, competitionId: e.target.value })}>
+                    <option value="">{t.noCompetition}</option>
+                    {competitions.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+                  </Select>
+                </Field>
+              ) : null}
               <Field label={t.round} optional>
                 <Input value={match.round ?? ""} onChange={(e) => set("match", { ...match, round: e.target.value })} inputMode="numeric" />
               </Field>

@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/status";
 import { DataList } from "@/components/ui/misc";
 import { KIND_ICONS } from "@/components/schedule/calendar";
 import { EventActions } from "@/components/schedule/event-actions";
-import { eventRoster, getEvent } from "@/components/schedule/queries";
+import { eventRoster, getEvent, coachManages } from "@/components/schedule/queries";
 import { getT } from "@/messages";
 
 export const metadata = { title: "Eveniment" };
@@ -116,7 +116,7 @@ export default async function EventPage({ params }: { params: Promise<{ id: stri
         </Card>
       ) : null}
 
-      {runs ? <EventActions id={id} cancelled={cancelled} inSeries={!!e.series_id} canEdit={office || ctx.role === "coach"} /> : null}
+      {office || (runs && coachManages(e)) ? <EventActions id={id} cancelled={cancelled} inSeries={!!e.series_id} canEdit /> : null}
     </div>
   );
 }

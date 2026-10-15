@@ -2,7 +2,7 @@
  * Service worker minim.
  *  - NU pune în cache pagini sau răspunsuri de API, cu o singură excepție: ecranul de prezență al antrenorului
  *    (/program/<id>/prezenta), ca să se poată deschide la teren fără semnal. Acesta conține doar nume, numere
- *    și starea „accidentat", fără diagnostic; se șterge la ieșirea din cont (mesajul „clear-pages").
+ *    și starea „accidentat", fără diagnostic; se șterge la ieșirea din cont (mesajul „clear-pages" și orice navigare spre /autentificare).
  *  - Ține în cache resursele statice (JS/CSS/fonturi) și o pagină „fără conexiune".
  *  - Pregătit pentru notificări push (se activează odată cu aplicația nativă / web push).
  */
@@ -51,6 +51,9 @@ self.addEventListener("fetch", (event) => {
     return;
   }
   if (req.mode === "navigate") {
+    // o încărcare completă a ecranului de autentificare golește ecranele de prezență păstrate
+    // (navigările din aplicație le acoperă ClearOfflinePages, montat pe ecranele de autentificare)
+    if (url.pathname.startsWith("/autentificare")) event.waitUntil(caches.delete(PAGES));
     event.respondWith(fetch(req).catch(() => caches.match(OFFLINE_URL)));
   }
 });

@@ -8,11 +8,12 @@ import { useToast } from "@/components/ui/toast";
 import { enqueueAttendance, queueAvailable } from "@/lib/offline-queue";
 import { useT } from "@/messages";
 import { cn } from "@/lib/cn";
-import { flushAttendanceQueue, usePendingAttendance } from "./attendance-sync";
+import { flushAttendanceQueue, usePendingAttendance, useQueueUser } from "./attendance-sync";
 import { syncAttendance } from "@/app/(app)/program/[id]/prezenta/actions";
 
 type Player = { id: string; name: string; number: number | null; injured: boolean; status: string | null; reason: string | null };
-type Mark = { status: "present" | "late" | "absent" | "injured"; reason: AbsenceReason | null; auto?: boolean };
+/** `at`: când a atins antrenorul rândul (ora telefonului); rândurile neatinse nu suprascriu ce e deja pe server. */
+type Mark = { status: "present" | "late" | "absent" | "injured"; reason: AbsenceReason | null; auto?: boolean; at?: string };
 
 const subscribe = (cb: () => void) => {
   window.addEventListener("online", cb);
@@ -21,12 +22,13 @@ const subscribe = (cb: () => void) => {
 };
 const useOnline = () => useSyncExternalStore(subscribe, () => navigator.onLine, () => true);
 
-export function AttendanceSheet({ eventId, title, subtitle, players, savedAt }: { eventId: string; title: string; subtitle: string; players: Player[]; savedAt: string | null }) {
+export function AttendanceSheet({ eventId, title, subtitle, players, savedAt, loadedAt }: { eventId: string; title: string; subtitle: string; players: Player[]; savedAt: string | null; loadedAt: string }) {
   const messages = useT();
   const t = messages.schedule.attendance;
   const toast = useToast();
   const online = useOnline();
   const queue = usePendingAttendance();
+  const userId = useQueueUser();
   const initial = useMemo(() => {
     const m: Record<string, Mark> = {};
     for (const p of players) {
@@ -46,15 +48,25 @@ export function AttendanceSheet({ eventId, title, subtitle, players, savedAt }: 
   const present = players.filter((p) => !isOut(marks[p.id])).length;
   const absentees = players.filter((p) => isOut(marks[p.id]));
   const waiting = queue.ids.includes(eventId);
+  const refused = eventId in queue.failed;
+  const mark = (id: string, m: Omit<Mark, "at">) => setMarks((prev) => ({ ...prev, [id]: { ...m, at: new Date().toISOString() } }));
   const lastSent = [syncedAt, queue.drainedAt].filter(Boolean).sort().pop() ?? null;
 
   const save = async () => {
     setBusy(true);
-    const now = new Date().toISOString();
-    const rows = players.map((p) => ({ player_id: p.id, status: marks[p.id].status, reason: marks[p.id].reason, recorded_at: now }));
-    if (queueAvailable()) {
-      await enqueueAttendance(eventId, rows);
-      const r = await flushAttendanceQueue();
+    // trimitem doar ce a atins antrenorul și rândurile încă negăsite pe server (cu ora deschiderii paginii),
+    // ca o listă deschisă de mult să nu șteargă o corectură făcută între timp de altcineva
+    const rows = players
+      .filter((p) => marks[p.id].at || !p.status)
+      .map((p) => ({ player_id: p.id, status: marks[p.id].status, reason: marks[p.id].reason, recorded_at: marks[p.id].at ?? loadedAt }));
+    if (!rows.length) {
+      setBusy(false);
+      setScreen("saved");
+      return;
+    }
+    if (queueAvailable() && userId) {
+      await enqueueAttendance(userId, eventId, rows);
+      const r = await flushAttendanceQueue(userId, { force: true });
       if (!r.pending) setSyncedAt(new Date().toISOString());
       else if (r.error) toast(r.error, "error");
     } else {
@@ -82,10 +94,15 @@ export function AttendanceSheet({ eventId, title, subtitle, players, savedAt }: 
           <h1 className="text-2xl">{t.saved}</h1>
           <p className="text-ink-2">{t.counts(present, absentees.length)}</p>
         </div>
-        {waiting || !online ? (
+        {refused ? (
+          <Notice tone="red" title={t.refusedTitle}>
+            {queue.failed[eventId] ? <span className="block">{queue.failed[eventId]}</span> : null}
+            {t.refusedHint}
+          </Notice>
+        ) : waiting || !online ? (
           <Notice tone="yellow" title={t.pending(1)}>
             {t.savedOffline}
-            {online ? <Button variant="secondary" className="mt-2" size="sm" icon={<RefreshCw className="size-4" aria-hidden />} onClick={() => flushAttendanceQueue()}>{t.retry}</Button> : null}
+            {online ? <Button variant="secondary" className="mt-2" size="sm" icon={<RefreshCw className="size-4" aria-hidden />} onClick={() => userId && flushAttendanceQueue(userId, { force: true })}>{t.retry}</Button> : null}
           </Notice>
         ) : lastSent ? (
           <Notice tone="green" title={t.synced(new Intl.DateTimeFormat("ro-RO", { hour: "2-digit", minute: "2-digit" }).format(new Date(lastSent)))} />
@@ -132,7 +149,7 @@ export function AttendanceSheet({ eventId, title, subtitle, players, savedAt }: 
             <li key={p.id}>
               <button type="button"
                 aria-label={out ? t.markPresent(p.name) : t.markAbsent(p.name)}
-                onClick={() => (out || m.status === "late" ? setMarks({ ...marks, [p.id]: { status: "present", reason: null } }) : setSheetFor(p))}
+                onClick={() => (out || m.status === "late" ? mark(p.id, { status: "present", reason: null }) : setSheetFor(p))}
                 className={cn("flex min-h-16 w-full items-center gap-3 px-4 py-2 text-left", out ? "bg-st-red-soft" : "bg-surface hover:bg-canvas")}>
                 <span aria-hidden className="inline-flex size-9 shrink-0 items-center justify-center rounded-full bg-sunken text-sm font-bold text-ink-2">{p.number ?? "–"}</span>
                 <span className="min-w-0 flex-1">
@@ -166,10 +183,10 @@ export function AttendanceSheet({ eventId, title, subtitle, players, savedAt }: 
           <div className="absolute inset-x-0 bottom-0 rounded-t-[var(--radius-sheet)] bg-surface p-4 pb-safe md:inset-x-auto md:left-1/2 md:top-1/2 md:bottom-auto md:w-[28rem] md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-[var(--radius-sheet)]">
             <h2 id="why-title" className="mb-3 text-lg">{t.why(sheetFor.name)}</h2>
             <div className="grid gap-2">
-              <button type="button" autoFocus onClick={() => { setMarks({ ...marks, [sheetFor.id]: { status: "late", reason: null } }); setSheetFor(null); }}
+              <button type="button" autoFocus onClick={() => { mark(sheetFor.id, { status: "late", reason: null }); setSheetFor(null); }}
                 className="flex h-14 items-center rounded-[var(--radius-control)] border border-border-control px-4 text-left font-semibold hover:bg-canvas">{t.late}</button>
               {ABSENCE_REASONS.map((r) => (
-                <button key={r} type="button" onClick={() => { setMarks({ ...marks, [sheetFor.id]: { status: r === "injured" ? "injured" : "absent", reason: r } }); setSheetFor(null); }}
+                <button key={r} type="button" onClick={() => { mark(sheetFor.id, { status: r === "injured" ? "injured" : "absent", reason: r }); setSheetFor(null); }}
                   className="flex h-14 items-center rounded-[var(--radius-control)] border border-border-control px-4 text-left font-semibold hover:bg-canvas">{ABSENCE_REASON_LABELS[r]}</button>
               ))}
               <Button variant="ghost" onClick={() => setSheetFor(null)}>{messages.common.actions.cancel}</Button>

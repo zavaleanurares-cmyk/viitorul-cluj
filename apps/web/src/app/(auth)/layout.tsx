@@ -1,5 +1,6 @@
 import { APP_NAME } from "@/lib/env";
 import { getT } from "@/messages";
+import { ClearOfflinePages } from "@/components/auth/clear-offline-pages";
 
 /** Cadru comun pentru paginile de dinainte de autentificare. */
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
@@ -15,6 +16,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
       </div>
       <div className="flex flex-1 items-start justify-center p-6 md:items-center md:p-12">
         <div className="w-full max-w-sm">{children}</div>
+        <ClearOfflinePages />
       </div>
     </main>
   );

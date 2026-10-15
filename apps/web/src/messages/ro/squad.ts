@@ -135,6 +135,7 @@ export const squad = {
     noAccount: "Fără cont",
     invite: "Trimite invitație în aplicație",
     inviteSent: "Invitația a fost trimisă.",
+    inviteExisting: (email: string) => `Există deja un cont pe ${email}. I-am adăugat rolul de părinte; intră cu parola lui (sau cu „Am uitat parola”).`,
     inviteLink: "Linkul de invitație (dacă e-mailul nu e configurat, trimite-l tu)",
     inviteNeedsEmail: "Pentru invitație, completează e-mailul părintelui.",
     saved: "Părintele a fost salvat.",

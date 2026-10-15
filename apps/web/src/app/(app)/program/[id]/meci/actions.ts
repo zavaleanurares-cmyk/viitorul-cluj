@@ -24,7 +24,7 @@ export async function saveSquad(input: { eventId: string; formation: string; row
 
 const EventInput = z.object({
   minute: z.number().int().min(0).max(150),
-  kind: z.enum(["goal", "goal_against", "own_goal", "yellow", "red", "sub"]),
+  kind: z.enum(["goal", "opp_own_goal", "goal_against", "own_goal", "yellow", "red", "sub"]),
   player_id: z.uuid().nullable().optional(),
   related_player_id: z.uuid().nullable().optional(),
 });

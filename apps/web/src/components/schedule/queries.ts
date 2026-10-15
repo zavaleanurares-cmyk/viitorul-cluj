@@ -112,3 +112,9 @@ export async function listOpponents(db: Db) {
   const { data } = await db.from("opponents").select("id, name").order("name");
   return data ?? [];
 }
+
+/** Ce poate gestiona antrenorul (la fel ca private.coach_manages_event): antrenamente, ședințe, amicale nejucate. */
+export function coachManages(e: { kind: string; match: { status: string; competition_id: string | null } | null }): boolean {
+  if (e.kind === "training" || e.kind === "meeting") return true;
+  return e.kind === "match" && (!e.match || (!e.match.competition_id && e.match.status === "scheduled"));
+}

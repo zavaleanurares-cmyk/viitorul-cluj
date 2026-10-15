@@ -81,7 +81,7 @@ function valid(y: number, m: number, d: number, time: string | null) {
 /** „10:00", „10.00", „10" → „10:00". */
 export function parseTime(value: unknown): string | null {
   const s = String(value ?? "").trim();
-  const m = /^(\d{1,2})(?:[:.](\d{2}))?$/.exec(s);
+  const m = /^(\d{1,2})(?:[:.](\d{2}))?(?::\d{2})?$/.exec(s);
   if (!m) return null;
   const h = +m[1];
   const min = m[2] ? +m[2] : 0;

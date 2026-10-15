@@ -34,10 +34,11 @@ export const ABSENCE_REASON_LABELS: Record<AbsenceReason, string> = {
   other: "Altul",
 };
 
-export const MATCH_EVENT_KINDS = ["goal", "goal_against", "own_goal", "yellow", "red", "sub"] as const;
+export const MATCH_EVENT_KINDS = ["goal", "opp_own_goal", "goal_against", "own_goal", "yellow", "red", "sub"] as const;
 export type MatchEventKind = (typeof MATCH_EVENT_KINDS)[number];
 export const MATCH_EVENT_LABELS: Record<MatchEventKind, string> = {
   goal: "Gol marcat",
+  opp_own_goal: "Autogol al adversarului",
   goal_against: "Gol primit",
   own_goal: "Autogol (în poarta noastră)",
   yellow: "Cartonaș galben",

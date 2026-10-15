@@ -1196,6 +1196,34 @@ export type Database = {
           { foreignKeyName: "match_events_related_player_id_fkey"; columns: ["related_player_id"]; isOneToOne: false; referencedRelation: "players"; referencedColumns: ["id"] },
         ];
       };
+      match_ratings: {
+        Row: {
+          event_id: string;
+          player_id: string;
+          rating: number;
+          rated_by: string | null;
+          created_at: string;
+        };
+        Insert: {
+          event_id: string;
+          player_id: string;
+          rating: number;
+          rated_by?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          event_id?: string;
+          player_id?: string;
+          rating?: number;
+          rated_by?: string | null;
+          created_at?: string;
+        };
+        Relationships: [
+          { foreignKeyName: "match_ratings_event_id_fkey"; columns: ["event_id"]; isOneToOne: false; referencedRelation: "matches"; referencedColumns: ["event_id"] },
+          { foreignKeyName: "match_ratings_player_id_fkey"; columns: ["player_id"]; isOneToOne: false; referencedRelation: "players"; referencedColumns: ["id"] },
+          { foreignKeyName: "match_ratings_rated_by_fkey"; columns: ["rated_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
+        ];
+      };
       match_squad: {
         Row: {
           event_id: string;
@@ -1204,7 +1232,6 @@ export type Database = {
           slot: number | null;
           is_captain: boolean;
           minutes: number | null;
-          rating: number | null;
         };
         Insert: {
           event_id: string;
@@ -1213,7 +1240,6 @@ export type Database = {
           slot?: number | null;
           is_captain?: boolean;
           minutes?: number | null;
-          rating?: number | null;
         };
         Update: {
           event_id?: string;
@@ -1222,7 +1248,6 @@ export type Database = {
           slot?: number | null;
           is_captain?: boolean;
           minutes?: number | null;
-          rating?: number | null;
         };
         Relationships: [
           { foreignKeyName: "match_squad_event_id_fkey"; columns: ["event_id"]; isOneToOne: false; referencedRelation: "matches"; referencedColumns: ["event_id"] },
@@ -2156,6 +2181,7 @@ export type Database = {
           matches_remaining: number;
           source_event_id: string | null;
           created_at: string;
+          served_event_ids: string[];
         };
         Insert: {
           id?: string;
@@ -2167,6 +2193,7 @@ export type Database = {
           matches_remaining?: number;
           source_event_id?: string | null;
           created_at?: string;
+          served_event_ids?: string[];
         };
         Update: {
           id?: string;
@@ -2178,6 +2205,7 @@ export type Database = {
           matches_remaining?: number;
           source_event_id?: string | null;
           created_at?: string;
+          served_event_ids?: string[];
         };
         Relationships: [
           { foreignKeyName: "suspensions_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },

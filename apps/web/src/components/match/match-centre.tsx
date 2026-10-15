@@ -83,6 +83,7 @@ export function MatchCentre(props: {
       case "goal": return t.eventText.goal(name(e.playerId), e.relatedId ? name(e.relatedId) : null);
       case "goal_against": return t.eventText.goal_against;
       case "own_goal": return t.eventText.own_goal;
+      case "opp_own_goal": return t.eventText.opp_own_goal;
       case "yellow": return t.eventText.yellow(name(e.playerId));
       case "red": return t.eventText.red(name(e.playerId));
       case "sub": return t.eventText.sub(name(e.relatedId), name(e.playerId));
@@ -284,8 +285,9 @@ export function MatchCentre(props: {
             </button>
           ))}
         </div>
-        <div className="mt-2 flex gap-2">
+        <div className="mt-2 flex flex-wrap gap-2">
           <Button variant="ghost" size="sm" onClick={() => setSheet({ mode: "red" })}>{t.live.red}</Button>
+          <Button variant="ghost" size="sm" onClick={() => add({ kind: "opp_own_goal" })}>{t.live.oppOwnGoal}</Button>
           <Button variant="ghost" size="sm" onClick={() => add({ kind: "own_goal" })}>{t.live.ownGoal}</Button>
         </div>
 
@@ -377,7 +379,7 @@ export function MatchCentre(props: {
   }
 
   // ---- încheiat (sau doar citire) ---------------------------------------------------------------
-  const scorers = props.events.filter((e) => e.kind === "goal");
+  const scorers = props.events.filter((e) => e.kind === "goal" || e.kind === "opp_own_goal");
   const minutes = props.squad.filter((s) => (s.minutes ?? 0) > 0).sort((x, y) => (y.minutes ?? 0) - (x.minutes ?? 0));
   return (
     <div className="mx-auto max-w-xl space-y-4">

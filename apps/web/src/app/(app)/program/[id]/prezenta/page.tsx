@@ -5,6 +5,7 @@ import { Notice } from "@/components/ui/card";
 import { AttendanceSheet } from "@/components/schedule/attendance-sheet";
 import { eventRoster, getEvent } from "@/components/schedule/queries";
 import { getT } from "@/messages";
+import { requestTime } from "@/lib/request-time";
 
 export const metadata = { title: "Prezența" };
 
@@ -35,6 +36,7 @@ export default async function AttendancePage({ params }: { params: Promise<{ id:
       title={`${t.attendance.title} · ${teams || e.title}`}
       subtitle={`${formatEventWhen(e.starts_at, e.ends_at, tz)}${e.venue ? ` · ${e.venue.name}` : ""}`}
       savedAt={e.attendance_saved_at}
+      loadedAt={new Date(requestTime()).toISOString()}
       players={roster.map((p) => ({
         id: p.id,
         name: p.full_name,
