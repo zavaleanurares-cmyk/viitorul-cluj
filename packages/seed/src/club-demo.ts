@@ -3,9 +3,13 @@
  * Totul prin funcțiile aplicației, cu identitatea conturilor demo. Totul inventat.
  */
 import crypto from "node:crypto";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
+import { execFileSync } from "node:child_process";
 import zlib from "node:zlib";
 import { createDb, type Db } from "@club/db";
-import { STANDARD_CONTRACTS, addDays, todayIn } from "@club/shared";
+import { PRIVACY_POLICY_STARTER, STANDARD_CONTRACTS, addDays, slugify, todayIn } from "@club/shared";
 import { writeLocalFile } from "./perf";
 
 async function rpc<T>(db: Db, fn: string, args: Record<string, unknown>, label: string): Promise<T> {
@@ -52,6 +56,82 @@ export async function seedClubDemo(admin: Db, clubId: string, ids: Record<string
   await seedContracts(admin, clubId, ids, today);
   await seedEnrolment(admin, clubId, ids, today);
   await seedCamps(admin, clubId, ids, today);
+  await seedWebsite(admin, clubId, ids, today);
+}
+
+/** O imagine demo (degrade între două culori), doar dacă ffmpeg există. */
+function demoImage(c0: string, c1: string): Buffer | null {
+  try {
+    const out = path.join(os.tmpdir(), `lr-img-${process.pid}-${crypto.randomUUID()}.jpg`);
+    execFileSync("ffmpeg", ["-y", "-loglevel", "error", "-f", "lavfi", "-i", `gradients=s=1280x800:c0=0x${c0}:c1=0x${c1}:x0=0:y0=0:x1=1280:y1=800`, "-frames:v", "1", out], { stdio: "ignore", timeout: 30000 });
+    const buf = fs.readFileSync(out);
+    fs.unlinkSync(out);
+    return buf;
+  } catch {
+    return null;
+  }
+}
+function storeImage(clubId: string, kind: "post" | "foto", c0: string, c1: string): string | null {
+  const img = demoImage(c0, c1);
+  if (!img) return null;
+  const p = `${clubId}/${kind}/${crypto.randomUUID()}.jpg`;
+  return writeLocalFile("site", p, img) ? p : null;
+}
+
+/** Site: setări, politica (textul model), trei știri (site, aplicație, ciornă), o galerie cu acord foto. */
+async function seedWebsite(admin: Db, clubId: string, ids: Record<string, string>, today: string) {
+  const { count } = await admin.from("site_posts").select("id", { count: "exact", head: true }).eq("club_id", clubId);
+  if (count || !ids.secretariat) return;
+  const office = createDb({ sub: ids.secretariat, role: "authenticated" });
+  const { data: club } = await admin.from("clubs").select("name").eq("id", clubId).single();
+  const groups = (await admin.from("groups").select("id, name").eq("club_id", clubId)).data ?? [];
+  const g = (n: string) => groups.find((x) => x.name === n)?.id;
+  await rpc(office, "save_site_settings", { p: {
+    tagline: "Fotbal pentru copii, juniori și seniori, din 1998.",
+    about: "Clubul s-a născut dintr-o grupă de copii care se antrenau pe terenul școlii. Astăzi avem cinci echipe, antrenori licențiați și o bază proprie.\n\nCredem în fotbal jucat cu plăcere, în disciplină și în școală pe primul loc.",
+    address: "Str. Stadionului 10, Cluj-Napoca", email: "contact@example.com", phone: "0264 000 000", map_url: "https://www.openstreetmap.org/",
+    facebook: "https://facebook.com/", instagram: "https://instagram.com/", show_staff: true, roster_groups: [g("Seniori")].filter(Boolean),
+  } }, "setările site-ului");
+  await rpc(office, "publish_site_policy", { p_body: PRIVACY_POLICY_STARTER.replaceAll("{{club}}", club?.name ?? "Clubul") }, "politica");
+  const cover1 = storeImage(clubId, "post", "0e5c3a", "f2c14e");
+  const inline = storeImage(clubId, "post", "12305a", "7cc4e8");
+  const p1 = await rpc<string>(office, "save_site_post", { p: {
+    title: "Victorie în derby-ul U17", slug: slugify("Victorie în derby-ul U17"), cover_path: cover1 ?? "", to_site: true, to_app: true, app_group_ids: [g("U17")].filter(Boolean),
+    blocks: [
+      { type: "paragraph", text: "Echipa U17 a câștigat sâmbătă derby-ul cu Unirea Podgoria, scor 3–1, după o repriză a doua foarte bună." },
+      { type: "heading", text: "Golurile" },
+      { type: "list", items: ["minutul 34 – lovitură liberă direct la vinclu", "minutul 58 – contraatac pe partea stângă", "minutul 81 – penalty"] },
+      ...(inline ? [{ type: "image", path: inline, alt: "Echipa U17 după meci", caption: "Bucuria de după fluierul final." }] : []),
+      { type: "quote", text: "Am crescut de la meci la meci. Băieții au muncit mult în săptămâna asta.", by: "antrenorul echipei" },
+      { type: "paragraph", text: "Următorul meci se joacă acasă, duminică, de la ora 11. Vă așteptăm în tribună!" },
+    ],
+  } }, "știre 1");
+  await rpc(office, "publish_site_post", { p_id: p1, p_publish: true }, "publicare 1");
+  const p2 = await rpc<string>(office, "save_site_post", { p: {
+    title: "Programul din vacanța de iarnă", slug: slugify("Programul din vacanța de iarnă"), to_site: false, to_app: true, app_group_ids: [],
+    blocks: [{ type: "paragraph", text: "Între 22 decembrie și 6 ianuarie antrenamentele se țin doar marțea și joia, la sala de sport. Taxa lunară pentru ianuarie se emite normal." }],
+  } }, "știre 2");
+  await rpc(office, "publish_site_post", { p_id: p2, p_publish: true }, "publicare 2");
+  await rpc(office, "save_site_post", { p: { title: "Ziua porților deschise", slug: slugify("Ziua porților deschise"), to_site: true, to_app: false,
+    blocks: [{ type: "paragraph", text: "Sâmbătă, 9 mai, copiii născuți între 2016 și 2019 pot încerca un antrenament gratuit." }] } }, "ciornă");
+  await admin.from("site_posts").update({ published_at: new Date(Date.now() - 5 * 86400e3).toISOString() }).eq("id", p1);
+
+  // galerie: o fotografie cu copilul demo (are acord foto semnat), una cu un copil fără acord (ascunsă), două de grup fără etichete
+  const album = await rpc<string>(office, "save_album", { p: { title: "Turneul de toamnă U17", taken_on: addDays(today, -12) } }, "album");
+  const { data: g2 } = ids.parinte ? await admin.from("guardians").select("guardian_players(player_id)").eq("user_id", ids.parinte).eq("club_id", clubId).maybeSingle() : { data: null };
+  const child = (g2?.guardian_players as Array<{ player_id: string }> | undefined)?.[0]?.player_id;
+  const other = (await admin.from("players").select("id").eq("club_id", clubId).eq("group_id", g("U17") ?? "").eq("photo_consent", false).neq("id", child ?? "").limit(1)).data?.[0]?.id;
+  const shots: Array<[string, string, string, string[]]> = [
+    ["0e5c3a", "9bd17a", "Încălzirea de dinaintea primului meci.", []],
+    ["f2c14e", "e8762d", "Portarul nostru, decisiv la penalty-uri.", child ? [child] : []],
+    ["12305a", "e04e5b", "Echipa, înainte de finală.", other ? [other] : []],
+    ["3a3a3a", "f2c14e", "Medaliile.", []],
+  ];
+  for (const [c0, c1, caption, players] of shots) {
+    const p = storeImage(clubId, "foto", c0, c1);
+    if (p) await rpc(office, "save_photo", { p: { album_id: album, path: p, caption, player_ids: players } }, "fotografie");
+  }
+  await rpc(office, "save_album", { p: { id: album, title: "Turneul de toamnă U17", taken_on: addDays(today, -12), status: "published" } }, "album publicat");
 }
 
 /** Tabere: una de iarnă cu înscrieri (copilul părintelui demo confirmat, două de pe site de confirmat), una în pregătire, una trecută. */

@@ -28,3 +28,9 @@ export async function visitorIp(): Promise<string | null> {
   const h = await headers();
   return (h.get("x-forwarded-for") ?? "").split(",")[0].trim() || h.get("x-real-ip") || null;
 }
+
+/** Clubul are o politică de confidențialitate publicată (linkul din subsol și din formulare). */
+export const hasPolicy = cache(async (slug: string): Promise<boolean> => {
+  const { data } = await createAnonDb().rpc("public_policy", { p_slug: slug });
+  return ((data ?? []) as unknown[]).length > 0;
+});

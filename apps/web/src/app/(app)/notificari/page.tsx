@@ -1,4 +1,4 @@
-import { Bell, Gauge, BellRing, CalendarDays, ChevronRight, CircleCheck, ClipboardCheck, ClipboardList, HeartPulse, ListChecks, ReceiptText, Stethoscope, TriangleAlert, Wallet, Clapperboard, FileCheck2, FileSignature, Megaphone, ShoppingBag, Star, Tent, UserPlus } from "lucide-react";
+import { Bell, Gauge, BellRing, CalendarDays, ChevronRight, CircleCheck, ClipboardCheck, ClipboardList, HeartPulse, ListChecks, ReceiptText, Stethoscope, TriangleAlert, Wallet, Clapperboard, FileCheck2, FileSignature, Megaphone, ShoppingBag, Star, Tent, UserPlus, Newspaper, HandHeart } from "lucide-react";
 import { addDays, formatDateTime, listNotifications, todayIn, type Notification } from "@club/shared";
 import { requireSession } from "@/lib/auth";
 import { EmptyState, PageHeader } from "@/components/ui/card";
@@ -31,7 +31,7 @@ const ICONS: Record<KnownKind | "other", typeof Bell> = {
   contract_sign: FileSignature,
   shop_order: ShoppingBag,
   enrolment: UserPlus,
-  camp: Tent,
+  camp: Tent, news: Newspaper, supporters: HandHeart,
   other: BellRing,
 };
 

@@ -38,6 +38,9 @@ export function writeLocalFile(bucket: string, p: string, body: Buffer): boolean
   const file = path.join(root, bucket, ...p.split("/"));
   fs.mkdirSync(path.dirname(file), { recursive: true });
   fs.writeFileSync(file, body);
+  const ext = p.split(".").pop()?.toLowerCase();
+  const type = { pdf: "application/pdf", png: "image/png", jpg: "image/jpeg", jpeg: "image/jpeg", webp: "image/webp", mp4: "video/mp4" }[ext ?? ""];
+  if (type) fs.writeFileSync(file + ".type", type);
   return true;
 }
 

@@ -109,7 +109,11 @@ export async function enrol(input: { id: string; groupId: string; firstMonth: bo
       if (!v.groupId) fail(t.errors.team);
       const fee = v.enrolFee.trim() ? parseLei(v.enrolFee) : 0;
       if (fee === null || fee < 0) fail(t.errors.amount);
-      const { data, error } = await db.rpc("enrol_request", { p_id: v.id, p: { group_id: v.groupId, first_month: v.firstMonth, enrol_fee: fee } });
+      // numele scurt („POPESCU A.") se face aici: majusculele cu diacritice nu depind de setările bazei de date
+      const { data: req } = await db.from("enrolment_requests").select("child_name").eq("id", v.id).maybeSingle();
+      const parts = (req?.child_name ?? "").trim().split(/\s+/);
+      const display = parts.length >= 2 ? `${parts[0].toLocaleUpperCase("ro")} ${parts[1][0].toLocaleUpperCase("ro")}.` : (req?.child_name ?? "").toLocaleUpperCase("ro");
+      const { data, error } = await db.rpc("enrol_request", { p_id: v.id, p: { group_id: v.groupId, first_month: v.firstMonth, enrol_fee: fee, display_name: display } });
       if (error) throw error;
       return data as { player_id: string; guardian_id: string; charges: number };
     },

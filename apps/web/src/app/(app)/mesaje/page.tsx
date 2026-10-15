@@ -6,6 +6,7 @@ import { EmptyState, PageHeader } from "@/components/ui/card";
 import { cn } from "@/lib/cn";
 import { getT } from "@/messages";
 import { FamilyClubTabs } from "@/components/club/family-tabs";
+import { FamilyNewsCard } from "@/components/club/family-news";
 
 export const metadata = { title: "Mesaje" };
 
@@ -21,6 +22,7 @@ export default async function InboxPage() {
     <div className="mx-auto max-w-2xl">
       {ctx.role === "guardian" || ctx.role === "player" ? <FamilyClubTabs current="messages" /> : null}
       <PageHeader title={t.inbox} description={t.inboxDescription} />
+      <div className="mb-4"><FamilyNewsCard db={db} today={ctx.today} days={60} limit={3} /></div>
       {!rows.length ? <EmptyState icon={<Megaphone className="size-8" aria-hidden />} title={t.inboxEmpty} /> : (
         <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface">
           {rows.map((m) => (

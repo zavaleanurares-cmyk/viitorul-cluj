@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { LogIn } from "lucide-react";
 import { clubThemeStyle } from "@/lib/theme";
-import { getPublicClub, siteOn } from "@/lib/public-site";
+import { getPublicClub, hasPolicy, siteOn } from "@/lib/public-site";
 import { PublicNav } from "@/components/site/public-nav";
 import { getT } from "@/messages";
 
@@ -56,7 +56,7 @@ export default async function PublicLayout({ children, params }: { children: Rea
       <footer className="border-t border-line bg-surface">
         <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-x-6 gap-y-2 px-4 py-6 text-sm text-ink-3">
           <span className="font-semibold text-ink-2">{club.name}</span>
-          {PUBLIC_PAGES.has("/confidentialitate") ? <Link href={`${base}/confidentialitate`} className="underline underline-offset-4 hover:text-ink">{t.privacy}</Link> : null}
+          {await hasPolicy(club.slug) ? <Link href={`${base}/confidentialitate`} className="underline underline-offset-4 hover:text-ink">{t.privacy}</Link> : null}
           <span className="flex-1" />
           <span>{t.poweredBy}</span>
         </div>
@@ -66,4 +66,4 @@ export default async function PublicLayout({ children, params }: { children: Rea
 }
 
 /** Paginile publice care există deja (se completează pe măsură ce modulele Club sunt gata). */
-const PUBLIC_PAGES = new Set(["/", "/inscriere", "/tabere"]);
+const PUBLIC_PAGES = new Set(["/", "/stiri", "/echipe", "/tabere", "/galerie", "/inscriere", "/contact"]);

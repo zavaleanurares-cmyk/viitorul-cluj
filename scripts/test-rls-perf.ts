@@ -438,6 +438,72 @@ try {
   check("plata directă nu se marchează pe o înscriere cu taxă în registru", await errored(secretary.rpc("set_camp_paid", { p_id: reg3.id, p_paid: true })));
   check("plata directă se marchează pe înscrierea de pe site", !(await errored(secretary.rpc("set_camp_paid", { p_id: pubReg.id, p_paid: true, p_note: "numerar" }))));
   check("curățarea datelor e doar a sarcinii programate", await errored(secretary.rpc("purge_camp_data")));
+  // -------------------------------------------------------------------------
+  console.log("\nSite și știri");
+  const blocks = [{ type: "paragraph", text: "Echipa U13 a câștigat turneul." }, { type: "script", text: "<x>" }, { type: "image", path: `${clubB}/post/x.jpg` }, { type: "image", path: `${clubA}/post/ok.jpg`, alt: "Echipa" }];
+  check("antrenorul NU publică știri", await errored(coach.rpc("save_site_post", { p: { title: "Victorie", blocks } })));
+  const postRes = await secretary.rpc("save_site_post", { p: { title: "Victorie la turneu!", blocks, to_site: true, to_app: true, app_group_ids: [G1] } });
+  check("secretariatul scrie o știre", !postRes.error, postRes);
+  const postId = postRes.data as string;
+  const saved = must(await admin.from("site_posts").select("slug, blocks, status").eq("id", postId).single(), "știrea");
+  check("blocurile necunoscute și imaginile altui club se aruncă", (saved.blocks as unknown[]).length === 2 && saved.slug === "victorie-la-turneu", saved);
+  check("ciorna nu e vizibilă familiilor", (await rows(guardian2.from("site_posts").select("id").eq("id", postId))) === 0);
+  check("ciorna nu e pe site", ((await anon.rpc("public_posts", { p_slug: slugA })).data as unknown[]).length === 0);
+  const pubN = await secretary.rpc("publish_site_post", { p_id: postId, p_publish: true });
+  check("publicarea anunță familiile echipei", !pubN.error && (pubN.data as number) >= 1, pubN);
+  check("părintele din echipă primește notificarea", (await rows(admin.from("notifications").select("id").eq("user_id", uGuardian2).eq("dedupe_key", `news:${postId}`))) === 1);
+  check("părintele altei echipe nu e anunțat și nu vede știrea", (await rows(admin.from("notifications").select("id").eq("user_id", uGuardian).eq("dedupe_key", `news:${postId}`))) === 0
+    && (await rows(guardian.from("site_posts").select("id").eq("id", postId))) === 0);
+  check("părintele din echipă vede știrea", (await rows(guardian2.from("site_posts").select("id").eq("id", postId))) === 1);
+  check("republicarea nu mai trimite notificări", (await secretary.rpc("publish_site_post", { p_id: postId, p_publish: true })).data === 0);
+  check("vizitatorul vede știrea pe site, cu rezumat", ((await anon.rpc("public_posts", { p_slug: slugA })).data as Array<{ excerpt: string }>)?.[0]?.excerpt === "Echipa U13 a câștigat turneul.");
+  check("imaginea știrii se servește public", (await anon.rpc("site_public_file", { p_slug: slugA, p_path: `${clubA}/post/ok.jpg` })).data === true);
+  check("o imagine nefolosită NU se servește public", (await anon.rpc("site_public_file", { p_slug: slugA, p_path: `${clubA}/post/alta.jpg` })).data === false);
+  check("părintele din echipă citește imaginea în aplicație", await access(guardian2, "site", `${clubA}/post/ok.jpg`, "read"));
+  check("părintele NU încarcă fișiere pe site", !(await access(guardian2, "site", `${clubA}/post/nou.jpg`, "write")));
+  check("secretariatul încarcă fișiere pe site", await access(secretary, "site", `${clubA}/post/nou.jpg`, "write"));
+  check("alt club NU vede știrea", (await rows(secretaryB.from("site_posts").select("id"))) === 0);
+  // galerie și acord foto (acordul lui DOI vine mai jos; îl pornise deja semnarea din secțiunea Contracte)
+  check("acordul semnat la Contracte e pe fișă", (await admin.from("players").select("photo_consent").eq("id", p2).single()).data?.photo_consent === true);
+  must(await admin.from("players").update({ photo_consent: false }).eq("id", p2).select("id"), "acord oprit");
+  const album = (await secretary.rpc("save_album", { p: { title: "Turneu", taken_on: day(-1) } })).data as string;
+  const ph1 = (await secretary.rpc("save_photo", { p: { album_id: album, path: `${clubA}/foto/a.jpg`, player_ids: [p2] } })).data as string;
+  const ph2 = (await secretary.rpc("save_photo", { p: { album_id: album, path: `${clubA}/foto/b.jpg`, player_ids: [] } })).data as string;
+  check("fotografia cu cale greșită e refuzată", await errored(secretary.rpc("save_photo", { p: { album_id: album, path: `${clubB}/foto/c.jpg` } })));
+  check("albumul nepublicat nu e pe site", ((await anon.rpc("public_albums", { p_slug: slugA })).data as unknown[]).length === 0);
+  await secretary.rpc("save_album", { p: { id: album, title: "Turneu", taken_on: day(-1), status: "published" } });
+  const pubPhotos = () => anon.rpc("public_album", { p_slug: slugA, p_album: album }).then((r) => ((r.data ?? []) as Array<{ path: string }>).map((x) => x.path));
+  check("fotografia cu un copil fără acord rămâne ascunsă", !(await pubPhotos()).includes(`${clubA}/foto/a.jpg`) && (await pubPhotos()).includes(`${clubA}/foto/b.jpg`));
+  check("fișierul ascuns nu se servește public", (await anon.rpc("site_public_file", { p_slug: slugA, p_path: `${clubA}/foto/a.jpg` })).data === false);
+  // acordul vine din semnarea documentului de tip „Fotografii și video"
+  const tplPhoto = (await secretary.rpc("save_contract_template", { p: { name: "Acord foto sezon", kind: "photo_consent", body: "Acordul lui {{parinte}} pentru {{jucator}}, sezonul {{sezon}}." } })).data as string;
+  await secretary.rpc("send_contracts", { p_template: tplPhoto, p_players: [p2] });
+  const cPhoto = must(await admin.from("contracts").select("id").eq("player_id", p2).eq("title", "Acord foto sezon").single(), "contract foto");
+  const sigPhoto = `${clubA}/${cPhoto.id}/semnatura-${crypto.randomUUID()}.png`;
+  await guardian2.rpc("sign_contract", { p_id: cPhoto.id, p_name: "Părinte Doi", p_signature_path: sigPhoto });
+  check("semnarea acordului foto îl pornește pe fișă", (await admin.from("players").select("photo_consent").eq("id", p2).single()).data?.photo_consent === true);
+  check("după acord, fotografia devine publică", (await pubPhotos()).includes(`${clubA}/foto/a.jpg`));
+  check("datele publice ale albumului nu conțin nume de copii", !JSON.stringify((await anon.rpc("public_album", { p_slug: slugA, p_album: album })).data).includes("DOI"));
+  check("alt părinte NU retrage acordul copilului altcuiva", await errored(guardian.rpc("withdraw_photo_consent", { p_player: p2 })));
+  check("părintele retrage acordul", !(await errored(guardian2.rpc("withdraw_photo_consent", { p_player: p2 }))));
+  check("retragerea ascunde imediat fotografia", !(await pubPhotos()).includes(`${clubA}/foto/a.jpg`));
+  check("părintele NU vede albumele din birou", (await rows(guardian2.from("site_photos").select("id"))) === 0);
+  void ph1; void ph2;
+  // setări și politică
+  check("antrenorul NU schimbă setările site-ului", await errored(coach.rpc("save_site_settings", { p: { news: false } })));
+  const st = await secretary.rpc("save_site_settings", { p: { news: false, tagline: "Din 1990", facebook: "https://facebook.com/club", hacker: "x", roster_groups: [G1, H1] } });
+  check("setările se salvează și intră în jurnal", !st.error && st.data === 4, st);
+  const site = (await admin.from("clubs").select("settings").eq("id", clubA).single()).data?.settings as { site: Record<string, unknown> };
+  check("cheile necunoscute și echipele altui club se ignoră", !("hacker" in site.site) && JSON.stringify(site.site.roster_groups) === JSON.stringify([G1]));
+  check("adresele fără https sunt refuzate", await errored(secretary.rpc("save_site_settings", { p: { instagram: "http://x" } })));
+  const teams = (await anon.rpc("public_teams", { p_slug: slugA })).data as Array<{ id: string; roster: unknown[] }>;
+  check("lotul public nu conține copii (toți jucătorii U13 sunt minori)", teams.find((x) => x.id === G1)?.roster.length === 0);
+  check("politica de confidențialitate are versiuni", (await secretary.rpc("publish_site_policy", { p_body: "x".repeat(60) })).data === 1
+    && (await secretary.rpc("publish_site_policy", { p_body: "y".repeat(60) })).data === 2
+    && ((await anon.rpc("public_policy", { p_slug: slugA })).data as Array<{ version: number }>)[0].version === 2);
+  check("politica neschimbată nu face versiune nouă", await errored(secretary.rpc("publish_site_policy", { p_body: "y".repeat(60) })));
+  check("ștergerea știrii scoate și notificările", !(await errored(secretary.rpc("delete_site_post", { p_id: postId })))
+    && (await rows(admin.from("notifications").select("id").eq("dedupe_key", `news:${postId}`))) === 0);
   void adminU; void player1;
 } finally {
   await cleanup();

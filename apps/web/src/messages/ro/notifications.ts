@@ -39,6 +39,8 @@ export const notifications = {
     shop_order: "Magazin",
     enrolment: "Înscriere",
     camp: "Tabără",
+    news: "Noutăți",
+    supporters: "Suporteri",
     other: "Notificare",
   },
 
@@ -77,6 +79,8 @@ export const notifications = {
       shop_order: "Comandă din magazin",
       enrolment: "Cerere de înscriere",
       camp: "Tabără",
+      news: "Noutăți de la club",
+      supporters: "Suporteri",
       other: "Notificare nouă",
     },
   },

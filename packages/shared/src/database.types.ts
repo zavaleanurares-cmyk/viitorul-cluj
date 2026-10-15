@@ -3924,6 +3924,198 @@ export type Database = {
           { foreignKeyName: "seasons_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
         ];
       };
+      site_albums: {
+        Row: {
+          id: string;
+          club_id: string;
+          title: string;
+          taken_on: string | null;
+          status: string;
+          created_by: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          club_id: string;
+          title: string;
+          taken_on?: string | null;
+          status?: string;
+          created_by?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          club_id?: string;
+          title?: string;
+          taken_on?: string | null;
+          status?: string;
+          created_by?: string | null;
+          created_at?: string;
+        };
+        Relationships: [
+          { foreignKeyName: "site_albums_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
+          { foreignKeyName: "site_albums_created_by_fkey"; columns: ["created_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
+        ];
+      };
+      site_changes: {
+        Row: {
+          id: number;
+          club_id: string;
+          at: string;
+          actor_id: string | null;
+          field: string;
+          old_value: Json | null;
+          new_value: Json | null;
+        };
+        Insert: {
+          id?: never;
+          club_id: string;
+          at?: string;
+          actor_id?: string | null;
+          field: string;
+          old_value?: Json | null;
+          new_value?: Json | null;
+        };
+        Update: {
+          id?: never;
+          club_id?: string;
+          at?: string;
+          actor_id?: string | null;
+          field?: string;
+          old_value?: Json | null;
+          new_value?: Json | null;
+        };
+        Relationships: [
+          { foreignKeyName: "site_changes_actor_id_fkey"; columns: ["actor_id"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
+          { foreignKeyName: "site_changes_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
+        ];
+      };
+      site_photos: {
+        Row: {
+          id: string;
+          album_id: string;
+          club_id: string;
+          path: string;
+          caption: string | null;
+          player_ids: string[];
+          sort: number;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          album_id: string;
+          club_id: string;
+          path: string;
+          caption?: string | null;
+          player_ids?: string[];
+          sort?: number;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          album_id?: string;
+          club_id?: string;
+          path?: string;
+          caption?: string | null;
+          player_ids?: string[];
+          sort?: number;
+          created_at?: string;
+        };
+        Relationships: [
+          { foreignKeyName: "site_photos_album_id_fkey"; columns: ["album_id"]; isOneToOne: false; referencedRelation: "site_albums"; referencedColumns: ["id"] },
+          { foreignKeyName: "site_photos_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
+        ];
+      };
+      site_policies: {
+        Row: {
+          id: string;
+          club_id: string;
+          version: number;
+          body: string;
+          published_at: string;
+          published_by: string | null;
+        };
+        Insert: {
+          id?: string;
+          club_id: string;
+          version: number;
+          body: string;
+          published_at?: string;
+          published_by?: string | null;
+        };
+        Update: {
+          id?: string;
+          club_id?: string;
+          version?: number;
+          body?: string;
+          published_at?: string;
+          published_by?: string | null;
+        };
+        Relationships: [
+          { foreignKeyName: "site_policies_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
+          { foreignKeyName: "site_policies_published_by_fkey"; columns: ["published_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
+        ];
+      };
+      site_posts: {
+        Row: {
+          id: string;
+          club_id: string;
+          title: string;
+          slug: string;
+          excerpt: string | null;
+          blocks: Json;
+          cover_path: string | null;
+          status: string;
+          to_site: boolean;
+          to_app: boolean;
+          app_group_ids: string[];
+          published_at: string | null;
+          notified_at: string | null;
+          author_id: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          club_id: string;
+          title: string;
+          slug: string;
+          excerpt?: string | null;
+          blocks?: Json;
+          cover_path?: string | null;
+          status?: string;
+          to_site?: boolean;
+          to_app?: boolean;
+          app_group_ids?: string[];
+          published_at?: string | null;
+          notified_at?: string | null;
+          author_id?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          club_id?: string;
+          title?: string;
+          slug?: string;
+          excerpt?: string | null;
+          blocks?: Json;
+          cover_path?: string | null;
+          status?: string;
+          to_site?: boolean;
+          to_app?: boolean;
+          app_group_ids?: string[];
+          published_at?: string | null;
+          notified_at?: string | null;
+          author_id?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          { foreignKeyName: "site_posts_author_id_fkey"; columns: ["author_id"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
+          { foreignKeyName: "site_posts_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
+        ];
+      };
       staff_groups: {
         Row: {
           user_id: string;
@@ -4405,9 +4597,12 @@ export type Database = {
       decide_visa_document: { Args: { p_id: string | null; p_approve: boolean | null; p_valid_until?: string | null; p_issued_on?: string | null; p_reason?: string | null }; Returns: undefined };
       decline_contract: { Args: { p_id: string | null; p_reason: string | null }; Returns: undefined };
       decline_enrolment: { Args: { p_id: string | null; p_reason: string | null; p_withdrawn?: boolean | null }; Returns: undefined };
+      delete_album: { Args: { p_id: string | null }; Returns: string[] };
       delete_charge_request: { Args: { p_id: string | null }; Returns: undefined };
       delete_evaluation_round: { Args: { p_round: string | null }; Returns: undefined };
       delete_match_event: { Args: { p_id: string | null }; Returns: undefined };
+      delete_photo: { Args: { p_id: string | null }; Returns: string };
+      delete_site_post: { Args: { p_id: string | null }; Returns: undefined };
       enrol_request: { Args: { p_id: string | null; p: Json | null }; Returns: Json };
       erase_player: { Args: { p_player: string | null }; Returns: string };
       evaluation_comment: { Args: { p_eval: string | null }; Returns: string };
@@ -4435,15 +4630,24 @@ export type Database = {
       my_clips: { Args: Record<PropertyKey, never>; Returns: { marker_id: string; player_id: string; player_name: string; video_title: string; recorded_on: string; source: string; url: string; storage_path: string; t_sec: number; end_sec: number; tag: string; label: string; shared_at: string }[] };
       my_trials: { Args: { p_event?: string | null }; Returns: { id: string; child_name: string; birth_year: number; pos: string; previous_club: string; event_id: string; trial_at: string; status: string; trial_rating: number; trial_note: string }[] };
       note_enrolment: { Args: { p_id: string | null; p_note: string | null }; Returns: undefined };
+      photo_consent_state: { Args: { p_album: string | null }; Returns: { photo_id: string; is_public: boolean; missing: string[] }[] };
       player_file_paths: { Args: { p_player: string | null }; Returns: { bucket: string; path: string }[] };
       players_past_retention: { Args: Record<PropertyKey, never>; Returns: { player_id: string; display_name: string; inactive_since: string }[] };
       preview_bank_lines: { Args: { p_lines: Json | null }; Returns: Json };
       preview_message_audience: { Args: { p_audience: Json | null }; Returns: { user_id: string; full_name: string; role: Database["public"]["Enums"]["app_role"]; reason: string }[] };
       preview_monthly_charges: { Args: { p_period: string | null }; Returns: Json };
+      public_album: { Args: { p_slug: string | null; p_album: string | null }; Returns: { title: string; taken_on: string; path: string; caption: string }[] };
+      public_albums: { Args: { p_slug: string | null }; Returns: { id: string; title: string; taken_on: string; cover_path: string; photos: number }[] };
       public_camps: { Args: { p_slug: string | null }; Returns: { id: string; title: string; description: string; location: string; starts_on: string; ends_on: string; price: number; birth_year_from: number; birth_year_to: number; deadline: string; spots_left: number }[] };
       public_club: { Args: { p_slug: string | null }; Returns: Json };
       public_logo_path: { Args: { p_slug: string | null }; Returns: string };
+      public_policy: { Args: { p_slug: string | null }; Returns: { version: number; body: string; published_at: string }[] };
+      public_post: { Args: { p_slug: string | null; p_post: string | null }; Returns: { id: string; title: string; slug: string; excerpt: string; cover_path: string; blocks: Json; published_at: string }[] };
+      public_posts: { Args: { p_slug: string | null; p_limit?: number | null; p_offset?: number | null }; Returns: { id: string; title: string; slug: string; excerpt: string; cover_path: string; published_at: string }[] };
+      public_teams: { Args: { p_slug: string | null }; Returns: Json };
       publish_evaluation_round: { Args: { p_round: string | null }; Returns: number };
+      publish_site_policy: { Args: { p_body: string | null }; Returns: number };
+      publish_site_post: { Args: { p_id: string | null; p_publish: boolean | null }; Returns: number };
       purge_camp_data: { Args: Record<PropertyKey, never>; Returns: number };
       purge_enrolment_requests: { Args: Record<PropertyKey, never>; Returns: number };
       record_payment: { Args: { p: Json | null }; Returns: Json };
@@ -4460,6 +4664,7 @@ export type Database = {
       run_rpe_requests: { Args: Record<PropertyKey, never>; Returns: number };
       run_scheduled_messages: { Args: Record<PropertyKey, never>; Returns: number };
       run_visa_reminders: { Args: Record<PropertyKey, never>; Returns: number };
+      save_album: { Args: { p: Json | null }; Returns: string };
       save_attendance: { Args: { p_event: string | null; p_rows: Json | null }; Returns: number };
       save_body_measurements: { Args: { p_date: string | null; p_rows: Json | null }; Returns: number };
       save_budget_lines: { Args: { p_year: number | null; p_kind: string | null; p_department: string | null; p_amounts: number[] | null }; Returns: undefined };
@@ -4471,8 +4676,11 @@ export type Database = {
       save_evaluation_template: { Args: { p: Json | null }; Returns: string };
       save_event: { Args: { p: Json | null }; Returns: string };
       save_match_squad: { Args: { p_event: string | null; p_formation: string | null; p_rows: Json | null }; Returns: number };
+      save_photo: { Args: { p: Json | null }; Returns: string };
       save_program: { Args: { p_id: string | null; p_name: string | null; p_description: string | null; p_kind: string | null; p_is_template: boolean | null; p_items: Json | null }; Returns: string };
       save_purchase_request: { Args: { p: Json | null }; Returns: Json };
+      save_site_post: { Args: { p: Json | null }; Returns: string };
+      save_site_settings: { Args: { p: Json | null }; Returns: number };
       save_test_grid: { Args: { p_date: string | null; p_rows: Json | null }; Returns: number };
       search_club: { Args: { p_query: string | null; p_limit?: number | null }; Returns: Json };
       send_contracts: { Args: { p_template: string | null; p_players: string[] | null; p_due_on?: string | null }; Returns: Json };
@@ -4491,6 +4699,7 @@ export type Database = {
       setup_club: { Args: { p_slug: string | null; p_name: string | null; p_short_name: string | null; p_groups: string[] | null; p_settings?: Json | null }; Returns: string };
       share_video_marker: { Args: { p_marker: string | null; p_share: boolean | null }; Returns: number };
       sign_contract: { Args: { p_id: string | null; p_name: string | null; p_signature_path: string | null; p_ip?: string | null; p_user_agent?: string | null }; Returns: string };
+      site_public_file: { Args: { p_slug: string | null; p_path: string | null }; Returns: boolean };
       start_evaluation_round: { Args: { p: Json | null }; Returns: string };
       submit_camp_registration: { Args: { p_slug: string | null; p_camp: string | null; p: Json | null; p_ip?: string | null }; Returns: boolean };
       submit_enrolment_request: { Args: { p_slug: string | null; p: Json | null; p_ip?: string | null }; Returns: boolean };
@@ -4503,6 +4712,7 @@ export type Database = {
       void_contract: { Args: { p_id: string | null; p_reason: string | null }; Returns: undefined };
       void_payment: { Args: { p_payment: string | null; p_reason: string | null }; Returns: undefined };
       waitlist_camp_registration: { Args: { p_id: string | null }; Returns: undefined };
+      withdraw_photo_consent: { Args: { p_player: string | null }; Returns: undefined };
     };
     Enums: {
       app_role: "owner" | "sporting_director" | "physio" | "coach" | "player" | "medical_partner" | "admin" | "secretary" | "accountant" | "guardian";

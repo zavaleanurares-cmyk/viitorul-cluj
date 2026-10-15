@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getPublicClub, siteOn } from "@/lib/public-site";
+import { getPublicClub, hasPolicy, siteOn } from "@/lib/public-site";
 import { PublicEnrolmentForm } from "@/components/site/enrolment-form";
 import { Notice } from "@/components/ui/card";
 import { getT } from "@/messages";
@@ -17,7 +17,7 @@ export default async function PublicEnrolmentPage({ params }: { params: Promise<
       <div className="space-y-4">
         <h1 className="text-3xl md:text-4xl">{t.title}</h1>
         <p className="max-w-prose text-lg text-ink-2">{t.lead}</p>
-        {open ? <PublicEnrolmentForm slug={club.slug} groups={club.groups.map((g) => ({ id: g.id, name: g.name }))} privacyHref={null} />
+        {open ? <PublicEnrolmentForm slug={club.slug} groups={club.groups.map((g) => ({ id: g.id, name: g.name }))} privacyHref={(await hasPolicy(club.slug)) ? `/c/${club.slug}/confidentialitate` : null} />
           : <Notice tone="yellow" title={t.closed} />}
       </div>
       {teams.length ? (
