@@ -97,3 +97,12 @@ export const STANDARD_TEMPLATES: StandardTemplate[] = [
     ],
   },
 ];
+
+/** Șabloane de mesaje gata făcute (clubul își poate salva altele). */
+export const STANDARD_MESSAGE_TEMPLATES: Array<{ key: string; name: string; title: string; body: string }> = [
+  { key: "cancelled", name: "Antrenament anulat", title: "Antrenamentul de azi se anulează", body: "Bună ziua,\n\nAntrenamentul de azi nu are loc. Ne vedem la următorul, conform programului din aplicație.\n\nMulțumim!" },
+  { key: "callup", name: "Convocare la meci", title: "Convocare: meciul de sâmbătă", body: "Bună ziua,\n\nLotul pentru meciul de sâmbătă este în aplicație, la Program. Întâlnirea este cu o oră înainte de meci, la teren.\n\nVă rugăm să confirmați dacă un copil nu poate veni." },
+  { key: "schedule", name: "Schimbare de program", title: "Programul se schimbă", body: "Bună ziua,\n\nÎncepând de săptămâna viitoare, programul echipei se modifică. Orele noi sunt în aplicație, la Program." },
+  { key: "kit", name: "Echipament", title: "Echipamentul pentru sezonul nou", body: "Bună ziua,\n\nEchipamentul pentru sezonul nou se poate ridica de la secretariatul clubului. Mărimile le găsiți în aplicație." },
+  { key: "meeting", name: "Ședință cu părinții", title: "Ședință cu părinții", body: "Bună ziua,\n\nVă invităm la o ședință cu părinții. Detaliile (data, ora, locul) sunt mai jos.\n\n" },
+];

@@ -2283,6 +2283,111 @@ export type Database = {
           { foreignKeyName: "memberships_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
         ];
       };
+      message_recipients: {
+        Row: {
+          message_id: string;
+          user_id: string;
+          reason: string | null;
+          read_at: string | null;
+          name: string | null;
+        };
+        Insert: {
+          message_id: string;
+          user_id: string;
+          reason?: string | null;
+          read_at?: string | null;
+          name?: string | null;
+        };
+        Update: {
+          message_id?: string;
+          user_id?: string;
+          reason?: string | null;
+          read_at?: string | null;
+          name?: string | null;
+        };
+        Relationships: [
+          { foreignKeyName: "message_recipients_message_id_fkey"; columns: ["message_id"]; isOneToOne: false; referencedRelation: "messages"; referencedColumns: ["id"] },
+          { foreignKeyName: "message_recipients_user_id_fkey"; columns: ["user_id"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
+        ];
+      };
+      message_templates: {
+        Row: {
+          id: string;
+          club_id: string;
+          name: string;
+          title: string;
+          body: string;
+          created_by: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          club_id: string;
+          name: string;
+          title: string;
+          body: string;
+          created_by?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          club_id?: string;
+          name?: string;
+          title?: string;
+          body?: string;
+          created_by?: string | null;
+          created_at?: string;
+        };
+        Relationships: [
+          { foreignKeyName: "message_templates_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
+          { foreignKeyName: "message_templates_created_by_fkey"; columns: ["created_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
+        ];
+      };
+      messages: {
+        Row: {
+          id: string;
+          club_id: string;
+          author_id: string | null;
+          title: string;
+          body: string;
+          audience: Json;
+          status: string;
+          scheduled_at: string;
+          sent_at: string | null;
+          recipient_count: number;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          club_id: string;
+          author_id?: string | null;
+          title: string;
+          body: string;
+          audience: Json;
+          status?: string;
+          scheduled_at?: string;
+          sent_at?: string | null;
+          recipient_count?: number;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          club_id?: string;
+          author_id?: string | null;
+          title?: string;
+          body?: string;
+          audience?: Json;
+          status?: string;
+          scheduled_at?: string;
+          sent_at?: string | null;
+          recipient_count?: number;
+          created_at?: string;
+        };
+        Relationships: [
+          { foreignKeyName: "messages_author_id_fkey"; columns: ["author_id"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
+          { foreignKeyName: "messages_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
+        ];
+      };
       name_matches: {
         Row: {
           id: string;
@@ -3847,6 +3952,7 @@ export type Database = {
       auto_pay_candidates: { Args: { p_club: string | null }; Returns: { guardian_id: string; method_ref: string; provider: string; charge_ids: string[]; amount: number }[] };
       budget_report: { Args: { p_year: number | null }; Returns: Json };
       cancel_charge: { Args: { p_charge: string | null; p_reason: string | null }; Returns: undefined };
+      cancel_message: { Args: { p_id: string | null }; Returns: undefined };
       cancel_purchase_request: { Args: { p_id: string | null }; Returns: undefined };
       clear_must_change_password: { Args: Record<PropertyKey, never>; Returns: undefined };
       close_match: { Args: { p_event: string | null; p_ratings?: Json | null; p_report?: string | null }; Returns: undefined };
@@ -3882,12 +3988,14 @@ export type Database = {
       issue_monthly_charges: { Args: { p_period: string | null; p_club?: string | null }; Returns: Json };
       log_event: { Args: { p_action: string | null; p_entity: string | null; p_details?: Json | null }; Returns: undefined };
       log_medical_access: { Args: { p_player: string | null; p_section?: string | null }; Returns: undefined };
+      mark_message_read: { Args: { p_id: string | null }; Returns: undefined };
       match_eligibility: { Args: { p_event: string | null }; Returns: { player_id: string; reason: string; detail: string; until_date: string }[] };
       money_summary: { Args: { p_year: number | null; p_month?: number | null }; Returns: Json };
       my_clips: { Args: Record<PropertyKey, never>; Returns: { marker_id: string; player_id: string; player_name: string; video_title: string; recorded_on: string; source: string; url: string; storage_path: string; t_sec: number; end_sec: number; tag: string; label: string; shared_at: string }[] };
       player_file_paths: { Args: { p_player: string | null }; Returns: { bucket: string; path: string }[] };
       players_past_retention: { Args: Record<PropertyKey, never>; Returns: { player_id: string; display_name: string; inactive_since: string }[] };
       preview_bank_lines: { Args: { p_lines: Json | null }; Returns: Json };
+      preview_message_audience: { Args: { p_audience: Json | null }; Returns: { user_id: string; full_name: string; role: Database["public"]["Enums"]["app_role"]; reason: string }[] };
       preview_monthly_charges: { Args: { p_period: string | null }; Returns: Json };
       publish_evaluation_round: { Args: { p_round: string | null }; Returns: number };
       record_payment: { Args: { p: Json | null }; Returns: Json };
@@ -3897,6 +4005,7 @@ export type Database = {
       resolve_bank_line: { Args: { p_line: string | null; p: Json | null }; Returns: undefined };
       revoke_payment_method: { Args: { p_method: string | null }; Returns: undefined };
       run_rpe_requests: { Args: Record<PropertyKey, never>; Returns: number };
+      run_scheduled_messages: { Args: Record<PropertyKey, never>; Returns: number };
       run_visa_reminders: { Args: Record<PropertyKey, never>; Returns: number };
       save_attendance: { Args: { p_event: string | null; p_rows: Json | null }; Returns: number };
       save_body_measurements: { Args: { p_date: string | null; p_rows: Json | null }; Returns: number };
@@ -3912,6 +4021,7 @@ export type Database = {
       save_test_grid: { Args: { p_date: string | null; p_rows: Json | null }; Returns: number };
       search_club: { Args: { p_query: string | null; p_limit?: number | null }; Returns: Json };
       send_fee_reminders: { Args: Record<PropertyKey, never>; Returns: number };
+      send_message: { Args: { p: Json | null }; Returns: Json };
       send_visa_reminders: { Args: { p_players: string[] | null }; Returns: number };
       send_wellness_reminders: { Args: Record<PropertyKey, never>; Returns: number };
       set_approver_roles: { Args: { p_roles: Database["public"]["Enums"]["app_role"][] | null }; Returns: undefined };

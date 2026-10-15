@@ -73,6 +73,13 @@ export async function GET(request: NextRequest) {
     return { sent: data ?? 0 };
   });
 
+  // Mesajele programate ajunse la ora lor
+  await step("messages", result, async () => {
+    const { data, error } = await admin.rpc("run_scheduled_messages");
+    if (error) throw new Error(error.message);
+    return { sent: data ?? 0 };
+  });
+
   await step("reminders", result, async () => {
     const { data, error } = await admin.rpc("send_wellness_reminders");
     if (error) throw new Error(error.message);

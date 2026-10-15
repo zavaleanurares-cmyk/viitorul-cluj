@@ -243,6 +243,37 @@ try {
   check("oprirea partajării ascunde clipul", !(await errored(coach.rpc("share_video_marker", { p_marker: mk, p_share: false })))
     && ((await player1.rpc("my_clips")).data as unknown[]).length === 0);
   check("antrenorul NU partajează clipuri din video-ul altei echipe", await errored(coach.rpc("share_video_marker", { p_marker: must(await director.from("video_markers").insert({ video_id: vid2, t_sec: 1, end_sec: 5, tag: "goal" }).select("id").single(), "m3").id, p_share: true })));
+  // -------------------------------------------------------------------------
+  console.log("\nMesaje");
+  const audG1 = { audiences: ["guardians", "players"], group_ids: [G1], exclude_user_ids: [] };
+  const prev = await coach.rpc("preview_message_audience", { p_audience: audG1 });
+  const prevRows = (prev.data ?? []) as Array<{ user_id: string; role: string }>;
+  check("previzualizarea arată părinții și jucătorii echipei", !prev.error && prevRows.some((r) => r.role === "guardian") && prevRows.some((r) => r.role === "player"), prev);
+  check("părintele altei echipe NU apare", !prevRows.some((r) => r.user_id === uGuardian));
+  check("antrenorul NU trimite altei echipe", await errored(coach.rpc("send_message", { p: { title: "Test", body: "x", audience: { audiences: ["guardians"], group_ids: [G2] } } })));
+  check("antrenorul NU trimite fără echipă", await errored(coach.rpc("send_message", { p: { title: "Test", body: "x", audience: { audiences: ["guardians"], group_ids: [] } } })));
+  check("antrenorul NU trimite către tot staff-ul", await errored(coach.rpc("send_message", { p: { title: "Test", body: "x", audience: { audiences: ["staff"], group_ids: [G1] } } })));
+  check("părintele NU trimite mesaje", await errored(guardian.rpc("send_message", { p: { title: "Test", body: "x", audience: { audiences: ["guardians"], group_ids: [G1] } } })));
+  const sentMsg = await coach.rpc("send_message", { p: { title: "Antrenament anulat", body: "Azi nu avem antrenament.", audience: { ...audG1, exclude_user_ids: [] } } });
+  check("antrenorul trimite echipei lui", !sentMsg.error && (sentMsg.data as { recipients: number }).recipients >= 2, sentMsg);
+  const msgId = (sentMsg.data as { id: string }).id;
+  check("părintele din echipă primește mesajul", (await rows(guardian2.from("message_recipients").select("message_id").eq("message_id", msgId))) === 1
+    && (await rows(guardian2.from("messages").select("id").eq("id", msgId))) === 1);
+  check("părintele altei echipe NU vede mesajul", (await rows(guardian.from("messages").select("id").eq("id", msgId))) === 0);
+  check("destinatarul nu vede lista celorlalți destinatari", (await rows(guardian2.from("message_recipients").select("user_id").eq("message_id", msgId))) === 1);
+  check("secretariatul vede mesajul și statistica", (await rows(secretary.from("message_recipients").select("user_id").eq("message_id", msgId))) >= 2);
+  check("contabilul NU vede mesajele altora", (await rows(accountant.from("messages").select("id"))) === 0);
+  await guardian2.rpc("mark_message_read", { p_id: msgId });
+  check("citirea se vede la expeditor", (await rows(coach.from("message_recipients").select("user_id").eq("message_id", msgId).not("read_at", "is", null))) === 1);
+  const excl = await secretary.rpc("send_message", { p: { title: "Doar părinții U13", body: "x", audience: { audiences: ["guardians"], group_ids: [G1], exclude_user_ids: [uGuardian2] } } });
+  check("excluderea scoate destinatarul", !!excl.error || (excl.data as { recipients: number }).recipients === 0, excl);
+  const later = await secretary.rpc("send_message", { p: { title: "Programat", body: "x", audience: { audiences: ["staff"], group_ids: [] }, scheduled_at: new Date(Date.now() + 3600e3).toISOString() } });
+  check("secretariatul programează un mesaj", !later.error && (later.data as { recipients: number }).recipients === 0, later);
+  check("mesajul programat nu ajunge încă", (await rows(coach.from("message_recipients").select("message_id").eq("message_id", (later.data as { id: string }).id))) === 0);
+  check("rularea mesajelor e doar a sarcinii programate", await errored(secretary.rpc("run_scheduled_messages")));
+  check("mesajul programat se poate anula", !(await errored(secretary.rpc("cancel_message", { p_id: (later.data as { id: string }).id }))));
+  check("antrenorul NU salvează șabloane pentru club", await errored(coach.from("message_templates").insert({ club_id: clubA, name: "X", title: "Xx", body: "x" }).select("id")));
+  check("alt club nu vede mesajele", (await rows(secretaryB.from("messages").select("id"))) === 0);
   void adminU; void player1;
 } finally {
   await cleanup();

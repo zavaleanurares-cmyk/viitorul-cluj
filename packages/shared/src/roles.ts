@@ -65,6 +65,21 @@ export const CAPABILITIES = {
   viewVisas: ["admin", "secretary", "sporting_director", "physio", "coach"],
   /** aprobă documentele de viză și trimite reamintiri */
   manageVisas: ["admin", "secretary", "physio"],
+  // Club (faza 4)
+  /** trimite mesaje (antrenorul și preparatorul: echipelor lor) */
+  clubMessages: ["admin", "secretary", "sporting_director", "physio", "coach"],
+  /** cererile de înscriere, probele, înscrierea */
+  manageEnrolment: ["admin", "secretary", "sporting_director"],
+  /** contractele și documentele de semnat */
+  manageContracts: ["admin", "secretary"],
+  /** taberele: înscrieri, plăți, participanți */
+  manageCamps: ["admin", "secretary"],
+  /** site-ul public: știri, echipe, sponsori, galerii, contact */
+  manageWebsite: ["admin", "secretary"],
+  /** magazinul: produse, mărimi, comenzi */
+  manageShop: ["admin", "secretary", "accountant"],
+  /** suporteri: redirecționarea 230, sponsorizări */
+  manageSupporters: ["admin", "secretary", "accountant"],
   /** evaluări, video, statistici sportive */
   viewAnalysis: ["sporting_director", "physio", "coach"],
 } as const satisfies Record<string, readonly AppRole[]>;

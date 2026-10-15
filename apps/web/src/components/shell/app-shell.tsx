@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 import {
   Bell, CalendarDays, ClipboardCheck, Dumbbell, Ellipsis, FileText, Gauge, HeartPulse, House, LayoutDashboard,
-  ListChecks, LogOut, Search, Settings, Stethoscope, Wallet, ReceiptText, Upload, User, Users, X,
+  ListChecks, LogOut, Search, Settings, Stethoscope, Wallet, ReceiptText, Upload, User, Users, X, Megaphone,
 } from "lucide-react";
 import type { NavItem, VisibleSection } from "@/lib/nav";
 import { useT } from "@/messages";
@@ -16,7 +16,7 @@ import { AttendanceSync, QueueUserContext } from "@/components/schedule/attendan
 const ICONS: Record<string, typeof House> = {
   home: House, clipboard: ClipboardCheck, calendar: CalendarDays, user: User, pulse: HeartPulse, users: Users,
   gauge: Gauge, dashboard: LayoutDashboard, list: ListChecks, dumbbell: Dumbbell, upload: Upload, file: FileText,
-  settings: Settings, stethoscope: Stethoscope, wallet: Wallet, receipt: ReceiptText,
+  settings: Settings, stethoscope: Stethoscope, wallet: Wallet, receipt: ReceiptText, megaphone: Megaphone,
 };
 
 type Props = {

@@ -89,11 +89,28 @@ export function moneySections(role: AppRole) {
   return visible(MONEY_SECTIONS, role);
 }
 
+/** Spațiul Club: comunicarea și administrarea clubului. */
+export const CLUB_SECTIONS: Section[] = [
+  { href: "/club/mesaje", key: "messages", cap: "clubMessages" },
+  { href: "/club/inscrieri", key: "enrolment", cap: "manageEnrolment" },
+  { href: "/club/contracte", key: "contracts", cap: "manageContracts" },
+  { href: "/club/tabere", key: "camps", cap: "manageCamps" },
+  { href: "/club/site", key: "website", cap: "manageWebsite" },
+  { href: "/club/magazin", key: "shop", cap: "manageShop" },
+  { href: "/club/suporteri", key: "supporters", cap: "manageSupporters" },
+  { href: "/administrare", key: "admin", cap: "administerClub" },
+];
+
+export function clubSections(role: AppRole) {
+  return visible(CLUB_SECTIONS, role);
+}
+
 /** Toate grupurile de file ale rolului (pentru AppShell). */
 export function sectionGroups(role: AppRole) {
   return [
     { key: "performance", sections: performanceSections(role) },
     { key: "money", sections: moneySections(role) },
+    { key: "club", sections: clubSections(role) },
   ].filter((g) => g.sections.length > 0);
 }
 
@@ -102,7 +119,9 @@ const PERFORMANCE_MATCH = [...new Set(PERFORMANCE_SECTIONS.flatMap((s) => [s.hre
 const today: NavItem = { href: "/azi", key: "today", icon: "home" };
 const schedule: NavItem = { href: "/program", key: "schedule", icon: "calendar" };
 const squad: NavItem = { href: "/lot", key: "squad", icon: "users" };
-const club: NavItem = { href: "/administrare", key: "club", icon: "settings" };
+const CLUB_MATCH = ["/club", "/administrare"];
+/** Spațiul Club deschide prima secțiune pe care rolul o vede. */
+const club = (href: string): NavItem => ({ href, key: "club", icon: "megaphone", match: CLUB_MATCH });
 const money: NavItem = { href: "/bani", key: "money", icon: "wallet" };
 /** cine vede doar referatele din spațiul Bani */
 const purchases: NavItem = { href: "/bani/referate", key: "purchases", icon: "receipt" };
@@ -117,14 +136,14 @@ export const NAV: Record<AppRole, NavItem[]> = {
     { href: "/plan", key: "plan", icon: "calendar" },
     profile,
   ],
-  coach: [today, schedule, squad, performance("/disponibilitate"), purchases, profile],
-  physio: [{ ...today, href: "/tablou" }, schedule, squad, performance("/disponibilitate"), club, purchases, profile],
-  sporting_director: [today, schedule, squad, performance("/tablou"), money, profile],
-  admin: [today, schedule, squad, money, club, profile],
-  secretary: [today, schedule, squad, money, profile],
-  accountant: [today, money, squad, profile],
+  coach: [today, schedule, squad, performance("/disponibilitate"), club("/club/mesaje"), purchases, profile],
+  physio: [{ ...today, href: "/tablou" }, schedule, squad, performance("/disponibilitate"), club("/club/mesaje"), purchases, profile],
+  sporting_director: [today, schedule, squad, performance("/tablou"), money, club("/club/mesaje"), profile],
+  admin: [today, schedule, squad, money, club("/club/mesaje"), profile],
+  secretary: [today, schedule, squad, money, club("/club/mesaje"), profile],
+  accountant: [today, money, squad, club("/club/magazin"), profile],
   owner: [{ href: "/tablou", key: "overview", icon: "dashboard" }, money, profile],
-  guardian: [today, { href: "/plati", key: "familyPayments", icon: "wallet" }, profile],
+  guardian: [today, { href: "/plati", key: "familyPayments", icon: "wallet" }, { href: "/mesaje", key: "inbox", icon: "megaphone", match: ["/clipuri", "/evaluari"] }, profile],
   medical_partner: [
     { href: "/cazuri", key: "cases", icon: "stethoscope" },
     profile,
