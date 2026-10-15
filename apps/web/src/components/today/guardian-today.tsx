@@ -10,6 +10,7 @@ import { getT } from "@/messages";
 import { FamilyDueCard } from "@/components/money/today-cards";
 import { VisaFamilyNotice } from "@/components/performance/visa-family";
 import { FamilyEvaluationsCard } from "@/components/performance/family-evaluations";
+import { FamilyClipsCard } from "@/components/performance/family-clips";
 
 const capitalize = (s: string) => s.charAt(0).toLocaleUpperCase("ro") + s.slice(1);
 
@@ -35,6 +36,7 @@ export async function GuardianToday({ db, ctx }: { db: Db; ctx: AppContext }) {
       <FamilyDueCard db={db} ctx={ctx} />
       {children.length === 0 ? <Notice tone="blue" title={t.children}>{t.noChildren}</Notice> : null}
       <FamilyEvaluationsCard db={db} />
+      <FamilyClipsCard db={db} />
       {children.map((c, i) => {
         const status = ctx.statuses.find((s) => s.id === c.status_id) ?? null;
         const team = ctx.groups.find((g) => g.id === c.group_id);

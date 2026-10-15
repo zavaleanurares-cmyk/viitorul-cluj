@@ -67,14 +67,25 @@ function restFetch(claims: Claims): typeof fetch {
     const headers = new Headers(init?.headers);
     let body: unknown = undefined;
     if (typeof init?.body === "string" && init.body !== "") body = JSON.parse(init.body);
-    const meta = await schemaMeta();
-    const res = await withIdentity(claims, async (client, role) => {
-      const exec: Exec = (sql, params) => client.query(sql, params) as ReturnType<Exec>;
-      const out = await handleRest({ method, path: url.pathname.replace(/^\/rest/, ""), query: url.searchParams, headers, body }, exec, meta, role);
-      // o eroare întoarsă ca răspuns trebuie totuși să anuleze tranzacția
-      if (out.status >= 400) await client.query("rollback").then(() => client.query("begin"));
-      return out;
-    });
+    const attempt = async () => {
+      const meta = await schemaMeta();
+      return withIdentity(claims, async (client, role) => {
+        const exec: Exec = (sql, params) => client.query(sql, params) as ReturnType<Exec>;
+        const out = await handleRest({ method, path: url.pathname.replace(/^\/rest/, ""), query: url.searchParams, headers, body }, exec, meta, role);
+        // o eroare întoarsă ca răspuns trebuie totuși să anuleze tranzacția
+        if (out.status >= 400) await client.query("rollback").then(() => client.query("begin"));
+        return out;
+      });
+    };
+    let res = await attempt();
+    // tabel / funcție / relație necunoscută: schema s-a schimbat după pornire (o migrare nouă) → recitim o dată
+    if (res.status === 404 || res.status === 400) {
+      const code = (() => { try { return (JSON.parse(res.body ?? "{}") as { code?: string }).code; } catch { return undefined; } })();
+      if (code === "PGRST205" || code === "PGRST202" || code === "PGRST200" || code === "PGRST204") {
+        resetSchemaMeta();
+        res = await attempt();
+      }
+    }
     // 204 / 205 / 304 nu pot avea corp
     const noBody = res.body === null || [204, 205, 304].includes(res.status) || method === "HEAD";
     return new Response(noBody ? null : res.body, { status: res.status, headers: res.headers });

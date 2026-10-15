@@ -5,6 +5,8 @@
 import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
+import os from "node:os";
+import { execFileSync } from "node:child_process";
 import { createDb, type Db } from "@club/db";
 import { STANDARD_BATTERIES, STANDARD_TEMPLATES, addDays, todayIn } from "@club/shared";
 import { must } from "./common";
@@ -52,6 +54,77 @@ export async function seedPerfDemo(admin: Db, clubId: string, ids: Record<string
   await seedBody(admin, clubId, today);
   await seedBatteries(ids);
   await seedEvaluations(admin, clubId, ids, today);
+  await seedVideo(admin, clubId, ids, today);
+}
+
+/** Un MP4 de test (imagine de probă, 2 minute), doar dacă ffmpeg există; altfel null. */
+function demoMp4(): Buffer | null {
+  try {
+    const out = path.join(os.tmpdir(), `lr-demo-${process.pid}.mp4`);
+    execFileSync("ffmpeg", ["-y", "-loglevel", "error", "-f", "lavfi", "-i", "testsrc2=size=640x360:rate=15", "-t", "120",
+      "-c:v", "libx264", "-pix_fmt", "yuv420p", "-b:v", "200k", "-movflags", "+faststart", out], { stdio: "ignore", timeout: 120000 });
+    const buf = fs.readFileSync(out);
+    fs.unlinkSync(out);
+    return buf;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Video: meciul U17 (fișier de test, dacă se poate genera) cu marcaje și două clipuri trimise familiei
+ * copilului demo; un meci U19 ca link VEO, cu marcaje doar pentru staff.
+ */
+async function seedVideo(admin: Db, clubId: string, ids: Record<string, string>, today: string) {
+  if (!ids["antrenor.juniori"]) return;
+  const coach = createDb({ sub: ids["antrenor.juniori"], role: "authenticated" });
+  const { count } = await coach.from("videos").select("id", { count: "exact", head: true });
+  if (count) return;
+  const { data: groups } = await admin.from("groups").select("id, name").eq("club_id", clubId);
+  const g = (n: string) => groups?.find((x) => x.name === n)?.id ?? null;
+  const lastMatch = async (gid: string | null) => {
+    if (!gid) return null;
+    const { data } = await admin.from("event_teams").select("events!inner(id, title, starts_at, kind)").eq("group_id", gid).eq("events.kind", "match").lte("events.starts_at", new Date().toISOString()).limit(50);
+    return (data ?? []).map((r) => r.events as unknown as { id: string; title: string; starts_at: string }).sort((a, b) => b.starts_at.localeCompare(a.starts_at))[0] ?? null;
+  };
+  const child = (await admin.from("guardians").select("guardian_players(player_id)").eq("user_id", ids.parinte ?? "").eq("club_id", clubId).maybeSingle()).data;
+  const childId = (child?.guardian_players as Array<{ player_id: string }> | undefined)?.[0]?.player_id ?? null;
+
+  const u17 = g("U17");
+  const m17 = await lastMatch(u17);
+  const mp4 = demoMp4();
+  let videoId: string | null = null;
+  if (u17 && mp4) {
+    const p = `${clubId}/${crypto.randomUUID()}-meci-u17.mp4`;
+    if (writeLocalFile("videos", p, mp4)) {
+      videoId = must(await coach.from("videos").insert({ club_id: clubId, group_id: u17, event_id: m17?.id ?? null, title: m17?.title ?? "Meci U17", source: "upload",
+        storage_path: p, recorded_on: m17 ? m17.starts_at.slice(0, 10) : addDays(today, -4), created_by: ids["antrenor.juniori"] }).select("id").single(), "video U17").id;
+    }
+  }
+  const { data: u17players } = u17 ? await admin.from("players").select("id").eq("group_id", u17).eq("is_active", true).order("display_name").limit(4) : { data: [] };
+  const others = (u17players ?? []).map((x) => x.id).filter((x) => x !== childId);
+  if (videoId) {
+    const marks: Array<{ t: number; end: number | null; tag: string; label: string; players: string[]; share: boolean }> = [
+      { t: 14, end: 32, tag: "goal", label: "Combinație pe dreapta, gol din prima", players: [childId, others[0]].filter(Boolean) as string[], share: true },
+      { t: 41, end: 55, tag: "defending", label: "Pressing după pierderea mingii", players: [childId].filter(Boolean) as string[], share: true },
+      { t: 63, end: 78, tag: "mistake", label: "Pasă înapoi riscantă", players: [others[1]].filter(Boolean) as string[], share: false },
+      { t: 95, end: null, tag: "set_piece", label: "Corner, varianta scurtă", players: [], share: false },
+    ];
+    for (const m of marks) {
+      const id = must(await coach.from("video_markers").insert({ video_id: videoId, t_sec: m.t, end_sec: m.end, tag: m.tag, label: m.label, created_by: ids["antrenor.juniori"] }).select("id").single(), "marcaj").id;
+      if (m.players.length) must(await coach.from("video_marker_players").insert(m.players.map((p) => ({ marker_id: id, player_id: p }))).select("marker_id"), "jucători marcaj");
+      if (m.share && m.players.length) await rpc(coach, "share_video_marker", { p_marker: id, p_share: true }, "partajare clip");
+    }
+  }
+  const u19 = g("U19");
+  const m19 = await lastMatch(u19);
+  if (u19) {
+    const vid = must(await coach.from("videos").insert({ club_id: clubId, group_id: u19, event_id: m19?.id ?? null, title: m19?.title ?? "Meci U19", source: "veo",
+      url: "https://app.veo.co/matches/demo-u19/", recorded_on: m19 ? m19.starts_at.slice(0, 10) : addDays(today, -6), created_by: ids["antrenor.juniori"] }).select("id").single(), "video U19").id;
+    for (const [t, tag, label] of [[312, "chance", "Ocazie după tranziție"], [1880, "goal", "Gol din fază fixă"], [3105, "mistake", "Linia defensivă prea sus"]] as const) {
+      must(await coach.from("video_markers").insert({ video_id: vid, t_sec: t, tag, label, created_by: ids["antrenor.juniori"] }).select("id"), "marcaj U19");
+    }
+  }
 }
 
 /** Bateriile standard „Viteză și forță" și „Rezistență și mobilitate", create de preparator. */

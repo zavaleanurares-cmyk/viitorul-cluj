@@ -210,6 +210,39 @@ try {
   check("după publicare evaluările nu se mai modifică", await errored(director.rpc("save_evaluation", { p_round: roundId, p_player: p1, p_scores: { [cPass]: 1, [cAtt]: 1 } })));
   check("runda cu evaluări nu se șterge", await errored(director.rpc("delete_evaluation_round", { p_round: roundId })));
   check("alt club nu vede runda", (await rows(secretaryB.from("evaluation_rounds").select("id"))) === 0);
+  // -------------------------------------------------------------------------
+  console.log("\nVideo");
+  const vpath = `${clubA}/${crypto.randomUUID()}-meci.mp4`;
+  check("antrenorul poate încărca un fișier video", await access(coach, "videos", vpath, "write"));
+  check("biroul NU încarcă video", !(await access(secretary, "videos", vpath, "write")));
+  const vid = await coach.from("videos").insert({ club_id: clubA, group_id: G1, title: "Meci U13", source: "upload", storage_path: vpath, recorded_on: day(-1) }).select("id").single();
+  check("antrenorul adaugă video pentru echipa lui", !vid.error, vid.error);
+  check("antrenorul NU adaugă video pentru altă echipă", await errored(coach.from("videos").insert({ club_id: clubA, group_id: G2, title: "X", source: "veo", url: "https://app.veo.co/x", recorded_on: day(-1) }).select("id")));
+  const vid2 = must(await director.from("videos").insert({ club_id: clubA, group_id: G2, title: "Meci U15", source: "youtube", url: "https://youtu.be/abc", recorded_on: day(-1) }).select("id").single(), "video U15").id;
+  check("antrenorul NU vede video-ul altei echipe", (await rows(coach.from("videos").select("id").eq("id", vid2))) === 0);
+  check("biroul NU vede video", (await rows(secretary.from("videos").select("id"))) === 0);
+  check("adresele fără https sunt refuzate", await errored(director.from("videos").insert({ club_id: clubA, title: "X", source: "other", url: "http://x.ro", recorded_on: day(-1) }).select("id")));
+  const vId = vid.data!.id;
+  const mk = must(await coach.from("video_markers").insert({ video_id: vId, t_sec: 30, end_sec: 50, tag: "goal", label: "Gol" }).select("id").single(), "marcaj").id;
+  const mk2 = must(await coach.from("video_markers").insert({ video_id: vId, t_sec: 70, end_sec: 80, tag: "mistake" }).select("id").single(), "marcaj 2").id;
+  check("partajarea cere un jucător etichetat", await errored(coach.rpc("share_video_marker", { p_marker: mk, p_share: true })));
+  must(await coach.from("video_marker_players").insert([{ marker_id: mk, player_id: p1 }, { marker_id: mk, player_id: p2 }]).select("marker_id"), "etichete");
+  must(await coach.from("video_marker_players").insert({ marker_id: mk2, player_id: p1 }).select("marker_id"), "etichete 2");
+  check("nu se etichetează jucători din alt club", await errored(coach.from("video_marker_players").insert({ marker_id: mk2, player_id: pB }).select("marker_id")));
+  check("jucătorul NU vede clipurile nepartajate", ((await player1.rpc("my_clips")).data as unknown[]).length === 0
+    && (await rows(player1.from("video_markers").select("id"))) === 0);
+  const shareRes = await coach.rpc("share_video_marker", { p_marker: mk, p_share: true });
+  check("antrenorul partajează clipul și anunță familia", !shareRes.error && (shareRes.data as number) >= 2, shareRes);
+  const clips1 = (await player1.rpc("my_clips")).data as Array<{ marker_id: string }>;
+  check("jucătorul vede doar clipul partajat", clips1.length === 1 && clips1[0].marker_id === mk);
+  check("jucătorul NU vede înregistrarea întreagă", (await rows(player1.from("videos").select("id"))) === 0);
+  check("jucătorul își vede doar propria etichetă pe clip", (await rows(player1.from("video_marker_players").select("player_id").eq("marker_id", mk))) === 1);
+  check("jucătorul citește fișierul clipului", await access(player1, "videos", vpath, "read"));
+  check("alt părinte NU citește fișierul", !(await access(guardian, "videos", vpath, "read")));
+  check("părintele copilului etichetat vede clipul", ((await guardian2.rpc("my_clips")).data as unknown[]).length === 1);
+  check("oprirea partajării ascunde clipul", !(await errored(coach.rpc("share_video_marker", { p_marker: mk, p_share: false })))
+    && ((await player1.rpc("my_clips")).data as unknown[]).length === 0);
+  check("antrenorul NU partajează clipuri din video-ul altei echipe", await errored(coach.rpc("share_video_marker", { p_marker: must(await director.from("video_markers").insert({ video_id: vid2, t_sec: 1, end_sec: 5, tag: "goal" }).select("id").single(), "m3").id, p_share: true })));
   void adminU; void player1;
 } finally {
   await cleanup();

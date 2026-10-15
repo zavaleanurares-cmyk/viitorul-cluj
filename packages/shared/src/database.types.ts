@@ -3540,6 +3540,116 @@ export type Database = {
           { foreignKeyName: "venues_parent_id_fkey"; columns: ["parent_id"]; isOneToOne: false; referencedRelation: "venues"; referencedColumns: ["id"] },
         ];
       };
+      video_marker_players: {
+        Row: {
+          marker_id: string;
+          player_id: string;
+        };
+        Insert: {
+          marker_id: string;
+          player_id: string;
+        };
+        Update: {
+          marker_id?: string;
+          player_id?: string;
+        };
+        Relationships: [
+          { foreignKeyName: "video_marker_players_marker_id_fkey"; columns: ["marker_id"]; isOneToOne: false; referencedRelation: "video_markers"; referencedColumns: ["id"] },
+          { foreignKeyName: "video_marker_players_player_id_fkey"; columns: ["player_id"]; isOneToOne: false; referencedRelation: "players"; referencedColumns: ["id"] },
+        ];
+      };
+      video_markers: {
+        Row: {
+          id: string;
+          video_id: string;
+          t_sec: number;
+          end_sec: number | null;
+          tag: string;
+          label: string | null;
+          shared: boolean;
+          shared_at: string | null;
+          created_by: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          video_id: string;
+          t_sec: number;
+          end_sec?: number | null;
+          tag?: string;
+          label?: string | null;
+          shared?: boolean;
+          shared_at?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          video_id?: string;
+          t_sec?: number;
+          end_sec?: number | null;
+          tag?: string;
+          label?: string | null;
+          shared?: boolean;
+          shared_at?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+        };
+        Relationships: [
+          { foreignKeyName: "video_markers_created_by_fkey"; columns: ["created_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
+          { foreignKeyName: "video_markers_video_id_fkey"; columns: ["video_id"]; isOneToOne: false; referencedRelation: "videos"; referencedColumns: ["id"] },
+        ];
+      };
+      videos: {
+        Row: {
+          id: string;
+          club_id: string;
+          group_id: string | null;
+          event_id: string | null;
+          title: string;
+          source: string;
+          url: string | null;
+          storage_path: string | null;
+          recorded_on: string;
+          duration_sec: number | null;
+          created_by: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          club_id: string;
+          group_id?: string | null;
+          event_id?: string | null;
+          title: string;
+          source: string;
+          url?: string | null;
+          storage_path?: string | null;
+          recorded_on: string;
+          duration_sec?: number | null;
+          created_by?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          club_id?: string;
+          group_id?: string | null;
+          event_id?: string | null;
+          title?: string;
+          source?: string;
+          url?: string | null;
+          storage_path?: string | null;
+          recorded_on?: string;
+          duration_sec?: number | null;
+          created_by?: string | null;
+          created_at?: string;
+        };
+        Relationships: [
+          { foreignKeyName: "videos_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
+          { foreignKeyName: "videos_created_by_fkey"; columns: ["created_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
+          { foreignKeyName: "videos_event_id_fkey"; columns: ["event_id"]; isOneToOne: false; referencedRelation: "events"; referencedColumns: ["id"] },
+          { foreignKeyName: "videos_group_id_fkey"; columns: ["group_id"]; isOneToOne: false; referencedRelation: "groups"; referencedColumns: ["id"] },
+        ];
+      };
       visa_documents: {
         Row: {
           id: string;
@@ -3774,6 +3884,7 @@ export type Database = {
       log_medical_access: { Args: { p_player: string | null; p_section?: string | null }; Returns: undefined };
       match_eligibility: { Args: { p_event: string | null }; Returns: { player_id: string; reason: string; detail: string; until_date: string }[] };
       money_summary: { Args: { p_year: number | null; p_month?: number | null }; Returns: Json };
+      my_clips: { Args: Record<PropertyKey, never>; Returns: { marker_id: string; player_id: string; player_name: string; video_title: string; recorded_on: string; source: string; url: string; storage_path: string; t_sec: number; end_sec: number; tag: string; label: string; shared_at: string }[] };
       player_file_paths: { Args: { p_player: string | null }; Returns: { bucket: string; path: string }[] };
       players_past_retention: { Args: Record<PropertyKey, never>; Returns: { player_id: string; display_name: string; inactive_since: string }[] };
       preview_bank_lines: { Args: { p_lines: Json | null }; Returns: Json };
@@ -3810,6 +3921,7 @@ export type Database = {
       set_fee_plan: { Args: { p_group: string | null; p_player: string | null; p_amount: number | null; p_from: string | null; p_reason?: string | null }; Returns: string };
       set_my_photo: { Args: { p_path: string | null }; Returns: undefined };
       setup_club: { Args: { p_slug: string | null; p_name: string | null; p_short_name: string | null; p_groups: string[] | null; p_settings?: Json | null }; Returns: string };
+      share_video_marker: { Args: { p_marker: string | null; p_share: boolean | null }; Returns: number };
       start_evaluation_round: { Args: { p: Json | null }; Returns: string };
       submit_visa_document: { Args: { p_player: string | null; p_path: string | null; p_file_name: string | null; p_mime: string | null; p_size: number | null; p_issued_on?: string | null }; Returns: string };
       switch_membership: { Args: { p_membership: string | null }; Returns: undefined };
