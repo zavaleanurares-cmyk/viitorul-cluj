@@ -118,7 +118,7 @@ export function ImportWizard({ mode, competitionId, ownName, timezone, label }: 
                 {preview.ours.slice(0, 40).map((o) => (
                   <li key={o.line} className="flex flex-wrap justify-between gap-2 px-3 py-2">
                     <span className="font-semibold">{o.home} – {o.away}{o.score ? ` · ${o.score[0]}–${o.score[1]}` : ""}</span>
-                    <span className="tabular-nums text-ink-2">{o.round ? `Et. ${o.round} · ` : ""}{o.date.split("-").reverse().join(".")} {o.time}</span>
+                    <span className="tabular-nums text-ink-2">{o.round ? `${m.schedule.roundShort(o.round)} · ` : ""}{o.date.split("-").reverse().join(".")} {o.time}</span>
                   </li>
                 ))}
               </ul>

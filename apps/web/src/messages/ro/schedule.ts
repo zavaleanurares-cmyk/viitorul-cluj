@@ -25,6 +25,7 @@ export const schedule = {
   trainings: "Antrenamente",
   matches: "Meciuri",
   viewLabel: "Vedere",
+  roundShort: (r: string) => `Et. ${r}`,
   venueNone: "Fără teren",
   event: {
     back: "Program",
