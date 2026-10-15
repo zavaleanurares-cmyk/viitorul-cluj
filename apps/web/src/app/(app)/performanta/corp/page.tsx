@@ -5,7 +5,7 @@ import { requireCapability, visibleGroups } from "@/lib/auth";
 import { EmptyState, Notice, PageHeader } from "@/components/ui/card";
 import { TabLinks, TableWrap } from "@/components/ui/misc";
 import { NavSelect } from "@/components/planning/nav-select";
-import { Sparkline } from "@/components/charts/acwr";
+import { Sparkline } from "@/components/charts";
 import { BodyGrid } from "@/components/performance/body-grid";
 import { getT } from "@/messages";
 

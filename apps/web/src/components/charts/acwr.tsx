@@ -47,17 +47,3 @@ export function LoadCharts({ data, loadLabel, ratioLabel, caption, height = 180 
     </div>
   );
 }
-
-/** Mini-grafic pentru tabele (greutate, încărcare): o linie, fără axe. */
-export function Sparkline({ values, label, width = 96, height = 28 }: { values: number[]; label: string; width?: number; height?: number }) {
-  if (values.length < 2) return <span className="text-sm text-ink-3">—</span>;
-  const min = Math.min(...values);
-  const max = Math.max(...values);
-  const span = max - min || 1;
-  const pts = values.map((v, i) => `${((i / (values.length - 1)) * (width - 4) + 2).toFixed(1)},${(height - 2 - ((v - min) / span) * (height - 4)).toFixed(1)}`).join(" ");
-  return (
-    <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} role="img" aria-label={label} className="shrink-0">
-      <polyline points={pts} fill="none" stroke={SERIES_COLORS[0]} strokeWidth={2} strokeLinejoin="round" strokeLinecap="round" />
-    </svg>
-  );
-}

@@ -133,8 +133,10 @@ export function BarsChart({ data, xKey = "x", valueKey = "value", label, caption
 }
 
 /** Bare stivuite — folosite pentru disponibilitate (disponibil / parțial / indisponibil). */
-export function StackedBarsChart({ data, xKey = "x", series, caption, height = 240 }: {
+export function StackedBarsChart({ data, xKey = "x", series, caption, height = 240, grouped = false }: {
   data: Row[]; xKey?: string; series: Series[]; caption: string; height?: number;
+  /** bare alăturate în loc de suprapuse (ex. goluri marcate / primite) */
+  grouped?: boolean;
 }) {
   const has = data.some((r) => series.some((s) => typeof r[s.key] === "number" && (r[s.key] as number) > 0));
   return (
@@ -148,7 +150,7 @@ export function StackedBarsChart({ data, xKey = "x", series, caption, height = 2
             <Tooltip {...tooltipStyle()} cursor={{ fill: "#f2f4f6" }} />
             <Legend iconType="square" wrapperStyle={{ fontSize: 13 }} formatter={(v) => <span style={{ color: "#36414f" }}>{v}</span>} />
             {series.map((s, i) => (
-              <Bar key={s.key} dataKey={s.key} name={s.label} stackId="a" fill={s.color ?? SERIES_COLORS[i % SERIES_COLORS.length]}
+              <Bar key={s.key} dataKey={s.key} name={s.label} stackId={grouped ? undefined : "a"} fill={s.color ?? SERIES_COLORS[i % SERIES_COLORS.length]}
                 maxBarSize={28} stroke="#fff" strokeWidth={2} isAnimationActive={false} />
             ))}
           </BarChart>
