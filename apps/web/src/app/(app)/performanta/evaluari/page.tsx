@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { ChevronRight, Star } from "lucide-react";
-import { can, formatDate, type Db } from "@club/shared";
+import { formatDate, type Db } from "@club/shared";
 import { requireCapability, visibleGroups } from "@/lib/auth";
 import { EmptyState, PageHeader } from "@/components/ui/card";
 import { StartRoundButton, TemplatesManager } from "@/components/performance/evaluation-admin";
