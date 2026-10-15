@@ -1,6 +1,6 @@
 import "server-only";
 import { createServiceDb } from "@club/db";
-import { formatDateShort, formatLei, leiInWords, PAYMENT_METHOD_LABELS, type Db } from "@club/shared";
+import { formatDateShort, formatLei, leiInWords, PAYMENT_METHOD_LABELS, PURCHASE_STATUS_LABELS, type Db } from "@club/shared";
 import { Report } from "@/components/reports/pdf";
 import { getT } from "@/messages";
 
@@ -76,4 +76,36 @@ export async function paymentProofPdf(db: Db, paymentId: string): Promise<{ byte
     { empty: t.noAllocations },
   );
   return { bytes: await doc.bytes(), name: `plata-${p.received_on}-${p.id.slice(0, 8)}.pdf` };
+}
+
+export async function purchaseRequestPdf(db: Db, id: string): Promise<{ bytes: Uint8Array; name: string } | null> {
+  const t = getT().money;
+  const d = t.documents;
+  const { data: r } = await db.from("purchase_requests").select("*, departments(name), groups(name)").eq("id", id).maybeSingle();
+  if (!r) return null;
+  const { data: items } = await db.from("purchase_request_items").select("*").eq("request_id", id).order("position");
+  const club = await clubInfo(r.club_id);
+  const [author, decider] = await Promise.all([issuerName(r.requested_by), issuerName(r.decided_by)]);
+  const doc = await Report.create({
+    club: club.name, title: d.requestTitle(r.number), subtitle: `${formatDateShort(r.created_at.slice(0, 10))} · ${t.purchases.cols.status}: ${PURCHASE_STATUS_LABELS[r.status] ?? r.status}`,
+    generated: "", footer: d.footer, pageLabel: (n, total) => `${n} / ${total}`,
+  });
+  doc.keyValues([
+    [t.purchases.cols.author, author], [t.purchases.cols.department, (r.departments as { name: string } | null)?.name ?? "—"],
+    [t.purchases.form.team, (r.groups as { name: string } | null)?.name ?? "—"], [t.purchases.form.neededBy, r.needed_by ? formatDateShort(r.needed_by) : "—"],
+  ], 2);
+  doc.heading(t.purchases.form.justification, 30);
+  doc.paragraph(r.justification);
+  doc.heading(t.purchases.form.items, 40);
+  doc.table(
+    [{ header: t.purchases.form.item.name, width: 0.4 }, { header: t.purchases.form.item.qty, width: 0.12, align: "right" }, { header: t.purchases.form.item.price, width: 0.16, align: "right" },
+     { header: t.purchases.form.item.vat, width: 0.1, align: "right" }, { header: t.purchases.form.totals.total, width: 0.22, align: "right" }],
+    (items ?? []).map((i) => [`${i.name}${i.details ? ` — ${i.details}` : ""}`, `${Number(i.quantity).toLocaleString("ro-RO")} ${i.unit}`, formatLei(i.unit_price, { decimals: "always", currency: false }), `${i.vat_rate}%`, formatLei(i.line_net + i.line_vat, { decimals: "always" })]),
+  );
+  doc.keyValues([[t.purchases.form.totals.net, formatLei(r.total_net, { decimals: "always" })], [t.purchases.form.totals.vat, formatLei(r.total_vat, { decimals: "always" })], [t.purchases.form.totals.total, formatLei(r.total, { decimals: "always" })]], 1);
+  if (r.decided_at) {
+    doc.space(10);
+    doc.paragraph(`${t.purchases.detail.decidedBy(decider ?? "—", formatDateShort(r.decided_at.slice(0, 10)))}${r.decision_note ? ` — ${r.decision_note}` : ""}`, { bold: true });
+  }
+  return { bytes: await doc.bytes(), name: `referat-${r.number}.pdf` };
 }

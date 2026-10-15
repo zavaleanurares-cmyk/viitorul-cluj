@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { CircleCheck } from "lucide-react";
 import { CONSENT_VERSION, consentAudience, consentText, homePath, isMinor } from "@club/shared";
 import { requireSession } from "@/lib/auth";
 import { Notice } from "@/components/ui/card";
@@ -22,8 +23,9 @@ export default async function ConsentPage() {
       {minor ? <Notice tone="yellow" className="mt-4">{t.minorNote}</Notice> : null}
       <ul className="mt-5 space-y-3">
         {text.points.map((p, i) => (
-          <li key={i} className="border-l-4 border-line-strong pl-3 text-ink-2">
-            {p}
+          <li key={i} className="flex gap-3 text-ink-2">
+            <CircleCheck className="mt-0.5 size-5 shrink-0 text-ink-3" aria-hidden />
+            <span>{p}</span>
           </li>
         ))}
       </ul>

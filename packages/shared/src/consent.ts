@@ -3,9 +3,12 @@ import type { AppRole } from "./roles";
 /** Versiunea textului de consimțământ. Se schimbă la orice modificare de fond; utilizatorii reacceptă. */
 export const CONSENT_VERSION = "2026-10-v1";
 
-export type ConsentAudience = "player_adult" | "player_minor_guardian" | "staff";
+export type ConsentAudience = "player_adult" | "player_minor_guardian" | "staff" | "office" | "guardian";
 
+/** Ce text vede fiecare rol la primul login: staff-ul cu acces medical, biroul (fără date medicale), părintele, jucătorul. */
 export function consentAudience(role: AppRole, minor: boolean | null): ConsentAudience {
+  if (role === "guardian") return "guardian";
+  if (role === "admin" || role === "secretary" || role === "accountant") return "office";
   if (role !== "player") return "staff";
   return minor ? "player_minor_guardian" : "player_adult";
 }
@@ -19,6 +22,32 @@ export function consentText(audience: ConsentAudience, clubName: string): { titl
     "preparatorul fizic al clubului (toate datele), antrenorii grupei din care faci parte (fișa medicală completă, " +
     "chestionarele și datele fizice — doar citire), directorul sportiv (fișa sumară: datele de bază, starea curentă și istoricul stărilor, zona accidentată, observațiile, restricțiile de antrenament, data estimată de revenire și viza medicală — fără diagnostice, documente sau chestionare), " +
     "conducerea clubului (doar cifre de ansamblu, fără nume) și, dacă ești trimis la un control, partenerul medical al clubului (doar cazul respectiv)";
+  if (audience === "office") {
+    return {
+      title: "Confidențialitatea datelor",
+      intro: `Prin contul tău ai acces la datele personale ale jucătorilor și ale familiilor de la ${clubName}: contacte, lot, program și, după rol, plățile. O parte dintre jucători sunt minori.`,
+      points: [
+        "Folosești datele doar pentru activitatea clubului.",
+        "Nu le copiezi, nu le fotografiezi și nu le transmiți în afara aplicației.",
+        "Nu îți împrumuți contul și nu lași aplicația deschisă pe dispozitive folosite de alții.",
+        "Modificările de date și operațiunile cu bani sunt înregistrate în jurnalul de audit.",
+      ],
+      accept: "Am înțeles și respect aceste reguli",
+    };
+  }
+  if (audience === "guardian") {
+    return {
+      title: "Contul tău de părinte",
+      intro: `${clubName} folosește această aplicație pentru program, prezență, meciuri și taxe. În contul tău vezi doar ce privește copiii tăi.`,
+      points: [
+        "Vezi programul echipei, prezența și meciurile copilului, taxele de plată și plățile făcute, cu chitanțele.",
+        "Datele medicale ale copilului le văd doar preparatorul fizic și antrenorii lui; în contul tău apare doar dacă este disponibil.",
+        "Plățile online trec prin operatorul de plăți al clubului; clubul nu vede și nu păstrează datele cardului.",
+        "Poți cere oricând o copie a datelor, corectarea sau ștergerea lor, din Profil sau direct la club.",
+      ],
+      accept: "Am înțeles",
+    };
+  }
   if (audience === "staff") {
     return {
       title: "Confidențialitatea datelor medicale",

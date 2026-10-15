@@ -42,4 +42,14 @@ export const today = {
   childNoEvents: "Nimic programat în următoarele 7 zile.",
   childAttendance: (p: number, n: number) => `Prezență în ultimele 30 de zile: ${p} din ${n}`,
   noChildren: "Contul nu e legat încă de niciun copil. Cere secretariatului să te lege de fișa copilului.",
+  money: {
+    title: "Bani de rezolvat",
+    overdue: (amount: string, families: number) => `${amount} restanțe · ${plural(families, "familie", "familii")}`,
+    unallocated: (n: number) => `${plural(n, "plată", "plăți")} de asociat`,
+    bank: (n: number) => `${plural(n, "rând", "rânduri")} din extras nerezolvate`,
+    requests: (n: number) => `${plural(n, "referat", "referate")} de aprobat`,
+    familyDue: (amount: string) => `De plată: ${amount}`,
+    familyLate: (n: number) => (n === 1 ? "O taxă a trecut de scadență" : `${plural(n, "taxă", "taxe")} trecute de scadență`),
+    pay: "Plătește",
+  },
 } as const;

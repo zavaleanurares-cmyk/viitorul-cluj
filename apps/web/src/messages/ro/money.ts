@@ -306,6 +306,7 @@ export const money = {
       reopen: "Redeschide",
     },
     resolved: "Rândul a fost rezolvat.",
+    resolve: "Rezolvă",
     wizard: {
       title: "Import extras de cont",
       step1: "Fișierul",
@@ -567,6 +568,7 @@ export const money = {
     receiptTitle: "Chitanță",
     receiptSubtitle: (series: string, n: number, date: string) => `Seria ${series} nr. ${n} din ${date}`,
     proofTitle: "Dovada plății",
+    requestTitle: (n: number) => `Referat de necesitate nr. ${n}`,
     proofSubtitle: (date: string) => `Plată primită pe ${date}`,
     beneficiary: "Beneficiar",
     fiscalCode: "Cod fiscal",

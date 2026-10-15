@@ -28,6 +28,8 @@ export const squad = {
   },
   player: {
     back: "Lot",
+    feesOk: "Taxe la zi",
+    feesOverdue: (amount: string) => `Restanță ${amount}`,
     edit: "Modifică",
     medicalFile: "Fișa medicală",
     identity: "Date",

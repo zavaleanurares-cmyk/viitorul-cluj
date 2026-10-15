@@ -9,6 +9,7 @@ import { requestTime } from "@/lib/request-time";
 import { getT } from "@/messages";
 import { cn } from "@/lib/cn";
 import { PendingSyncNotice, WarmOffline } from "./client-bits";
+import { MoneyTodayCard } from "@/components/money/today-cards";
 
 type Todo = { key: string; text: string; href: string; tone: "red" | "orange" | "blue"; icon: typeof Clock };
 
@@ -89,6 +90,7 @@ export async function StaffToday({ db, ctx }: { db: Db; ctx: AppContext }) {
       <h1 className="text-2xl md:text-3xl">{capitalize(formatDate(ctx.today, { weekday: true, year: false }))}</h1>
       <WarmOffline urls={warm} />
       {runs ? <PendingSyncNotice /> : null}
+      <MoneyTodayCard db={db} ctx={ctx} />
 
       {!isCoach ? (
         <div className="grid grid-cols-2 gap-3 md:grid-cols-4">

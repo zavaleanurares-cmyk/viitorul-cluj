@@ -216,7 +216,7 @@ try {
   check("plata din extras se leagă de cheltuială", !(await errored(accountant.rpc("resolve_bank_line", { p_line: debit, p: { action: "match_expense", expense_id: exp } }))));
   must(await accountant.from("budget_lines").insert({ club_id: clubA, year: 2026, month: 10, kind: "expense", department_id: dept, amount: lei(1000) }).select("id"), "buget");
   const br = must(await owner.rpc("budget_report", { p_year: 2026 }), "buget patron") as { departments: Array<{ planned: number[]; actual: number[] }> };
-  check("bugetul arată planificat vs realizat", br.departments[0].planned[9] === lei(1000) && br.departments[0].actual[9] === lei(1200), br.departments[0]);
+  check("bugetul arată planificat vs realizat, pe luni", br.departments[0].planned[9] === lei(1000) && br.departments[0].planned[0] === 0 && br.departments[0].actual[9] === lei(1200) && br.departments[0].actual[8] === 0, br.departments[0]);
 
   // -------------------------------------------------------------------------
   console.log("\nRapoarte");

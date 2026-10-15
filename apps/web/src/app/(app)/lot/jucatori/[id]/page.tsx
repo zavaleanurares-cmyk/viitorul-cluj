@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Ban, ChevronLeft, HeartPulse, Pencil, Phone } from "lucide-react";
-import { ABSENCE_REASON_LABELS, ATTENDANCE_LABELS, ageOn, can, formatDate, formatDateShort, seasonStart, type AbsenceReason, type AttendanceStatus } from "@club/shared";
+import { Ban, ChevronLeft, CircleAlert, CircleCheck, HeartPulse, Pencil, Phone } from "lucide-react";
+import { ABSENCE_REASON_LABELS, ATTENDANCE_LABELS, ageOn, can, formatDate, formatDateShort, formatLei, seasonStart, type AbsenceReason, type AttendanceStatus } from "@club/shared";
 import { requireCapability } from "@/lib/auth";
 import { LinkButton } from "@/components/ui/button";
 import { Card, CardBody, CardHeader, Notice, Stat } from "@/components/ui/card";
@@ -33,6 +33,9 @@ export default async function SquadPlayerPage({ params }: { params: Promise<{ id
   const age = ageOn(player.birth_date, ctx.today);
   const canManage = can(ctx.role, "manageSquad");
   const canMedical = can(ctx.role, "viewMedicalFile") || can(ctx.role, "viewPlayerList");
+  const finance = can(ctx.role, "manageMoney");
+  const fees = finance ? (await db.from("charge_balances").select("balance, due_on").eq("player_id", id).eq("status", "open").gt("balance", 0)).data ?? [] : null;
+  const overdue = (fees ?? []).filter((c) => c.due_on < ctx.today).reduce((s, c) => s + c.balance, 0);
 
   return (
     <div className="space-y-4">
@@ -48,6 +51,12 @@ export default async function SquadPlayerPage({ params }: { params: Promise<{ id
           <div className="mt-2 flex flex-wrap items-center gap-2">
             {status ? <StatusChip status={status} full /> : null}
             <VisaChip {...visa} expires={player.medical_visa_expires_on} size="md" />
+            {fees ? (
+              <Link href="/bani/taxe?vedere=grila" className={overdue ? "inline-flex h-8 items-center gap-1 rounded-md bg-st-red px-2.5 text-sm font-semibold text-white" : "inline-flex h-8 items-center gap-1 rounded-md bg-st-green-soft px-2.5 text-sm font-semibold text-ink"}>
+                {overdue ? <CircleAlert className="size-4" aria-hidden /> : <CircleCheck className="size-4" aria-hidden />}
+                {overdue ? p.feesOverdue(formatLei(overdue)) : p.feesOk}
+              </Link>
+            ) : null}
             {!player.is_active ? <span className="inline-flex h-8 items-center rounded-md bg-st-gray px-2.5 text-sm font-semibold text-white">{p.inactive}</span> : null}
           </div>
         </div>
