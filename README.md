@@ -1,3 +1,11 @@
+# Locker Room
+
+Platforma de administrare a clubului de fotbal: echipe, jucători, familii, program, meciuri, antrenamente, performanță, bani și comunicare, într-o singură aplicație multi-club, în limba română. Înlocuiește The Football Brain la Viitorul Cluj.
+
+Locker Room pornește din Vestiar, platforma medicală și de pregătire fizică descrisă mai jos, care devine spațiul de lucru **Performanță**. Istoricul Vestiar este păstrat în acest depozit. Planul de reconstrucție (arhitectura informației, modelul de date, etapele) este documentul „Locker Room — Rebuild Plan”.
+
+---
+
 # Platformă medicală și de pregătire fizică pentru cluburi de fotbal
 
 Aplicație web în care un club ține evidența stării medicale și fizice a fiecărui jucător, iar preparatorul fizic prescrie și urmărește programe de prevenție, recuperare și planuri zilnice. Fiecare jucător are contul lui și își vede doar pagina lui; permisiunile sunt impuse în baza de date, nu doar în interfață. Aplicația este multi-club (nume, siglă, culori, grupe și stări sunt date de configurare) și este în limba română. Primul client: Viitorul Cluj.
