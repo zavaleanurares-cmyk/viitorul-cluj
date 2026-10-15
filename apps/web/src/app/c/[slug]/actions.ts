@@ -45,3 +45,29 @@ export async function submitEnrolment(slug: string, input: z.input<typeof Enrolm
   if (error) return { ok: false, error: friendlyError(error) || t.site.errors.generic };
   return { ok: true };
 }
+
+const Camp = z.object({
+  childName: z.string().trim().min(3).max(120),
+  birthDate: z.iso.date(),
+  parentName: z.string().trim().min(3).max(120),
+  email: z.union([z.email(), z.literal("")]).optional(),
+  phone: z.string().trim().max(20).optional(),
+  notes: z.string().trim().max(1000).optional(),
+  consent: z.literal(true),
+});
+
+export async function submitCampRegistration(slug: string, campId: string, input: z.input<typeof Camp>, meta: { startedAt: number; website?: string }): Promise<PublicResult> {
+  const t = getT();
+  const v = Camp.safeParse(input);
+  if (!v.success || !z.uuid().safeParse(campId).success) return { ok: false, error: input.consent ? t.club.enrolment.errors.invalid : t.club.camps.public.consent };
+  if (!v.data.email && !v.data.phone) return { ok: false, error: t.club.enrolment.errors.contact };
+  if (looksLikeBot(meta)) return { ok: false, error: t.site.errors.tooFast };
+  const d = v.data;
+  const { error } = await createAnonDb().rpc("submit_camp_registration", {
+    p_slug: slug, p_camp: campId,
+    p: { child_name: d.childName, birth_date: d.birthDate, parent_name: d.parentName, parent_email: d.email ?? "", parent_phone: d.phone ?? "", notes: d.notes ?? "", consent: true },
+    p_ip: (await visitorIp()) ?? undefined,
+  });
+  if (error) return { ok: false, error: friendlyError(error) || t.site.errors.generic };
+  return { ok: true };
+}

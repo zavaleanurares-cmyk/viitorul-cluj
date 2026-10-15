@@ -1,11 +1,13 @@
 /** Spațiul Club (faza 4): mesaje, înscrieri, contracte, tabere, site, magazin, suporteri. */
 import { enrolment } from "./enrolment";
+import { camps } from "./camps";
 
 const persoane = (n: number) => (n === 1 ? "o persoană" : n < 20 ? `${n} persoane` : `${n} de persoane`);
 
 export const club = {
   people: persoane,
   enrolment,
+  camps,
   onboarding: {
     title: "Primii pași în club",
     description: "Câteva lucruri de făcut după înscriere. Durează câteva minute.",

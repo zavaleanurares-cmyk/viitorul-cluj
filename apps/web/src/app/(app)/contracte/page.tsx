@@ -4,6 +4,7 @@ import { formatDate } from "@club/shared";
 import { requireRole } from "@/lib/auth";
 import { EmptyState, PageHeader } from "@/components/ui/card";
 import { getT } from "@/messages";
+import { FamilyClubTabs } from "@/components/club/family-tabs";
 
 export const metadata = { title: "Documente" };
 
@@ -28,6 +29,7 @@ export default async function FamilyContracts() {
   );
   return (
     <div className="mx-auto max-w-2xl space-y-4">
+      <FamilyClubTabs current="documents" />
       <PageHeader title={t.family.title} description={t.family.description} />
       {!data?.length ? <EmptyState icon={<FileSignature className="size-8" aria-hidden />} title={t.family.empty} /> : null}
       {pending.length ? (<section><h2 className="mb-2 text-lg">{t.family.pending}</h2><ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface">{pending.map((c) => <Row key={c.id} c={c} />)}</ul></section>) : null}

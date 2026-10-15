@@ -134,6 +134,7 @@ export const NAV: Record<AppRole, NavItem[]> = {
     { href: "/azi", key: "today", icon: "home" },
     { href: "/chestionar", key: "questionnaire", icon: "clipboard" },
     { href: "/plan", key: "plan", icon: "calendar" },
+    { href: "/mesaje", key: "familyClub", icon: "megaphone", match: ["/clipuri", "/evaluari", "/contracte", "/tabere", "/magazin"] },
     profile,
   ],
   coach: [today, schedule, squad, performance("/disponibilitate"), club("/club/mesaje"), purchases, profile],
@@ -143,7 +144,7 @@ export const NAV: Record<AppRole, NavItem[]> = {
   secretary: [today, schedule, squad, money, club("/club/mesaje"), profile],
   accountant: [today, money, squad, club("/club/magazin"), profile],
   owner: [{ href: "/tablou", key: "overview", icon: "dashboard" }, money, profile],
-  guardian: [today, { href: "/plati", key: "familyPayments", icon: "wallet" }, { href: "/mesaje", key: "inbox", icon: "megaphone", match: ["/clipuri", "/evaluari", "/contracte"] }, profile],
+  guardian: [today, { href: "/plati", key: "familyPayments", icon: "wallet" }, { href: "/mesaje", key: "familyClub", icon: "megaphone", match: ["/clipuri", "/evaluari", "/contracte", "/tabere", "/magazin"] }, profile],
   medical_partner: [
     { href: "/cazuri", key: "cases", icon: "stethoscope" },
     profile,

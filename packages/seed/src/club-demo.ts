@@ -51,6 +51,40 @@ export async function seedClubDemo(admin: Db, clubId: string, ids: Record<string
   await seedMessages(admin, clubId, ids, today);
   await seedContracts(admin, clubId, ids, today);
   await seedEnrolment(admin, clubId, ids, today);
+  await seedCamps(admin, clubId, ids, today);
+}
+
+/** Tabere: una de iarnă cu înscrieri (copilul părintelui demo confirmat, două de pe site de confirmat), una în pregătire, una trecută. */
+async function seedCamps(admin: Db, clubId: string, ids: Record<string, string>, today: string) {
+  const { count } = await admin.from("camps").select("id", { count: "exact", head: true }).eq("club_id", clubId);
+  if (count || !ids.secretariat || !ids.parinte) return;
+  const office = createDb({ sub: ids.secretariat, role: "authenticated" });
+  const year = Number(today.slice(0, 4));
+  const winter = await rpc<string>(office, "save_camp", { p: {
+    title: "Tabăra de iarnă", location: "Baza sportivă Feleacu", starts_on: `${year}-12-27`, ends_on: `${year}-12-30`, price: 85000, capacity: 24,
+    birth_year_from: year - 18, birth_year_to: year - 12, deadline: `${year}-12-15`, status: "open", is_public: true,
+    description: "Patru zile de pregătire: două antrenamente pe zi, sală de forță, analiză video și un turneu în ultima zi.\n\nPrețul include cazarea, trei mese pe zi și transportul din Cluj. Copiii au nevoie de echipament de sală și de teren sintetic.",
+  } }, "tabăra de iarnă");
+  await rpc(office, "save_camp", { p: {
+    title: "Tabăra de vară pentru portari", location: "Gilău", starts_on: `${year + 1}-07-06`, ends_on: `${year + 1}-07-10`, price: 120000, capacity: 12,
+    birth_year_from: year - 18, birth_year_to: year - 10, status: "draft", is_public: true,
+  } }, "tabăra de vară");
+  const past = await rpc<string>(office, "save_camp", { p: {
+    title: "Cantonament de vară", location: "Sovata", starts_on: `${year}-07-20`, ends_on: `${year}-07-26`, price: 0, capacity: 30, status: "open", is_public: false,
+  } }, "cantonament");
+  await admin.from("camps").update({ status: "closed" }).eq("id", past);
+  const { data: g } = await admin.from("guardians").select("guardian_players(player_id)").eq("user_id", ids.parinte).eq("club_id", clubId).maybeSingle();
+  const child = (g?.guardian_players as Array<{ player_id: string }> | undefined)?.[0]?.player_id;
+  if (child) {
+    const parent = createDb({ sub: ids.parinte, role: "authenticated" });
+    await rpc(parent, "register_camp", { p_camp: winter, p_player: child, p_notes: "Nu mănâncă lactate." }, "înscriere copil demo");
+  }
+  const { data: club } = await admin.from("clubs").select("slug").eq("id", clubId).single();
+  const anon = createDb({ role: "anon" });
+  for (const [name, age, parent, phone] of [["Lazăr Mihai", 13, "Lazăr Corina", "0744555666"], ["Pavel Erik", 14, "Pavel Ionuț", "0733444555"]] as const) {
+    await rpc(anon, "submit_camp_registration", { p_slug: club!.slug, p_camp: winter, p_ip: `203.0.113.${age}`,
+      p: { child_name: name, birth_date: `${year - age}-04-0${age % 9 + 1}`, parent_name: parent, parent_phone: phone, consent: true } }, `înscriere ${name}`);
+  }
 }
 
 /** Înscrieri: cereri în toate etapele, una cu probă la următorul antrenament U17 (o vede antrenorul de juniori). */

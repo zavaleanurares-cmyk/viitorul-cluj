@@ -14,6 +14,7 @@ import { VisaFamilyNotice } from "@/components/performance/visa-family";
 import { FamilyEvaluationsCard } from "@/components/performance/family-evaluations";
 import { FamilyClipsCard } from "@/components/performance/family-clips";
 import { FamilyContractsCard } from "@/components/club/family-contracts";
+import { FamilyCampsCard } from "@/components/club/family-camps";
 import { visaState } from "@/components/squad/queries";
 
 function capitalize(s: string) {
@@ -46,6 +47,7 @@ export async function PlayerToday({ db, ctx }: Pick<Session, "db" | "ctx">) {
       <FamilyContractsCard db={db} />
       <FamilyEvaluationsCard db={db} />
       <FamilyClipsCard db={db} />
+      <FamilyCampsCard db={db} today={ctx.today} />
       <VisaFamilyNotice playerId={player.id} playerName={player.display_name} state={visa.state} today={ctx.today} last={docs.data?.[0] ?? null} self />
 
       {entry ? (

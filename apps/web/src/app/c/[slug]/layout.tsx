@@ -66,4 +66,4 @@ export default async function PublicLayout({ children, params }: { children: Rea
 }
 
 /** Paginile publice care există deja (se completează pe măsură ce modulele Club sunt gata). */
-const PUBLIC_PAGES = new Set(["/", "/inscriere"]);
+const PUBLIC_PAGES = new Set(["/", "/inscriere", "/tabere"]);

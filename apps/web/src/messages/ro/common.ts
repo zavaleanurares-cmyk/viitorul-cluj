@@ -1,5 +1,6 @@
 /** Texte comune. Fiecare modul are propriul fișier în acest director. */
 export const common = {
+  familyClub: { messages: "Mesaje", documents: "Documente", camps: "Tabere", shop: "Magazin" },
   appTagline: "Lot, program, performanță",
   actions: {
     save: "Salvează",
@@ -76,6 +77,7 @@ export const common = {
     tools: "Instrumente",
     messages: "Mesaje",
     inbox: "Mesaje",
+    familyClub: "Club",
     enrolment: "Înscrieri",
     contracts: "Contracte",
     camps: "Tabere",

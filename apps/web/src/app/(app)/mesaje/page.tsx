@@ -5,6 +5,7 @@ import { requireSession } from "@/lib/auth";
 import { EmptyState, PageHeader } from "@/components/ui/card";
 import { cn } from "@/lib/cn";
 import { getT } from "@/messages";
+import { FamilyClubTabs } from "@/components/club/family-tabs";
 
 export const metadata = { title: "Mesaje" };
 
@@ -18,6 +19,7 @@ export default async function InboxPage() {
     .sort((a, b) => (b.sent_at ?? "").localeCompare(a.sent_at ?? ""));
   return (
     <div className="mx-auto max-w-2xl">
+      {ctx.role === "guardian" || ctx.role === "player" ? <FamilyClubTabs current="messages" /> : null}
       <PageHeader title={t.inbox} description={t.inboxDescription} />
       {!rows.length ? <EmptyState icon={<Megaphone className="size-8" aria-hidden />} title={t.inboxEmpty} /> : (
         <ul className="divide-y divide-line overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface">

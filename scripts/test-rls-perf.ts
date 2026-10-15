@@ -395,6 +395,49 @@ try {
   check("părintele își trece mărimea echipamentului copilului", !(await errored(guardian.rpc("set_kit_size", { p_player: p3, p_size: "140" })))
     && (await admin.from("players").select("kit_size").eq("id", p3).single()).data?.kit_size === "140");
   check("părintele NU schimbă mărimea altui copil", await errored(guardian.rpc("set_kit_size", { p_player: p2, p_size: "152" })));
+  // -------------------------------------------------------------------------
+  console.log("\nTabere");
+  const campBody = { title: "Tabăra de iarnă", starts_on: day(30), ends_on: day(34), price: 30000, capacity: 2, birth_year_from: 2011, birth_year_to: 2013, status: "open", is_public: true };
+  check("antrenorul NU organizează tabere", await errored(coach.rpc("save_camp", { p: campBody })));
+  check("contabilul NU organizează tabere", await errored(accountant.rpc("save_camp", { p: campBody })));
+  const campRes = await secretary.rpc("save_camp", { p: campBody });
+  check("secretariatul creează tabăra", !campRes.error, campRes);
+  const campId = campRes.data as string;
+  const draft = (await secretary.rpc("save_camp", { p: { ...campBody, title: "Ciornă", status: "draft" } })).data as string;
+  check("părintele vede tabăra deschisă, nu și ciorna", (await rows(guardian.from("camps").select("id").eq("id", campId))) === 1 && (await rows(guardian.from("camps").select("id").eq("id", draft))) === 0);
+  check("părintele NU înscrie copilul altcuiva", await errored(guardian.rpc("register_camp", { p_camp: campId, p_player: p2 })));
+  check("jucătorul minor NU se înscrie singur", await errored(player1.rpc("register_camp", { p_camp: campId, p_player: p1 })));
+  const r3 = await guardian.rpc("register_camp", { p_camp: campId, p_player: p3, p_notes: "Alergic la arahide" });
+  check("părintele înscrie copilul: loc confirmat", r3.data === "confirmed", r3);
+  const reg3 = must(await admin.from("camp_registrations").select("id, charge_id").eq("camp_id", campId).eq("player_id", p3).single(), "înscrierea 3");
+  const ch3 = must(await admin.from("charges").select("kind, amount, guardian_id, status").eq("id", reg3.charge_id!).single(), "taxa 3");
+  check("taxa taberei intră în registrul familiei", ch3.kind === "camp" && ch3.amount === 30000 && ch3.guardian_id === gId && ch3.status === "open", ch3);
+  check("a doua înscriere a aceluiași copil e refuzată", await errored(guardian.rpc("register_camp", { p_camp: campId, p_player: p3 })));
+  check("al doilea părinte ocupă ultimul loc", (await guardian2.rpc("register_camp", { p_camp: campId, p_player: p2 })).data === "confirmed");
+  check("biroul înscrie un al treilea: listă de așteptare", (await secretary.rpc("register_camp", { p_camp: campId, p_player: p1 })).data === "waitlist");
+  check("părintele vede doar înscrierea lui (cu nota)", (await rows(guardian.from("camp_registrations").select("id"))) === 1
+    && (await guardian.from("camp_registrations").select("notes").single()).data?.notes === "Alergic la arahide");
+  check("antrenorul NU vede înscrierile (note medicale)", (await rows(coach.from("camp_registrations").select("id"))) === 0);
+  check("contabilul NU vede înscrierile", (await rows(accountant.from("camp_registrations").select("id"))) === 0);
+  check("alt club NU vede taberele", (await rows(secretaryB.from("camps").select("id"))) === 0);
+  check("vizitatorul vede tabăra publică fără nume", ((await anon.rpc("public_camps", { p_slug: slugA })).data as Array<{ spots_left: number }>)?.[0]?.spots_left === 0);
+  check("vizitatorul NU citește înscrierile", (await rows(anon.from("camp_registrations").select("id"))) === 0 || await errored(anon.from("camp_registrations").select("id")));
+  check("de pe site: vârsta din afara intervalului e refuzată", await errored(anon.rpc("submit_camp_registration", { p_slug: slugA, p_camp: campId, p: { child_name: "Copil Mare", birth_date: "2005-01-01", parent_name: "Părinte X", parent_phone: "0700000000", consent: true }, p_ip: "198.51.100.20" })));
+  const pubCamp = await anon.rpc("submit_camp_registration", { p_slug: slugA, p_camp: campId, p: { child_name: "Copil Din Oraș", birth_date: "2012-06-01", parent_name: "Părinte Oraș", parent_phone: "0711222333", consent: true }, p_ip: "198.51.100.20" });
+  check("de pe site: înscrierea așteaptă confirmarea", !pubCamp.error, pubCamp);
+  check("de pe site: tabăra ciornă nu primește înscrieri", await errored(anon.rpc("submit_camp_registration", { p_slug: slugA, p_camp: draft, p: { child_name: "Copil Ciornă", birth_date: "2012-06-01", parent_name: "Părinte X", parent_phone: "0711222333", consent: true }, p_ip: "198.51.100.21" })));
+  const pubReg = must(await admin.from("camp_registrations").select("id, status").eq("camp_id", campId).eq("child_name", "Copil Din Oraș").single(), "înscrierea publică");
+  check("biroul NU confirmă peste numărul de locuri", pubReg.status === "pending" && await errored(secretary.rpc("confirm_camp_registration", { p_id: pubReg.id })));
+  check("locurile nu scad sub cele confirmate", await errored(secretary.rpc("save_camp", { p: { ...campBody, id: campId, capacity: 1 } })));
+  check("prețul nu se schimbă după confirmări", await errored(secretary.rpc("save_camp", { p: { ...campBody, id: campId, price: 1 } })));
+  check("alt părinte NU anulează înscrierea", await errored(guardian2.rpc("cancel_camp_registration", { p_id: reg3.id })));
+  check("părintele renunță înainte de tabără", !(await errored(guardian.rpc("cancel_camp_registration", { p_id: reg3.id, p_reason: "Plecăm în vacanță" }))));
+  check("taxa neplătită se anulează", (await admin.from("charges").select("status").eq("id", reg3.charge_id!).single()).data?.status === "cancelled");
+  const promoted = must(await admin.from("camp_registrations").select("status, charge_id").eq("camp_id", campId).eq("player_id", p1).single(), "promovat");
+  check("primul de pe lista de așteptare urcă, cu taxa lui", promoted.status === "confirmed" && !!promoted.charge_id, promoted);
+  check("plata directă nu se marchează pe o înscriere cu taxă în registru", await errored(secretary.rpc("set_camp_paid", { p_id: reg3.id, p_paid: true })));
+  check("plata directă se marchează pe înscrierea de pe site", !(await errored(secretary.rpc("set_camp_paid", { p_id: pubReg.id, p_paid: true, p_note: "numerar" }))));
+  check("curățarea datelor e doar a sarcinii programate", await errored(secretary.rpc("purge_camp_data")));
   void adminU; void player1;
 } finally {
   await cleanup();

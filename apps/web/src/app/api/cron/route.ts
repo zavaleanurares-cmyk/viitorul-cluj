@@ -94,6 +94,13 @@ export async function GET(request: NextRequest) {
     return { deleted: data ?? 0 };
   });
 
+  // Notele pentru organizatori și contactele copiilor din afara clubului, la 30 de zile după tabără
+  await step("camp_purge", result, async () => {
+    const { data, error } = await admin.rpc("purge_camp_data");
+    if (error) throw new Error(error.message);
+    return { cleared: data ?? 0 };
+  });
+
   await step("reminders", result, async () => {
     const { data, error } = await admin.rpc("send_wellness_reminders");
     if (error) throw new Error(error.message);
