@@ -68,7 +68,7 @@ async function seedBody(admin: Db, clubId: string, today: string) {
   await admin.from("anthropometrics").delete().in("player_id", ids);
   let seed = 4242;
   const rnd = () => ((seed = (seed * 1664525 + 1013904223) % 4294967296) / 4294967296);
-  const rows: Array<Record<string, unknown>> = [];
+  const rows: Array<{ player_id: string; measured_on: string; weight_kg: number; height_cm: number | null; body_fat_pct: number; notes: string | null }> = [];
   ids.forEach((id, i) => {
     const base = first.get(id) ?? { w: 62 + Math.round(rnd() * 16), h: 172 + Math.round(rnd() * 14) };
     const losing = i % 11 === 3;
