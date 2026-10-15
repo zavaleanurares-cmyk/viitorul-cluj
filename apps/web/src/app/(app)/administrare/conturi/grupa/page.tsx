@@ -10,7 +10,7 @@ export const metadata = { title: "Conturi pentru o grupă" };
 
 /** Creare în masă: jucătorii fără cont ai unei grupe, cu câte un câmp de e-mail. */
 export default async function Page({ searchParams }: { searchParams: Promise<{ grupa?: string }> }) {
-  const { db, ctx } = await requireRole("physio");
+  const { db, ctx } = await requireRole("physio", "admin");
   const sp = await searchParams;
   const t = getT().admin.bulk;
   const { withoutAccount } = await loadAccounts(db, ctx);

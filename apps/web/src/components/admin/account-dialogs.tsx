@@ -15,8 +15,8 @@ import { Confirm } from "./confirm";
 import { InviteLink, type IssuedLink } from "./invite-link";
 import type { AccountRow, PlayerOption } from "./queries";
 
-type StaffRole = Exclude<AppRole, "player">;
-export const STAFF_ROLES: StaffRole[] = ["coach", "physio", "sporting_director", "owner", "medical_partner"];
+type StaffRole = Exclude<AppRole, "player" | "guardian">;
+export const STAFF_ROLES: StaffRole[] = ["coach", "secretary", "admin", "physio", "sporting_director", "accountant", "owner", "medical_partner"];
 
 function GroupChecks({ groups, value, onChange, legend }: { groups: Group[]; value: string[]; onChange: (v: string[]) => void; legend: string }) {
   return (
@@ -169,7 +169,7 @@ export function AccountDialog({ account, onClose, groups, freePlayers }: {
       footer={anonymized ? <Button variant="secondary" onClick={onClose}>{c.actions.close}</Button> : (
         <>
           <Button variant="secondary" onClick={onClose}>{c.actions.cancel}</Button>
-          <Button pending={save.pending} disabled={!dirty} onClick={() => save.run({ userId: account.id, fullName, email, role, groupIds })}>{t.save}</Button>
+          <Button pending={save.pending} disabled={!dirty} onClick={() => save.run({ userId: account.id, fullName, email, role: role as Exclude<AppRole, "guardian">, groupIds })}>{t.save}</Button>
         </>
       )}
     >

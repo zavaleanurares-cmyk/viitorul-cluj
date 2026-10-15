@@ -8,7 +8,7 @@ export const metadata = { title: "Conturi" };
 
 /** Conturile clubului. Conturile se creează doar aici, de către preparator (nu există înregistrare publică). */
 export default async function Page({ searchParams }: { searchParams: Promise<{ q?: string; rol?: string; stare?: string; jucator?: string }> }) {
-  const { db, ctx } = await requireRole("physio");
+  const { db, ctx } = await requireRole("physio", "admin");
   const sp = await searchParams;
   const t = getT().admin.accounts;
   const { accounts, withoutAccount } = await loadAccounts(db, ctx);

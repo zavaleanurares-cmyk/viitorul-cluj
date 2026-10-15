@@ -35,7 +35,7 @@ async function usage({ db }: Session, id: string) {
 }
 
 export async function createStatus(input: z.infer<typeof Fields>) {
-  return run({ roles: ["physio"], revalidate: PATHS, message: t.statuses.created }, async ({ db, ctx }) => {
+  return run({ roles: ["physio", "admin"], revalidate: PATHS, message: t.statuses.created }, async ({ db, ctx }) => {
     const v = Fields.parse(input);
     // codul se generează din etichetă și nu se mai schimbă
     const base = norm(v.label).replace(/ /g, "_").slice(0, 30) || "STARE";
@@ -53,7 +53,7 @@ export async function createStatus(input: z.infer<typeof Fields>) {
 const Update = Fields.extend({ id: z.uuid(), isActive: z.boolean() });
 
 export async function updateStatus(input: z.infer<typeof Update>) {
-  return run({ roles: ["physio"], revalidate: PATHS, message: t.statuses.saved }, async (session) => {
+  return run({ roles: ["physio", "admin"], revalidate: PATHS, message: t.statuses.saved }, async (session) => {
     const v = Update.parse(input);
     const status = await statusOf(session, v.id);
     if (!v.isActive && DEFAULTS.includes(status.code)) fail(t.errors.statusDefaultLocked);
@@ -65,7 +65,7 @@ export async function updateStatus(input: z.infer<typeof Update>) {
 }
 
 export async function moveStatus(input: { id: string; direction: "up" | "down" }) {
-  return run({ roles: ["physio"], revalidate: PATHS }, async ({ db, ctx }) => {
+  return run({ roles: ["physio", "admin"], revalidate: PATHS }, async ({ db, ctx }) => {
     const v = z.object({ id: z.uuid(), direction: z.enum(["up", "down"]) }).parse(input);
     const order = [...ctx.statuses].sort((a, b) => a.sort - b.sort);
     const i = order.findIndex((s) => s.id === v.id);
@@ -83,7 +83,7 @@ export async function moveStatus(input: { id: string; direction: "up" | "down" }
 
 /** O stare care a fost dată vreodată unui jucător nu se șterge (istoricul ar rămâne fără ea): se dezactivează. */
 export async function deleteStatus(input: { id: string }) {
-  return run({ roles: ["physio"], revalidate: PATHS, message: t.statuses.deleted }, async (session) => {
+  return run({ roles: ["physio", "admin"], revalidate: PATHS, message: t.statuses.deleted }, async (session) => {
     const v = z.object({ id: z.uuid() }).parse(input);
     const status = await statusOf(session, v.id);
     if (DEFAULTS.includes(status.code)) fail(t.errors.statusDefaultLocked);

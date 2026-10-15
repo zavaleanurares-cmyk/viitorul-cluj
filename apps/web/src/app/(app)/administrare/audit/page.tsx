@@ -21,7 +21,7 @@ const ACTION_TONE: Record<string, "gray" | "blue" | "red" | "yellow" | "green"> 
 
 /** Jurnalul de audit: cine, ce, când. Doar de citit — baza de date nu permite nimănui să-l modifice. */
 export default async function Page({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
-  const { db, ctx } = await requireRole("physio");
+  const { db, ctx } = await requireRole("physio", "admin");
   const sp = await searchParams;
   const t = getT().admin.audit;
   const c = getT().common;

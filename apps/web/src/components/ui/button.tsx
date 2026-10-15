@@ -10,7 +10,7 @@ const base =
   "transition-colors disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap";
 const variants: Record<Variant, string> = {
   primary: "bg-brand text-brand-ink hover:brightness-110 active:brightness-95",
-  secondary: "bg-surface text-ink border border-line-strong hover:bg-canvas active:bg-sunken",
+  secondary: "bg-surface text-ink border border-border-control hover:bg-canvas active:bg-sunken",
   ghost: "text-ink hover:bg-sunken active:bg-line",
   danger: "bg-st-red text-white hover:brightness-110 active:brightness-95",
 };

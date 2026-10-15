@@ -10,7 +10,7 @@ import { getT } from "@/messages";
 const t = getT().admin;
 const PATHS = ["/administrare", "/administrare/conturi"];
 
-const StaffRole = z.enum(["owner", "sporting_director", "physio", "coach", "medical_partner"]);
+const StaffRole = z.enum(["owner", "sporting_director", "physio", "coach", "medical_partner", "admin", "secretary", "accountant"]);
 const Email = z.string().trim().toLowerCase().pipe(z.email(t.errors.emailInvalid));
 const FullName = z.string().trim().min(2, t.errors.nameNeeded).max(120);
 const GroupIds = z.array(z.uuid()).max(50);
@@ -66,7 +66,7 @@ async function createAccount(
 const NewStaff = z.object({ fullName: FullName, email: Email, role: StaffRole, groupIds: GroupIds });
 
 export async function createStaffAccount(input: z.infer<typeof NewStaff>) {
-  return run<AccessLink>({ roles: ["physio"], revalidate: PATHS, message: t.accounts.created }, async (session) => {
+  return run<AccessLink>({ roles: ["physio", "admin"], revalidate: PATHS, message: t.accounts.created }, async (session) => {
     const v = NewStaff.parse(input);
     const groupIds = v.role === "coach" ? clubGroups(session, v.groupIds) : [];
     if (v.role === "coach" && !groupIds.length) fail(t.errors.coachNeedsGroup);
@@ -87,7 +87,7 @@ async function playerForAccount({ db }: Session, playerId: string) {
 const NewPlayerAccount = z.object({ playerId: z.uuid(), email: Email });
 
 export async function createPlayerAccount(input: z.infer<typeof NewPlayerAccount>) {
-  return run<AccessLink>({ roles: ["physio"], revalidate: PATHS, message: t.accounts.created }, async (session) => {
+  return run<AccessLink>({ roles: ["physio", "admin"], revalidate: PATHS, message: t.accounts.created }, async (session) => {
     const v = NewPlayerAccount.parse(input);
     const player = await playerForAccount(session, v.playerId);
     const userId = await createAccount(session, { email: v.email, fullName: player.full_name, role: "player", playerId: player.id });
@@ -100,7 +100,7 @@ export type BulkResult = { playerId: string; name: string; email: string } & ({ 
 
 /** Conturi pentru mai mulți jucători deodată. Un rând greșit nu le oprește pe celelalte. */
 export async function createPlayerAccounts(input: z.infer<typeof Bulk>) {
-  return run<BulkResult[]>({ roles: ["physio"], revalidate: PATHS }, async (session) => {
+  return run<BulkResult[]>({ roles: ["physio", "admin"], revalidate: PATHS }, async (session) => {
     const v = Bulk.parse(input);
     const seen = new Set<string>();
     const results: BulkResult[] = [];
@@ -130,7 +130,7 @@ export async function createPlayerAccounts(input: z.infer<typeof Bulk>) {
 const Update = z.object({ userId: z.uuid(), fullName: FullName, email: Email, role: z.enum([...StaffRole.options, "player"]), groupIds: GroupIds });
 
 export async function updateAccount(input: z.infer<typeof Update>) {
-  return run({ roles: ["physio"], revalidate: PATHS, message: t.accounts.saved }, async (session) => {
+  return run({ roles: ["physio", "admin"], revalidate: PATHS, message: t.accounts.saved }, async (session) => {
     const { db, ctx } = session;
     const v = Update.parse(input);
     const p = await targetProfile(session, v.userId);
@@ -169,7 +169,7 @@ const Target = z.object({ userId: z.uuid() });
 
 /** Invitație nouă (dacă parola nu a fost aleasă încă) sau link de resetare a parolei. */
 export async function sendAccessLink(input: z.infer<typeof Target>) {
-  return run<AccessLink>({ roles: ["physio"], revalidate: PATHS }, async (session) => {
+  return run<AccessLink>({ roles: ["physio", "admin"], revalidate: PATHS }, async (session) => {
     const v = Target.parse(input);
     const p = await targetProfile(session, v.userId);
     const user = await getUser(p.id);
@@ -183,7 +183,7 @@ export async function sendAccessLink(input: z.infer<typeof Target>) {
 const Active = z.object({ userId: z.uuid(), active: z.boolean() });
 
 export async function setAccountActive(input: z.infer<typeof Active>) {
-  return run({ roles: ["physio"], revalidate: PATHS, message: input.active ? t.accounts.enabled : t.accounts.disabled }, async (session) => {
+  return run({ roles: ["physio", "admin"], revalidate: PATHS, message: input.active ? t.accounts.enabled : t.accounts.disabled }, async (session) => {
     const v = Active.parse(input);
     const p = await targetProfile(session, v.userId);
     if (p.id === session.ctx.userId) fail(t.errors.notYourself);
@@ -197,7 +197,7 @@ export async function setAccountActive(input: z.infer<typeof Active>) {
 
 /** Dezleagă contul de fișa jucătorului. Contul rămâne, dezactivat: fără fișă nu are ce să arate. */
 export async function unlinkPlayer(input: z.infer<typeof Target>) {
-  return run({ roles: ["physio"], revalidate: PATHS, message: t.accounts.unlinked }, async (session) => {
+  return run({ roles: ["physio", "admin"], revalidate: PATHS, message: t.accounts.unlinked }, async (session) => {
     const v = Target.parse(input);
     const p = await targetProfile(session, v.userId);
     if (p.role !== "player") fail(t.errors.notPlayerAccount);
@@ -211,7 +211,7 @@ const Link = z.object({ userId: z.uuid(), playerId: z.uuid() });
 
 /** Leagă un cont de jucător rămas fără fișă de un jucător fără cont și îl reactivează. */
 export async function linkPlayer(input: z.infer<typeof Link>) {
-  return run({ roles: ["physio"], revalidate: PATHS, message: t.accounts.linked }, async (session) => {
+  return run({ roles: ["physio", "admin"], revalidate: PATHS, message: t.accounts.linked }, async (session) => {
     const v = Link.parse(input);
     const p = await targetProfile(session, v.userId);
     if (p.role !== "player") fail(t.errors.notPlayerAccount);
@@ -228,7 +228,7 @@ export async function linkPlayer(input: z.infer<typeof Link>) {
 }
 
 export async function deleteAccount(input: z.infer<typeof Target>) {
-  return run({ roles: ["physio"], revalidate: PATHS, message: t.accounts.deleted }, async (session) => {
+  return run({ roles: ["physio", "admin"], revalidate: PATHS, message: t.accounts.deleted }, async (session) => {
     const v = Target.parse(input);
     const p = await targetProfile(session, v.userId);
     if (p.id === session.ctx.userId) fail(t.errors.notYourself);

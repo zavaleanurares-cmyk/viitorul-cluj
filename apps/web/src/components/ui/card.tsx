@@ -1,4 +1,5 @@
 import type { ComponentProps, ReactNode } from "react";
+import { CircleAlert, CircleCheck, Info, TriangleAlert } from "lucide-react";
 import { cn } from "@/lib/cn";
 
 export function Card({ className, ...props }: ComponentProps<"section">) {
@@ -46,13 +47,15 @@ export function EmptyState({ title, description, action, icon }: { title: ReactN
   );
 }
 
-/** O cifră cu etichetă — pentru tablouri de bord. */
+/** O cifră cu etichetă — pentru tablouri de bord. Starea apare ca punct colorat lângă etichetă (nu ca bară laterală). */
 export function Stat({ label, value, hint, tone }: { label: ReactNode; value: ReactNode; hint?: ReactNode; tone?: "green" | "yellow" | "orange" | "red" | "gray" }) {
-  const bar = { green: "bg-st-green", yellow: "bg-st-yellow", orange: "bg-st-orange", red: "bg-st-red", gray: "bg-st-gray" } as const;
+  const dot = { green: "bg-st-green", yellow: "bg-st-yellow", orange: "bg-st-orange", red: "bg-st-red", gray: "bg-st-gray" } as const;
   return (
-    <div className="relative overflow-hidden rounded-[var(--radius-card)] border border-line bg-surface p-4">
-      {tone ? <span className={cn("absolute inset-y-0 left-0 w-1.5", bar[tone])} aria-hidden /> : null}
-      <p className="text-sm text-ink-3">{label}</p>
+    <div className="rounded-[var(--radius-card)] border border-line bg-surface p-4">
+      <p className="flex items-center gap-2 text-sm text-ink-3">
+        {tone ? <span className={cn("size-2.5 shrink-0 rounded-full", dot[tone])} aria-hidden /> : null}
+        {label}
+      </p>
       <p className="mt-1 text-3xl font-bold leading-none">{value}</p>
       {hint ? <p className="mt-2 text-sm text-ink-3">{hint}</p> : null}
     </div>
@@ -61,16 +64,20 @@ export function Stat({ label, value, hint, tone }: { label: ReactNode; value: Re
 
 export function Notice({ tone = "blue", title, children, className }: { tone?: "blue" | "yellow" | "red" | "green" | "gray"; title?: ReactNode; children?: ReactNode; className?: string }) {
   const tones = {
-    blue: "bg-st-blue-soft border-st-blue",
-    yellow: "bg-st-yellow-soft border-st-yellow",
-    red: "bg-st-red-soft border-st-red",
-    green: "bg-st-green-soft border-st-green",
-    gray: "bg-st-gray-soft border-st-gray",
+    blue: "bg-st-blue-soft",
+    yellow: "bg-st-yellow-soft",
+    red: "bg-st-red-soft",
+    green: "bg-st-green-soft",
+    gray: "bg-st-gray-soft",
   } as const;
+  const Icon = { blue: Info, yellow: TriangleAlert, red: CircleAlert, green: CircleCheck, gray: Info }[tone];
   return (
-    <div role={tone === "red" ? "alert" : "note"} className={cn("rounded-[var(--radius-control)] border-l-4 px-4 py-3", tones[tone], className)}>
-      {title ? <p className="font-semibold">{title}</p> : null}
-      {children ? <div className={cn("text-ink-2", title && "mt-1")}>{children}</div> : null}
+    <div role={tone === "red" ? "alert" : "note"} className={cn("flex items-start gap-3 rounded-[var(--radius-control)] px-4 py-3", tones[tone], className)}>
+      <Icon className="mt-0.5 size-5 shrink-0" aria-hidden />
+      <div className="min-w-0">
+        {title ? <p className="font-semibold">{title}</p> : null}
+        {children ? <div className={cn("text-ink-2", title && "mt-1")}>{children}</div> : null}
+      </div>
     </div>
   );
 }

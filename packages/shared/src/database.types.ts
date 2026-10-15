@@ -2333,6 +2333,7 @@ export type Database = {
       save_event: { Args: { p: Json | null }; Returns: string };
       save_match_squad: { Args: { p_event: string | null; p_formation: string | null; p_rows: Json | null }; Returns: number };
       save_program: { Args: { p_id: string | null; p_name: string | null; p_description: string | null; p_kind: string | null; p_is_template: boolean | null; p_items: Json | null }; Returns: string };
+      search_club: { Args: { p_query: string | null; p_limit?: number | null }; Returns: Json };
       send_wellness_reminders: { Args: Record<PropertyKey, never>; Returns: number };
       set_event_state: { Args: { p_event: string | null; p_state: string | null; p_scope?: string | null }; Returns: number };
       set_my_photo: { Args: { p_path: string | null }; Returns: undefined };

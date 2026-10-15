@@ -7,7 +7,7 @@ import { getT } from "@/messages";
 export const metadata = { title: "Grupe" };
 
 export default async function Page() {
-  const { db, ctx } = await requireRole("physio");
+  const { db, ctx } = await requireRole("physio", "admin");
   const t = getT().admin.groups;
   const [players, staffGroups, coaches] = await Promise.all([
     db.from("players").select("group_id, is_active"),

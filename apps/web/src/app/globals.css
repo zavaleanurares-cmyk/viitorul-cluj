@@ -20,6 +20,8 @@
   --color-surface: #ffffff;
   --color-canvas: #f2f4f6;
   --color-sunken: #e8ecf0;
+  /* marginea controalelor (câmpuri, butoane secundare): contrast de cel puțin 3:1 */
+  --color-border-control: #77818f;
 
   /* culoarea clubului (configurabilă) */
   --color-brand: var(--club-primary, #12305a);
@@ -42,6 +44,7 @@
 
   --radius-control: 0.5rem;
   --radius-card: 0.75rem;
+  --radius-sheet: 1rem;
 
   --text-2xs: 0.6875rem;
 }

@@ -188,6 +188,11 @@ try {
   ] });
   const own = must(await coach.from("competition_standings").select("is_own").eq("competition_id", comp).eq("position", 2).single(), "clasament");
   check("clasamentul se importă și ne recunoaște echipa", st.data === 2 && own.is_own === true, { st, own });
+
+  // -------------------------------------------------------------------------
+  console.log("\nȘtergere");
+  const gone = await admin.from("clubs").delete().eq("id", clubA).select("id");
+  check("ștergerea clubului șterge tot (meciuri, prezență, suspendări)", !gone.error && (gone.data ?? []).length === 1, gone.error);
 } catch (e) {
   failures.push("EROARE DE EXECUȚIE: " + (e as Error).message);
   console.error(e);

@@ -7,6 +7,7 @@ import { deleteUser, findUserByEmail, type Db } from "@club/db";
 import { addDays, isoWeekday, todayIn, weekStart } from "@club/shared";
 import { ensureAccount, must, randomPassword, type SeededAccount } from "./common";
 import { seedLibrary } from "./library";
+import { seedLotDemo } from "./lot";
 
 const SLUG = "club-demo";
 
@@ -288,6 +289,9 @@ export async function seedDemo(admin: Db, opts: { reset?: boolean; domain?: stri
     { key: "jucator.accidentat", full_name: injuredPlayer.display_name, role: "player", player_id: injuredPlayer.id, note: "jucător cu plan de recuperare" },
     { key: "jucator.minor", full_name: minor.display_name, role: "player", player_id: minor.id, note: "jucător minor (acordul părintelui)" },
     { key: "partener", full_name: "Clinică Parteneră Demo", role: "medical_partner" },
+    { key: "admin", full_name: "Administrator Demo", role: "admin" },
+    { key: "secretariat", full_name: "Secretariat Demo", role: "secretary" },
+    { key: "parinte", full_name: "Părinte Demo", role: "guardian", note: "părintele jucătorului minor" },
   ];
   const seeded: SeededAccount[] = [];
   const ids: Record<string, string> = {};
@@ -305,6 +309,7 @@ export async function seedDemo(admin: Db, opts: { reset?: boolean; domain?: stri
     }
   }
   await admin.rpc("refresh_daily_alerts", { p_club: clubId });
+  await seedLotDemo(admin, clubId, ids);
 
   return { clubName: club.name, players: allPlayers.length, accounts: seeded };
 }

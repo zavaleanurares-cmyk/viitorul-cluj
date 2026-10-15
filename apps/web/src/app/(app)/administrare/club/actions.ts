@@ -17,7 +17,7 @@ const Identity = z.object({
 });
 
 export async function saveClubIdentity(input: z.infer<typeof Identity>) {
-  return run({ roles: ["physio"], revalidate: PATHS, message: t.club.identitySaved }, async ({ db, ctx }) => {
+  return run({ roles: ["physio", "admin"], revalidate: PATHS, message: t.club.identitySaved }, async ({ db, ctx }) => {
     const v = Identity.parse(input);
     const { error } = await db.from("clubs").update({
       name: v.name, short_name: v.shortName || null, primary_color: v.primaryColor, accent_color: v.accentColor,
@@ -30,7 +30,7 @@ const Logo = z.object({ path: z.string().max(200).nullable() });
 
 /** Leagă sigla încărcată de club (sau o scoate, cu `path: null`) și șterge fișierul vechi. */
 export async function setClubLogo(input: z.infer<typeof Logo>) {
-  return run({ roles: ["physio"], revalidate: PATHS, message: input.path ? t.club.logoSaved : t.club.logoRemoved }, async ({ db, ctx }) => {
+  return run({ roles: ["physio", "admin"], revalidate: PATHS, message: input.path ? t.club.logoSaved : t.club.logoRemoved }, async ({ db, ctx }) => {
     const v = Logo.parse(input);
     // calea trebuie să fie în directorul clubului apelantului
     if (v.path !== null && !new RegExp(`^${ctx.club.id}/sigla-[0-9]+\\.(png|webp|jpg)$`).test(v.path)) fail(t.errors.logoInvalid);
@@ -72,7 +72,7 @@ const Settings = z.object({
  * nu le cunoaște (adăugate de alte module) se păstrează neschimbate.
  */
 export async function saveClubSettings(input: z.infer<typeof Settings>) {
-  return run({ roles: ["physio"], revalidate: PATHS, message: t.club.settingsSaved }, async ({ db, ctx }) => {
+  return run({ roles: ["physio", "admin"], revalidate: PATHS, message: t.club.settingsSaved }, async ({ db, ctx }) => {
     const v = Settings.parse(input);
     const raw = ctx.club.settings;
     const existing = raw && typeof raw === "object" && !Array.isArray(raw) ? raw : {};

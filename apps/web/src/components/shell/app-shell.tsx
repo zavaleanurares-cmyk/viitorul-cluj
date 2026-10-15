@@ -1,14 +1,16 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import {
   Bell, CalendarDays, ClipboardCheck, Dumbbell, Ellipsis, FileText, Gauge, HeartPulse, House, LayoutDashboard,
-  ListChecks, LogOut, Settings, Stethoscope, Upload, User, Users, X,
+  ListChecks, LogOut, Search, Settings, Stethoscope, Upload, User, Users, X,
 } from "lucide-react";
 import type { NavItem } from "@/lib/nav";
 import { useT } from "@/messages";
 import { cn } from "@/lib/cn";
+import { CommandPalette } from "./command-palette";
+import { RoleSwitcher, type MembershipOption } from "./role-switcher";
 
 const ICONS: Record<string, typeof House> = {
   home: House, clipboard: ClipboardCheck, calendar: CalendarDays, user: User, pulse: HeartPulse, users: Users,
@@ -18,24 +20,47 @@ const ICONS: Record<string, typeof House> = {
 
 type Props = {
   items: NavItem[];
+  /** secțiunile spațiului Performanță vizibile rolului (file deasupra paginii) */
+  sections: Array<{ href: string; key: string }>;
   clubName: string;
   logoUrl: string | null;
   userName: string;
   roleLabel: string;
   unread: number;
+  memberships: MembershipOption[];
+  searchable: boolean;
   signOut: () => Promise<void>;
   children: ReactNode;
 };
 
-export function AppShell({ items, clubName, logoUrl, userName, roleLabel, unread, signOut, children }: Props) {
+export function AppShell({ items, sections, clubName, logoUrl, userName, roleLabel, unread, memberships, searchable, signOut, children }: Props) {
   const t = useT().common;
   const pathname = usePathname();
   const [moreOpen, setMoreOpen] = useState(false);
-  const isActive = (href: string) => pathname === href || pathname.startsWith(href + "/");
+  const [searchOpen, setSearchOpen] = useState(false);
+  const starts = (href: string) => pathname === href || pathname.startsWith(href + "/");
+  // un singur element activ: întâi potrivirea directă, apoi rutele asociate spațiului de lucru
+  const active = items.find((it) => starts(it.href)) ?? items.find((it) => it.match?.some(starts));
+  const isActive = (it: NavItem) => it === active;
   const label = (key: string) => t.nav[key as keyof typeof t.nav] ?? key;
 
   const primary = items.length > 5 ? items.slice(0, 4) : items;
   const overflow = items.length > 5 ? items.slice(4) : [];
+  const showSections = sections.length > 1 && sections.some((s) => starts(s.href));
+  const currentSection = sections.find((s) => starts(s.href))?.key;
+
+  // ⌘K / Ctrl+K deschide căutarea
+  useEffect(() => {
+    if (!searchable) return;
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setSearchOpen(true);
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [searchable]);
 
   const Brand = (
     <span className="flex min-w-0 items-center gap-2.5">
@@ -63,6 +88,13 @@ export function AppShell({ items, clubName, logoUrl, userName, roleLabel, unread
     </Link>
   );
 
+  const SearchButton = searchable ? (
+    <button type="button" onClick={() => setSearchOpen(true)} aria-label={t.search.open} title={t.search.open}
+      className="inline-flex size-12 items-center justify-center rounded-lg hover:bg-brand-ink/10 md:hidden">
+      <Search className="size-6" aria-hidden />
+    </button>
+  ) : null;
+
   return (
     <div className="min-h-dvh md:grid md:grid-cols-[15.5rem_1fr]">
       {/* Ecrane mari: meniu lateral */}
@@ -71,13 +103,23 @@ export function AppShell({ items, clubName, logoUrl, userName, roleLabel, unread
           {Brand}
           {BellLink}
         </div>
+        {searchable ? (
+          <div className="px-3 pb-2">
+            <button type="button" onClick={() => setSearchOpen(true)}
+              className="flex h-11 w-full items-center gap-2 rounded-lg bg-brand-ink/10 px-3 text-left font-semibold hover:bg-brand-ink/15">
+              <Search className="size-5 shrink-0" aria-hidden />
+              <span className="flex-1">{t.search.open}</span>
+              <kbd className="rounded border border-brand-ink/30 px-1.5 text-xs font-semibold">⌘K</kbd>
+            </button>
+          </div>
+        ) : null}
         <nav aria-label="Meniu principal" className="flex-1 overflow-y-auto px-2 py-1">
           {items.map((it) => {
             const Icon = ICONS[it.icon] ?? House;
             return (
-              <Link key={it.href} href={it.href} aria-current={isActive(it.href) ? "page" : undefined}
+              <Link key={it.href + it.key} href={it.href} aria-current={isActive(it) ? "page" : undefined}
                 className={cn("mb-0.5 flex h-11 items-center gap-3 rounded-lg px-3 font-semibold",
-                  isActive(it.href) ? "bg-brand-ink text-brand" : "hover:bg-brand-ink/10")}>
+                  isActive(it) ? "bg-brand-ink text-brand" : "hover:bg-brand-ink/10")}>
                 <Icon className="size-5 shrink-0" aria-hidden />
                 {label(it.key)}
               </Link>
@@ -87,6 +129,7 @@ export function AppShell({ items, clubName, logoUrl, userName, roleLabel, unread
         <div className="border-t border-brand-ink/20 p-3">
           <p className="truncate font-semibold">{userName}</p>
           <p className="truncate text-sm opacity-80">{roleLabel}</p>
+          {memberships.length > 1 ? <RoleSwitcher memberships={memberships} tone="brand" /> : null}
           <form action={signOut}>
             <button type="submit" className="mt-2 flex h-10 w-full items-center gap-2 rounded-lg px-2 font-semibold hover:bg-brand-ink/10">
               <LogOut className="size-5" aria-hidden /> {t.actions.signOut}
@@ -99,22 +142,42 @@ export function AppShell({ items, clubName, logoUrl, userName, roleLabel, unread
         {/* Telefon: bară de sus */}
         <header className="no-print sticky top-0 z-30 flex items-center justify-between gap-2 bg-brand pl-3 pr-1 text-brand-ink pt-safe md:hidden">
           <div className="flex h-14 min-w-0 items-center">{Brand}</div>
-          {BellLink}
+          <div className="flex items-center">
+            {SearchButton}
+            {BellLink}
+          </div>
         </header>
 
-        <main className="mx-auto w-full max-w-6xl flex-1 px-4 pb-28 pt-4 md:px-8 md:pb-10 md:pt-8">{children}</main>
+        <main className="mx-auto w-full max-w-6xl flex-1 px-4 pb-28 pt-4 md:px-8 md:pb-10 md:pt-8">
+          {showSections ? (
+            <nav aria-label={t.nav.performance} className="no-print -mx-4 mb-4 overflow-x-auto px-4 md:mx-0 md:px-0">
+              <ul className="flex gap-1 border-b border-line">
+                {sections.map((s) => (
+                  <li key={s.href}>
+                    <Link href={s.href} aria-current={currentSection === s.key ? "page" : undefined}
+                      className={cn("flex h-11 items-center whitespace-nowrap border-b-[3px] px-3 font-semibold",
+                        currentSection === s.key ? "border-brand text-ink" : "border-transparent text-ink-3 hover:text-ink")}>
+                      {label(s.key)}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          ) : null}
+          {children}
+        </main>
 
         {/* Telefon: bară de jos */}
         <nav aria-label="Meniu principal" className="no-print fixed inset-x-0 bottom-0 z-30 border-t border-line bg-surface pb-safe md:hidden">
           <ul className="mx-auto flex max-w-lg">
             {primary.map((it) => {
               const Icon = ICONS[it.icon] ?? House;
-              const active = isActive(it.href);
+              const on = isActive(it);
               return (
-                <li key={it.href} className="flex-1">
-                  <Link href={it.href} aria-current={active ? "page" : undefined}
-                    className={cn("flex h-16 flex-col items-center justify-center gap-0.5 text-xs font-semibold", active ? "text-brand" : "text-ink-3")}>
-                    <span className={cn("flex h-8 w-14 items-center justify-center rounded-full", active && "bg-brand text-brand-ink")}>
+                <li key={it.href + it.key} className="flex-1">
+                  <Link href={it.href} aria-current={on ? "page" : undefined}
+                    className={cn("flex h-16 flex-col items-center justify-center gap-0.5 text-xs font-semibold", on ? "text-brand" : "text-ink-3")}>
+                    <span className={cn("flex h-8 w-14 items-center justify-center rounded-full", on && "bg-brand text-brand-ink")}>
                       <Icon className="size-5" aria-hidden />
                     </span>
                     {label(it.key)}
@@ -126,8 +189,8 @@ export function AppShell({ items, clubName, logoUrl, userName, roleLabel, unread
               <li className="flex-1">
                 <button type="button" onClick={() => setMoreOpen(true)} aria-expanded={moreOpen}
                   className={cn("flex h-16 w-full flex-col items-center justify-center gap-0.5 text-xs font-semibold",
-                    overflow.some((o) => isActive(o.href)) ? "text-brand" : "text-ink-3")}>
-                  <span className={cn("flex h-8 w-14 items-center justify-center rounded-full", overflow.some((o) => isActive(o.href)) && "bg-brand text-brand-ink")}>
+                    overflow.some(isActive) ? "text-brand" : "text-ink-3")}>
+                  <span className={cn("flex h-8 w-14 items-center justify-center rounded-full", overflow.some(isActive) && "bg-brand text-brand-ink")}>
                     <Ellipsis className="size-5" aria-hidden />
                   </span>
                   {t.nav.more}
@@ -150,14 +213,15 @@ export function AppShell({ items, clubName, logoUrl, userName, roleLabel, unread
                   <X className="size-6" aria-hidden />
                 </button>
               </div>
+              {memberships.length > 1 ? <div className="px-2 pb-2"><RoleSwitcher memberships={memberships} tone="plain" /></div> : null}
               <ul className="grid grid-cols-2 gap-2 py-2">
                 {overflow.map((it) => {
                   const Icon = ICONS[it.icon] ?? House;
                   return (
-                    <li key={it.href}>
-                      <Link href={it.href} onClick={() => setMoreOpen(false)} aria-current={isActive(it.href) ? "page" : undefined}
+                    <li key={it.href + it.key}>
+                      <Link href={it.href} onClick={() => setMoreOpen(false)} aria-current={isActive(it) ? "page" : undefined}
                         className={cn("flex h-14 items-center gap-3 rounded-lg border px-3 font-semibold",
-                          isActive(it.href) ? "border-brand bg-brand text-brand-ink" : "border-line bg-surface")}>
+                          isActive(it) ? "border-brand bg-brand text-brand-ink" : "border-line bg-surface")}>
                         <Icon className="size-5 shrink-0" aria-hidden />
                         {label(it.key)}
                       </Link>
@@ -166,7 +230,7 @@ export function AppShell({ items, clubName, logoUrl, userName, roleLabel, unread
                 })}
               </ul>
               <form action={signOut}>
-                <button type="submit" className="flex h-12 w-full items-center justify-center gap-2 rounded-lg border border-line-strong font-semibold">
+                <button type="submit" className="flex h-12 w-full items-center justify-center gap-2 rounded-lg border border-border-control font-semibold">
                   <LogOut className="size-5" aria-hidden /> {t.actions.signOut}
                 </button>
               </form>
@@ -174,6 +238,7 @@ export function AppShell({ items, clubName, logoUrl, userName, roleLabel, unread
           </div>
         ) : null}
       </div>
+      {searchable && searchOpen ? <CommandPalette onClose={() => setSearchOpen(false)} /> : null}
     </div>
   );
 }

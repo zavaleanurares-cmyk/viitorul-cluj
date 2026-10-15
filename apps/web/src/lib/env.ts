@@ -5,4 +5,4 @@ export const SITE_URL = (
 ).replace(/\/$/, "");
 
 /** Numele afișat înainte de autentificare și la instalarea ca aplicație. */
-export const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME ?? "Vestiar";
+export const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME ?? "Locker Room";

@@ -7,7 +7,7 @@ import { getT } from "@/messages";
 export const metadata = { title: "Club" };
 
 export default async function Page() {
-  const { ctx } = await requireRole("physio");
+  const { ctx } = await requireRole("physio", "admin");
   const t = getT().admin.club;
   const { club } = ctx;
   return (

@@ -1,48 +1,56 @@
-import type { AppRole } from "@club/shared";
+import { can, type AppRole, type Capability } from "@club/shared";
 
-export type NavItem = { href: string; key: string; icon: string };
+/**
+ * Locker Room are șase spații de lucru: Azi, Program, Lot, Performanță, Bani (faza 3), Club.
+ * `match` = alte rute care aparțin aceluiași spațiu (pentru evidențierea în meniu).
+ */
+export type NavItem = { href: string; key: string; icon: string; match?: string[] };
 
-/** Meniul fiecărui rol. Primele patru intrări apar în bara de jos pe telefon; restul sub „Mai mult". */
+/** Secțiunile spațiului Performanță (modulele Vestiar), cu dreptul care le deschide. */
+export const PERFORMANCE_SECTIONS: Array<{ href: string; key: string; cap: Capability }> = [
+  { href: "/tablou", key: "overview", cap: "viewOverview" },
+  { href: "/disponibilitate", key: "availability", cap: "viewAvailabilityBoard" },
+  { href: "/jucatori", key: "medicalFiles", cap: "viewPlayerList" },
+  { href: "/wellness", key: "wellness", cap: "viewWellnessGrid" },
+  { href: "/fizic", key: "physical", cap: "viewPhysicalData" },
+  { href: "/planuri", key: "plans", cap: "manage" },
+  { href: "/programe", key: "programs", cap: "manage" },
+  { href: "/biblioteca", key: "library", cap: "manage" },
+  { href: "/import", key: "imports", cap: "manage" },
+  { href: "/rapoarte", key: "reports", cap: "manage" },
+];
+
+export function performanceSections(role: AppRole) {
+  return PERFORMANCE_SECTIONS.filter((s) => can(role, s.cap));
+}
+
+const PERFORMANCE_MATCH = [...PERFORMANCE_SECTIONS.map((s) => s.href), "/exercitii"];
+
+const today: NavItem = { href: "/azi", key: "today", icon: "home" };
+const schedule: NavItem = { href: "/program", key: "schedule", icon: "calendar" };
+const squad: NavItem = { href: "/lot", key: "squad", icon: "users" };
+const club: NavItem = { href: "/administrare", key: "club", icon: "settings" };
+const profile: NavItem = { href: "/profil", key: "profile", icon: "user" };
+const performance = (href: string): NavItem => ({ href, key: "performance", icon: "pulse", match: PERFORMANCE_MATCH });
+
+/** Meniul fiecărui rol. Pe telefon: primele patru în bara de jos, restul sub „Mai mult". */
 export const NAV: Record<AppRole, NavItem[]> = {
   player: [
     { href: "/azi", key: "today", icon: "home" },
     { href: "/chestionar", key: "questionnaire", icon: "clipboard" },
     { href: "/plan", key: "plan", icon: "calendar" },
-    { href: "/profil", key: "profile", icon: "user" },
+    profile,
   ],
-  coach: [
-    { href: "/disponibilitate", key: "availability", icon: "pulse" },
-    { href: "/jucatori", key: "players", icon: "users" },
-    { href: "/wellness", key: "wellness", icon: "clipboard" },
-    { href: "/fizic", key: "physical", icon: "gauge" },
-    { href: "/profil", key: "profile", icon: "user" },
-  ],
-  physio: [
-    { href: "/tablou", key: "overview", icon: "dashboard" },
-    { href: "/disponibilitate", key: "availability", icon: "pulse" },
-    { href: "/jucatori", key: "players", icon: "users" },
-    { href: "/wellness", key: "wellness", icon: "clipboard" },
-    { href: "/planuri", key: "plans", icon: "calendar" },
-    { href: "/programe", key: "programs", icon: "list" },
-    { href: "/biblioteca", key: "library", icon: "dumbbell" },
-    { href: "/fizic", key: "physical", icon: "gauge" },
-    { href: "/import", key: "imports", icon: "upload" },
-    { href: "/rapoarte", key: "reports", icon: "file" },
-    { href: "/administrare", key: "admin", icon: "settings" },
-    { href: "/profil", key: "profile", icon: "user" },
-  ],
-  sporting_director: [
-    { href: "/tablou", key: "overview", icon: "dashboard" },
-    { href: "/disponibilitate", key: "availability", icon: "pulse" },
-    { href: "/jucatori", key: "players", icon: "users" },
-    { href: "/profil", key: "profile", icon: "user" },
-  ],
-  owner: [
-    { href: "/tablou", key: "overview", icon: "dashboard" },
-    { href: "/profil", key: "profile", icon: "user" },
-  ],
+  coach: [today, schedule, squad, performance("/disponibilitate"), profile],
+  physio: [{ ...today, href: "/tablou" }, schedule, squad, performance("/disponibilitate"), club, profile],
+  sporting_director: [today, schedule, squad, performance("/tablou"), profile],
+  admin: [today, schedule, squad, club, profile],
+  secretary: [today, schedule, squad, profile],
+  accountant: [today, squad, profile],
+  owner: [{ href: "/tablou", key: "overview", icon: "dashboard" }, profile],
+  guardian: [today, profile],
   medical_partner: [
     { href: "/cazuri", key: "cases", icon: "stethoscope" },
-    { href: "/profil", key: "profile", icon: "user" },
+    profile,
   ],
 };

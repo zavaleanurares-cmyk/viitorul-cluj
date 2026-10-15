@@ -11,7 +11,7 @@ export const metadata = { title: "Administrare" };
 
 /** Pagina de pornire a administrării: câte o intrare pe secțiune, cu cifra care contează. */
 export default async function Page() {
-  const { db, ctx } = await requireRole("physio");
+  const { db, ctx } = await requireRole("physio", "admin");
   const t = getT().admin.home;
   const head = { count: "exact", head: true } as const;
   const [accounts, noAccount, openRequests, readsToday] = await Promise.all([

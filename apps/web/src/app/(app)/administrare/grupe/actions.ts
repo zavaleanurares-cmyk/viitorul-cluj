@@ -23,7 +23,7 @@ async function playerCounts({ db }: Session, groupId: string) {
 }
 
 export async function createGroup(input: { name: string }) {
-  return run({ roles: ["physio"], revalidate: PATHS, message: t.groups.created }, async ({ db, ctx }) => {
+  return run({ roles: ["physio", "admin"], revalidate: PATHS, message: t.groups.created }, async ({ db, ctx }) => {
     const name = Name.parse(input.name);
     if (ctx.groups.some((g) => g.name.toLowerCase() === name.toLowerCase())) fail(t.errors.groupExists);
     const sort = Math.max(0, ...ctx.groups.map((g) => g.sort)) + 1;
@@ -42,7 +42,7 @@ const Update = z.object({
 });
 
 export async function updateGroup(input: z.infer<typeof Update>) {
-  return run({ roles: ["physio"], revalidate: PATHS, message: t.groups.saved }, async (session) => {
+  return run({ roles: ["physio", "admin"], revalidate: PATHS, message: t.groups.saved }, async (session) => {
     const { db, ctx } = session;
     const v = Update.parse(input);
     const group = await groupOf(session, v.id);
@@ -77,7 +77,7 @@ export async function updateGroup(input: z.infer<typeof Update>) {
 
 /** Mută grupa cu o poziție și renumerotează ordinea tuturor grupelor. */
 export async function moveGroup(input: { id: string; direction: "up" | "down" }) {
-  return run({ roles: ["physio"], revalidate: PATHS }, async ({ db, ctx }) => {
+  return run({ roles: ["physio", "admin"], revalidate: PATHS }, async ({ db, ctx }) => {
     const v = z.object({ id: z.uuid(), direction: z.enum(["up", "down"]) }).parse(input);
     const order = [...ctx.groups].sort((a, b) => a.sort - b.sort || a.name.localeCompare(b.name, "ro"));
     const i = order.findIndex((g) => g.id === v.id);
@@ -95,7 +95,7 @@ export async function moveGroup(input: { id: string; direction: "up" | "down" })
 
 /** Ștergerea este posibilă doar pentru o grupă în care nu a fost niciodată trecut un jucător aflat în evidență. */
 export async function deleteGroup(input: { id: string }) {
-  return run({ roles: ["physio"], revalidate: PATHS, message: t.groups.deleted }, async (session) => {
+  return run({ roles: ["physio", "admin"], revalidate: PATHS, message: t.groups.deleted }, async (session) => {
     const v = z.object({ id: z.uuid() }).parse(input);
     const group = await groupOf(session, v.id);
     if ((await playerCounts(session, group.id)).total > 0) fail(t.errors.groupNotEmpty);

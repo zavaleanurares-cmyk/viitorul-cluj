@@ -1,6 +1,6 @@
 /** Texte comune. Fiecare modul are propriul fișier în acest director. */
 export const common = {
-  appTagline: "Stare medicală și pregătire fizică",
+  appTagline: "Lot, program, performanță",
   actions: {
     save: "Salvează",
     saving: "Se salvează…",
@@ -45,6 +45,27 @@ export const common = {
     notifications: "Notificări",
     cases: "Cazuri",
     more: "Mai mult",
+    schedule: "Program",
+    squad: "Lot",
+    performance: "Performanță",
+    club: "Club",
+    money: "Bani",
+    medicalFiles: "Fișe medicale",
+  },
+  search: {
+    open: "Caută",
+    placeholder: "Caută un jucător, o echipă, un eveniment…",
+    hint: "Scrie cel puțin două litere. Diacriticele nu contează.",
+    none: (q: string) => `Nimic pentru „${q}”.`,
+    players: "Jucători",
+    teams: "Echipe",
+    events: "Evenimente",
+    guardians: "Părinți",
+    pages: "Pagini",
+  },
+  roles: {
+    switch: "Schimbă rolul sau clubul",
+    current: "acum",
   },
   states: {
     loading: "Se încarcă…",
