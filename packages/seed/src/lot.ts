@@ -115,6 +115,12 @@ export async function seedLotDemo(admin: Db, clubId: string, ids: Record<string,
       club_id: clubId, season_id: season?.id ?? null, group_id: g.id, name: plan.competition, source: plan.name === "Seniori" ? "frf" : "frf",
       half_minutes: plan.half, yellow_limit: plan.yellow, own_name: "Club Demo",
     }).select("id").single(), "competiție");
+    // suspendatul de la final: a strâns cartonașele galbene în ultimele meciuri (câte unul pe meci, ca în statistici)
+    const suspended = players.find((p) => !(p.status_id && outIds.has(p.status_id)) && p.position === "MID");
+    const pastDates: string[] = [];
+    for (let d = from; d < today && d <= until; d = addDays(d, 1)) if (isoWeekday(d) === plan.matchDay) pastDates.push(d);
+    const cardFrom = pastDates.length - plan.yellow;
+    let pastIndex = -1;
     let round = 6;
     for (let d = from; d <= until; d = addDays(d, 1)) {
       if (isoWeekday(d) !== plan.matchDay) continue;
@@ -137,7 +143,11 @@ export async function seedLotDemo(admin: Db, clubId: string, ids: Record<string,
       }).select("event_id"), "detalii meci");
       if (!past) continue;
 
-      const available = players.filter((p) => !(p.status_id && outIds.has(p.status_id)));
+      pastIndex++;
+      const booked = suspended && pastIndex >= cardFrom ? suspended : null;
+      const pool = players.filter((p) => !(p.status_id && outIds.has(p.status_id)));
+      // jucătorul care ia galbenul în meciul acesta joacă titular
+      const available = booked ? [pool[0], booked, ...pool.slice(1).filter((p) => p.id !== booked.id)].filter((p, i, a) => a.indexOf(p) === i) : pool;
       const starters = available.slice(0, 11);
       const subs = available.slice(11, 16);
       const total = plan.half * 2;
@@ -155,14 +165,13 @@ export async function seedLotDemo(admin: Db, clubId: string, ids: Record<string,
       for (let k = 0; k < goalsFor; k++) events.push({ event_id: ev.id, minute: between(5, total - 2), kind: "goal", player_id: pick(starters.slice(5)).id, related_player_id: pick(starters.slice(3, 8)).id, created_by: creator });
       for (let k = 0; k < goalsAgainst; k++) events.push({ event_id: ev.id, minute: between(5, total - 2), kind: "goal_against", created_by: creator });
       for (let k = 0; k < nSubs; k++) events.push({ event_id: ev.id, minute: subMinutes[k], kind: "sub", player_id: starters[8 + k].id, related_player_id: subs[k].id, created_by: creator });
-      events.push({ event_id: ev.id, minute: between(20, total - 5), kind: "yellow", player_id: pick(starters.slice(1, 8)).id, created_by: creator });
+      events.push({ event_id: ev.id, minute: between(20, total - 5), kind: "yellow", player_id: (booked ?? pick(starters.slice(2, 8).filter((p) => p.id !== suspended?.id))).id, created_by: creator });
       must(await admin.from("match_events").insert(events.map((e) => ({ player_id: null, related_player_id: null, ...e }))).select("id"), "evenimente meci");
       await admin.from("matches").update({ goals_for: goalsFor, goals_against: goalsAgainst }).eq("event_id", ev.id);
     }
 
-    // o suspendare activă, ca să se vadă blocarea la convocare
-    const suspended = players.find((p) => !(p.status_id && outIds.has(p.status_id)) && p.position === "MID");
-    if (suspended) {
+    // o suspendare activă, ca să se vadă blocarea la convocare (acoperită de cartonașele din meciurile de mai sus)
+    if (suspended && cardFrom >= 0) {
       await admin.from("suspensions").insert({ club_id: clubId, player_id: suspended.id, competition_id: comp.id, reason: `${plan.yellow} cartonașe galbene`, matches_total: 1, matches_remaining: 1 });
     }
   }

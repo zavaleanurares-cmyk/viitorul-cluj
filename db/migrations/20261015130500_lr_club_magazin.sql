@@ -38,7 +38,7 @@ create unique index shop_variants_uq on public.shop_variants (product_id, coales
 
 create table public.shop_bundle_items (
   bundle_id   uuid not null references public.shop_products(id) on delete cascade,
-  product_id  uuid not null references public.shop_products(id) on delete restrict,
+  product_id  uuid not null references public.shop_products(id) on delete cascade,
   primary key (bundle_id, product_id),
   check (bundle_id <> product_id)
 );

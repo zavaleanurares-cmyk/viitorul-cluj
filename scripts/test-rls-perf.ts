@@ -587,6 +587,10 @@ try {
   check("părintele NU vede sponsorii (sume, contacte)", (await rows(guardian.from("sponsors").select("id"))) === 0);
   check("sponsorul se șterge", !(await errored(secretary.rpc("delete_sponsor", { p_id: sp1 }))));
   check("alt club NU vede campaniile", (await rows(secretaryB.from("support_campaigns").select("id"))) === 0);
+  // -------------------------------------------------------------------------
+  console.log("\nȘtergerea clubului");
+  const del = await admin.from("clubs").delete().eq("id", clubA).select("id");
+  check("clubul se șterge cu tot ce are (fără chei care blochează)", !del.error && del.data?.length === 1, del.error);
   void adminU; void player1;
 } finally {
   await cleanup();
