@@ -79,7 +79,7 @@ export function GuardianDialogButton({ guardian, players, hasAccount, autoOpen, 
               <option value="">{t.chooseChild}</option>
               {available.map((p) => <option key={p.id} value={p.id}>{p.name}{p.team ? ` · ${p.team}` : ""}</option>)}
             </Select>
-            <Button disabled={!pick} onClick={() => { setV({ ...v, children: [...v.children, { playerId: pick, relation: "parent", isBilling: v.children.length === 0 }] }); setPick(""); }}>{t.addChild}</Button>
+            <Button variant="secondary" disabled={!pick} onClick={() => { setV({ ...v, children: [...v.children, { playerId: pick, relation: "parent", isBilling: v.children.length === 0 }] }); setPick(""); }}>{t.addChild}</Button>
           </div>
         </fieldset>
 
@@ -88,7 +88,7 @@ export function GuardianDialogButton({ guardian, players, hasAccount, autoOpen, 
         {guardian?.id ? (
           <div className="mt-4 rounded-[var(--radius-control)] bg-st-blue-soft p-3">
             <p className="font-semibold">{hasAccount ? t.hasAccount : t.noAccount}</p>
-            <Button className="mt-2" icon={<Mail className="size-5" aria-hidden />} pending={invite.pending} disabled={!v.email}
+            <Button variant="secondary" className="mt-2" icon={<Mail className="size-5" aria-hidden />} pending={invite.pending} disabled={!v.email}
               onClick={() => invite.run(guardian.id!)}>{t.invite}</Button>
             {!v.email ? <p className="mt-1 text-sm text-ink-2">{t.inviteNeedsEmail}</p> : null}
             {link ? (

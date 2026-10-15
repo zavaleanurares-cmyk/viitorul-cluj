@@ -38,7 +38,7 @@ export function EventActions({ id, cancelled, inSeries, canEdit }: { id: string;
     <div className="flex flex-wrap gap-2">
       {canEdit ? <LinkButton href={`/program/${id}/modifica`} icon={<Pencil className="size-5" aria-hidden />}>{t.edit}</LinkButton> : null}
       {cancelled ? (
-        <Button pending={busy} icon={<RotateCcw className="size-5" aria-hidden />} onClick={() => act("scheduled", "one")}>{t.restoreCancelled}</Button>
+        <Button variant="secondary" pending={busy} icon={<RotateCcw className="size-5" aria-hidden />} onClick={() => act("scheduled", "one")}>{t.restoreCancelled}</Button>
       ) : (
         <Button variant="ghost" pending={busy} icon={<Ban className="size-5" aria-hidden />} onClick={() => (inSeries ? setConfirm("cancel") : act("cancelled", "one"))}>{t.cancel}</Button>
       )}
@@ -47,7 +47,7 @@ export function EventActions({ id, cancelled, inSeries, canEdit }: { id: string;
       <Dialog open={confirm !== null} onClose={() => setConfirm(null)} title={confirm === "delete" ? t.deleteTitle : t.cancel}
         footer={<>
           <Button variant="ghost" onClick={() => setConfirm(null)}>{c.cancel}</Button>
-          {inSeries ? <Button pending={busy} onClick={() => act(confirm === "delete" ? "deleted" : "cancelled", "following")}>{t.deleteFollowing}</Button> : null}
+          {inSeries ? <Button variant="secondary" pending={busy} onClick={() => act(confirm === "delete" ? "deleted" : "cancelled", "following")}>{t.deleteFollowing}</Button> : null}
           <Button variant={confirm === "delete" ? "danger" : "primary"} pending={busy} onClick={() => act(confirm === "delete" ? "deleted" : "cancelled", "one")}>{inSeries ? t.deleteOne : confirm === "delete" ? t.delete : t.cancel}</Button>
         </>}>
         <p className="text-ink-2">{confirm === "delete" ? t.deleteText : t.cancelSeries}</p>

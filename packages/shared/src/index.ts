@@ -14,3 +14,4 @@ export * from "./client";
 export * from "./media";
 export * from "./queries";
 export * from "./schedule";
+export * from "./fixtures";

@@ -85,7 +85,7 @@ export function AttendanceSheet({ eventId, title, subtitle, players, savedAt }: 
         {waiting || !online ? (
           <Notice tone="yellow" title={t.pending(1)}>
             {t.savedOffline}
-            {online ? <Button className="mt-2" size="sm" icon={<RefreshCw className="size-4" aria-hidden />} onClick={() => flushAttendanceQueue()}>{t.retry}</Button> : null}
+            {online ? <Button variant="secondary" className="mt-2" size="sm" icon={<RefreshCw className="size-4" aria-hidden />} onClick={() => flushAttendanceQueue()}>{t.retry}</Button> : null}
           </Notice>
         ) : lastSent ? (
           <Notice tone="green" title={t.synced(new Intl.DateTimeFormat("ro-RO", { hour: "2-digit", minute: "2-digit" }).format(new Date(lastSent)))} />
