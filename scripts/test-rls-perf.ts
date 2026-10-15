@@ -7,7 +7,7 @@
  * Fiecare modul al fazei 4 își adaugă aici secțiunea.
  */
 import crypto from "node:crypto";
-import { closePool, deleteUser, ensureAccount, must, randomPassword, serviceClient, userClient } from "./lib";
+import { anonClient, closePool, deleteUser, ensureAccount, must, randomPassword, serviceClient, userClient } from "./lib";
 
 const admin = serviceClient();
 const run = crypto.randomBytes(3).toString("hex");
@@ -333,6 +333,68 @@ try {
   must(await admin.from("contracts").update({ last_reminded_at: new Date(Date.now() - 4 * 86400e3).toISOString() }).eq("id", c1.id).select("id"), "vechime");
   const auto = await admin.rpc("run_contract_reminders");
   check("sarcina programată reamintește după 3 zile", !auto.error && (auto.data as number) >= 1, auto);
+  // -------------------------------------------------------------------------
+  console.log("\nÎnscrieri");
+  const anon = anonClient();
+  const slugA = `perf-a-${run}`;
+  const form = (over: Record<string, unknown> = {}) => ({ child_name: "Copil Nou", birth_date: "2014-05-06", parent_name: "Mama Copilului", parent_email: `mama-${run}@example.com`, parent_phone: "0722000111", consent: true, ...over });
+  check("formularul public cere acordul", await errored(anon.rpc("submit_enrolment_request", { p_slug: slugA, p: form({ consent: false }), p_ip: "198.51.100.1" })));
+  check("formularul public cere un contact", await errored(anon.rpc("submit_enrolment_request", { p_slug: slugA, p: form({ parent_email: "", parent_phone: "" }), p_ip: "198.51.100.1" })));
+  const pubReq = await anon.rpc("submit_enrolment_request", { p_slug: slugA, p: form(), p_ip: "198.51.100.1" });
+  check("vizitatorul fără cont trimite o cerere", !pubReq.error && pubReq.data === true, pubReq);
+  check("vizitatorul NU citește cererile", (await rows(anon.from("enrolment_requests").select("id"))) === 0 || await errored(anon.from("enrolment_requests").select("id")));
+  for (let i = 0; i < 5; i++) await anon.rpc("submit_enrolment_request", { p_slug: slugA, p: form({ child_name: `Copil Spam ${i}` }), p_ip: "198.51.100.2" });
+  check("după 5 trimiteri pe oră de pe același IP, a șasea e oprită", await errored(anon.rpc("submit_enrolment_request", { p_slug: slugA, p: form({ child_name: "Copil Spam 5" }), p_ip: "198.51.100.2" }))
+    && !(await errored(anon.rpc("submit_enrolment_request", { p_slug: slugA, p: form({ child_name: "Alt IP" }), p_ip: "198.51.100.3" }))));
+  check("clubul inexistent e refuzat", await errored(anon.rpc("submit_enrolment_request", { p_slug: "nu-exista-" + run, p: form(), p_ip: "198.51.100.4" })));
+  check("datele publice ale clubului nu conțin date personale", !JSON.stringify((await anon.rpc("public_club", { p_slug: slugA })).data).includes("@"));
+  const req = must(await admin.from("enrolment_requests").select("id, group_id, status").eq("club_id", clubA).eq("child_name", "Copil Nou").single(), "cererea");
+  check("cererea primește echipa după anul nașterii (sau niciuna)", req.status === "new");
+  check("secretariatul vede cererea", (await rows(secretary.from("enrolment_requests").select("id").eq("id", req.id))) === 1);
+  check("directorul sportiv vede cererea", (await rows(director.from("enrolment_requests").select("id").eq("id", req.id))) === 1);
+  check("antrenorul NU vede cererile (date de contact)", (await rows(coach.from("enrolment_requests").select("id"))) === 0);
+  check("contabilul NU vede cererile", (await rows(accountant.from("enrolment_requests").select("id"))) === 0);
+  check("părintele NU vede cererile", (await rows(guardian.from("enrolment_requests").select("id"))) === 0);
+  check("alt club NU vede cererea", (await rows(secretaryB.from("enrolment_requests").select("id"))) === 0);
+  check("biroul este anunțat de cererea nouă", (await rows(admin.from("notifications").select("id").eq("dedupe_key", `enrolment:${req.id}`))) >= 2);
+  const evStart = new Date(Date.now() + 3 * 86400e3).toISOString();
+  const evId = must(await admin.from("events").insert({ club_id: clubA, kind: "training", title: "Antrenament U13", starts_at: evStart, ends_at: new Date(Date.parse(evStart) + 90 * 60e3).toISOString() }).select("id").single(), "antrenament").id;
+  must(await admin.from("event_teams").insert({ event_id: evId, group_id: G1 }).select("event_id"), "echipa antrenamentului");
+  const evOther = must(await admin.from("events").insert({ club_id: clubA, kind: "training", title: "Antrenament U15", starts_at: evStart, ends_at: new Date(Date.parse(evStart) + 90 * 60e3).toISOString() }).select("id").single(), "antrenament 2").id;
+  must(await admin.from("event_teams").insert({ event_id: evOther, group_id: G2 }).select("event_id"), "echipa 2");
+  check("antrenorul NU programează probe", await errored(coach.rpc("book_trial", { p_id: req.id, p_event: evId })));
+  check("secretariatul programează proba pe antrenamentul U13", !(await errored(secretary.rpc("book_trial", { p_id: req.id, p_event: evId }))));
+  check("antrenorul echipei e anunțat de probă", (await rows(admin.from("notifications").select("id").like("dedupe_key", `trial:${req.id}:%`))) === 1);
+  const myTrials = (await coach.rpc("my_trials", { p_event: evId })).data as Array<Record<string, unknown>> | null;
+  check("antrenorul vede proba, fără contactele familiei", myTrials?.length === 1 && !("parent_email" in myTrials[0]) && !("parent_phone" in myTrials[0]), myTrials);
+  check("antrenorul notează proba echipei lui", !(await errored(coach.rpc("record_trial", { p_id: req.id, p_rating: 4, p_note: "Bun cu mingea" }))));
+  must(await admin.from("enrolment_requests").update({ trial_event_id: evOther }).eq("id", req.id).select("id"), "mutare");
+  check("antrenorul NU notează proba altei echipe", await errored(coach.rpc("record_trial", { p_id: req.id, p_rating: 2, p_note: "x" })));
+  must(await admin.from("enrolment_requests").update({ trial_event_id: evId }).eq("id", req.id).select("id"), "înapoi");
+  check("antrenorul NU înscrie", await errored(coach.rpc("enrol_request", { p_id: req.id, p: { group_id: G1 } })));
+  check("înscrierea cere echipa clubului", await errored(secretary.rpc("enrol_request", { p_id: req.id, p: { group_id: H1 } })));
+  must(await admin.from("fee_plans").insert({ club_id: clubA, group_id: G1, amount: 20000, valid_from: new Date().toISOString().slice(0, 7) + "-01" }).select("id"), "taxa U13");
+  const en = await secretary.rpc("enrol_request", { p_id: req.id, p: { group_id: G1, first_month: true, enrol_fee: 5000 } });
+  check("secretariatul înscrie: jucător, părinte plătitor, două taxe", !en.error && (en.data as { charges: number }).charges === 2, en);
+  const newPlayer = (en.data as { player_id: string; guardian_id: string }).player_id;
+  const pl = must(await admin.from("players").select("full_name, display_name, group_id, enrolled_on").eq("id", newPlayer).single(), "jucătorul");
+  check("jucătorul are numele, echipa și numele scurt", pl.full_name === "Copil Nou" && pl.group_id === G1 && pl.display_name === "COPIL N.", pl);
+  const gp = must(await admin.from("guardian_players").select("is_billing, guardians(email)").eq("player_id", newPlayer), "legătura");
+  check("părintele e legat ca plătitor", gp.length === 1 && gp[0].is_billing && (gp[0].guardians as { email: string }).email === `mama-${run}@example.com`);
+  check("cererea înscrisă nu se mai înscrie o dată", await errored(secretary.rpc("enrol_request", { p_id: req.id, p: { group_id: G1 } })));
+  const sib = await secretary.rpc("create_enrolment_request", { p: form({ child_name: "Frate Nou", birth_date: "2016-02-02" }) });
+  check("biroul adaugă o cerere primită la telefon", !sib.error, sib);
+  const en2 = await secretary.rpc("enrol_request", { p_id: sib.data, p: { group_id: G2, first_month: false, enrol_fee: 0 } });
+  check("fratele cu aceeași adresă intră în aceeași familie", !en2.error && (en2.data as { guardian_id: string }).guardian_id === (en.data as { guardian_id: string }).guardian_id, en2);
+  const dec = await secretary.rpc("create_enrolment_request", { p: form({ child_name: "Refuzat Nou" }) });
+  check("cererea se refuză și se redeschide", !(await errored(secretary.rpc("decline_enrolment", { p_id: dec.data, p_reason: "Lot complet", p_withdrawn: false })))
+    && !(await errored(secretary.rpc("reopen_enrolment", { p_id: dec.data }))));
+  check("istoricul păstrează pașii", (await rows(secretary.from("enrolment_events").select("id").eq("request_id", dec.data))) === 3);
+  check("antrenorul NU vede istoricul", (await rows(coach.from("enrolment_events").select("id"))) === 0);
+  check("ștergerea automată e doar a sarcinii programate", await errored(secretary.rpc("purge_enrolment_requests")));
+  check("părintele își trece mărimea echipamentului copilului", !(await errored(guardian.rpc("set_kit_size", { p_player: p3, p_size: "140" })))
+    && (await admin.from("players").select("kit_size").eq("id", p3).single()).data?.kit_size === "140");
+  check("părintele NU schimbă mărimea altui copil", await errored(guardian.rpc("set_kit_size", { p_player: p2, p_size: "152" })));
   void adminU; void player1;
 } finally {
   await cleanup();

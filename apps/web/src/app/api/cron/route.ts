@@ -87,6 +87,13 @@ export async function GET(request: NextRequest) {
     return { sent: data ?? 0 };
   });
 
+  // Cererile de înscriere închise de peste 12 luni (sau uitate de peste 18) se șterg
+  await step("enrolment_purge", result, async () => {
+    const { data, error } = await admin.rpc("purge_enrolment_requests");
+    if (error) throw new Error(error.message);
+    return { deleted: data ?? 0 };
+  });
+
   await step("reminders", result, async () => {
     const { data, error } = await admin.rpc("send_wellness_reminders");
     if (error) throw new Error(error.message);

@@ -1,8 +1,25 @@
 /** Spațiul Club (faza 4): mesaje, înscrieri, contracte, tabere, site, magazin, suporteri. */
+import { enrolment } from "./enrolment";
+
 const persoane = (n: number) => (n === 1 ? "o persoană" : n < 20 ? `${n} persoane` : `${n} de persoane`);
 
 export const club = {
   people: persoane,
+  enrolment,
+  onboarding: {
+    title: "Primii pași în club",
+    description: "Câteva lucruri de făcut după înscriere. Durează câteva minute.",
+    account: "Contul în aplicație e activ.",
+    contract: "Semnează contractul de participare",
+    contractDone: "Documentele sunt semnate.",
+    visa: "Încarcă avizul medical sportiv",
+    visaSent: "Avizul medical a fost trimis și se verifică.",
+    visaDone: "Avizul medical e valabil.",
+    size: "Alege mărimea echipamentului",
+    sizeDone: (size: string) => `Mărimea echipamentului: ${size}.`,
+    pickSize: "Alege mărimea",
+    sizeSaved: "Mărimea a fost salvată.",
+  },
   messages: {
     title: "Mesaje",
     description: "Mesaje către părinți, jucători și staff, pe echipe. Vezi lista destinatarilor înainte să trimiți.",

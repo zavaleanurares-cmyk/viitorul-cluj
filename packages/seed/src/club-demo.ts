@@ -50,6 +50,46 @@ export async function seedClubDemo(admin: Db, clubId: string, ids: Record<string
   const today = todayIn();
   await seedMessages(admin, clubId, ids, today);
   await seedContracts(admin, clubId, ids, today);
+  await seedEnrolment(admin, clubId, ids, today);
+}
+
+/** Înscrieri: cereri în toate etapele, una cu probă la următorul antrenament U17 (o vede antrenorul de juniori). */
+async function seedEnrolment(admin: Db, clubId: string, ids: Record<string, string>, today: string) {
+  const { count } = await admin.from("enrolment_requests").select("id", { count: "exact", head: true }).eq("club_id", clubId);
+  if (count || !ids.secretariat) return;
+  const { data: club } = await admin.from("clubs").select("slug").eq("id", clubId).single();
+  const anon = createDb({ role: "anon" });
+  const office = createDb({ sub: ids.secretariat, role: "authenticated" });
+  const year = Number(today.slice(0, 4));
+  const pub = (child: string, age: number, parent: string, extra: Record<string, unknown> = {}) => rpc(anon, "submit_enrolment_request", {
+    p_slug: club!.slug, p_ip: `203.0.113.${Math.floor(Math.random() * 200)}`,
+    p: { child_name: child, birth_date: `${year - age}-0${1 + (child.length % 9)}-1${child.length % 9}`, parent_name: parent,
+         parent_email: `${parent.split(" ")[0].normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()}.demo@example.com`, parent_phone: "0740123456", consent: true, ...extra },
+  }, `cerere ${child}`);
+  await pub("Rusu Andrei", 9, "Rusu Elena", { position: "MID", notes: "Joacă de doi ani la o școală de fotbal din cartier." });
+  await pub("Mureșan Ioana", 12, "Mureșan Dan", { relation: "father", position: "FWD" });
+  await pub("Cozma David", 15, "Cozma Maria", { relation: "mother", position: "GK", previous_club: "CS Feleacu" });
+  await pub("Bălan Tudor", 16, "Bălan Sorin", { relation: "father", position: "DEF", previous_club: "Unirea Dej" });
+  await rpc(office, "create_enrolment_request", { p: { child_name: "Pop Matei", birth_date: `${year - 11}-03-04`, parent_name: "Pop Adriana", relation: "mother", parent_phone: "0745111222" } }, "cerere la telefon");
+  const reqs = (await admin.from("enrolment_requests").select("id, child_name, group_id").eq("club_id", clubId)).data ?? [];
+  const byName = (n: string) => reqs.find((r) => r.child_name === n)!;
+  // proba lui Cozma David: următorul antrenament al echipei lui
+  const nextTraining = async (groupId: string | null) => {
+    if (!groupId) return null;
+    const { data } = await admin.from("events").select("id, event_teams!inner(group_id)").eq("event_teams.group_id", groupId).eq("kind", "training")
+      .neq("status", "cancelled").is("deleted_at", null).gt("starts_at", new Date().toISOString()).order("starts_at").limit(1);
+    return data?.[0]?.id ?? null;
+  };
+  const david = byName("Cozma David");
+  const ev = await nextTraining(david.group_id);
+  if (ev) await rpc(office, "book_trial", { p_id: david.id, p_event: ev }, "probă David");
+  const tudor = byName("Bălan Tudor");
+  const ev2 = await nextTraining(tudor.group_id);
+  if (ev2) {
+    await rpc(office, "book_trial", { p_id: tudor.id, p_event: ev2 }, "probă Tudor");
+    await rpc(office, "record_trial", { p_id: tudor.id, p_rating: 4, p_note: "Bun în duelurile aeriene, comunică mult. Trebuie lucrat la pasa cu stângul." }, "probă notată");
+  }
+  await rpc(office, "decline_enrolment", { p_id: byName("Mureșan Ioana").id, p_reason: "Familia s-a mutat în alt oraș.", p_withdrawn: true }, "retrasă");
 }
 
 /** Mesaje: unul trimis părinților U17 (citit de părintele demo) și unul programat pentru mâine. */

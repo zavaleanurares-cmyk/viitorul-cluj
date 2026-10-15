@@ -12,6 +12,7 @@ import { VisaFamilyNotice } from "@/components/performance/visa-family";
 import { FamilyEvaluationsCard } from "@/components/performance/family-evaluations";
 import { FamilyClipsCard } from "@/components/performance/family-clips";
 import { FamilyContractsCard } from "@/components/club/family-contracts";
+import { FamilyOnboardingCard } from "@/components/club/family-onboarding";
 
 const capitalize = (s: string) => s.charAt(0).toLocaleUpperCase("ro") + s.slice(1);
 
@@ -20,7 +21,7 @@ export async function GuardianToday({ db, ctx }: { db: Db; ctx: AppContext }) {
   const t = getT().today;
   const tz = ctx.settings.timezone;
   // RLS: părintele vede doar copiii lui
-  const { data: kids } = await db.from("players").select("id, full_name, group_id, status_id, medical_visa_expires_on").eq("is_active", true).order("full_name");
+  const { data: kids } = await db.from("players").select("id, full_name, group_id, status_id, medical_visa_expires_on, enrolled_on, kit_size").eq("is_active", true).order("full_name");
   const children = kids ?? [];
   const groupIds = [...new Set(children.map((c) => c.group_id).filter(Boolean) as string[])];
   const events = groupIds.length ? await listEvents(db, { from: ctx.today, to: addDays(ctx.today, 7), timezone: tz, groupIds }) : [];
@@ -34,6 +35,7 @@ export async function GuardianToday({ db, ctx }: { db: Db; ctx: AppContext }) {
   return (
     <div className="mx-auto max-w-2xl space-y-4">
       <h1 className="text-2xl md:text-3xl">{capitalize(formatDate(ctx.today, { weekday: true, year: false }))}</h1>
+      <FamilyOnboardingCard db={db} kids={children} today={ctx.today} visaPending={new Set([...lastDoc].filter(([, d]) => d.status === "pending").map(([id]) => id))} />
       <FamilyDueCard db={db} ctx={ctx} />
       <FamilyContractsCard db={db} />
       {children.length === 0 ? <Notice tone="blue" title={t.children}>{t.noChildren}</Notice> : null}
@@ -46,7 +48,7 @@ export async function GuardianToday({ db, ctx }: { db: Db; ctx: AppContext }) {
         const visa = visaState(c.medical_visa_expires_on, ctx.today, ctx.settings.alerts.visa_days_before);
         const a = attendance[i];
         return (
-          <Card key={c.id}>
+          <Card key={c.id} id={`copil-${c.id}`} className="scroll-mt-20">
             <CardHeader title={c.full_name} description={team?.name} action={status ? <StatusChip status={status} size="sm" /> : null} />
             <CardBody className="space-y-3">
               <div className="flex flex-wrap items-center gap-3 text-sm">

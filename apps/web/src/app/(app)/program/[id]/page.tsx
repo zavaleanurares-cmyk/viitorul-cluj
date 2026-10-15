@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/status";
 import { DataList } from "@/components/ui/misc";
 import { KIND_ICONS } from "@/components/schedule/calendar";
 import { EventActions } from "@/components/schedule/event-actions";
+import { RecordTrialButton } from "@/components/club/enrolment-admin";
 import { eventRoster, getEvent, coachManages } from "@/components/schedule/queries";
 import { getT } from "@/messages";
 
@@ -35,6 +36,10 @@ export default async function EventPage({ params }: { params: Promise<{ id: stri
   const recorded = roster.filter((p) => p.attendance);
   const present = recorded.filter((p) => p.attendance!.status === "present" || p.attendance!.status === "late").length;
   const absent = recorded.filter((p) => p.attendance!.status === "absent" || p.attendance!.status === "injured");
+  const trials = runs || can(ctx.role, "manageEnrolment")
+    ? ((await db.rpc("my_trials", { p_event: id })).data ?? []) as Array<{ id: string; child_name: string; birth_year: number; pos: string | null; previous_club: string | null; trial_rating: number | null; trial_note: string | null }>
+    : [];
+  const te = getT().club.enrolment;
   let seriesText: string | null = null;
   if (e.series_id) {
     const { data: s } = await db.from("event_series").select("weekdays, until").eq("id", e.series_id).maybeSingle();
@@ -112,6 +117,25 @@ export default async function EventPage({ params }: { params: Promise<{ id: stri
                 ))}
               </ul>
             )}
+          </CardBody>
+        </Card>
+      ) : null}
+
+      {trials.length ? (
+        <Card>
+          <CardHeader title={te.coach.title} description={te.coach.hint} />
+          <CardBody>
+            <ul className="divide-y divide-line">
+              {trials.map((x) => (
+                <li key={x.id} className="flex flex-wrap items-center justify-between gap-3 py-2">
+                  <span className="min-w-0">
+                    <span className="block font-semibold">{x.child_name}</span>
+                    <span className="block text-sm text-ink-3">{[te.born(x.birth_year), x.pos ? te.positions[x.pos as keyof typeof te.positions] : null, x.previous_club].filter(Boolean).join(" · ")}</span>
+                  </span>
+                  <RecordTrialButton id={x.id} eventId={id} rating={x.trial_rating} note={x.trial_note} compact />
+                </li>
+              ))}
+            </ul>
           </CardBody>
         </Card>
       ) : null}

@@ -19,5 +19,6 @@ import { match } from "./match";
 import { money } from "./money";
 import { performance } from "./performance";
 import { club } from "./club";
+import { site } from "./site";
 
-export const ro = { common, auth, player, players, library, planning, wellness, physical, imports, dashboard, admin, reports, partner, notifications, squad, schedule, today, match, money, performance, club } as const;
+export const ro = { common, auth, player, players, library, planning, wellness, physical, imports, dashboard, admin, reports, partner, notifications, squad, schedule, today, match, money, performance, club, site } as const;

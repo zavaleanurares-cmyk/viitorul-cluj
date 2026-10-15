@@ -19,3 +19,4 @@ export * from "./money";
 export * from "./bank";
 export * from "./performance-data";
 export * from "./video";
+export * from "./club-data";

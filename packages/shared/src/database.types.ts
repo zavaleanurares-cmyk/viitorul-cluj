@@ -1109,6 +1109,127 @@ export type Database = {
           { foreignKeyName: "departments_parent_id_fkey"; columns: ["parent_id"]; isOneToOne: false; referencedRelation: "departments"; referencedColumns: ["id"] },
         ];
       };
+      enrolment_events: {
+        Row: {
+          id: number;
+          request_id: string;
+          at: string;
+          actor_id: string | null;
+          action: string;
+          note: string | null;
+        };
+        Insert: {
+          id?: never;
+          request_id: string;
+          at?: string;
+          actor_id?: string | null;
+          action: string;
+          note?: string | null;
+        };
+        Update: {
+          id?: never;
+          request_id?: string;
+          at?: string;
+          actor_id?: string | null;
+          action?: string;
+          note?: string | null;
+        };
+        Relationships: [
+          { foreignKeyName: "enrolment_events_actor_id_fkey"; columns: ["actor_id"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
+          { foreignKeyName: "enrolment_events_request_id_fkey"; columns: ["request_id"]; isOneToOne: false; referencedRelation: "enrolment_requests"; referencedColumns: ["id"] },
+        ];
+      };
+      enrolment_requests: {
+        Row: {
+          id: string;
+          club_id: string;
+          status: string;
+          child_name: string;
+          birth_date: string;
+          group_id: string | null;
+          previous_club: string | null;
+          position: string | null;
+          notes: string | null;
+          parent_name: string;
+          parent_email: string | null;
+          parent_phone: string | null;
+          relation: string;
+          source: string;
+          consent_at: string | null;
+          trial_event_id: string | null;
+          trial_at: string | null;
+          trial_rating: number | null;
+          trial_note: string | null;
+          decline_reason: string | null;
+          player_id: string | null;
+          guardian_id: string | null;
+          created_by: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          club_id: string;
+          status?: string;
+          child_name: string;
+          birth_date: string;
+          group_id?: string | null;
+          previous_club?: string | null;
+          position?: string | null;
+          notes?: string | null;
+          parent_name: string;
+          parent_email?: string | null;
+          parent_phone?: string | null;
+          relation?: string;
+          source?: string;
+          consent_at?: string | null;
+          trial_event_id?: string | null;
+          trial_at?: string | null;
+          trial_rating?: number | null;
+          trial_note?: string | null;
+          decline_reason?: string | null;
+          player_id?: string | null;
+          guardian_id?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          club_id?: string;
+          status?: string;
+          child_name?: string;
+          birth_date?: string;
+          group_id?: string | null;
+          previous_club?: string | null;
+          position?: string | null;
+          notes?: string | null;
+          parent_name?: string;
+          parent_email?: string | null;
+          parent_phone?: string | null;
+          relation?: string;
+          source?: string;
+          consent_at?: string | null;
+          trial_event_id?: string | null;
+          trial_at?: string | null;
+          trial_rating?: number | null;
+          trial_note?: string | null;
+          decline_reason?: string | null;
+          player_id?: string | null;
+          guardian_id?: string | null;
+          created_by?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          { foreignKeyName: "enrolment_requests_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
+          { foreignKeyName: "enrolment_requests_created_by_fkey"; columns: ["created_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
+          { foreignKeyName: "enrolment_requests_group_id_fkey"; columns: ["group_id"]; isOneToOne: false; referencedRelation: "groups"; referencedColumns: ["id"] },
+          { foreignKeyName: "enrolment_requests_guardian_id_fkey"; columns: ["guardian_id"]; isOneToOne: false; referencedRelation: "guardians"; referencedColumns: ["id"] },
+          { foreignKeyName: "enrolment_requests_player_id_fkey"; columns: ["player_id"]; isOneToOne: false; referencedRelation: "players"; referencedColumns: ["id"] },
+          { foreignKeyName: "enrolment_requests_trial_event_id_fkey"; columns: ["trial_event_id"]; isOneToOne: false; referencedRelation: "events"; referencedColumns: ["id"] },
+        ];
+      };
       evaluation_criteria: {
         Row: {
           id: string;
@@ -3049,6 +3170,7 @@ export type Database = {
           fifa_id: string | null;
           enrolled_on: string | null;
           photo_consent: boolean;
+          kit_size: string | null;
         };
         Insert: {
           id?: string;
@@ -3083,6 +3205,7 @@ export type Database = {
           fifa_id?: string | null;
           enrolled_on?: string | null;
           photo_consent?: boolean;
+          kit_size?: string | null;
         };
         Update: {
           id?: string;
@@ -3117,6 +3240,7 @@ export type Database = {
           fifa_id?: string | null;
           enrolled_on?: string | null;
           photo_consent?: boolean;
+          kit_size?: string | null;
         };
         Relationships: [
           { foreignKeyName: "players_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
@@ -4123,6 +4247,7 @@ export type Database = {
       attach_intent_checkout: { Args: { p_intent: string | null; p_provider_ref: string | null; p_url: string | null }; Returns: undefined };
       auto_issue_due: { Args: Record<PropertyKey, never>; Returns: Json };
       auto_pay_candidates: { Args: { p_club: string | null }; Returns: { guardian_id: string; method_ref: string; provider: string; charge_ids: string[]; amount: number }[] };
+      book_trial: { Args: { p_id: string | null; p_event: string | null }; Returns: undefined };
       budget_report: { Args: { p_year: number | null }; Returns: Json };
       cancel_charge: { Args: { p_charge: string | null; p_reason: string | null }; Returns: undefined };
       cancel_message: { Args: { p_id: string | null }; Returns: undefined };
@@ -4134,15 +4259,18 @@ export type Database = {
       compute_bonuses: { Args: { p_from: string | null; p_to: string | null }; Returns: number };
       copy_daily_plan: { Args: { p_plan: string | null; p_dates: string[] | null; p_players?: string[] | null }; Returns: number };
       create_auto_pay_intent: { Args: { p_guardian: string | null; p_charge_ids: string[] | null }; Returns: Json };
+      create_enrolment_request: { Args: { p: Json | null }; Returns: string };
       create_fitness_battery: { Args: { p: Json | null }; Returns: string };
       create_payment_intent: { Args: { p_charge_ids: string[] | null; p_save_method?: boolean | null }; Returns: Json };
       decide_bonus_entries: { Args: { p_ids: string[] | null; p_status: string | null }; Returns: number };
       decide_purchase_request: { Args: { p_id: string | null; p_decision: string | null; p_note?: string | null }; Returns: undefined };
       decide_visa_document: { Args: { p_id: string | null; p_approve: boolean | null; p_valid_until?: string | null; p_issued_on?: string | null; p_reason?: string | null }; Returns: undefined };
       decline_contract: { Args: { p_id: string | null; p_reason: string | null }; Returns: undefined };
+      decline_enrolment: { Args: { p_id: string | null; p_reason: string | null; p_withdrawn?: boolean | null }; Returns: undefined };
       delete_charge_request: { Args: { p_id: string | null }; Returns: undefined };
       delete_evaluation_round: { Args: { p_round: string | null }; Returns: undefined };
       delete_match_event: { Args: { p_id: string | null }; Returns: undefined };
+      enrol_request: { Args: { p_id: string | null; p: Json | null }; Returns: Json };
       erase_player: { Args: { p_player: string | null }; Returns: string };
       evaluation_comment: { Args: { p_eval: string | null }; Returns: string };
       expense_from_bank_line: { Args: { p_line: string | null; p: Json | null }; Returns: string };
@@ -4150,6 +4278,7 @@ export type Database = {
       family_payment_info: { Args: Record<PropertyKey, never>; Returns: Json };
       fee_roster: { Args: { p_period: string | null }; Returns: { player_id: string; full_name: string; group_id: string; is_active: boolean; fee: number; own_plan: boolean; adjustments: string; guardian_id: string; guardian_name: string; payment_ref: string; charge_id: string; net: number; paid: number; state: string; due_on: string }[] };
       file_access: { Args: { p_bucket: string | null; p_path: string | null; p_action: string | null }; Returns: boolean };
+      group_fee_now: { Args: { p_group: string | null }; Returns: number };
       group_test_averages: { Args: { p_group: string | null }; Returns: { test_id: string; average: number; best: number; players: number }[] };
       import_bank_statement: { Args: { p: Json | null }; Returns: Json };
       import_fixtures: { Args: { p_competition: string | null; p_rows: Json | null; p_duration_min?: number | null }; Returns: Json };
@@ -4166,16 +4295,23 @@ export type Database = {
       match_eligibility: { Args: { p_event: string | null }; Returns: { player_id: string; reason: string; detail: string; until_date: string }[] };
       money_summary: { Args: { p_year: number | null; p_month?: number | null }; Returns: Json };
       my_clips: { Args: Record<PropertyKey, never>; Returns: { marker_id: string; player_id: string; player_name: string; video_title: string; recorded_on: string; source: string; url: string; storage_path: string; t_sec: number; end_sec: number; tag: string; label: string; shared_at: string }[] };
+      my_trials: { Args: { p_event?: string | null }; Returns: { id: string; child_name: string; birth_year: number; pos: string; previous_club: string; event_id: string; trial_at: string; status: string; trial_rating: number; trial_note: string }[] };
+      note_enrolment: { Args: { p_id: string | null; p_note: string | null }; Returns: undefined };
       player_file_paths: { Args: { p_player: string | null }; Returns: { bucket: string; path: string }[] };
       players_past_retention: { Args: Record<PropertyKey, never>; Returns: { player_id: string; display_name: string; inactive_since: string }[] };
       preview_bank_lines: { Args: { p_lines: Json | null }; Returns: Json };
       preview_message_audience: { Args: { p_audience: Json | null }; Returns: { user_id: string; full_name: string; role: Database["public"]["Enums"]["app_role"]; reason: string }[] };
       preview_monthly_charges: { Args: { p_period: string | null }; Returns: Json };
+      public_club: { Args: { p_slug: string | null }; Returns: Json };
+      public_logo_path: { Args: { p_slug: string | null }; Returns: string };
       publish_evaluation_round: { Args: { p_round: string | null }; Returns: number };
+      purge_enrolment_requests: { Args: Record<PropertyKey, never>; Returns: number };
       record_payment: { Args: { p: Json | null }; Returns: Json };
+      record_trial: { Args: { p_id: string | null; p_rating: number | null; p_note: string | null }; Returns: undefined };
       refresh_daily_alerts: { Args: { p_club?: string | null }; Returns: number };
       remind_contracts: { Args: { p_ids: string[] | null }; Returns: number };
       remind_overdue_families: { Args: Record<PropertyKey, never>; Returns: number };
+      reopen_enrolment: { Args: { p_id: string | null }; Returns: undefined };
       reopen_match: { Args: { p_event: string | null }; Returns: undefined };
       resolve_bank_line: { Args: { p_line: string | null; p: Json | null }; Returns: undefined };
       revoke_payment_method: { Args: { p_method: string | null }; Returns: undefined };
@@ -4207,14 +4343,17 @@ export type Database = {
       set_charge_discount: { Args: { p_charge: string | null; p_discount: number | null; p_note: string | null }; Returns: undefined };
       set_event_state: { Args: { p_event: string | null; p_state: string | null; p_scope?: string | null }; Returns: number };
       set_fee_plan: { Args: { p_group: string | null; p_player: string | null; p_amount: number | null; p_from: string | null; p_reason?: string | null }; Returns: string };
+      set_kit_size: { Args: { p_player: string | null; p_size: string | null }; Returns: undefined };
       set_my_photo: { Args: { p_path: string | null }; Returns: undefined };
       setup_club: { Args: { p_slug: string | null; p_name: string | null; p_short_name: string | null; p_groups: string[] | null; p_settings?: Json | null }; Returns: string };
       share_video_marker: { Args: { p_marker: string | null; p_share: boolean | null }; Returns: number };
       sign_contract: { Args: { p_id: string | null; p_name: string | null; p_signature_path: string | null; p_ip?: string | null; p_user_agent?: string | null }; Returns: string };
       start_evaluation_round: { Args: { p: Json | null }; Returns: string };
+      submit_enrolment_request: { Args: { p_slug: string | null; p: Json | null; p_ip?: string | null }; Returns: boolean };
       submit_visa_document: { Args: { p_player: string | null; p_path: string | null; p_file_name: string | null; p_mime: string | null; p_size: number | null; p_issued_on?: string | null }; Returns: string };
       switch_membership: { Args: { p_membership: string | null }; Returns: undefined };
       unaccent_ro: { Args: { p: string | null }; Returns: string };
+      update_enrolment_request: { Args: { p_id: string | null; p: Json | null }; Returns: undefined };
       update_my_profile: { Args: { p_full_name?: string | null; p_phone?: string | null; p_email_notifications?: boolean | null }; Returns: undefined };
       view_contract: { Args: { p_id: string | null; p_ip?: string | null }; Returns: undefined };
       void_contract: { Args: { p_id: string | null; p_reason: string | null }; Returns: undefined };
