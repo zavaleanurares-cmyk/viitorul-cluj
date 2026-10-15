@@ -46,7 +46,7 @@ export const club = {
     teams: "Echipele",
     allTeams: "Toate echipele",
     allTeamsHint: "Nicio echipă aleasă înseamnă tot clubul.",
-    coachTeamsHint: "Mesajele tale ajung doar la echipele tale.",
+    coachTeamsHint: "Alege echipele: mesajul ajunge doar la ele.",
     subject: "Subiect",
     body: "Mesajul",
     template: "Pornește de la un șablon",

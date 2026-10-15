@@ -26,7 +26,8 @@ export function siteOn(club: PublicClub, key: string, fallback = true): boolean 
 /** IP-ul vizitatorului (pentru limitarea trimiterilor; în baza de date ajunge doar amprentat). */
 export async function visitorIp(): Promise<string | null> {
   const h = await headers();
-  return (h.get("x-forwarded-for") ?? "").split(",")[0].trim() || h.get("x-real-ip") || null;
+  // pe Vercel x-real-ip e pus de platformă (clientul nu îl poate falsifica); x-forwarded-for doar ca rezervă
+  return h.get("x-real-ip") || (h.get("x-forwarded-for") ?? "").split(",")[0].trim() || null;
 }
 
 /** Clubul are o politică de confidențialitate publicată (linkul din subsol și din formulare). */

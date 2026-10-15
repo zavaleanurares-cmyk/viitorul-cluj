@@ -18,7 +18,7 @@ export default async function NewMessagePage() {
   return (
     <>
       <PageHeader back={<Link href="/club/mesaje" className="inline-flex h-10 items-center gap-1 font-semibold text-ink-3 hover:text-ink"><ChevronLeft className="size-5" aria-hidden />{t.title}</Link>} title={t.composeTitle} />
-      <MessageComposer teams={teams.map((g) => ({ id: g.id, name: g.name }))} templates={templates} coach={coach}
+      <MessageComposer teams={teams.map((g) => ({ id: g.id, name: g.name }))} templates={templates} coach={coach || ctx.role === "physio"}
         staffAllowed={!["coach", "physio"].includes(ctx.role)} canSaveTemplates={["admin", "secretary", "sporting_director"].includes(ctx.role)} />
     </>
   );

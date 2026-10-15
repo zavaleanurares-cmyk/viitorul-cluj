@@ -22,8 +22,8 @@ export default async function AlbumPage({ params }: { params: Promise<{ id: stri
     db.rpc("photo_consent_state", { p_album: id }),
     db.from("players").select("id, full_name, group_id, photo_consent").eq("is_active", true).is("anonymized_at", null).order("full_name"),
   ]);
-  const st = new Map(((state ?? []) as Array<{ photo_id: string; is_public: boolean; missing: string[] }>).map((s) => [s.photo_id, s]));
-  const list = (photos ?? []).map((p) => ({ ...p, isPublic: st.get(p.id)?.is_public ?? false, missing: st.get(p.id)?.missing ?? [] }));
+  const st = new Map(((state ?? []) as Array<{ photo_id: string; is_public: boolean; missing: string[]; reviewed: boolean }>).map((s) => [s.photo_id, s]));
+  const list = (photos ?? []).map((p) => ({ ...p, isPublic: st.get(p.id)?.is_public ?? false, missing: st.get(p.id)?.missing ?? [], reviewed: st.get(p.id)?.reviewed ?? false }));
   const pub = list.filter((p) => p.isPublic).length;
   return (
     <div className="space-y-4">

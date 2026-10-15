@@ -84,7 +84,7 @@ export function PhotoUploader({ clubId, albumId }: { clubId: string; albumId: st
   );
 }
 
-type Photo = { id: string; path: string; caption: string | null; player_ids: string[]; isPublic: boolean; missing: string[] };
+type Photo = { id: string; path: string; caption: string | null; player_ids: string[]; isPublic: boolean; missing: string[]; reviewed: boolean };
 
 export function PhotoGrid({ albumId, photos, players, published }: { albumId: string; photos: Photo[]; players: Array<{ id: string; name: string; team: string; consent: boolean }>; published: boolean }) {
   const t = useT().club.website.gallery;
@@ -100,7 +100,7 @@ export function PhotoGrid({ albumId, photos, players, published }: { albumId: st
               <img src={`/api/files/site/${p.path}`} alt={p.caption ?? ""} loading="lazy" className="aspect-[4/3] w-full object-cover" />
               <span className="block space-y-1 p-2 text-sm">
                 <span className={cn("flex items-center gap-1 font-semibold", p.isPublic ? "text-st-green" : "text-ink-2")}>
-                  {p.isPublic ? <><Check className="size-4" aria-hidden />{t.publicOk}</> : <><EyeOff className="size-4" aria-hidden />{p.missing.length ? t.hidden(p.missing.join(", ")) : !published ? t.hiddenDraft : ""}</>}
+                  {p.isPublic ? <><Check className="size-4" aria-hidden />{t.publicOk}</> : <><EyeOff className="size-4" aria-hidden />{!p.reviewed ? t.unreviewed : p.missing.length ? t.hidden(p.missing.join(", ")) : !published ? t.hiddenDraft : ""}</>}
                 </span>
                 <span className="flex items-center gap-1 text-ink-3"><Tag className="size-4" aria-hidden />{p.player_ids.length ? players.filter((x) => p.player_ids.includes(x.id)).map((x) => x.name).join(", ") : t.noTags}</span>
               </span>

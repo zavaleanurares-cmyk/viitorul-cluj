@@ -1025,6 +1025,7 @@ export type Database = {
           void_reason: string | null;
           reminders_sent: number;
           last_reminded_at: string | null;
+          kind: string | null;
         };
         Insert: {
           id?: string;
@@ -1049,6 +1050,7 @@ export type Database = {
           void_reason?: string | null;
           reminders_sent?: number;
           last_reminded_at?: string | null;
+          kind?: string | null;
         };
         Update: {
           id?: string;
@@ -1073,6 +1075,7 @@ export type Database = {
           void_reason?: string | null;
           reminders_sent?: number;
           last_reminded_at?: string | null;
+          kind?: string | null;
         };
         Relationships: [
           { foreignKeyName: "contracts_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
@@ -4237,6 +4240,7 @@ export type Database = {
           player_ids: string[];
           sort: number;
           created_at: string;
+          reviewed: boolean;
         };
         Insert: {
           id?: string;
@@ -4247,6 +4251,7 @@ export type Database = {
           player_ids?: string[];
           sort?: number;
           created_at?: string;
+          reviewed?: boolean;
         };
         Update: {
           id?: string;
@@ -4257,6 +4262,7 @@ export type Database = {
           player_ids?: string[];
           sort?: number;
           created_at?: string;
+          reviewed?: boolean;
         };
         Relationships: [
           { foreignKeyName: "site_photos_album_id_fkey"; columns: ["album_id"]; isOneToOne: false; referencedRelation: "site_albums"; referencedColumns: ["id"] },
@@ -5021,7 +5027,7 @@ export type Database = {
       my_clips: { Args: Record<PropertyKey, never>; Returns: { marker_id: string; player_id: string; player_name: string; video_title: string; recorded_on: string; source: string; url: string; storage_path: string; t_sec: number; end_sec: number; tag: string; label: string; shared_at: string }[] };
       my_trials: { Args: { p_event?: string | null }; Returns: { id: string; child_name: string; birth_year: number; pos: string; previous_club: string; event_id: string; trial_at: string; status: string; trial_rating: number; trial_note: string }[] };
       note_enrolment: { Args: { p_id: string | null; p_note: string | null }; Returns: undefined };
-      photo_consent_state: { Args: { p_album: string | null }; Returns: { photo_id: string; is_public: boolean; missing: string[] }[] };
+      photo_consent_state: { Args: { p_album: string | null }; Returns: { photo_id: string; is_public: boolean; missing: string[]; reviewed: boolean }[] };
       place_order: { Args: { p_player: string | null; p_items: Json | null; p_note?: string | null }; Returns: Json };
       player_file_paths: { Args: { p_player: string | null }; Returns: { bucket: string; path: string }[] };
       players_past_retention: { Args: Record<PropertyKey, never>; Returns: { player_id: string; display_name: string; inactive_since: string }[] };

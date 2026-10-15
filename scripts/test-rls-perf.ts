@@ -52,6 +52,8 @@ try {
   const p1 = await mkPlayer(clubA, G1, "UNU", day(200));
   const p2 = await mkPlayer(clubA, G1, "DOI", day(5));
   const p3 = await mkPlayer(clubA, G2, "TREI", day(-3));
+  const pAdult = await mkPlayer(clubA, G2, "MAJOR", day(100));
+  must(await admin.from("players").update({ birth_date: "2000-01-01" }).eq("id", pAdult).select("id"), "major");
   const pB = await mkPlayer(clubB, H1, "ALTCLUB", null);
 
   const acc = async (k: string, role: Parameters<typeof ensureAccount>[1]["role"], club: string, extra: { group_ids?: string[]; player_id?: string } = {}) => {
@@ -67,6 +69,7 @@ try {
   await acc("physio", "physio", clubA);
   await acc("coach", "coach", clubA, { group_ids: [G1] });
   await acc("player1", "player", clubA, { player_id: p1 });
+  const uAdult = await acc("adult", "player", clubA, { player_id: pAdult });
   const uGuardian = await acc("guardian", "guardian", clubA);
   const uGuardian2 = await acc("guardian2", "guardian", clubA);
   await acc("secretaryb", "secretary", clubB);
@@ -252,6 +255,8 @@ try {
   check("părintele altei echipe NU apare", !prevRows.some((r) => r.user_id === uGuardian));
   check("antrenorul NU trimite altei echipe", await errored(coach.rpc("send_message", { p: { title: "Test", body: "x", audience: { audiences: ["guardians"], group_ids: [G2] } } })));
   check("antrenorul NU trimite fără echipă", await errored(coach.rpc("send_message", { p: { title: "Test", body: "x", audience: { audiences: ["guardians"], group_ids: [] } } })));
+  check("kinetoterapeutul NU trimite tuturor fără să aleagă echipele", await errored(physio.rpc("send_message", { p: { title: "Test", body: "x", audience: { audiences: ["guardians"], group_ids: [] } } })));
+  check("kinetoterapeutul trimite echipelor alese", !(await errored(physio.rpc("preview_message_audience", { p_audience: { audiences: ["guardians"], group_ids: [G1, G2], exclude_user_ids: [] } }))));
   check("antrenorul NU trimite către tot staff-ul", await errored(coach.rpc("send_message", { p: { title: "Test", body: "x", audience: { audiences: ["staff"], group_ids: [G1] } } })));
   check("părintele NU trimite mesaje", await errored(guardian.rpc("send_message", { p: { title: "Test", body: "x", audience: { audiences: ["guardians"], group_ids: [G1] } } })));
   const sentMsg = await coach.rpc("send_message", { p: { title: "Antrenament anulat", body: "Azi nu avem antrenament.", audience: { ...audG1, exclude_user_ids: [] } } });
@@ -288,13 +293,16 @@ try {
   check("același text nu face versiune nouă; textul schimbat face", vers1 === 1 && (await rows(secretary.from("contract_template_versions").select("id").eq("template_id", tplId))) === 2);
   check("părintele NU vede modelele", (await rows(guardian.from("contract_templates").select("id"))) === 0);
   check("antrenorul NU trimite contracte", await errored(coach.rpc("send_contracts", { p_template: tplId, p_players: [p1, p2, p3] })));
-  const sentC = await secretary.rpc("send_contracts", { p_template: tplId, p_players: [p1, p2, p3, pB], p_due_on: day(7) });
+  const sentC = await secretary.rpc("send_contracts", { p_template: tplId, p_players: [p1, p2, p3, pAdult, pB], p_due_on: day(7) });
   check("trimiterea ajunge la cei trei semnatari, fără jucătorul altui club", !sentC.error && (sentC.data as { sent: number }).sent === 3, sentC);
   const again = await secretary.rpc("send_contracts", { p_template: tplId, p_players: [p2] });
   check("nu se trimite de două ori aceeași versiune", (again.data as { sent: number }).sent === 0, again);
-  const cs = must(await admin.from("contracts").select("id, player_id, signer_user_id, body").eq("club_id", clubA), "contracte");
-  const c2 = cs.find((c) => c.player_id === p2)!, c3 = cs.find((c) => c.player_id === p3)!, c1 = cs.find((c) => c.player_id === p1)!;
-  check("semnatarul copilului e părintele plătitor; al jucătorului fără părinte e jucătorul", c2.signer_user_id === uGuardian2 && c3.signer_user_id === uGuardian && c1.signer_user_id !== uGuardian && c1.signer_user_id !== uGuardian2);
+  const cs = must(await admin.from("contracts").select("id, player_id, signer_user_id, body, kind").eq("club_id", clubA), "contracte");
+  const c2 = cs.find((c) => c.player_id === p2)!, c3 = cs.find((c) => c.player_id === p3)!, c1 = cs.find((c) => c.player_id === pAdult)!;
+  check("semnatarul copilului e părintele plătitor; al jucătorului major fără părinte e jucătorul", c2.signer_user_id === uGuardian2 && c3.signer_user_id === uGuardian && c1.signer_user_id === uAdult);
+  check("jucătorul minor fără părinte în aplicație NU primește documentul (îl semnează un părinte)", !cs.some((c) => c.player_id === p1)
+    && ((sentC.data as { skipped: Array<{ player: string }> }).skipped.some((x) => x.player === "UNU")));
+  check("documentul are tipul modelului salvat pe el", cs.length > 0 && cs.every((c) => c.kind === "photo_consent"));
   check("textul trimis are câmpurile completate", c2.body.includes("Părinte Doi") && c2.body.includes("DOI") && c2.body.includes("Perf A") && !c2.body.includes("{{"));
   check("părintele vede doar documentul lui", (await rows(guardian2.from("contracts").select("id"))) === 1 && (await rows(guardian2.from("contracts").select("id").eq("id", c3.id))) === 0);
   check("antrenorul NU vede contractele", (await rows(coach.from("contracts").select("id"))) === 0);
@@ -384,7 +392,9 @@ try {
   check("cererea înscrisă nu se mai înscrie o dată", await errored(secretary.rpc("enrol_request", { p_id: req.id, p: { group_id: G1 } })));
   const sib = await secretary.rpc("create_enrolment_request", { p: form({ child_name: "Frate Nou", birth_date: "2016-02-02" }) });
   check("biroul adaugă o cerere primită la telefon", !sib.error, sib);
-  const en2 = await secretary.rpc("enrol_request", { p_id: sib.data, p: { group_id: G2, first_month: false, enrol_fee: 0 } });
+  const en2no = await secretary.rpc("enrol_request", { p_id: sib.data, p: { group_id: G2, first_month: false, enrol_fee: 0 } });
+  check("adresa unui părinte existent nu leagă automat copilul de familie (biroul confirmă)", !!en2no.error && /FAMILIE_EXISTENTA/.test(en2no.error.message));
+  const en2 = await secretary.rpc("enrol_request", { p_id: sib.data, p: { group_id: G2, first_month: false, enrol_fee: 0, link_existing: true } });
   check("fratele cu aceeași adresă intră în aceeași familie", !en2.error && (en2.data as { guardian_id: string }).guardian_id === (en.data as { guardian_id: string }).guardian_id, en2);
   const dec = await secretary.rpc("create_enrolment_request", { p: form({ child_name: "Refuzat Nou" }) });
   check("cererea se refuză și se redeschide", !(await errored(secretary.rpc("decline_enrolment", { p_id: dec.data, p_reason: "Lot complet", p_withdrawn: false })))
@@ -460,6 +470,9 @@ try {
   check("imaginea știrii se servește public", (await anon.rpc("site_public_file", { p_slug: slugA, p_path: `${clubA}/post/ok.jpg` })).data === true);
   check("o imagine nefolosită NU se servește public", (await anon.rpc("site_public_file", { p_slug: slugA, p_path: `${clubA}/post/alta.jpg` })).data === false);
   check("părintele din echipă citește imaginea în aplicație", await access(guardian2, "site", `${clubA}/post/ok.jpg`, "read"));
+  const draftPost = (await secretary.rpc("save_site_post", { p: { title: "Ciornă cu imagine", blocks: [{ type: "image", path: `${clubA}/post/ciorna.jpg` }], to_app: true } })).data as string;
+  check("imaginea unei ciorne NU se citește de familie", !(await access(guardian2, "site", `${clubA}/post/ciorna.jpg`, "read")));
+  void draftPost;
   check("părintele NU încarcă fișiere pe site", !(await access(guardian2, "site", `${clubA}/post/nou.jpg`, "write")));
   check("secretariatul încarcă fișiere pe site", await access(secretary, "site", `${clubA}/post/nou.jpg`, "write"));
   check("alt club NU vede știrea", (await rows(secretaryB.from("site_posts").select("id"))) === 0);
@@ -469,6 +482,11 @@ try {
   const album = (await secretary.rpc("save_album", { p: { title: "Turneu", taken_on: day(-1) } })).data as string;
   const ph1 = (await secretary.rpc("save_photo", { p: { album_id: album, path: `${clubA}/foto/a.jpg`, player_ids: [p2] } })).data as string;
   const ph2 = (await secretary.rpc("save_photo", { p: { album_id: album, path: `${clubA}/foto/b.jpg`, player_ids: [] } })).data as string;
+  await secretary.rpc("save_album", { p: { id: album, title: "Turneu", taken_on: day(-1), status: "published" } });
+  check("fotografia nouă, neverificată, nu e publică nici fără copii etichetați", ((await anon.rpc("public_album", { p_slug: slugA, p_album: album })).data as unknown[]).length === 0);
+  await secretary.rpc("save_photo", { p: { id: ph1, player_ids: [p2] } });
+  await secretary.rpc("save_photo", { p: { id: ph2, player_ids: [] } });
+  await secretary.rpc("save_album", { p: { id: album, title: "Turneu", taken_on: day(-1), status: "draft" } });
   check("fotografia cu cale greșită e refuzată", await errored(secretary.rpc("save_photo", { p: { album_id: album, path: `${clubB}/foto/c.jpg` } })));
   check("albumul nepublicat nu e pe site", ((await anon.rpc("public_albums", { p_slug: slugA })).data as unknown[]).length === 0);
   await secretary.rpc("save_album", { p: { id: album, title: "Turneu", taken_on: day(-1), status: "published" } });

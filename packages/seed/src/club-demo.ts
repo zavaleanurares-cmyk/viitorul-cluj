@@ -195,7 +195,9 @@ async function seedWebsite(admin: Db, clubId: string, ids: Record<string, string
   ];
   for (const [c0, c1, caption, players] of shots) {
     const p = storeImage(clubId, "foto", c0, c1);
-    if (p) await rpc(office, "save_photo", { p: { album_id: album, path: p, caption, player_ids: players } }, "fotografie");
+    if (!p) continue;
+    const id = await rpc<string>(office, "save_photo", { p: { album_id: album, path: p, caption, player_ids: players } }, "fotografie");
+    await rpc(office, "save_photo", { p: { id, caption, player_ids: players } }, "fotografie verificată");
   }
   await rpc(office, "save_album", { p: { id: album, title: "Turneul de toamnă U17", taken_on: addDays(today, -12), status: "published" } }, "album publicat");
 }

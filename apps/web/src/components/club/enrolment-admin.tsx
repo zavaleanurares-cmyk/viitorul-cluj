@@ -161,7 +161,10 @@ export function EnrolButton({ id, groupId, groups }: { id: string; groupId: stri
   const [fee, setFee] = useState<number | null | undefined>(undefined);
   const [first, setFirst] = useState(true);
   const [enrolFee, setEnrolFee] = useState("");
-  const go = useAction(enrol, { onSuccess: () => setOpen(false) });
+  const [existing, setExisting] = useState<string | null>(null);
+  const [same, setSame] = useState(false);
+  const toast = useToast();
+  const go = useAction(enrol, { successMessage: false, onSuccess: (r) => { if ("existingFamily" in r) setExisting(r.existingFamily); else { setOpen(false); toast(t.enrolled); } } });
   const lookup = useAction(groupFee, { successMessage: false, refresh: false, onSuccess: (x) => setFee(x) });
   const pickGroup = (g: string) => { setGroup(g); setFee(undefined); if (g) void lookup.run(g); };
   return (
@@ -170,8 +173,8 @@ export function EnrolButton({ id, groupId, groups }: { id: string; groupId: stri
       <Dialog open={open} onClose={() => setOpen(false)} title={t.enrolTitle}
         footer={<>
           <Button variant="ghost" onClick={() => setOpen(false)}>{c.actions.cancel}</Button>
-          <Button disabled={!group} pending={go.pending} icon={<Check className="size-5" aria-hidden />}
-            onClick={() => go.run({ id, groupId: group, firstMonth: first && !!fee, enrolFee })}>{t.enrol}</Button>
+          <Button pending={go.pending} icon={<Check className="size-5" aria-hidden />}
+            disabled={!group || (!!existing && !same)} onClick={() => go.run({ id, groupId: group, firstMonth: first && !!fee, enrolFee, linkExisting: same })}>{t.enrol}</Button>
         </>}>
         <div className="space-y-4">
           <p className="text-ink-2">{t.enrolHint}</p>
@@ -184,6 +187,12 @@ export function EnrolButton({ id, groupId, groups }: { id: string; groupId: stri
           {group && fee !== undefined ? (fee ? <Checkbox label={t.firstMonth(formatLei(fee))} checked={first} onChange={(e) => setFirst(e.target.checked)} />
             : <p className="text-sm text-ink-3">{t.firstMonthNone}</p>) : null}
           <Field label={t.enrolFee} optional><Input inputMode="decimal" value={enrolFee} maxLength={12} placeholder="0" onChange={(e) => setEnrolFee(e.target.value)} /></Field>
+          {existing ? (
+            <div className="space-y-2 rounded-[var(--radius-control)] border border-st-yellow bg-st-yellow/10 p-3">
+              <p className="text-sm">{t.existingFamily(existing)}</p>
+              <Checkbox label={t.sameFamily} checked={same} onChange={(e) => setSame(e.target.checked)} />
+            </div>
+          ) : null}
           <FormError>{go.error}</FormError>
         </div>
       </Dialog>

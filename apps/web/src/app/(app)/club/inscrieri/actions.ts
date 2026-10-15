@@ -101,11 +101,11 @@ export async function addNote(input: { id: string; note: string }) {
   });
 }
 
-export async function enrol(input: { id: string; groupId: string; firstMonth: boolean; enrolFee: string }) {
-  return run<{ player_id: string; guardian_id: string; charges: number }>(
+export async function enrol(input: { id: string; groupId: string; firstMonth: boolean; enrolFee: string; linkExisting?: boolean }) {
+  return run<{ player_id: string; guardian_id: string; charges: number } | { existingFamily: string }>(
     { roles: [...OFFICE], revalidate: [...paths(input.id), "/lot", "/lot/parinti", "/bani"], message: t.enrolled },
     async ({ db }) => {
-      const v = z.object({ id: z.uuid(), groupId: z.union([z.uuid(), z.literal("")]), firstMonth: z.boolean(), enrolFee: z.string().max(20) }).parse(input);
+      const v = z.object({ id: z.uuid(), groupId: z.union([z.uuid(), z.literal("")]), firstMonth: z.boolean(), enrolFee: z.string().max(20), linkExisting: z.boolean().optional() }).parse(input);
       if (!v.groupId) fail(t.errors.team);
       const fee = v.enrolFee.trim() ? parseLei(v.enrolFee) : 0;
       if (fee === null || fee < 0) fail(t.errors.amount);
@@ -113,7 +113,10 @@ export async function enrol(input: { id: string; groupId: string; firstMonth: bo
       const { data: req } = await db.from("enrolment_requests").select("child_name").eq("id", v.id).maybeSingle();
       const parts = (req?.child_name ?? "").trim().split(/\s+/);
       const display = parts.length >= 2 ? `${parts[0].toLocaleUpperCase("ro")} ${parts[1][0].toLocaleUpperCase("ro")}.` : (req?.child_name ?? "").toLocaleUpperCase("ro");
-      const { data, error } = await db.rpc("enrol_request", { p_id: v.id, p: { group_id: v.groupId, first_month: v.firstMonth, enrol_fee: fee, display_name: display } });
+      const { data, error } = await db.rpc("enrol_request", { p_id: v.id, p: { group_id: v.groupId, first_month: v.firstMonth, enrol_fee: fee, display_name: display, link_existing: !!v.linkExisting } });
+      // adresa părintelui există deja în club: biroul confirmă că e aceeași familie
+      const m = /FAMILIE_EXISTENTA:(.*)/.exec(error?.message ?? "");
+      if (m) return { existingFamily: m[1].trim() };
       if (error) throw error;
       return data as { player_id: string; guardian_id: string; charges: number };
     },

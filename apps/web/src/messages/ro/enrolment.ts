@@ -55,6 +55,8 @@ export const enrolment = {
   firstMonthNone: "Echipa nu are o taxă lunară stabilită; o poți emite din Bani.",
   enrolFee: "Taxă de înscriere (opțional)",
   enrolled: "Copilul a fost înscris.",
+  existingFamily: (name: string) => `Adresa de e-mail a părintelui aparține deja lui ${name}, în evidența clubului. Dacă e aceeași familie (un frate sau o soră), copilul se adaugă la ea și taxele merg la același plătitor.`,
+  sameFamily: "Da, e aceeași familie",
   decline: "Refuză",
   withdraw: "Familia a renunțat",
   closeTitle: "Închide cererea",
