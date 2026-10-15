@@ -11,6 +11,7 @@ import zlib from "node:zlib";
 import { createDb, type Db } from "@club/db";
 import { PRIVACY_POLICY_STARTER, STANDARD_CONTRACTS, addDays, slugify, todayIn } from "@club/shared";
 import { writeLocalFile } from "./perf";
+import { must } from "./common";
 
 async function rpc<T>(db: Db, fn: string, args: Record<string, unknown>, label: string): Promise<T> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -57,6 +58,44 @@ export async function seedClubDemo(admin: Db, clubId: string, ids: Record<string
   await seedEnrolment(admin, clubId, ids, today);
   await seedCamps(admin, clubId, ids, today);
   await seedWebsite(admin, clubId, ids, today);
+  await seedShop(admin, clubId, ids);
+}
+
+/** Magazin: tricou, șort, jambiere, trening, rucsac, pachetul de echipament; comenzile părintelui demo. */
+async function seedShop(admin: Db, clubId: string, ids: Record<string, string>) {
+  const { count } = await admin.from("shop_products").select("id", { count: "exact", head: true }).eq("club_id", clubId);
+  if (count || !ids.secretariat) return;
+  const office = createDb({ sub: ids.secretariat, role: "authenticated" });
+  const photo = (c0: string, c1: string) => {
+    const img = demoImage(c0, c1);
+    if (!img) return [];
+    const p = `${clubId}/${crypto.randomUUID()}.jpg`;
+    return writeLocalFile("shop", p, img) ? [p] : [];
+  };
+  const sizes = (stock: number[]) => ["128", "140", "152", "164", "S", "M", "L"].map((size, i) => ({ size, stock: stock[i] ?? 0 }));
+  const product = (p: Record<string, unknown>) => rpc<string>(office, "save_product", { p }, `produs ${p.name}`);
+  const jersey = await product({ name: "Tricou de joc", description: "Tricoul oficial, cu emblema clubului. Numărul se imprimă la club.", category: "kit", price: 12000, kind: "item", size_kind: "apparel", photo_paths: photo("0e5c3a", "1f8a5a"), variants: sizes([4, 8, 6, 2, 3, 5, 1]) });
+  const shorts = await product({ name: "Șort de joc", category: "kit", price: 6000, kind: "item", size_kind: "apparel", photo_paths: photo("ffffff", "0e5c3a"), variants: sizes([5, 9, 7, 4, 3, 2, 0]) });
+  const socks = await product({ name: "Jambiere", category: "kit", price: 2500, kind: "item", size_kind: "none", photo_paths: photo("0e5c3a", "f2c14e"), variants: [{ size: null, stock: 40 }] });
+  await product({ name: "Trening de prezentare", description: "Bluză și pantaloni, pentru deplasări.", category: "training", price: 24000, kind: "item", size_kind: "apparel", photo_paths: photo("12305a", "0e5c3a"), variants: sizes([2, 3, 3, 1, 2, 2, 1]) });
+  await product({ name: "Rucsac", category: "accessories", price: 9000, kind: "item", size_kind: "none", photo_paths: photo("3a3a3a", "0e5c3a"), variants: [{ size: null, stock: 12 }] });
+  const kit = await product({ name: "Pachet echipament de joc", description: "Tricou, șort și jambiere, cu 15 lei mai ieftin decât separat.", category: "kit", price: 17000, kind: "bundle", size_kind: "none", photo_paths: photo("f2c14e", "0e5c3a"), bundle_items: [jersey, shorts, socks] });
+  if (!ids.parinte) return;
+  const { data: g } = await admin.from("guardians").select("guardian_players(player_id)").eq("user_id", ids.parinte).eq("club_id", clubId).maybeSingle();
+  const child = (g?.guardian_players as Array<{ player_id: string }> | undefined)?.[0]?.player_id;
+  if (!child) return;
+  const v = async (product: string, size: string | null) => {
+    const q = admin.from("shop_variants").select("id").eq("product_id", product);
+    return must((await (size === null ? q.is("size", null) : q.eq("size", size)).single()), "mărime").id;
+  };
+  const parent = createDb({ sub: ids.parinte, role: "authenticated" });
+  await rpc(parent, "set_kit_size", { p_player: child, p_size: "152" }, "mărimea copilului");
+  const first = await rpc<{ id: string }>(parent, "place_order", { p_player: child, p_note: null, p_items: [
+    { product_id: kit, qty: 1, components: [{ product_id: jersey, variant_id: await v(jersey, "164") }, { product_id: shorts, variant_id: await v(shorts, "164") }, { product_id: socks, variant_id: await v(socks, null) }] },
+  ] }, "comanda 1");
+  await rpc(office, "set_order_status", { p_id: first.id, p_status: "ready" }, "gata");
+  await rpc(office, "set_order_status", { p_id: first.id, p_status: "picked_up" }, "predată");
+  await rpc(parent, "place_order", { p_player: child, p_note: "Dacă se poate, cu numărul 7.", p_items: [{ product_id: jersey, variant_id: await v(jersey, "164"), qty: 1 }] }, "comanda 2");
 }
 
 /** O imagine demo (degrade între două culori), doar dacă ffmpeg există. */

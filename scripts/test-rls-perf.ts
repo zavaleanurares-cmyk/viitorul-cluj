@@ -504,6 +504,53 @@ try {
   check("politica neschimbată nu face versiune nouă", await errored(secretary.rpc("publish_site_policy", { p_body: "y".repeat(60) })));
   check("ștergerea știrii scoate și notificările", !(await errored(secretary.rpc("delete_site_post", { p_id: postId })))
     && (await rows(admin.from("notifications").select("id").eq("dedupe_key", `news:${postId}`))) === 0);
+  // -------------------------------------------------------------------------
+  console.log("\nMagazin");
+  const jersey = { name: "Tricou de joc", category: "kit", price: 12000, kind: "item", size_kind: "apparel", is_active: true, variants: [{ size: "140", stock: 2 }, { size: "152", stock: 1 }] };
+  check("antrenorul NU administrează magazinul", await errored(coach.rpc("save_product", { p: jersey })));
+  const jId = (await accountant.rpc("save_product", { p: jersey })).data as string;
+  check("contabilul adaugă un produs cu mărimi", !!jId && (await rows(admin.from("shop_variants").select("id").eq("product_id", jId))) === 2);
+  const shorts = (await secretary.rpc("save_product", { p: { ...jersey, name: "Șort de joc", price: 6000, variants: [{ size: "140", stock: 5 }] } })).data as string;
+  const kitB = await secretary.rpc("save_product", { p: { name: "Pachet echipament", category: "kit", price: 15000, kind: "bundle", size_kind: "none", bundle_items: [jId, shorts] } });
+  check("secretariatul face un pachet", !kitB.error, kitB);
+  check("pachetul fără produse e refuzat", await errored(secretary.rpc("save_product", { p: { name: "Pachet gol", price: 100, kind: "bundle", size_kind: "none", bundle_items: [] } })));
+  const hidden = (await secretary.rpc("save_product", { p: { ...jersey, name: "Ascuns", is_active: false } })).data as string;
+  check("familia vede catalogul activ, nu și produsele ascunse", (await rows(guardian.from("shop_products").select("id").eq("id", jId))) === 1 && (await rows(guardian.from("shop_products").select("id").eq("id", hidden))) === 0);
+  const v140 = must(await admin.from("shop_variants").select("id").eq("product_id", jId).eq("size", "140").single(), "140").id;
+  const v152 = must(await admin.from("shop_variants").select("id").eq("product_id", jId).eq("size", "152").single(), "152").id;
+  const s140 = must(await admin.from("shop_variants").select("id").eq("product_id", shorts).eq("size", "140").single(), "șort").id;
+  check("părintele NU comandă pentru copilul altcuiva", await errored(guardian.rpc("place_order", { p_player: p2, p_items: [{ product_id: jId, variant_id: v140, qty: 1 }] })));
+  check("jucătorul minor NU comandă singur", await errored(player1.rpc("place_order", { p_player: p1, p_items: [{ product_id: jId, variant_id: v140, qty: 1 }] })));
+  check("nu se comandă peste stoc", await errored(guardian.rpc("place_order", { p_player: p3, p_items: [{ product_id: jId, variant_id: v152, qty: 2 }] })));
+  check("produsul ascuns nu se comandă", await errored(guardian.rpc("place_order", { p_player: p3, p_items: [{ product_id: hidden, variant_id: v140, qty: 1 }] })));
+  check("pachetul cere mărime pentru fiecare produs", await errored(guardian.rpc("place_order", { p_player: p3, p_items: [{ product_id: kitB.data, qty: 1, components: [{ product_id: jId, variant_id: v140 }] }] })));
+  const ord = await guardian.rpc("place_order", { p_player: p3, p_items: [{ product_id: jId, variant_id: v152, qty: 1 }, { product_id: kitB.data, qty: 1, components: [{ product_id: jId, variant_id: v140 }, { product_id: shorts, variant_id: s140 }] }], p_note: "Mulțumim" });
+  check("părintele comandă tricou și pachet", !ord.error && (ord.data as { total: number }).total === 27000, ord);
+  const ordId = (ord.data as { id: string }).id;
+  const stock = async (id: string) => (await admin.from("shop_variants").select("stock").eq("id", id).single()).data?.stock;
+  check("stocul scade pe fiecare mărime", (await stock(v152)) === 0 && (await stock(v140)) === 1 && (await stock(s140)) === 4);
+  const och = must(await admin.from("shop_orders").select("charge_id, guardian_id, number").eq("id", ordId).single(), "comanda");
+  const oc = must(await admin.from("charges").select("kind, amount, guardian_id").eq("id", och.charge_id!).single(), "taxa comenzii");
+  check("suma intră în registrul familiei", oc.kind === "equipment" && oc.amount === 27000 && oc.guardian_id === gId, oc);
+  check("părintele își vede comanda și produsele", (await rows(guardian.from("shop_orders").select("id"))) === 1 && (await rows(guardian.from("shop_order_items").select("id").eq("order_id", ordId))) === 4);
+  check("alt părinte NU vede comanda", (await rows(guardian2.from("shop_orders").select("id"))) === 0 && (await rows(guardian2.from("shop_order_items").select("id"))) === 0);
+  check("antrenorul NU vede comenzile", (await rows(coach.from("shop_orders").select("id"))) === 0);
+  check("contabilul vede comenzile și jurnalul de stoc", (await rows(accountant.from("shop_orders").select("id"))) === 1 && (await rows(accountant.from("shop_stock_moves").select("id").eq("order_id", ordId))) === 3);
+  check("părintele NU vede jurnalul de stoc", (await rows(guardian.from("shop_stock_moves").select("id"))) === 0);
+  check("părintele NU marchează comanda gata", await errored(guardian.rpc("set_order_status", { p_id: ordId, p_status: "ready" })));
+  check("biroul marchează comanda gata, familia e anunțată", !(await errored(secretary.rpc("set_order_status", { p_id: ordId, p_status: "ready" })))
+    && (await rows(admin.from("notifications").select("id").eq("user_id", uGuardian).eq("dedupe_key", `shop_ready:${ordId}`))) === 1);
+  check("familia NU anulează comanda pregătită", await errored(guardian.rpc("cancel_order", { p_id: ordId })));
+  check("biroul anulează: stocul revine, taxa se anulează", !(await errored(secretary.rpc("cancel_order", { p_id: ordId, p_reason: "test" })))
+    && (await stock(v152)) === 1 && (await stock(v140)) === 2 && (await stock(s140)) === 5
+    && (await admin.from("charges").select("status").eq("id", och.charge_id!).single()).data?.status === "cancelled");
+  const ord2 = (await guardian.rpc("place_order", { p_player: p3, p_items: [{ product_id: jId, variant_id: v140, qty: 1 }] })).data as { id: string; number: number };
+  check("numerele comenzilor cresc", ord2.number === och.number + 1);
+  check("familia își anulează comanda nouă", !(await errored(guardian.rpc("cancel_order", { p_id: ord2.id }))));
+  check("stocul modificat de birou intră în jurnal", !(await errored(secretary.rpc("save_product", { p: { ...jersey, id: jId, variants: [{ size: "140", stock: 10 }, { size: "152", stock: 1 }] } })))
+    && (await rows(admin.from("shop_stock_moves").select("id").eq("variant_id", v140).eq("reason", "restock"))) >= 2);
+  check("fotografiile produselor: le vede clubul, le încarcă doar biroul", await access(guardian, "shop", `${clubA}/x.jpg`, "read") && !(await access(guardian, "shop", `${clubA}/x.jpg`, "write")) && await access(accountant, "shop", `${clubA}/x.jpg`, "write"));
+  check("alt club NU vede produsele", (await rows(secretaryB.from("shop_products").select("id"))) === 0);
   void adminU; void player1;
 } finally {
   await cleanup();

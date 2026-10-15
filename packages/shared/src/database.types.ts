@@ -3924,6 +3924,243 @@ export type Database = {
           { foreignKeyName: "seasons_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
         ];
       };
+      shop_bundle_items: {
+        Row: {
+          bundle_id: string;
+          product_id: string;
+        };
+        Insert: {
+          bundle_id: string;
+          product_id: string;
+        };
+        Update: {
+          bundle_id?: string;
+          product_id?: string;
+        };
+        Relationships: [
+          { foreignKeyName: "shop_bundle_items_bundle_id_fkey"; columns: ["bundle_id"]; isOneToOne: false; referencedRelation: "shop_products"; referencedColumns: ["id"] },
+          { foreignKeyName: "shop_bundle_items_product_id_fkey"; columns: ["product_id"]; isOneToOne: false; referencedRelation: "shop_products"; referencedColumns: ["id"] },
+        ];
+      };
+      shop_order_items: {
+        Row: {
+          id: string;
+          order_id: string;
+          product_id: string | null;
+          variant_id: string | null;
+          parent_id: string | null;
+          title: string;
+          size: string | null;
+          qty: number;
+          unit_price: number;
+        };
+        Insert: {
+          id?: string;
+          order_id: string;
+          product_id?: string | null;
+          variant_id?: string | null;
+          parent_id?: string | null;
+          title: string;
+          size?: string | null;
+          qty: number;
+          unit_price: number;
+        };
+        Update: {
+          id?: string;
+          order_id?: string;
+          product_id?: string | null;
+          variant_id?: string | null;
+          parent_id?: string | null;
+          title?: string;
+          size?: string | null;
+          qty?: number;
+          unit_price?: number;
+        };
+        Relationships: [
+          { foreignKeyName: "shop_order_items_order_id_fkey"; columns: ["order_id"]; isOneToOne: false; referencedRelation: "shop_orders"; referencedColumns: ["id"] },
+          { foreignKeyName: "shop_order_items_parent_id_fkey"; columns: ["parent_id"]; isOneToOne: false; referencedRelation: "shop_order_items"; referencedColumns: ["id"] },
+          { foreignKeyName: "shop_order_items_product_id_fkey"; columns: ["product_id"]; isOneToOne: false; referencedRelation: "shop_products"; referencedColumns: ["id"] },
+          { foreignKeyName: "shop_order_items_variant_id_fkey"; columns: ["variant_id"]; isOneToOne: false; referencedRelation: "shop_variants"; referencedColumns: ["id"] },
+        ];
+      };
+      shop_orders: {
+        Row: {
+          id: string;
+          club_id: string;
+          number: number;
+          player_id: string | null;
+          guardian_id: string | null;
+          child_name: string;
+          status: string;
+          total: number;
+          charge_id: string | null;
+          note: string | null;
+          cancel_reason: string | null;
+          placed_by: string | null;
+          created_at: string;
+          ready_at: string | null;
+          picked_up_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          club_id: string;
+          number: number;
+          player_id?: string | null;
+          guardian_id?: string | null;
+          child_name: string;
+          status?: string;
+          total: number;
+          charge_id?: string | null;
+          note?: string | null;
+          cancel_reason?: string | null;
+          placed_by?: string | null;
+          created_at?: string;
+          ready_at?: string | null;
+          picked_up_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          club_id?: string;
+          number?: number;
+          player_id?: string | null;
+          guardian_id?: string | null;
+          child_name?: string;
+          status?: string;
+          total?: number;
+          charge_id?: string | null;
+          note?: string | null;
+          cancel_reason?: string | null;
+          placed_by?: string | null;
+          created_at?: string;
+          ready_at?: string | null;
+          picked_up_at?: string | null;
+        };
+        Relationships: [
+          { foreignKeyName: "shop_orders_charge_id_fkey"; columns: ["charge_id"]; isOneToOne: false; referencedRelation: "charges"; referencedColumns: ["id"] },
+          { foreignKeyName: "shop_orders_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
+          { foreignKeyName: "shop_orders_guardian_id_fkey"; columns: ["guardian_id"]; isOneToOne: false; referencedRelation: "guardians"; referencedColumns: ["id"] },
+          { foreignKeyName: "shop_orders_placed_by_fkey"; columns: ["placed_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
+          { foreignKeyName: "shop_orders_player_id_fkey"; columns: ["player_id"]; isOneToOne: false; referencedRelation: "players"; referencedColumns: ["id"] },
+        ];
+      };
+      shop_products: {
+        Row: {
+          id: string;
+          club_id: string;
+          name: string;
+          description: string | null;
+          category: string;
+          price: number;
+          photo_paths: string[];
+          kind: string;
+          size_kind: string;
+          is_active: boolean;
+          sort: number;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          club_id: string;
+          name: string;
+          description?: string | null;
+          category?: string;
+          price: number;
+          photo_paths?: string[];
+          kind?: string;
+          size_kind?: string;
+          is_active?: boolean;
+          sort?: number;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          club_id?: string;
+          name?: string;
+          description?: string | null;
+          category?: string;
+          price?: number;
+          photo_paths?: string[];
+          kind?: string;
+          size_kind?: string;
+          is_active?: boolean;
+          sort?: number;
+          created_at?: string;
+        };
+        Relationships: [
+          { foreignKeyName: "shop_products_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
+        ];
+      };
+      shop_stock_moves: {
+        Row: {
+          id: number;
+          club_id: string;
+          variant_id: string;
+          delta: number;
+          reason: string;
+          order_id: string | null;
+          note: string | null;
+          actor_id: string | null;
+          at: string;
+        };
+        Insert: {
+          id?: never;
+          club_id: string;
+          variant_id: string;
+          delta: number;
+          reason: string;
+          order_id?: string | null;
+          note?: string | null;
+          actor_id?: string | null;
+          at?: string;
+        };
+        Update: {
+          id?: never;
+          club_id?: string;
+          variant_id?: string;
+          delta?: number;
+          reason?: string;
+          order_id?: string | null;
+          note?: string | null;
+          actor_id?: string | null;
+          at?: string;
+        };
+        Relationships: [
+          { foreignKeyName: "shop_stock_moves_actor_id_fkey"; columns: ["actor_id"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
+          { foreignKeyName: "shop_stock_moves_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
+          { foreignKeyName: "shop_stock_moves_order_id_fkey"; columns: ["order_id"]; isOneToOne: false; referencedRelation: "shop_orders"; referencedColumns: ["id"] },
+          { foreignKeyName: "shop_stock_moves_variant_id_fkey"; columns: ["variant_id"]; isOneToOne: false; referencedRelation: "shop_variants"; referencedColumns: ["id"] },
+        ];
+      };
+      shop_variants: {
+        Row: {
+          id: string;
+          product_id: string;
+          club_id: string;
+          size: string | null;
+          stock: number;
+          sort: number;
+        };
+        Insert: {
+          id?: string;
+          product_id: string;
+          club_id: string;
+          size?: string | null;
+          stock?: number;
+          sort?: number;
+        };
+        Update: {
+          id?: string;
+          product_id?: string;
+          club_id?: string;
+          size?: string | null;
+          stock?: number;
+          sort?: number;
+        };
+        Relationships: [
+          { foreignKeyName: "shop_variants_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
+          { foreignKeyName: "shop_variants_product_id_fkey"; columns: ["product_id"]; isOneToOne: false; referencedRelation: "shop_products"; referencedColumns: ["id"] },
+        ];
+      };
       site_albums: {
         Row: {
           id: string;
@@ -4580,6 +4817,7 @@ export type Database = {
       cancel_camp_registration: { Args: { p_id: string | null; p_reason?: string | null }; Returns: undefined };
       cancel_charge: { Args: { p_charge: string | null; p_reason: string | null }; Returns: undefined };
       cancel_message: { Args: { p_id: string | null }; Returns: undefined };
+      cancel_order: { Args: { p_id: string | null; p_reason?: string | null }; Returns: undefined };
       cancel_purchase_request: { Args: { p_id: string | null }; Returns: undefined };
       clear_must_change_password: { Args: Record<PropertyKey, never>; Returns: undefined };
       close_match: { Args: { p_event: string | null; p_ratings?: Json | null; p_report?: string | null }; Returns: undefined };
@@ -4631,6 +4869,7 @@ export type Database = {
       my_trials: { Args: { p_event?: string | null }; Returns: { id: string; child_name: string; birth_year: number; pos: string; previous_club: string; event_id: string; trial_at: string; status: string; trial_rating: number; trial_note: string }[] };
       note_enrolment: { Args: { p_id: string | null; p_note: string | null }; Returns: undefined };
       photo_consent_state: { Args: { p_album: string | null }; Returns: { photo_id: string; is_public: boolean; missing: string[] }[] };
+      place_order: { Args: { p_player: string | null; p_items: Json | null; p_note?: string | null }; Returns: Json };
       player_file_paths: { Args: { p_player: string | null }; Returns: { bucket: string; path: string }[] };
       players_past_retention: { Args: Record<PropertyKey, never>; Returns: { player_id: string; display_name: string; inactive_since: string }[] };
       preview_bank_lines: { Args: { p_lines: Json | null }; Returns: Json };
@@ -4677,6 +4916,7 @@ export type Database = {
       save_event: { Args: { p: Json | null }; Returns: string };
       save_match_squad: { Args: { p_event: string | null; p_formation: string | null; p_rows: Json | null }; Returns: number };
       save_photo: { Args: { p: Json | null }; Returns: string };
+      save_product: { Args: { p: Json | null }; Returns: string };
       save_program: { Args: { p_id: string | null; p_name: string | null; p_description: string | null; p_kind: string | null; p_is_template: boolean | null; p_items: Json | null }; Returns: string };
       save_purchase_request: { Args: { p: Json | null }; Returns: Json };
       save_site_post: { Args: { p: Json | null }; Returns: string };
@@ -4696,6 +4936,7 @@ export type Database = {
       set_fee_plan: { Args: { p_group: string | null; p_player: string | null; p_amount: number | null; p_from: string | null; p_reason?: string | null }; Returns: string };
       set_kit_size: { Args: { p_player: string | null; p_size: string | null }; Returns: undefined };
       set_my_photo: { Args: { p_path: string | null }; Returns: undefined };
+      set_order_status: { Args: { p_id: string | null; p_status: string | null }; Returns: undefined };
       setup_club: { Args: { p_slug: string | null; p_name: string | null; p_short_name: string | null; p_groups: string[] | null; p_settings?: Json | null }; Returns: string };
       share_video_marker: { Args: { p_marker: string | null; p_share: boolean | null }; Returns: number };
       sign_contract: { Args: { p_id: string | null; p_name: string | null; p_signature_path: string | null; p_ip?: string | null; p_user_agent?: string | null }; Returns: string };

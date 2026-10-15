@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Ban, Phone } from "lucide-react";
-import { ABSENCE_REASON_LABELS, ATTENDANCE_LABELS, ageOn, can, formatDate, formatDateShort, seasonStart, type AbsenceReason, type AttendanceStatus } from "@club/shared";
+import { ABSENCE_REASON_LABELS, ATTENDANCE_LABELS, ageOn, can, formatDate, formatDateShort, kitSizeLabel, seasonStart, type AbsenceReason, type AttendanceStatus } from "@club/shared";
 import { requireCapability } from "@/lib/auth";
 import { LinkButton } from "@/components/ui/button";
 import { Card, CardBody, CardHeader, Notice, Stat } from "@/components/ui/card";
@@ -65,6 +65,7 @@ export default async function SquadPlayerPage({ params }: { params: Promise<{ id
               { label: p.fields.foot, value: player.dominant_foot ? p.foot[player.dominant_foot] : "—" },
               { label: p.fields.nationality, value: player.nationality ?? "—" },
               { label: p.fields.registration, value: player.registration_number ?? "—" },
+              { label: getT().club.onboarding.kitSize, value: player.kit_size ? kitSizeLabel(player.kit_size) : "—" },
               { label: p.fields.fifaId, value: player.fifa_id ?? "—" },
               { label: p.fields.enrolledOn, value: player.enrolled_on ? formatDate(player.enrolled_on) : "—" },
               { label: p.fields.visa, value: player.medical_visa_expires_on ? formatDate(player.medical_visa_expires_on) : t.visa.missing },

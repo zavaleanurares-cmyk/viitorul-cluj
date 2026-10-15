@@ -2,6 +2,7 @@
 import { enrolment } from "./enrolment";
 import { camps } from "./camps";
 import { website } from "./website";
+import { shop } from "./shop";
 
 const persoane = (n: number) => (n === 1 ? "o persoană" : n < 20 ? `${n} persoane` : `${n} de persoane`);
 
@@ -10,6 +11,7 @@ export const club = {
   enrolment,
   camps,
   website,
+  shop,
   onboarding: {
     title: "Primii pași în club",
     description: "Câteva lucruri de făcut după înscriere. Durează câteva minute.",
@@ -22,6 +24,7 @@ export const club = {
     size: "Alege mărimea echipamentului",
     sizeDone: (size: string) => `Mărimea echipamentului: ${size}.`,
     pickSize: "Alege mărimea",
+    kitSize: "Mărimea echipamentului",
     sizeSaved: "Mărimea a fost salvată.",
   },
   messages: {
