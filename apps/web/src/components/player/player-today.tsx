@@ -11,6 +11,7 @@ import { RpeCard } from "@/components/player/rpe-card";
 import { StatusCard } from "@/components/player/status-card";
 import { getT } from "@/messages";
 import { VisaFamilyNotice } from "@/components/performance/visa-family";
+import { FamilyEvaluationsCard } from "@/components/performance/family-evaluations";
 import { visaState } from "@/components/squad/queries";
 
 function capitalize(s: string) {
@@ -40,6 +41,7 @@ export async function PlayerToday({ db, ctx }: Pick<Session, "db" | "ctx">) {
       </header>
 
       <StatusCard player={player} status={status} today={ctx.today} />
+      <FamilyEvaluationsCard db={db} />
       <VisaFamilyNotice playerId={player.id} playerName={player.display_name} state={visa.state} today={ctx.today} last={docs.data?.[0] ?? null} self />
 
       {entry ? (

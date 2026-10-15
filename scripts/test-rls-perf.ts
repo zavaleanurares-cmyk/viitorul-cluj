@@ -149,6 +149,67 @@ try {
   check("biroul NU vede greutatea", (await rows(secretary.from("anthropometrics").select("id"))) === 0);
   check("rândul gol șterge măsurătoarea zilei", (await physio.rpc("save_body_measurements", { p_date: day(0), p_rows: [{ player_id: p2 }] })).data === 1
     && (await rows(admin.from("anthropometrics").select("id").eq("player_id", p2))) === 0);
+  // -------------------------------------------------------------------------
+  console.log("\nBaterii de teste");
+  const bat = await physio.rpc("create_fitness_battery", { p: { name: "Viteză", tests: [
+    { code: "sprint_10", name: "Sprint 10 m", unit: "s", lower_is_better: true }, { code: "cmj", name: "CMJ", unit: "cm", lower_is_better: false }] } });
+  check("preparatorul creează o baterie (cu testele lipsă)", !bat.error, bat.error);
+  check("a doua baterie refolosește testul existent după cod", !(await errored(physio.rpc("create_fitness_battery", { p: { name: "Sprint", tests: [{ code: "sprint_10", name: "x", unit: "s" }] } })))
+    && (await rows(physio.from("fitness_tests").select("id").eq("code", "sprint_10"))) === 1);
+  check("antrenorul NU creează baterii", await errored(coach.rpc("create_fitness_battery", { p: { name: "X", tests: [{ code: "x1", name: "X", unit: "s" }] } })));
+  check("antrenorul vede bateriile", (await rows(coach.from("fitness_batteries").select("id"))) === 2);
+  const tSprint = must(await physio.from("fitness_tests").select("id").eq("code", "sprint_10").single(), "test").id;
+  const tCmj = must(await physio.from("fitness_tests").select("id").eq("code", "cmj").single(), "test cmj").id;
+  check("grila salvează jucători × teste", (await physio.rpc("save_test_grid", { p_date: day(0), p_rows: [
+    { player_id: p1, test_id: tSprint, value: 1.92 }, { player_id: p1, test_id: tCmj, value: 34 }, { player_id: p2, test_id: tSprint, value: 2.01 }] })).data === 3);
+  check("o valoare goală șterge rezultatul zilei", (await physio.rpc("save_test_grid", { p_date: day(0), p_rows: [{ player_id: p2, test_id: tSprint, value: null }] })).data === 1
+    && (await rows(admin.from("fitness_test_results").select("id").eq("player_id", p2))) === 0);
+  check("antrenorul NU introduce rezultate", await errored(coach.rpc("save_test_grid", { p_date: day(0), p_rows: [{ player_id: p1, test_id: tSprint, value: 3 }] })));
+  const tB = must(await admin.from("fitness_tests").insert({ club_id: clubB, code: "b1", name: "B", unit: "s" }).select("id").single(), "test B").id;
+  check("testul altui club e refuzat în grilă", await errored(physio.rpc("save_test_grid", { p_date: day(0), p_rows: [{ player_id: p1, test_id: tB, value: 1 }] })));
+
+  // -------------------------------------------------------------------------
+  console.log("\nEvaluări");
+  const tpl = await director.rpc("save_evaluation_template", { p: { name: "Dezvoltare", criteria: [
+    { category: "technical", name: "Pasa" }, { category: "mental", name: "Atitudine" }] } });
+  check("directorul creează un model", !tpl.error, tpl.error);
+  check("antrenorul NU creează modele", await errored(coach.rpc("save_evaluation_template", { p: { name: "X", criteria: [{ category: "technical", name: "Y" }] } })));
+  const crits = must(await director.from("evaluation_criteria").select("id, name").eq("template_id", tpl.data as string), "criterii");
+  const cPass = crits.find((c) => c.name === "Pasa")!.id;
+  const cAtt = crits.find((c) => c.name === "Atitudine")!.id;
+  const rnd = await director.rpc("start_evaluation_round", { p: { name: "Toamna", template_id: tpl.data, group_ids: [G1, G2], due_on: day(14) } });
+  check("directorul pornește runda", !rnd.error, rnd.error);
+  const roundId = rnd.data as string;
+  check("antrenorul primește anunțul rundei", (await rows(coach.from("notifications").select("id").eq("kind", "evaluation_round"))) === 1);
+  check("antrenorul NU pornește runde", await errored(coach.rpc("start_evaluation_round", { p: { name: "X", template_id: tpl.data, group_ids: [G1] } })));
+  check("antrenorul notează un jucător din echipa lui (ciornă)", !(await errored(coach.rpc("save_evaluation", { p_round: roundId, p_player: p1, p_scores: { [cPass]: 4 } }))));
+  check("trimiterea cere toate criteriile", await errored(coach.rpc("save_evaluation", { p_round: roundId, p_player: p1, p_scores: { [cPass]: 4 }, p_submit: true })));
+  check("notele sunt de la 1 la 5", await errored(coach.rpc("save_evaluation", { p_round: roundId, p_player: p1, p_scores: { [cPass]: 7, [cAtt]: 3 } })));
+  const sent = await coach.rpc("save_evaluation", { p_round: roundId, p_player: p1, p_scores: { [cPass]: 4, [cAtt]: 5 }, p_next_goals: "Pasa cu stângul", p_comment: "intern: discuție cu părinții", p_submit: true });
+  check("antrenorul trimite evaluarea", !sent.error, sent.error);
+  const evalId = sent.data as string;
+  check("antrenorul NU notează jucători din alte echipe", await errored(coach.rpc("save_evaluation", { p_round: roundId, p_player: p3, p_scores: { [cPass]: 3, [cAtt]: 3 } })));
+  check("antrenorul NU vede evaluările altor echipe", (await rows(coach.from("evaluations").select("id").eq("player_id", p3))) === 0);
+  check("directorul notează orice jucător din rundă", !(await errored(director.rpc("save_evaluation", { p_round: roundId, p_player: p3, p_scores: { [cPass]: 3, [cAtt]: 3 }, p_submit: true }))));
+  check("jucătorul din afara rundei e refuzat", await errored(director.rpc("save_evaluation", { p_round: roundId, p_player: pB, p_scores: {} })));
+  check("nota internă NU se citește direct din tabel", await errored(director.from("evaluations").select("comment").eq("id", evalId)));
+  check("nota internă se citește prin funcție de staff", (await coach.rpc("evaluation_comment", { p_eval: evalId })).data === "intern: discuție cu părinții");
+  check("jucătorul NU vede evaluarea înainte de publicare", (await rows(player1.from("evaluations").select("id"))) === 0);
+  check("părintele NU vede evaluarea înainte de publicare", (await rows(guardian.from("evaluations").select("id"))) === 0);
+  check("biroul NU vede evaluările", (await rows(secretary.from("evaluations").select("id"))) === 0);
+  check("antrenorul NU publică", await errored(coach.rpc("publish_evaluation_round", { p_round: roundId })));
+  const pub = await director.rpc("publish_evaluation_round", { p_round: roundId });
+  check("directorul publică și anunță familiile", !pub.error && (pub.data as number) >= 2, pub);
+  check("jucătorul își vede evaluarea publicată", (await rows(player1.from("evaluations").select("id"))) === 1);
+  check("jucătorul vede notele pe criterii", (await rows(player1.from("evaluation_scores").select("score").eq("evaluation_id", evalId))) === 2);
+  check("jucătorul vede runda publicată", (await rows(player1.from("evaluation_rounds").select("id"))) === 1);
+  check("jucătorul NU citește nota internă", (await player1.rpc("evaluation_comment", { p_eval: evalId })).data === null);
+  check("părintele vede doar evaluarea copilului lui", (await rows(guardian.from("evaluations").select("player_id"))) === 1
+    && (await guardian.from("evaluations").select("player_id").single()).data?.player_id === p3);
+  check("alt părinte nu vede nimic (copilul lui nu a fost evaluat)", (await rows(guardian2.from("evaluations").select("id"))) === 0);
+  check("după publicare evaluările nu se mai modifică", await errored(director.rpc("save_evaluation", { p_round: roundId, p_player: p1, p_scores: { [cPass]: 1, [cAtt]: 1 } })));
+  check("runda cu evaluări nu se șterge", await errored(director.rpc("delete_evaluation_round", { p_round: roundId })));
+  check("alt club nu vede runda", (await rows(secretaryB.from("evaluation_rounds").select("id"))) === 0);
   void adminU; void player1;
 } finally {
   await cleanup();

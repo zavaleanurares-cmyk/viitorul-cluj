@@ -47,6 +47,7 @@ export default async function PlayerFileLayout({ children, params }: { children:
     { key: "fizic", href: `${base}/fizic`, label: tabsT.fizic, show: can(ctx.role, "viewPhysicalData") },
     { key: "plan", href: `${base}/plan`, label: tabsT.plan, show: can(ctx.role, "manage") },
     { key: "documente", href: `${base}/documente`, label: tabsT.documente, show: can(ctx.role, "viewMedicalFile") },
+    { key: "evaluari", href: `${base}/evaluari`, label: getT().performance.evaluations.playerTab, show: can(ctx.role, "viewAnalysis") },
   ].filter((x) => x.show).map(({ key, href, label }) => ({ key, href, label }));
 
   return (

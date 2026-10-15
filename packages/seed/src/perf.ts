@@ -6,7 +6,7 @@ import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
 import { createDb, type Db } from "@club/db";
-import { addDays, todayIn } from "@club/shared";
+import { STANDARD_BATTERIES, STANDARD_TEMPLATES, addDays, todayIn } from "@club/shared";
 import { must } from "./common";
 
 /** Un PDF minim (o pagină cu un titlu), ca documentele demo să se poată deschide. */
@@ -50,6 +50,60 @@ export async function seedPerfDemo(admin: Db, clubId: string, ids: Record<string
   const today = todayIn();
   await seedVisas(admin, clubId, ids, today);
   await seedBody(admin, clubId, today);
+  await seedBatteries(ids);
+  await seedEvaluations(admin, clubId, ids, today);
+}
+
+/** Bateriile standard „Viteză și forță" și „Rezistență și mobilitate", create de preparator. */
+async function seedBatteries(ids: Record<string, string>) {
+  if (!ids.preparator) return;
+  const physio = createDb({ sub: ids.preparator, role: "authenticated" });
+  const { count } = await physio.from("fitness_batteries").select("id", { count: "exact", head: true });
+  if (count) return;
+  for (const b of STANDARD_BATTERIES.filter((x) => ["speed", "endurance"].includes(x.key))) {
+    await rpc(physio, "create_fitness_battery", { p: { name: b.name, description: b.description, tests: b.tests } }, `baterie ${b.name}`);
+  }
+}
+
+/**
+ * Evaluări: modelul „Dezvoltare", o rundă publicată pentru U17 (toamna trecută → familia vede profilul)
+ * și o rundă deschisă pentru U19, notată pe jumătate de antrenor.
+ */
+async function seedEvaluations(admin: Db, clubId: string, ids: Record<string, string>, today: string) {
+  if (!ids.director || !ids["antrenor.juniori"]) return;
+  const director = createDb({ sub: ids.director, role: "authenticated" });
+  const coach = createDb({ sub: ids["antrenor.juniori"], role: "authenticated" });
+  const { count } = await director.from("evaluation_rounds").select("id", { count: "exact", head: true });
+  if (count) return;
+  const tplData = STANDARD_TEMPLATES.find((x) => x.key === "development")!;
+  const tpl = await rpc<string>(director, "save_evaluation_template", { p: { name: tplData.name, age_label: tplData.age_label, criteria: tplData.criteria } }, "model");
+  const crit = must(await director.from("evaluation_criteria").select("id, category").eq("template_id", tpl).order("sort"), "criterii");
+  const { data: groups } = await admin.from("groups").select("id, name").eq("club_id", clubId);
+  const g = (n: string) => groups?.find((x) => x.name === n)?.id;
+  let seed = 777;
+  const rnd = () => ((seed = (seed * 1664525 + 1013904223) % 4294967296) / 4294967296);
+  const goals = ["Prima atingere cu piciorul slab, 10 minute pe zi.", "Comunicare mai multă în faza defensivă.", "Sprinturi repetate: păstrează intensitatea până la final.", "Decizie mai rapidă la pasa de după preluare."];
+  const rate = async (round: string, player: string, submit: boolean, shift = 0) => {
+    const scores = Object.fromEntries(crit.map((c) => [c.id, Math.max(1, Math.min(5, Math.round(2.6 + rnd() * 2 + shift)))]));
+    await rpc(coach, "save_evaluation", { p_round: round, p_player: player, p_scores: scores, p_strengths: "Atitudine foarte bună la antrenament.",
+      p_next_goals: goals[Math.floor(rnd() * goals.length)], p_comment: null, p_submit: submit }, "evaluare");
+  };
+  const u17 = g("U17");
+  if (u17) {
+    const r1 = await rpc<string>(director, "start_evaluation_round", { p: { name: "Primăvara 2026", template_id: tpl, group_ids: [u17], due_on: addDays(today, -150) } }, "runda U17");
+    const { data: players } = await admin.from("players").select("id").eq("group_id", u17).eq("is_active", true);
+    for (const p of players ?? []) await rate(r1, p.id, true, -0.4);
+    await rpc(director, "publish_evaluation_round", { p_round: r1 }, "publicare U17");
+    const r2 = await rpc<string>(director, "start_evaluation_round", { p: { name: "Toamna 2026", template_id: tpl, group_ids: [u17], due_on: addDays(today, -2) } }, "runda U17 toamna");
+    for (const p of players ?? []) await rate(r2, p.id, true, 0.3);
+    await rpc(director, "publish_evaluation_round", { p_round: r2 }, "publicare U17 toamna");
+  }
+  const u19 = g("U19");
+  if (u19) {
+    const r = await rpc<string>(director, "start_evaluation_round", { p: { name: "Toamna 2026", template_id: tpl, group_ids: [u19], due_on: addDays(today, 10) } }, "runda U19");
+    const { data: players } = await admin.from("players").select("id").eq("group_id", u19).eq("is_active", true).order("display_name");
+    for (const [i, p] of (players ?? []).entries()) if (i < 6) await rate(r, p.id, i < 5);
+  }
 }
 
 /**

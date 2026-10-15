@@ -936,6 +936,193 @@ export type Database = {
           { foreignKeyName: "departments_parent_id_fkey"; columns: ["parent_id"]; isOneToOne: false; referencedRelation: "departments"; referencedColumns: ["id"] },
         ];
       };
+      evaluation_criteria: {
+        Row: {
+          id: string;
+          template_id: string;
+          category: string;
+          name: string;
+          description: string | null;
+          sort: number;
+          is_active: boolean;
+        };
+        Insert: {
+          id?: string;
+          template_id: string;
+          category: string;
+          name: string;
+          description?: string | null;
+          sort?: number;
+          is_active?: boolean;
+        };
+        Update: {
+          id?: string;
+          template_id?: string;
+          category?: string;
+          name?: string;
+          description?: string | null;
+          sort?: number;
+          is_active?: boolean;
+        };
+        Relationships: [
+          { foreignKeyName: "evaluation_criteria_template_id_fkey"; columns: ["template_id"]; isOneToOne: false; referencedRelation: "evaluation_templates"; referencedColumns: ["id"] },
+        ];
+      };
+      evaluation_round_groups: {
+        Row: {
+          round_id: string;
+          group_id: string;
+        };
+        Insert: {
+          round_id: string;
+          group_id: string;
+        };
+        Update: {
+          round_id?: string;
+          group_id?: string;
+        };
+        Relationships: [
+          { foreignKeyName: "evaluation_round_groups_group_id_fkey"; columns: ["group_id"]; isOneToOne: false; referencedRelation: "groups"; referencedColumns: ["id"] },
+          { foreignKeyName: "evaluation_round_groups_round_id_fkey"; columns: ["round_id"]; isOneToOne: false; referencedRelation: "evaluation_rounds"; referencedColumns: ["id"] },
+        ];
+      };
+      evaluation_rounds: {
+        Row: {
+          id: string;
+          club_id: string;
+          template_id: string;
+          name: string;
+          due_on: string | null;
+          status: string;
+          created_by: string | null;
+          created_at: string;
+          published_at: string | null;
+          published_by: string | null;
+        };
+        Insert: {
+          id?: string;
+          club_id: string;
+          template_id: string;
+          name: string;
+          due_on?: string | null;
+          status?: string;
+          created_by?: string | null;
+          created_at?: string;
+          published_at?: string | null;
+          published_by?: string | null;
+        };
+        Update: {
+          id?: string;
+          club_id?: string;
+          template_id?: string;
+          name?: string;
+          due_on?: string | null;
+          status?: string;
+          created_by?: string | null;
+          created_at?: string;
+          published_at?: string | null;
+          published_by?: string | null;
+        };
+        Relationships: [
+          { foreignKeyName: "evaluation_rounds_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
+          { foreignKeyName: "evaluation_rounds_created_by_fkey"; columns: ["created_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
+          { foreignKeyName: "evaluation_rounds_published_by_fkey"; columns: ["published_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
+          { foreignKeyName: "evaluation_rounds_template_id_fkey"; columns: ["template_id"]; isOneToOne: false; referencedRelation: "evaluation_templates"; referencedColumns: ["id"] },
+        ];
+      };
+      evaluation_scores: {
+        Row: {
+          evaluation_id: string;
+          criterion_id: string;
+          score: number;
+        };
+        Insert: {
+          evaluation_id: string;
+          criterion_id: string;
+          score: number;
+        };
+        Update: {
+          evaluation_id?: string;
+          criterion_id?: string;
+          score?: number;
+        };
+        Relationships: [
+          { foreignKeyName: "evaluation_scores_criterion_id_fkey"; columns: ["criterion_id"]; isOneToOne: false; referencedRelation: "evaluation_criteria"; referencedColumns: ["id"] },
+          { foreignKeyName: "evaluation_scores_evaluation_id_fkey"; columns: ["evaluation_id"]; isOneToOne: false; referencedRelation: "evaluations"; referencedColumns: ["id"] },
+        ];
+      };
+      evaluation_templates: {
+        Row: {
+          id: string;
+          club_id: string;
+          name: string;
+          age_label: string | null;
+          is_active: boolean;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          club_id: string;
+          name: string;
+          age_label?: string | null;
+          is_active?: boolean;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          club_id?: string;
+          name?: string;
+          age_label?: string | null;
+          is_active?: boolean;
+          created_at?: string;
+        };
+        Relationships: [
+          { foreignKeyName: "evaluation_templates_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
+        ];
+      };
+      evaluations: {
+        Row: {
+          id: string;
+          round_id: string;
+          player_id: string;
+          evaluator_id: string | null;
+          status: string;
+          strengths: string | null;
+          next_goals: string | null;
+          comment: string | null;
+          updated_at: string;
+          submitted_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          round_id: string;
+          player_id: string;
+          evaluator_id?: string | null;
+          status?: string;
+          strengths?: string | null;
+          next_goals?: string | null;
+          comment?: string | null;
+          updated_at?: string;
+          submitted_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          round_id?: string;
+          player_id?: string;
+          evaluator_id?: string | null;
+          status?: string;
+          strengths?: string | null;
+          next_goals?: string | null;
+          comment?: string | null;
+          updated_at?: string;
+          submitted_at?: string | null;
+        };
+        Relationships: [
+          { foreignKeyName: "evaluations_evaluator_id_fkey"; columns: ["evaluator_id"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
+          { foreignKeyName: "evaluations_player_id_fkey"; columns: ["player_id"]; isOneToOne: false; referencedRelation: "players"; referencedColumns: ["id"] },
+          { foreignKeyName: "evaluations_round_id_fkey"; columns: ["round_id"]; isOneToOne: false; referencedRelation: "evaluation_rounds"; referencedColumns: ["id"] },
+        ];
+      };
       event_series: {
         Row: {
           id: string;
@@ -1429,6 +1616,59 @@ export type Database = {
           { foreignKeyName: "finance_settings_club_id_fkey"; columns: ["club_id"]; isOneToOne: true; referencedRelation: "clubs"; referencedColumns: ["id"] },
         ];
       };
+      fitness_batteries: {
+        Row: {
+          id: string;
+          club_id: string;
+          name: string;
+          description: string | null;
+          sort: number;
+          is_active: boolean;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          club_id: string;
+          name: string;
+          description?: string | null;
+          sort?: number;
+          is_active?: boolean;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          club_id?: string;
+          name?: string;
+          description?: string | null;
+          sort?: number;
+          is_active?: boolean;
+          created_at?: string;
+        };
+        Relationships: [
+          { foreignKeyName: "fitness_batteries_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
+        ];
+      };
+      fitness_battery_tests: {
+        Row: {
+          battery_id: string;
+          test_id: string;
+          sort: number;
+        };
+        Insert: {
+          battery_id: string;
+          test_id: string;
+          sort?: number;
+        };
+        Update: {
+          battery_id?: string;
+          test_id?: string;
+          sort?: number;
+        };
+        Relationships: [
+          { foreignKeyName: "fitness_battery_tests_battery_id_fkey"; columns: ["battery_id"]; isOneToOne: false; referencedRelation: "fitness_batteries"; referencedColumns: ["id"] },
+          { foreignKeyName: "fitness_battery_tests_test_id_fkey"; columns: ["test_id"]; isOneToOne: false; referencedRelation: "fitness_tests"; referencedColumns: ["id"] },
+        ];
+      };
       fitness_test_results: {
         Row: {
           id: string;
@@ -1476,6 +1716,7 @@ export type Database = {
           lower_is_better: boolean;
           sort: number;
           is_active: boolean;
+          description: string | null;
         };
         Insert: {
           id?: string;
@@ -1486,6 +1727,7 @@ export type Database = {
           lower_is_better?: boolean;
           sort?: number;
           is_active?: boolean;
+          description?: string | null;
         };
         Update: {
           id?: string;
@@ -1496,6 +1738,7 @@ export type Database = {
           lower_is_better?: boolean;
           sort?: number;
           is_active?: boolean;
+          description?: string | null;
         };
         Relationships: [
           { foreignKeyName: "fitness_tests_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
@@ -3502,13 +3745,16 @@ export type Database = {
       compute_bonuses: { Args: { p_from: string | null; p_to: string | null }; Returns: number };
       copy_daily_plan: { Args: { p_plan: string | null; p_dates: string[] | null; p_players?: string[] | null }; Returns: number };
       create_auto_pay_intent: { Args: { p_guardian: string | null; p_charge_ids: string[] | null }; Returns: Json };
+      create_fitness_battery: { Args: { p: Json | null }; Returns: string };
       create_payment_intent: { Args: { p_charge_ids: string[] | null; p_save_method?: boolean | null }; Returns: Json };
       decide_bonus_entries: { Args: { p_ids: string[] | null; p_status: string | null }; Returns: number };
       decide_purchase_request: { Args: { p_id: string | null; p_decision: string | null; p_note?: string | null }; Returns: undefined };
       decide_visa_document: { Args: { p_id: string | null; p_approve: boolean | null; p_valid_until?: string | null; p_issued_on?: string | null; p_reason?: string | null }; Returns: undefined };
       delete_charge_request: { Args: { p_id: string | null }; Returns: undefined };
+      delete_evaluation_round: { Args: { p_round: string | null }; Returns: undefined };
       delete_match_event: { Args: { p_id: string | null }; Returns: undefined };
       erase_player: { Args: { p_player: string | null }; Returns: string };
+      evaluation_comment: { Args: { p_eval: string | null }; Returns: string };
       expense_from_bank_line: { Args: { p_line: string | null; p: Json | null }; Returns: string };
       export_player_data: { Args: { p_player?: string | null }; Returns: Json };
       family_payment_info: { Args: Record<PropertyKey, never>; Returns: Json };
@@ -3532,6 +3778,7 @@ export type Database = {
       players_past_retention: { Args: Record<PropertyKey, never>; Returns: { player_id: string; display_name: string; inactive_since: string }[] };
       preview_bank_lines: { Args: { p_lines: Json | null }; Returns: Json };
       preview_monthly_charges: { Args: { p_period: string | null }; Returns: Json };
+      publish_evaluation_round: { Args: { p_round: string | null }; Returns: number };
       record_payment: { Args: { p: Json | null }; Returns: Json };
       refresh_daily_alerts: { Args: { p_club?: string | null }; Returns: number };
       remind_overdue_families: { Args: Record<PropertyKey, never>; Returns: number };
@@ -3545,10 +3792,13 @@ export type Database = {
       save_budget_lines: { Args: { p_year: number | null; p_kind: string | null; p_department: string | null; p_amounts: number[] | null }; Returns: undefined };
       save_charge_request: { Args: { p: Json | null }; Returns: Json };
       save_daily_plan: { Args: { p_player: string | null; p_date: string | null; p_title: string | null; p_notes: string | null; p_injury: string | null; p_rtp_stage: number | null; p_items: Json | null }; Returns: string };
+      save_evaluation: { Args: { p_round: string | null; p_player: string | null; p_scores: Json | null; p_strengths?: string | null; p_next_goals?: string | null; p_comment?: string | null; p_submit?: boolean | null }; Returns: string };
+      save_evaluation_template: { Args: { p: Json | null }; Returns: string };
       save_event: { Args: { p: Json | null }; Returns: string };
       save_match_squad: { Args: { p_event: string | null; p_formation: string | null; p_rows: Json | null }; Returns: number };
       save_program: { Args: { p_id: string | null; p_name: string | null; p_description: string | null; p_kind: string | null; p_is_template: boolean | null; p_items: Json | null }; Returns: string };
       save_purchase_request: { Args: { p: Json | null }; Returns: Json };
+      save_test_grid: { Args: { p_date: string | null; p_rows: Json | null }; Returns: number };
       search_club: { Args: { p_query: string | null; p_limit?: number | null }; Returns: Json };
       send_fee_reminders: { Args: Record<PropertyKey, never>; Returns: number };
       send_visa_reminders: { Args: { p_players: string[] | null }; Returns: number };
@@ -3560,6 +3810,7 @@ export type Database = {
       set_fee_plan: { Args: { p_group: string | null; p_player: string | null; p_amount: number | null; p_from: string | null; p_reason?: string | null }; Returns: string };
       set_my_photo: { Args: { p_path: string | null }; Returns: undefined };
       setup_club: { Args: { p_slug: string | null; p_name: string | null; p_short_name: string | null; p_groups: string[] | null; p_settings?: Json | null }; Returns: string };
+      start_evaluation_round: { Args: { p: Json | null }; Returns: string };
       submit_visa_document: { Args: { p_player: string | null; p_path: string | null; p_file_name: string | null; p_mime: string | null; p_size: number | null; p_issued_on?: string | null }; Returns: string };
       switch_membership: { Args: { p_membership: string | null }; Returns: undefined };
       unaccent_ro: { Args: { p: string | null }; Returns: string };

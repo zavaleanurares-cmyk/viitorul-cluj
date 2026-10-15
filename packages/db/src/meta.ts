@@ -7,8 +7,8 @@ export type Query = (sql: string, params?: unknown[]) => Promise<{ rows: Record<
 export type ColumnMeta = {
   name: string;
   type: string;
-  /** rolul `authenticated` nu o poate citi (ex. coloanele medicale de pe `players`, deschise doar pentru `lr_health`) */
-  restricted: boolean;
+  /** rolurile Postgres ale cererilor care NU o pot citi (ex. coloanele medicale de pe `players` pentru `authenticated`) */
+  deniedFor: string[];
 };
 export type TableMeta = {
   name: string;
@@ -36,7 +36,12 @@ export async function loadSchemaMeta(query: Query): Promise<SchemaMeta> {
   const [cols, cons, fks, fns, viewBases] = await Promise.all([
     query(`
       select c.relname as table, a.attname as name, format_type(a.atttypid, a.atttypmod) as type,
-        not has_column_privilege('authenticated', c.oid, a.attnum, 'SELECT') as restricted
+        array_remove(array[
+          case when not has_column_privilege('authenticated', c.oid, a.attnum, 'SELECT') then 'authenticated' end,
+          case when exists (select 1 from pg_roles where rolname = 'lr_health')
+                and not has_column_privilege('lr_health', c.oid, a.attnum, 'SELECT') then 'lr_health' end,
+          case when not has_column_privilege('anon', c.oid, a.attnum, 'SELECT') then 'anon' end
+        ], null)::text[] as denied_for
       from pg_attribute a
       join pg_class c on c.oid = a.attrelid and c.relkind in ('r', 'p', 'v')
       join pg_namespace n on n.oid = c.relnamespace and n.nspname = 'public'
@@ -101,11 +106,11 @@ export async function loadSchemaMeta(query: Query): Promise<SchemaMeta> {
   ]);
 
   const tables = new Map<string, TableMeta>();
-  for (const r of cols.rows as Array<{ table: string; name: string; type: string; restricted: boolean }>) {
+  for (const r of cols.rows as Array<{ table: string; name: string; type: string; denied_for: string[] }>) {
     if (r.table.startsWith("_")) continue; // tabele interne (ex. _migrations)
     let t = tables.get(r.table);
     if (!t) tables.set(r.table, (t = { name: r.table, columns: new Map(), primaryKey: [], unique: [] }));
-    t.columns.set(r.name, { name: r.name, type: r.type, restricted: r.restricted });
+    t.columns.set(r.name, { name: r.name, type: r.type, deniedFor: r.denied_for ?? [] });
   }
   for (const r of cons.rows as Array<{ table: string; kind: string; columns: string[] | null }>) {
     const t = tables.get(r.table);

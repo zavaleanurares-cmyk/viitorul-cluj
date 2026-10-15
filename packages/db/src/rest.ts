@@ -143,12 +143,17 @@ export function parseSelect(input: string): Field[] {
 /** `role` = rolul Postgres al cererii; sub `authenticated`, `*` înseamnă doar coloanele pe care le poate citi. */
 type Ctx = { meta: SchemaMeta; params: unknown[]; aliasSeq: number; query: URLSearchParams; role: string };
 
-/** Coloanele pe care rolul cererii le poate citi, ca listă SQL; null = toate (`*`). */
+/**
+ * Coloanele pe care rolul cererii le poate citi, ca listă SQL; null = toate (`*`).
+ * Pentru tabelele fără restricții pe coloane rămâne `*` (aceeași interogare ca înainte).
+ */
 function readableColumns(ctx: Ctx, t: TableMeta, alias: string | null): string | null {
-  if (ctx.role !== "authenticated" && ctx.role !== "anon") return null;
   const cols = [...t.columns.values()];
-  if (!cols.some((c) => c.restricted)) return null;
-  return cols.filter((c) => !c.restricted).map((c) => (alias ? `${alias}.${q(c.name)}` : q(c.name))).join(", ");
+  if (!cols.some((c) => (c.deniedFor ?? []).includes(ctx.role))) return null;
+  const allowed = cols.filter((c) => !(c.deniedFor ?? []).includes(ctx.role));
+  // fără nicio coloană permisă lăsăm `*`, ca Postgres să refuze cererea (permission denied), nu să întoarcă rânduri goale
+  if (!allowed.length) return null;
+  return allowed.map((c) => (alias ? `${alias}.${q(c.name)}` : q(c.name))).join(", ");
 }
 
 const RESERVED = new Set(["select", "order", "limit", "offset", "on_conflict", "columns", "and", "or", "not.and", "not.or"]);

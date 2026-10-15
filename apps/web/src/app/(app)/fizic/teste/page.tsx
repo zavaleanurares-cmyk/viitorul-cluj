@@ -11,6 +11,8 @@ import { compare, formatValue } from "@/components/physical/domain";
 import { groupAverages, listResults, listTests } from "@/components/physical/queries";
 import { SectionNav } from "@/components/physical/section-nav";
 import { TestsManager } from "@/components/physical/tests-manager";
+import { BatteriesManager } from "@/components/physical/batteries-manager";
+import { percentileOf } from "@/components/physical/standard-batteries";
 
 /** Teste fizice pe grupă: ultimul rezultat al fiecărui jucător, clasament, media grupei, diferența față de testarea anterioară. */
 export default async function Page({ searchParams }: { searchParams: Promise<{ grupa?: string; test?: string }> }) {
@@ -40,10 +42,12 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ g
   const test = tests.find((x) => x.id === sp.test) ?? tests.find((x) => x.is_active) ?? null;
   const players = await listPlayers(db, { groupId: group.id });
   const ids = players.map((p) => p.id);
-  const [results, averages] = await Promise.all([
+  const [results, averages, { data: batteries }] = await Promise.all([
     test ? listResults(db, ids, test.id) : Promise.resolve([]),
     groupAverages(db, group.id),
+    db.from("fitness_batteries").select("id, name, fitness_battery_tests(sort, fitness_tests(name))").eq("is_active", true).order("sort"),
   ]);
+  const pt = getT().performance.tests;
 
   const href = (g: string, testId?: string | null) => {
     const p = new URLSearchParams();
@@ -66,6 +70,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ g
     .map((p) => ({ player: p, ...byPlayer.get(p.id)! }))
     .sort((a, b) => (lower ? a.last.value - b.last.value : b.last.value - a.last.value) || a.player.display_name.localeCompare(b.player.display_name, "ro"));
   const untested = players.filter((p) => !byPlayer.has(p.id));
+  const latestValues = ranked.map((r) => r.last.value);
   const avg = test ? averages.get(test.id) ?? null : null;
   const lastDate = ranked.reduce<string | null>((d, r) => (!d || r.last.tested_on > d ? r.last.tested_on : d), null);
   const entryHref = test ? `/fizic/teste/rezultate?grupa=${group.id}&test=${test.id}` : null;
@@ -79,7 +84,11 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ g
           canEdit ? (
             <div className="flex max-w-[calc(100vw-2rem)] flex-wrap gap-2">
               <TestsManager tests={allTests.map((x) => ({ id: x.id, name: x.name, unit: x.unit, lower_is_better: x.lower_is_better, is_active: x.is_active }))} />
-              {entryHref ? <LinkButton href={entryHref} variant="primary" icon={<ClipboardPen className="size-5" aria-hidden />}>{tt.enter}</LinkButton> : null}
+              <BatteriesManager
+                batteries={(batteries ?? []).map((b) => ({ id: b.id, name: b.name, tests: [...(b.fitness_battery_tests ?? [])].sort((a, c) => a.sort - c.sort).map((x) => (x.fitness_tests as { name: string } | null)?.name ?? "") }))}
+                tests={allTests.filter((x) => x.is_active).map((x) => ({ id: x.id, name: x.name, unit: x.unit }))} />
+              {entryHref ? <LinkButton href={entryHref} icon={<ClipboardPen className="size-5" aria-hidden />}>{tt.enter}</LinkButton> : null}
+              {batteries?.length ? <LinkButton href={`/fizic/teste/baterie?grupa=${group.id}`} variant="primary" icon={<ClipboardPen className="size-5" aria-hidden />}>{pt.enterBattery}</LinkButton> : null}
             </div>
           ) : undefined
         }
@@ -123,6 +132,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ g
                   <th scope="col">{tt.colDate}</th>
                   <th scope="col">{tt.colVsPrevious}</th>
                   <th scope="col">{tt.colVsAverage}</th>
+                  <th scope="col" title={pt.percentileHint}>{pt.percentile}</th>
                 </tr>
               </thead>
               <tbody>
@@ -142,6 +152,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ g
                       ) : <span className="text-ink-3">{tt.firstResult}</span>}
                     </td>
                     <td><Delta cmp={avg ? compare(r.last.value, avg.average, lower) : null} unit={test.unit} /></td>
+                    <td className="tabular-nums">{(() => { const p = percentileOf(r.last.value, latestValues, lower); return p === null ? "—" : `P${p}`; })()}</td>
                   </tr>
                 ))}
               </tbody>
@@ -158,7 +169,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ g
           {ranked.length && untested.length ? (
             <p className="text-sm text-ink-3">{tt.untested(untested.length)}: {untested.map((p) => p.display_name).join(", ")}.</p>
           ) : null}
-          <p className="text-sm text-ink-3">{tt.legend}</p>
+          <p className="text-sm text-ink-3">{tt.legend} {pt.percentileHint}</p>
         </div>
       )}
     </>
