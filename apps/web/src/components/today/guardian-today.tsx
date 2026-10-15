@@ -1,0 +1,65 @@
+import { CalendarDays } from "lucide-react";
+import { addDays, formatDate, formatEventWhen, type AppContext, type Db } from "@club/shared";
+import { Card, CardBody, CardHeader, Notice } from "@/components/ui/card";
+import { StatusChip } from "@/components/ui/status";
+import { AttendanceMeter, VisaChip } from "@/components/squad/bits";
+import { playerAttendance, visaState } from "@/components/squad/queries";
+import { KIND_ICONS } from "@/components/schedule/calendar";
+import { listEvents } from "@/components/schedule/queries";
+import { getT } from "@/messages";
+
+const capitalize = (s: string) => s.charAt(0).toLocaleUpperCase("ro") + s.slice(1);
+
+/** Azi pentru părinte: fiecare copil cu programul din următoarele 7 zile, prezența și viza. */
+export async function GuardianToday({ db, ctx }: { db: Db; ctx: AppContext }) {
+  const t = getT().today;
+  const tz = ctx.settings.timezone;
+  // RLS: părintele vede doar copiii lui
+  const { data: kids } = await db.from("players").select("id, full_name, group_id, status_id, medical_visa_expires_on").eq("is_active", true).order("full_name");
+  const children = kids ?? [];
+  const groupIds = [...new Set(children.map((c) => c.group_id).filter(Boolean) as string[])];
+  const events = groupIds.length ? await listEvents(db, { from: ctx.today, to: addDays(ctx.today, 7), timezone: tz, groupIds }) : [];
+  const attendance = await Promise.all(children.map((c) => playerAttendance(db, c.id, ctx.today)));
+
+  return (
+    <div className="mx-auto max-w-2xl space-y-4">
+      <h1 className="text-2xl md:text-3xl">{capitalize(formatDate(ctx.today, { weekday: true, year: false }))}</h1>
+      {children.length === 0 ? <Notice tone="blue" title={t.children}>{t.noChildren}</Notice> : null}
+      {children.map((c, i) => {
+        const status = ctx.statuses.find((s) => s.id === c.status_id) ?? null;
+        const team = ctx.groups.find((g) => g.id === c.group_id);
+        const next = events.filter((e) => c.group_id && e.groupIds.includes(c.group_id) && e.status !== "cancelled").slice(0, 5);
+        const visa = visaState(c.medical_visa_expires_on, ctx.today, ctx.settings.alerts.visa_days_before);
+        const a = attendance[i];
+        return (
+          <Card key={c.id}>
+            <CardHeader title={c.full_name} description={team?.name} action={status ? <StatusChip status={status} size="sm" /> : null} />
+            <CardBody className="space-y-3">
+              <div className="flex flex-wrap items-center gap-3 text-sm">
+                <VisaChip {...visa} expires={c.medical_visa_expires_on} />
+                {a.total ? <span className="inline-flex items-center gap-2 text-ink-2">{t.childAttendance(a.present, a.total)} <AttendanceMeter present={a.present} total={a.total} /></span> : null}
+              </div>
+              <h3 className="text-base">{t.childNext}</h3>
+              {next.length === 0 ? <p className="text-ink-3">{t.childNoEvents}</p> : (
+                <ul className="divide-y divide-line rounded-[var(--radius-control)] border border-line">
+                  {next.map((e) => {
+                    const Icon = KIND_ICONS[e.kind] ?? CalendarDays;
+                    return (
+                      <li key={e.id} className="flex items-start gap-3 px-3 py-2">
+                        <Icon className="mt-0.5 size-5 shrink-0 text-ink-3" aria-hidden />
+                        <span>
+                          <span className="block font-semibold">{e.match ? `${e.match.is_home ? "" : "@ "}${e.match.opponent}` : e.title}</span>
+                          <span className="block text-sm text-ink-3">{formatEventWhen(e.starts_at, e.ends_at, tz)}{e.venue ? ` · ${e.venue.name}` : ""}</span>
+                        </span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </CardBody>
+          </Card>
+        );
+      })}
+    </div>
+  );
+}

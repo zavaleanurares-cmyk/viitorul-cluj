@@ -1,8 +1,45 @@
+import { plural } from "@club/shared";
+
 /** Spațiul Azi pentru staff și părinți (pagina jucătorului rămâne în player.ts). */
 export const today = {
   title: "Azi",
   nothingToday: "Nimic programat azi.",
-  next: "Urmează",
+  nextMatch: "Următorul meci",
+  noMatch: "Niciun meci în următoarele 7 zile.",
   todo: "De rezolvat",
-  allDone: "Nimic de rezolvat.",
+  allDone: "Nimic de rezolvat. Totul e la zi.",
+  training: "Antrenament",
+  attendanceMissing: "Prezența nefăcută",
+  attendanceDone: "Prezența făcută",
+  takeAttendance: "Fă prezența",
+  editAttendance: "Vezi prezența",
+  rosterInfo: (n: number, out: number) => `${plural(n, "jucător", "jucători")} în lot${out ? `, ${plural(out, "indisponibil", "indisponibili")}` : ""}.`,
+  blocked: (n: number) => `${n === 1 ? "Un jucător nu poate fi convocat" : `${plural(n, "jucător", "jucători")} nu pot fi convocați`}.`,
+  squadNotPicked: "Lotul nu e ales încă.",
+  squadPicked: (n: number) => `Lot ales · ${plural(n, "jucător", "jucători")}.`,
+  pickSquad: "Alege lotul",
+  openMatch: "Deschide meciul",
+  missingAttendance: (title: string, day: string) => `${title} · ${day}: prezența nefăcută`,
+  visaExpiring: (name: string, days: number) => (days < 0 ? `${name} · viza medicală a expirat` : days === 0 ? `${name} · viza expiră azi` : `${name} · viza expiră în ${plural(days, "zi", "zile")}`),
+  injured: (name: string, until: string | null) => `${name} · indisponibil${until ? `, revenire estimată ${until}` : ""}`,
+  pendingSync: (n: number) => `${plural(n, "prezență salvată", "prezențe salvate")} pe telefon, de trimis`,
+  // birou
+  officeEvents: "Programul de azi",
+  thisWeek: "Săptămâna asta",
+  stats: {
+    trainings: "Antrenamente azi",
+    matches: "Meciuri în 7 zile",
+    visas: "Vize expirate sau pe cale",
+    missing: "Prezențe nefăcute (7 zile)",
+  },
+  unclosed: (title: string, day: string) => `${title} · ${day}: meciul nu e închis`,
+  noSquad: (title: string, day: string) => `${title} · ${day}: lotul nu e ales`,
+  noTeam: (n: number) => `${plural(n, "jucător", "jucători")} fără echipă`,
+  more: (n: number) => `și încă ${n}`,
+  // părinte
+  children: "Copiii mei",
+  childNext: "Urmează",
+  childNoEvents: "Nimic programat în următoarele 7 zile.",
+  childAttendance: (p: number, n: number) => `Prezență în ultimele 30 de zile: ${p} din ${n}`,
+  noChildren: "Contul nu e legat încă de niciun copil. Cere secretariatului să te lege de fișa copilului.",
 } as const;
