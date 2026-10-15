@@ -84,7 +84,10 @@ try {
   // -------------------------------------------------------------------------
   console.log("\nSetări și coduri de plată");
   check("fiecare familie primește un cod de plată", /^LR-\d{4}$/.test(gA.payment_ref ?? "") && gA.payment_ref !== gB.payment_ref, [gA, gB]);
-  check("contabilul schimbă IBAN-ul", !(await errored(accountant.from("finance_settings").update({ iban: "RO49AAAA1B31007593840000", sibling_discount_pct: 50 }).eq("club_id", clubA).select("club_id"))));
+  check("plata online e oprită până o pornește biroul", (await rows(admin.from("finance_settings").select("club_id").eq("club_id", clubA).eq("online_enabled", false))) === 1);
+  check("contabilul schimbă IBAN-ul", !(await errored(accountant.from("finance_settings").update({ iban: "RO49AAAA1B31007593840000", sibling_discount_pct: 50, online_enabled: true }).eq("club_id", clubA).select("club_id"))));
+  check("contabilul NU schimbă cine aprobă referatele", await errored(accountant.from("finance_settings").update({ approver_roles: ["accountant"] }).eq("club_id", clubA).select("club_id"))
+    && await errored(accountant.rpc("set_approver_roles", { p_roles: ["accountant"] })));
   check("secretariatul NU schimbă setările financiare", (await rows(secretary.from("finance_settings").update({ iban: "RO49AAAA1B31007593840001" }).eq("club_id", clubA).select("club_id"))) === 0);
   const info = must(await parentA.rpc("family_payment_info"), "info părinte") as { iban: string; refs: Array<{ ref: string }> };
   check("părintele vede IBAN-ul și codul lui", info.iban === "RO49AAAA1B31007593840000" && info.refs.length === 1 && info.refs[0].ref === gA.payment_ref, info);
@@ -126,6 +129,7 @@ try {
   const cash2 = must(await secretary.rpc("record_payment", { p: { method: "cash", amount: lei(10), player_id: p3, received_on: "2026-10-06" } }), "numerar 2") as { receipt_id: string };
   const rc2 = must(await admin.from("receipts").select("number").eq("id", cash2.receipt_id).single(), "chitanța 2");
   check("chitanța următoare are numărul 2", rc2.number === 2, rc2);
+  check("data plății nu poate fi în viitor", await errored(secretary.rpc("record_payment", { p: { method: "cash", amount: lei(10), guardian_id: gA.id, received_on: "2099-01-01" } })));
   const bank = must(await secretary.rpc("record_payment", { p: { method: "bank", amount: lei(100), guardian_id: gA.id } }), "transfer") as { receipt_id: string | null; payment_id: string; unallocated: number };
   check("transferul bancar nu primește chitanță", bank.receipt_id === null);
   check("transferul se împarte pe ce a rămas de plată", bank.unallocated === 0, bank);
@@ -158,6 +162,10 @@ try {
   must(await admin.rpc("apply_provider_event", { p: { provider: "test", event_id: `evt-${run}-2`, type: "refund.succeeded", payment_ref: `pay-${run}-1`, amount: lei(25) } }), "returnare");
   const p2ref = must(await admin.from("charge_balances").select("state, balance").eq("id", byP(p2).id).single(), "după returnare");
   check("returnarea parțială redeschide taxa cu suma returnată", p2ref.state === "partial" && p2ref.balance === lei(25), p2ref);
+  check("evenimentul altui operator nu atinge intenția", await errored(admin.rpc("apply_provider_event", { p: { ...evt, provider: "altul", event_id: `evt-${run}-x`, payment_ref: `pay-${run}-x` } })));
+  const second = must(await admin.rpc("apply_provider_event", { p: { ...evt, event_id: `evt-${run}-3`, payment_ref: `pay-${run}-3` } }), "a doua încasare") as { payment_id: string };
+  const secondBal = must(await admin.from("payment_balances").select("unallocated, amount").eq("id", second.payment_id).single(), "sold a doua");
+  check("a doua încasare pe aceeași intenție rămâne de asociat", secondBal.unallocated === secondBal.amount, secondBal);
   const method = must(await parentA.from("payment_methods").select("id").is("revoked_at", null).single(), "metoda").id;
   check("părintele pornește plata automată", !(await errored(parentA.rpc("set_auto_pay", { p_method: method, p_on: true }))));
   check("părintele B NU poate porni plata automată pe cardul altuia", await errored(parentB.rpc("set_auto_pay", { p_method: method, p_on: false })));
@@ -189,6 +197,8 @@ try {
   check("reimportul aceluiași extras nu dublează nimic", imp2.inserted === 0 && imp2.duplicates === 3, imp2);
   const p3bal = must(await admin.from("charge_balances").select("state").eq("id", byP(p3).id).single(), "p3");
   check("transferul cu cod achită taxa familiei", p3bal.state === "paid", p3bal);
+  const credit = must(await admin.from("bank_lines").select("id").eq("line_hash", `h-${run}-2`).single(), "rând credit").id;
+  check("un rând deja rezolvat nu devine a doua plată", await errored(accountant.rpc("resolve_bank_line", { p_line: credit, p: { action: "unassigned_payment" } })));
   check("încasarea fără cod ajunge la plăți de asociat", (await rows(accountant.from("payment_balances").select("id").gt("unallocated", 0).eq("payer_name", "NECUNOSCUT"))) === 1);
 
   // -------------------------------------------------------------------------
@@ -205,8 +215,16 @@ try {
   check("aprobatorii primesc anunțul", (await rows(admin.from("notifications").select("id").eq("kind", "purchase_request").like("title", `Referat nr. ${pr.number}%`))) >= 2);
   check("antrenorul NU aprobă", await errored(coach.rpc("decide_purchase_request", { p_id: pr.id, p_decision: "approved" })));
   check("respingerea cere motiv", await errored(owner.rpc("decide_purchase_request", { p_id: pr.id, p_decision: "rejected" })));
+  const edited = must(await adminU.rpc("save_purchase_request", { p: { id: pr.id, department_id: dept, group_id: G1, justification: "Mingi pentru U13 (corectat)", submit: true, items: [
+    { name: "Minge mărimea 4", quantity: 10, unit_price: lei(100), vat_rate: 21, price_includes_vat: true },
+    { name: "Jaloane", quantity: 2, unit_price: lei(50), vat_rate: 21, price_includes_vat: false },
+  ] } }), "referat modificat de admin") as { id: string };
+  check("cine a modificat referatul nu îl aprobă", await errored(adminU.rpc("decide_purchase_request", { p_id: edited.id, p_decision: "approved" })));
+  check("specificația din dosarul altcuiva e refuzată", await errored(coach.rpc("save_purchase_request", { p: { justification: "X", spec_path: `${clubA}/altcineva/f.pdf`, items: [{ name: "X", quantity: 1, unit_price: 100, vat_rate: 21 }] } })));
   check("patronul aprobă", !(await errored(owner.rpc("decide_purchase_request", { p_id: pr.id, p_decision: "approved", p_note: "OK" }))));
-  check("autorul vede decizia", (await rows(coach.from("purchase_requests").select("id").eq("status", "approved"))) === 1);
+  check("patronul vede cine a cerut referatul", ((await owner.from("purchase_requests").select("author:profiles!purchase_requests_requested_by_fkey(full_name)").eq("id", pr.id).single()).data?.author as { full_name: string } | null)?.full_name != null);
+  check("patronul nu vede profilurile familiilor", (await rows(owner.from("profiles").select("id").in("role", ["guardian", "player"]))) === 0);
+  check("autorul vede decizia",(await rows(coach.from("purchase_requests").select("id").eq("status", "approved"))) === 1);
   const own = must(await adminU.rpc("save_purchase_request", { p: { justification: "Laptop birou", submit: true, items: [{ name: "Laptop", quantity: 1, unit_price: lei(3000), vat_rate: 21 }] } }), "referat admin") as { id: string };
   check("nimeni nu își aprobă propriul referat", await errored(adminU.rpc("decide_purchase_request", { p_id: own.id, p_decision: "approved" })));
   check("cota de TVA din afara listei e refuzată", await errored(coach.rpc("save_purchase_request", { p: { justification: "X", items: [{ name: "X", quantity: 1, unit_price: 100, vat_rate: 19 }] } })));

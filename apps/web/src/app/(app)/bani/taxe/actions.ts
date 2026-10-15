@@ -1,6 +1,5 @@
 "use server";
 import { z } from "zod";
-import type { Db } from "@club/shared";
 import { fail, run } from "@/lib/actions";
 import { getT } from "@/messages";
 
@@ -79,13 +78,7 @@ export async function saveChargeRequest(input: z.input<typeof Request>) {
 export async function deleteChargeRequest(input: { id: string }) {
   return run({ roles: [...FINANCE], revalidate: paths }, async ({ db }) => {
     const id = z.uuid().parse(input.id);
-    const { data: charges } = await db.from("charge_balances").select("id, paid").eq("request_id", id).eq("status", "open");
-    if ((charges ?? []).some((c) => c.paid > 0)) fail("Cererea are plăți. Anulează întâi plățile sau taxele plătite.");
-    for (const c of charges ?? []) {
-      const { error } = await db.rpc("cancel_charge", { p_charge: c.id, p_reason: "Cerere ștearsă" });
-      if (error) fail(error.message);
-    }
-    const { error } = await db.from("charge_requests").update({ deleted_at: new Date().toISOString() }).eq("id", id);
+    const { error } = await db.rpc("delete_charge_request", { p_id: id });
     if (error) fail(error.message);
     return null;
   });
@@ -96,26 +89,21 @@ export async function deleteChargeRequest(input: { id: string }) {
 // ---------------------------------------------------------------------------
 /** Taxa unei echipe de la o lună: închide planul anterior în luna dinainte și deschide unul nou. */
 export async function saveTeamFee(input: { groupId: string; amount: number; from: string }) {
-  return run({ roles: [...FINANCE], revalidate: ["/bani/taxe"], message: getT().money.plans.saved }, async ({ db, ctx }) => {
+  return run({ roles: [...FINANCE], revalidate: ["/bani/taxe"], message: getT().money.plans.saved }, async ({ db }) => {
     const groupId = z.uuid().parse(input.groupId);
     const from = month.parse(input.from);
     const amount = bani.parse(input.amount);
-    await closePlans(db, { group_id: groupId }, from);
-    const { error } = await db.from("fee_plans").insert({ club_id: ctx.club.id, group_id: groupId, amount, valid_from: from, created_by: ctx.userId });
+    const { error } = await db.rpc("set_fee_plan", { p_group: groupId, p_player: null, p_amount: amount, p_from: from });
     if (error) fail(error.message);
     return null;
   });
 }
 
 export async function savePlayerFee(input: { playerId: string; amount: number; from: string; reason?: string }) {
-  return run({ roles: [...FINANCE], revalidate: ["/bani/taxe"], message: getT().money.plans.saved }, async ({ db, ctx }) => {
+  return run({ roles: [...FINANCE], revalidate: ["/bani/taxe"], message: getT().money.plans.saved }, async ({ db }) => {
     const playerId = z.uuid().parse(input.playerId);
     const from = month.parse(input.from);
-    await closePlans(db, { player_id: playerId }, from);
-    const { error } = await db.from("fee_plans").insert({
-      club_id: ctx.club.id, player_id: playerId, amount: bani.parse(input.amount), valid_from: from,
-      reason: z.string().max(200).optional().parse(input.reason) ?? null, created_by: ctx.userId,
-    });
+    const { error } = await db.rpc("set_fee_plan", { p_group: null, p_player: playerId, p_amount: bani.parse(input.amount), p_from: from, p_reason: z.string().max(200).optional().parse(input.reason) });
     if (error) fail(error.message);
     return null;
   });
@@ -141,18 +129,6 @@ const prevMonth = (period: string) => {
   return new Date(Date.UTC(y, m - 2, 1)).toISOString().slice(0, 10);
 };
 
-async function closePlans(db: Db, who: { group_id?: string; player_id?: string }, from: string) {
-  let q = db.from("fee_plans").select("id, valid_from, valid_to").is("deleted_at", null);
-  q = who.group_id ? q.eq("group_id", who.group_id) : q.eq("player_id", who.player_id!);
-  const { data } = await q;
-  for (const p of data ?? []) {
-    if (p.valid_to && p.valid_to < from) continue;
-    const res = p.valid_from >= from
-      ? await db.from("fee_plans").update({ deleted_at: new Date().toISOString() }).eq("id", p.id)
-      : await db.from("fee_plans").update({ valid_to: prevMonth(from) }).eq("id", p.id);
-    if (res.error) fail(res.error.message);
-  }
-}
 
 const Adjustment = z.object({
   player_id: z.uuid("Alege jucătorul."),

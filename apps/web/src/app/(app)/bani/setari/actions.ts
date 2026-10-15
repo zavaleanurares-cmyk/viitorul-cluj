@@ -31,15 +31,25 @@ export async function saveFinanceSettings(input: z.input<typeof Settings>) {
     const s = Settings.parse(input);
     const iban = s.iban ? normalizeIban(s.iban) : "";
     if (iban && !isValidIban(iban)) fail(getT().money.settings.invalidIban);
-    if (!availableProviders().some((p) => p.id === s.provider)) fail("Operator de plăți necunoscut.");
-    const { provider, ...rest } = s;
+    const providers = availableProviders();
+    if (s.provider && !providers.some((p) => p.id === s.provider)) fail("Operator de plăți necunoscut.");
+    if (s.online_enabled && !providers.length) fail(getT().money.settings.noProvider);
+    const { provider, approver_roles, ...rest } = s;
     const { error } = await db.from("finance_settings").update({
       ...rest, iban: iban || null, beneficiary: s.beneficiary.trim() || null, fiscal_code: s.fiscal_code.trim() || null,
       address: s.address.trim() || null, bank_name: s.bank_name.trim() || null,
     }).eq("club_id", ctx.club.id);
     if (error) fail(error.message);
+    // cine aprobă referatele: doar administratorul (separarea sarcinilor față de contabil și secretariat)
+    const { data: cur } = await db.from("finance_settings").select("approver_roles").eq("club_id", ctx.club.id).maybeSingle();
+    const changed = [...(cur?.approver_roles ?? [])].sort().join() !== [...approver_roles].sort().join();
+    if (changed) {
+      if (ctx.role !== "admin") fail(getT().money.settings.approversAdminOnly);
+      const { error: e3 } = await db.rpc("set_approver_roles", { p_roles: approver_roles });
+      if (e3) fail(e3.message);
+    }
     // operatorul nu se schimbă din aplicație decât printre adaptoarele instalate (coloana nu e deschisă utilizatorilor)
-    if (provider) {
+    if (provider && providers.some((p) => p.id === provider)) {
       const { createServiceDb } = await import("@club/db");
       const { error: e2 } = await createServiceDb().from("finance_settings").update({ provider }).eq("club_id", ctx.club.id);
       if (e2) fail(e2.message);

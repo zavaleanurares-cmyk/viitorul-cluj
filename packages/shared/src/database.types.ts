@@ -2906,6 +2906,7 @@ export type Database = {
           decision_note: string | null;
           created_at: string;
           updated_at: string;
+          last_edited_by: string | null;
         };
         Insert: {
           id?: string;
@@ -2927,6 +2928,7 @@ export type Database = {
           decision_note?: string | null;
           created_at?: string;
           updated_at?: string;
+          last_edited_by?: string | null;
         };
         Update: {
           id?: string;
@@ -2948,12 +2950,14 @@ export type Database = {
           decision_note?: string | null;
           created_at?: string;
           updated_at?: string;
+          last_edited_by?: string | null;
         };
         Relationships: [
           { foreignKeyName: "purchase_requests_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
           { foreignKeyName: "purchase_requests_decided_by_fkey"; columns: ["decided_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
           { foreignKeyName: "purchase_requests_department_id_fkey"; columns: ["department_id"]; isOneToOne: false; referencedRelation: "departments"; referencedColumns: ["id"] },
           { foreignKeyName: "purchase_requests_group_id_fkey"; columns: ["group_id"]; isOneToOne: false; referencedRelation: "groups"; referencedColumns: ["id"] },
+          { foreignKeyName: "purchase_requests_last_edited_by_fkey"; columns: ["last_edited_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
           { foreignKeyName: "purchase_requests_requested_by_fkey"; columns: ["requested_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
         ];
       };
@@ -3442,8 +3446,10 @@ export type Database = {
       create_payment_intent: { Args: { p_charge_ids: string[] | null; p_save_method?: boolean | null }; Returns: Json };
       decide_bonus_entries: { Args: { p_ids: string[] | null; p_status: string | null }; Returns: number };
       decide_purchase_request: { Args: { p_id: string | null; p_decision: string | null; p_note?: string | null }; Returns: undefined };
+      delete_charge_request: { Args: { p_id: string | null }; Returns: undefined };
       delete_match_event: { Args: { p_id: string | null }; Returns: undefined };
       erase_player: { Args: { p_player: string | null }; Returns: string };
+      expense_from_bank_line: { Args: { p_line: string | null; p: Json | null }; Returns: string };
       export_player_data: { Args: { p_player?: string | null }; Returns: Json };
       family_payment_info: { Args: Record<PropertyKey, never>; Returns: Json };
       fee_roster: { Args: { p_period: string | null }; Returns: { player_id: string; full_name: string; group_id: string; is_active: boolean; fee: number; own_plan: boolean; adjustments: string; guardian_id: string; guardian_name: string; payment_ref: string; charge_id: string; net: number; paid: number; state: string; due_on: string }[] };
@@ -3472,6 +3478,7 @@ export type Database = {
       resolve_bank_line: { Args: { p_line: string | null; p: Json | null }; Returns: undefined };
       revoke_payment_method: { Args: { p_method: string | null }; Returns: undefined };
       save_attendance: { Args: { p_event: string | null; p_rows: Json | null }; Returns: number };
+      save_budget_lines: { Args: { p_year: number | null; p_kind: string | null; p_department: string | null; p_amounts: number[] | null }; Returns: undefined };
       save_charge_request: { Args: { p: Json | null }; Returns: Json };
       save_daily_plan: { Args: { p_player: string | null; p_date: string | null; p_title: string | null; p_notes: string | null; p_injury: string | null; p_rtp_stage: number | null; p_items: Json | null }; Returns: string };
       save_event: { Args: { p: Json | null }; Returns: string };
@@ -3481,9 +3488,11 @@ export type Database = {
       search_club: { Args: { p_query: string | null; p_limit?: number | null }; Returns: Json };
       send_fee_reminders: { Args: Record<PropertyKey, never>; Returns: number };
       send_wellness_reminders: { Args: Record<PropertyKey, never>; Returns: number };
+      set_approver_roles: { Args: { p_roles: Database["public"]["Enums"]["app_role"][] | null }; Returns: undefined };
       set_auto_pay: { Args: { p_method: string | null; p_on: boolean | null }; Returns: undefined };
       set_charge_discount: { Args: { p_charge: string | null; p_discount: number | null; p_note: string | null }; Returns: undefined };
       set_event_state: { Args: { p_event: string | null; p_state: string | null; p_scope?: string | null }; Returns: number };
+      set_fee_plan: { Args: { p_group: string | null; p_player: string | null; p_amount: number | null; p_from: string | null; p_reason?: string | null }; Returns: string };
       set_my_photo: { Args: { p_path: string | null }; Returns: undefined };
       setup_club: { Args: { p_slug: string | null; p_name: string | null; p_short_name: string | null; p_groups: string[] | null; p_settings?: Json | null }; Returns: string };
       switch_membership: { Args: { p_membership: string | null }; Returns: undefined };

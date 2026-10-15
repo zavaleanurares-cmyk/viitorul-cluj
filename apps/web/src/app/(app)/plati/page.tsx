@@ -4,7 +4,7 @@ import { requireCapability } from "@/lib/auth";
 import { Card, CardBody, CardHeader, Notice, PageHeader } from "@/components/ui/card";
 import { Money } from "@/components/money/bits";
 import { DueNow, HowToPay, PaymentResult, type DueCharge, type Info } from "@/components/money/family-pay";
-import { getAdapter } from "@/lib/payments/registry";
+import { getAdapter, providerAvailable } from "@/lib/payments/registry";
 import { getT } from "@/messages";
 
 export const metadata = { title: "Plăți" };
@@ -20,7 +20,9 @@ export default async function FamilyPaymentsPage({ searchParams }: { searchParam
     db.from("payments").select("id, received_on, amount, method, status, refunded_amount, receipts(id, series, number, cancelled_at)").eq("status", "completed").order("received_on", { ascending: false }).limit(50),
     db.from("payment_methods").select("id, label, auto_pay, provider").is("revoked_at", null).limit(1),
   ]);
-  const i = (info.data ?? { beneficiary: ctx.club.name, iban: null, bank_name: null, online_enabled: false, provider: "test", refs: [] }) as Info;
+  const raw = (info.data ?? { beneficiary: ctx.club.name, iban: null, bank_name: null, online_enabled: false, provider: "test", refs: [] }) as Info;
+  // plata online apare doar dacă operatorul clubului e instalat pe server
+  const i: Info = { ...raw, online_enabled: raw.online_enabled && providerAvailable(raw.provider) };
   const due: DueCharge[] = (charges.data ?? []).map((c) => ({ id: c.id, title: c.title, child: (c.players as { full_name: string } | null)?.full_name ?? "", balance: c.balance, due_on: c.due_on, discount_note: c.discount_note }));
   const card = methods.data?.[0] ? { id: methods.data[0].id, label: methods.data[0].label, auto_pay: methods.data[0].auto_pay } : null;
   let canSaveCard = false;

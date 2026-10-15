@@ -3,7 +3,7 @@ import { z } from "zod";
 import { createServiceDb } from "@club/db";
 import { fail, run } from "@/lib/actions";
 import { SITE_URL } from "@/lib/env";
-import { getAdapter } from "@/lib/payments/registry";
+import { getAdapter, testPaymentsEnabled } from "@/lib/payments/registry";
 import { completeTestCheckout } from "@/lib/payments/test-adapter";
 import { getT } from "@/messages";
 
@@ -56,6 +56,7 @@ export async function removeCard(input: { methodId: string }) {
 /** Pagina operatorului de test: „plătește" cu un card de test. Rezultatul ajunge prin webhook, ca la un operator real. */
 export async function payWithTestCard(input: { intentId: string; card: string }) {
   return run<{ ok: boolean; reason?: string }>({ roles: [...FAMILY] }, async ({ db }) => {
+    if (!testPaymentsEnabled()) fail("Operatorul de test nu este pornit.");
     const id = z.uuid().parse(input.intentId);
     const { data: intent } = await db.from("payment_intents").select("id, provider, provider_ref, amount, status, save_method").eq("id", id).maybeSingle();
     if (!intent) fail("Plată necunoscută.");

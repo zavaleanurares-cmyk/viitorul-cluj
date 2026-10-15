@@ -144,7 +144,8 @@ try {
   check("privirea de ansamblu nu conține nume", !JSON.stringify(ov.data).includes("UNU"));
   check("nu poate modifica un jucător", await denied(owner.from("players").update({ status_note: "x" }).eq("id", p1).select("id")));
   check("nu vede jurnalul de audit", (await countAll(owner, "audit_log")) === 0);
-  check("nu vede alte conturi", (await countAll(owner, "profiles")) === 1);
+  // vede doar numele staff-ului (aprobă referate, vede prime), nu și conturile familiilor
+  check("nu vede conturile familiilor", (await owner.from("profiles").select("id").not("role", "in", "(admin,secretary,sporting_director,physio,coach,accountant,owner)")).data?.length === 0);
   check("nu poate anonimiza", await errored(owner.rpc("anonymize_player", { p_player: p1 })));
 
   // -------------------------------------------------------------------------

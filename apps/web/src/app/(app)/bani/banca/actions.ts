@@ -54,19 +54,13 @@ export async function resolveLine(input: { lineId: string; action: "match_guardi
 
 /** Rând de plată din extras → cheltuială nouă, legată de rând. */
 export async function expenseFromLine(input: { lineId: string; description: string; departmentId: string | null; supplier?: string; invoiceNo?: string }) {
-  return run({ roles: [...FINANCE], revalidate: paths, message: getT().money.expenses.saved }, async ({ db, ctx }) => {
-    const lineId = z.uuid().parse(input.lineId);
-    const { data: line } = await db.from("bank_lines").select("id, amount, booked_on, counterparty, status").eq("id", lineId).maybeSingle();
-    if (!line || line.status !== "unmatched" || line.amount >= 0) fail("Rândul nu mai poate deveni cheltuială.");
-    const { data: exp, error } = await db.from("expenses").insert({
-      club_id: ctx.club.id, description: z.string().trim().min(1, "Scrie descrierea.").max(300).parse(input.description),
+  return run({ roles: [...FINANCE], revalidate: paths, message: getT().money.expenses.saved }, async ({ db }) => {
+    const { error } = await db.rpc("expense_from_bank_line", { p_line: z.uuid().parse(input.lineId), p: {
+      description: z.string().trim().min(1, "Scrie descrierea.").max(300).parse(input.description),
       department_id: input.departmentId ? z.uuid().parse(input.departmentId) : null,
-      supplier: input.supplier?.trim() || line.counterparty || null, invoice_no: input.invoiceNo?.trim() || null,
-      amount: -line.amount, spent_on: line.booked_on, method: "bank", created_by: ctx.userId,
-    }).select("id").single();
+      supplier: input.supplier ?? null, invoice_no: input.invoiceNo ?? null,
+    } });
     if (error) fail(error.message);
-    const { error: e2 } = await db.rpc("resolve_bank_line", { p_line: lineId, p: { action: "match_expense", expense_id: exp.id } });
-    if (e2) fail(e2.message);
     return null;
   });
 }

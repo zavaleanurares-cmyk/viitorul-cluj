@@ -516,6 +516,8 @@ export const money = {
     },
     invalidIban: "IBAN-ul nu este valid. Verifică cifrele.",
     saved: "Setările au fost salvate.",
+    noProvider: "Niciun operator de plăți nu e configurat pe server. Plățile online rămân oprite până îl adăugăm.",
+    approversAdminOnly: "Doar administratorul schimbă cine aprobă referatele.",
     providerTest: "Operator de test: plățile trec prin tot circuitul, dar nu se mișcă bani. Când alegi operatorul real, îl adăugăm și schimbi aici.",
   },
 

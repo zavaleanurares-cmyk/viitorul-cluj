@@ -74,7 +74,7 @@ self.addEventListener("message", (event) => {
 
 self.addEventListener("push", (event) => {
   let data = {};
-  try { data = event.data ? event.data.json() : {}; } catch (e) {}
+  try { data = event.data ? event.data.json() : {}; } catch { /* payload invalid */ }
   event.waitUntil(self.registration.showNotification(data.title || "Notificare", {
     body: data.body || "", icon: "/icon/192", badge: "/icon/192", data: { url: data.url || "/" },
   }));

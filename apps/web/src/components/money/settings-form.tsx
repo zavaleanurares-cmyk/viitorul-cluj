@@ -16,7 +16,7 @@ export type SettingsValue = {
 const APPROVERS = ["admin", "owner", "sporting_director", "accountant", "secretary"] as const;
 const list = (s: string) => s.split(/[,\s;]+/).map((x) => Number(x)).filter((n) => Number.isInteger(n));
 
-export function FinanceSettingsForm({ initial, providers }: { initial: SettingsValue; providers: Array<{ id: string; label: string; test: boolean }> }) {
+export function FinanceSettingsForm({ initial, providers, canSetApprovers }: { initial: SettingsValue; providers: Array<{ id: string; label: string; test: boolean }>; canSetApprovers: boolean }) {
   const m = useT().money;
   const t = m.settings;
   const [v, setV] = useState(initial);
@@ -27,7 +27,7 @@ export function FinanceSettingsForm({ initial, providers }: { initial: SettingsV
   const ibanBad = !!v.iban.trim() && !isValidIban(v.iban);
   const provider = providers.find((p) => p.id === v.provider);
   return (
-    <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); a.run({ ...v, reminder_days: list(reminders), vat_rates: list(vat), approver_roles: v.approver_roles as Array<"admin"> }); }}>
+    <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); a.run({ ...v, online_enabled: providers.length ? v.online_enabled : false, reminder_days: list(reminders), vat_rates: list(vat), approver_roles: v.approver_roles as Array<"admin"> }); }}>
       <Card>
         <CardHeader title={t.sections.identity} />
         <CardBody className="grid gap-4 sm:grid-cols-2">
@@ -64,13 +64,17 @@ export function FinanceSettingsForm({ initial, providers }: { initial: SettingsV
       <Card>
         <CardHeader title={t.sections.online} />
         <CardBody className="space-y-4">
-          <Checkbox label={t.fields.online} checked={v.online_enabled} onChange={(e) => set("online_enabled", e.target.checked)} />
-          <Field label={t.fields.provider}>
-            <Select value={v.provider} onChange={(e) => set("provider", e.target.value)}>
-              {providers.map((p) => <option key={p.id} value={p.id}>{p.label}</option>)}
-            </Select>
-          </Field>
-          {provider?.test ? <Notice tone="yellow">{t.providerTest}</Notice> : null}
+          {providers.length === 0 ? <Notice tone="gray">{t.noProvider}</Notice> : (
+            <>
+              <Checkbox label={t.fields.online} checked={v.online_enabled} onChange={(e) => set("online_enabled", e.target.checked)} />
+              <Field label={t.fields.provider}>
+                <Select value={v.provider} onChange={(e) => set("provider", e.target.value)}>
+                  {providers.map((p) => <option key={p.id} value={p.id}>{p.label}</option>)}
+                </Select>
+              </Field>
+              {provider?.test ? <Notice tone="yellow">{t.providerTest}</Notice> : null}
+            </>
+          )}
         </CardBody>
       </Card>
       <Card>
@@ -79,8 +83,9 @@ export function FinanceSettingsForm({ initial, providers }: { initial: SettingsV
           <Field label={t.fields.vatRates} hint={t.fields.vatRatesHint}><Input value={vat} onChange={(e) => setVat(e.target.value)} /></Field>
           <fieldset>
             <legend className="mb-1 text-sm font-semibold text-ink-2">{t.fields.approvers}</legend>
+            {!canSetApprovers ? <p className="mb-1 text-sm text-ink-3">{t.approversAdminOnly}</p> : null}
             {APPROVERS.map((r) => (
-              <Checkbox key={r} className="min-h-10 py-1" label={ROLE_LABELS[r]} checked={v.approver_roles.includes(r)}
+              <Checkbox key={r} className="min-h-10 py-1" label={ROLE_LABELS[r]} checked={v.approver_roles.includes(r)} disabled={!canSetApprovers}
                 onChange={(e) => set("approver_roles", e.target.checked ? [...v.approver_roles, r] : v.approver_roles.filter((x) => x !== r))} />
             ))}
           </fieldset>

@@ -37,6 +37,7 @@ export async function seedBaniDemo(admin: Db, clubId: string, ids: Record<string
   must(await admin.from("finance_settings").update({
     beneficiary: "Asociația Club Sportiv Demo", fiscal_code: "12345678", address: "Str. Exemplului nr. 1, Cluj-Napoca",
     iban: "RO49AAAA1B31007593840000", bank_name: "Banca Exemplu", sibling_discount_pct: 25, receipt_prefix: "CSD",
+    online_enabled: true, // demo: plăți online prin operatorul de test (pe server doar cu PAYMENTS_TEST_MODE=1 în producție)
   }).eq("club_id", clubId).select("club_id"), "setări financiare");
 
   // ---- taxe pe echipe, reduceri ---------------------------------------------------------------
