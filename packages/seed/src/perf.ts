@@ -49,6 +49,38 @@ async function rpc<T>(db: Db, fn: string, args: Record<string, unknown>, label: 
 export async function seedPerfDemo(admin: Db, clubId: string, ids: Record<string, string>): Promise<void> {
   const today = todayIn();
   await seedVisas(admin, clubId, ids, today);
+  await seedBody(admin, clubId, today);
+}
+
+/**
+ * Greutate: la două săptămâni, ultimele 12 săptămâni, cu variații mici; doi jucători slăbesc vizibil
+ * (ca semnalul „Schimbare rapidă" să aibă ce arăta). Înlocuiește valorile generate la întâmplare de seed-ul Vestiar.
+ */
+async function seedBody(admin: Db, clubId: string, today: string) {
+  const { data: players } = await admin.from("players").select("id, birth_date").eq("club_id", clubId).eq("is_active", true).order("display_name");
+  const ids = (players ?? []).map((p) => p.id);
+  if (!ids.length) return;
+  const { data: existing } = await admin.from("anthropometrics").select("player_id, weight_kg, height_cm").in("player_id", ids).order("measured_on");
+  const marker = await admin.from("anthropometrics").select("id", { count: "exact", head: true }).in("player_id", ids).eq("notes", "demo-serie");
+  if (marker.count) return;
+  const first = new Map<string, { w: number; h: number | null }>();
+  for (const e of existing ?? []) if (!first.has(e.player_id) && e.weight_kg) first.set(e.player_id, { w: Number(e.weight_kg), h: e.height_cm ? Number(e.height_cm) : null });
+  await admin.from("anthropometrics").delete().in("player_id", ids);
+  let seed = 4242;
+  const rnd = () => ((seed = (seed * 1664525 + 1013904223) % 4294967296) / 4294967296);
+  const rows: Array<Record<string, unknown>> = [];
+  ids.forEach((id, i) => {
+    const base = first.get(id) ?? { w: 62 + Math.round(rnd() * 16), h: 172 + Math.round(rnd() * 14) };
+    const losing = i % 11 === 3;
+    for (let k = 6; k >= 0; k--) {
+      const drift = losing ? -(6 - k) * 0.55 : (rnd() - 0.5) * 0.8;
+      rows.push({
+        player_id: id, measured_on: addDays(today, -14 * k - 1), weight_kg: Math.round((base.w + drift) * 10) / 10,
+        height_cm: base.h, body_fat_pct: Math.round((10 + rnd() * 4) * 10) / 10, notes: k === 0 ? "demo-serie" : null,
+      });
+    }
+  });
+  for (let i = 0; i < rows.length; i += 200) must(await admin.from("anthropometrics").insert(rows.slice(i, i + 200)).select("id"), "greutate demo");
 }
 
 /** Vize: copilul părintelui demo expiră în 10 zile și părintele a trimis deja avizul nou (de aprobat). */

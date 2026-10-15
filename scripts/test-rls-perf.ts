@@ -131,6 +131,24 @@ try {
   const files = await physio.rpc("player_file_paths", { p_player: p3 });
   check("preparatorul vede fișierele de șters ale jucătorului", !files.error && (files.data as unknown[]).length === 1, files);
   check("secretariatul NU listează fișierele pentru ștergere", await errored(secretary.rpc("player_file_paths", { p_player: p3 })));
+  // -------------------------------------------------------------------------
+  console.log("\nÎncărcare și greutate");
+  check("cererile de RPE sunt doar ale sarcinii programate", await errored(secretary.rpc("run_rpe_requests")));
+  check("sarcina programată trimite cererile de RPE", !(await errored(admin.rpc("run_rpe_requests"))));
+  const grid = [{ player_id: p1, weight_kg: 61.5, height_cm: 168 }, { player_id: p2, weight_kg: 58 }];
+  check("preparatorul salvează grila de greutate", (await physio.rpc("save_body_measurements", { p_date: day(0), p_rows: grid })).data === 2);
+  check("a doua salvare în aceeași zi înlocuiește, nu dublează",
+    (await physio.rpc("save_body_measurements", { p_date: day(0), p_rows: [{ player_id: p1, weight_kg: 62 }] })).data === 1
+    && (await rows(admin.from("anthropometrics").select("id").eq("player_id", p1).eq("measured_on", day(0)))) === 1);
+  check("antrenorul NU scrie greutatea", await errored(coach.rpc("save_body_measurements", { p_date: day(0), p_rows: [{ player_id: p1, weight_kg: 70 }] }))
+    && (await admin.from("anthropometrics").select("weight_kg").eq("player_id", p1).eq("measured_on", day(0)).single()).data?.weight_kg === 62);
+  check("data din viitor e refuzată", await errored(physio.rpc("save_body_measurements", { p_date: day(2), p_rows: grid })));
+  check("valorile absurde sunt refuzate", await errored(physio.rpc("save_body_measurements", { p_date: day(0), p_rows: [{ player_id: p1, weight_kg: 900 }] })));
+  check("antrenorul vede greutatea echipei lui", (await rows(coach.from("anthropometrics").select("id").eq("player_id", p1))) === 1);
+  check("antrenorul NU vede greutatea altei echipe", (await rows(coach.from("anthropometrics").select("id").eq("player_id", p3))) === 0);
+  check("biroul NU vede greutatea", (await rows(secretary.from("anthropometrics").select("id"))) === 0);
+  check("rândul gol șterge măsurătoarea zilei", (await physio.rpc("save_body_measurements", { p_date: day(0), p_rows: [{ player_id: p2 }] })).data === 1
+    && (await rows(admin.from("anthropometrics").select("id").eq("player_id", p2))) === 0);
   void adminU; void player1;
 } finally {
   await cleanup();

@@ -1,4 +1,4 @@
-import { Bell, BellRing, CalendarDays, ChevronRight, CircleCheck, ClipboardCheck, ClipboardList, HeartPulse, ListChecks, ReceiptText, Stethoscope, TriangleAlert, Wallet, Clapperboard, FileCheck2, FileSignature, Megaphone, ShoppingBag, Star, Tent, UserPlus } from "lucide-react";
+import { Bell, Gauge, BellRing, CalendarDays, ChevronRight, CircleCheck, ClipboardCheck, ClipboardList, HeartPulse, ListChecks, ReceiptText, Stethoscope, TriangleAlert, Wallet, Clapperboard, FileCheck2, FileSignature, Megaphone, ShoppingBag, Star, Tent, UserPlus } from "lucide-react";
 import { addDays, formatDateTime, listNotifications, todayIn, type Notification } from "@club/shared";
 import { requireSession } from "@/lib/auth";
 import { EmptyState, PageHeader } from "@/components/ui/card";
@@ -23,6 +23,7 @@ const ICONS: Record<KnownKind | "other", typeof Bell> = {
   purchase_request: ClipboardList,
   visa_document: FileCheck2,
   visa_reminder: Stethoscope,
+  rpe_request: Gauge,
   evaluation_published: Star,
   evaluation_round: Star,
   video_shared: Clapperboard,

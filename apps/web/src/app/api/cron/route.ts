@@ -66,6 +66,13 @@ export async function GET(request: NextRequest) {
     return { sent: data ?? 0 };
   });
 
+  // Încărcare: cererea de RPE după antrenamente și meciuri (o dată pe eveniment și jucător)
+  await step("rpe_requests", result, async () => {
+    const { data, error } = await admin.rpc("run_rpe_requests");
+    if (error) throw new Error(error.message);
+    return { sent: data ?? 0 };
+  });
+
   await step("reminders", result, async () => {
     const { data, error } = await admin.rpc("send_wellness_reminders");
     if (error) throw new Error(error.message);

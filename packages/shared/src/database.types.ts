@@ -3538,8 +3538,10 @@ export type Database = {
       reopen_match: { Args: { p_event: string | null }; Returns: undefined };
       resolve_bank_line: { Args: { p_line: string | null; p: Json | null }; Returns: undefined };
       revoke_payment_method: { Args: { p_method: string | null }; Returns: undefined };
+      run_rpe_requests: { Args: Record<PropertyKey, never>; Returns: number };
       run_visa_reminders: { Args: Record<PropertyKey, never>; Returns: number };
       save_attendance: { Args: { p_event: string | null; p_rows: Json | null }; Returns: number };
+      save_body_measurements: { Args: { p_date: string | null; p_rows: Json | null }; Returns: number };
       save_budget_lines: { Args: { p_year: number | null; p_kind: string | null; p_department: string | null; p_amounts: number[] | null }; Returns: undefined };
       save_charge_request: { Args: { p: Json | null }; Returns: Json };
       save_daily_plan: { Args: { p_player: string | null; p_date: string | null; p_title: string | null; p_notes: string | null; p_injury: string | null; p_rtp_stage: number | null; p_items: Json | null }; Returns: string };

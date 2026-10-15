@@ -14,13 +14,13 @@ import type { ReactNode } from "react";
 export const SERIES_COLORS = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100"] as const;
 export const AVAILABILITY_COLORS = { full: "#1b7a3d", limited: "#ef8a1d", out: "#c3281c" } as const;
 
-const AXIS = { stroke: "#a9b3bf", tick: { fill: "#596575", fontSize: 12 }, tickLine: false } as const;
-const GRID = "#e3e7ec";
+export const AXIS = { stroke: "#a9b3bf", tick: { fill: "#596575", fontSize: 12 }, tickLine: false } as const;
+export const GRID = "#e3e7ec";
 
 export type Series = { key: string; label: string; color?: string };
-type Row = Record<string, string | number | null | undefined>;
+export type Row = Record<string, string | number | null | undefined>;
 
-function tooltipStyle() {
+export function tooltipStyle() {
   return {
     contentStyle: { background: "#fff", border: "1px solid #a9b3bf", borderRadius: 8, color: "#0e1726", fontSize: 14, padding: "8px 10px" },
     labelStyle: { fontWeight: 700, marginBottom: 4 },
@@ -29,7 +29,7 @@ function tooltipStyle() {
   };
 }
 
-function DataTable({ data, xKey, series, caption }: { data: Row[]; xKey: string; series: Series[]; caption: string }) {
+export function DataTable({ data, xKey, series, caption }: { data: Row[]; xKey: string; series: Series[]; caption: string }) {
   return (
     <div className="sr-only">
     <table>
@@ -53,7 +53,7 @@ function DataTable({ data, xKey, series, caption }: { data: Row[]; xKey: string;
   );
 }
 
-function Frame({ height, children, empty }: { height: number; children: ReactNode; empty?: boolean }) {
+export function Frame({ height, children, empty }: { height: number; children: ReactNode; empty?: boolean }) {
   if (empty) {
     return <div className="flex items-center justify-center rounded-lg bg-canvas text-ink-3" style={{ height }}>Încă nu există date.</div>;
   }
