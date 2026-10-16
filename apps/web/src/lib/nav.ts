@@ -98,7 +98,6 @@ export const CLUB_SECTIONS: Section[] = [
   { href: "/club/site", key: "website", cap: "manageWebsite" },
   { href: "/club/magazin", key: "shop", cap: "manageShop" },
   { href: "/club/suporteri", key: "supporters", cap: "manageSupporters" },
-  { href: "/administrare", key: "admin", cap: "administerClub" },
 ];
 
 export function clubSections(role: AppRole) {
@@ -119,13 +118,15 @@ const PERFORMANCE_MATCH = [...new Set(PERFORMANCE_SECTIONS.flatMap((s) => [s.hre
 const today: NavItem = { href: "/azi", key: "today", icon: "home" };
 const schedule: NavItem = { href: "/program", key: "schedule", icon: "calendar" };
 const squad: NavItem = { href: "/lot", key: "squad", icon: "users" };
-const CLUB_MATCH = ["/club", "/administrare"];
+const CLUB_MATCH = ["/club"];
 /** Spațiul Club deschide prima secțiune pe care rolul o vede. */
 const club = (href: string): NavItem => ({ href, key: "club", icon: "megaphone", match: CLUB_MATCH });
 const money: NavItem = { href: "/bani", key: "money", icon: "wallet" };
 /** cine vede doar referatele din spațiul Bani */
 const purchases: NavItem = { href: "/bani/referate", key: "purchases", icon: "receipt" };
 const profile: NavItem = { href: "/profil", key: "profile", icon: "user" };
+/** Administrarea are intrarea ei în meniu (înainte era doar o filă ascunsă în Club). */
+const admin: NavItem = { href: "/administrare", key: "admin", icon: "settings" };
 const performance = (href: string): NavItem => ({ href, key: "performance", icon: "pulse", match: PERFORMANCE_MATCH });
 
 /** Meniul fiecărui rol. Pe telefon: primele patru în bara de jos, restul sub „Mai mult". */
@@ -138,9 +139,9 @@ export const NAV: Record<AppRole, NavItem[]> = {
     profile,
   ],
   coach: [today, schedule, squad, performance("/disponibilitate"), club("/club/mesaje"), purchases, profile],
-  physio: [{ ...today, href: "/tablou" }, schedule, squad, performance("/disponibilitate"), club("/club/mesaje"), purchases, profile],
+  physio: [{ ...today, href: "/tablou" }, schedule, squad, performance("/disponibilitate"), club("/club/mesaje"), purchases, admin, profile],
   sporting_director: [today, schedule, squad, performance("/tablou"), money, club("/club/mesaje"), profile],
-  admin: [today, schedule, squad, money, club("/club/mesaje"), profile],
+  admin: [today, schedule, squad, money, club("/club/mesaje"), admin, profile],
   secretary: [today, schedule, squad, money, club("/club/mesaje"), profile],
   accountant: [today, money, squad, club("/club/magazin"), profile],
   owner: [{ href: "/tablou", key: "overview", icon: "dashboard" }, money, profile],
