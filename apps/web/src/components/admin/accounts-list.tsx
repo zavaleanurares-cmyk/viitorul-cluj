@@ -13,7 +13,7 @@ import type { AccountRow, AccountState, PlayerOption } from "./queries";
 
 const GRID = "md:grid-cols-[minmax(0,1.3fr)_9.5rem_minmax(0,1fr)_6.5rem_9.5rem_1.25rem]";
 const STATE_TONE: Record<AccountState, "green" | "yellow" | "gray"> = { active: "green", invited: "yellow", disabled: "gray", anonymized: "gray" };
-const ROLE_ORDER: AppRole[] = ["physio", "coach", "sporting_director", "owner", "medical_partner", "player"];
+const ROLE_ORDER: AppRole[] = ["physio", "admin", "coach", "sporting_director", "owner", "secretary", "accountant", "medical_partner", "player", "guardian"];
 
 type Filters = { q: string; rol: string; stare: string };
 

@@ -13,6 +13,8 @@ export type AccountRow = {
   /** deja formatată în fusul clubului; null = nu s-a autentificat niciodată */
   lastSignIn: string | null;
   inviteExpires: string | null;
+  /** fără parolă și fără link de invitație valabil: intră la invitațiile în masă */
+  needsInvite: boolean;
   isSelf: boolean;
 };
 
@@ -58,6 +60,7 @@ export async function loadAccounts(db: Db, ctx: AppContext): Promise<{ accounts:
       player: player ? { id: player.id, displayName: player.display_name } : null,
       lastSignIn: a?.last_sign_in_at ? formatDateTime(a.last_sign_in_at, ctx.settings.timezone) : null,
       inviteExpires: a?.invite_expires_at ? formatDateTime(a.invite_expires_at, ctx.settings.timezone) : null,
+      needsInvite: !!a && p.is_active && !!p.email && !a.has_password && !a.disabled && !a.anonymized && !a.invite_expires_at,
       isSelf: p.id === ctx.userId,
     };
   });

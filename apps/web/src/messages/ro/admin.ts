@@ -149,6 +149,23 @@ const accounts = {
   deletePlayerNote: "Fișa jucătorului și datele lui medicale nu se șterg; jucătorul rămâne fără cont.",
 } as const;
 
+const invites = {
+  title: "Invitații",
+  description: "Conturile care nu și-au ales încă parola și n-au un link valabil, de exemplu cele aduse din TFB. Fiecare primește pe e-mail linkul de invitație, valabil 7 zile.",
+  scopeLabel: "Cui trimiți",
+  scopes: { staff: "Staff", guardian: "Părinți", player: "Jucători", all: "Toți" },
+  pending: (n: number) => (n === 0 ? "Nicio invitație de trimis." : n === 1 ? "O invitație de trimis." : `${plural(n, "invitație", "invitații")} de trimis.`),
+  send: (n: number) => (n === 1 ? "Trimite invitația" : `Trimite ${plural(n, "invitație", "invitații")}`),
+  progress: (done: number, total: number) => `${done} din ${total}`,
+  progressLabel: "Invitații trimise",
+  stop: "Oprește",
+  done: (n: number) => (n === 0 ? "Nicio invitație trimisă." : n === 1 ? "O invitație trimisă." : `${plural(n, "invitație trimisă", "invitații trimise")}.`),
+  failedTitle: (n: number) => (n === 1 ? "Un e-mail nu a plecat" : `${plural(n, "e-mail nu a plecat", "e-mailuri nu au plecat")}`),
+  failedHint: "Retrimite invitația din fereastra contului sau verifică adresa.",
+  notConfigured: "Trimiterea e-mailurilor nu e configurată încă (RESEND_API_KEY și EMAIL_FROM, cu domeniul clubului verificat în Resend). Până atunci, linkul de invitație se ia din fereastra fiecărui cont.",
+  demo: "Din clubul demo nu pleacă e-mailuri.",
+} as const;
+
 const bulk = {
   title: "Conturi pentru o grupă",
   description: "Completează e-mailul pentru jucătorii care primesc cont acum. Rândurile lăsate goale sunt sărite.",
@@ -566,4 +583,4 @@ const errors = {
   alreadyAnonymized: "Jucătorul este deja anonimizat.",
 } as const;
 
-export const admin = { nav, home, link, confirm, email, accounts, bulk, groups, statuses, club, audit, gdpr, errors } as const;
+export const admin = { nav, home, link, confirm, email, accounts, invites, bulk, groups, statuses, club, audit, gdpr, errors } as const;

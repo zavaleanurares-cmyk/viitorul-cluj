@@ -29,6 +29,17 @@ Cod: migrarea în `packages/shared/src/import/tfb.ts` (citire, potrivire, plan),
   - conturile staff-ului, pentru că TFB nu exportă adresele lor de e-mail (staff-ul se invită din Administrare › Conturi).
 - **După import, taxele lunare se emit din Locker Room** cu sumele preluate din TFB. Planul echipei are taxa cea mai frecventă, iar excepțiile se pun pe jucător.
 
+## Programul și conturile din TFB (după migrare)
+
+- **Programul** s-a adus din calendarul TFB, de la 16 octombrie 2026 înainte: 301 antrenamente și 151 de meciuri, cu competițiile sezonului, adversarii, acasă/deplasare și etapa. Trecutul nu s-a adus, ca să nu apară sute de prezențe nefăcute. „Meciurile” unei echipe cu ea însăși (etape libere în TFB) au rămas pe dinafară.
+- **Terenurile:** 83. Baza Sportivă Viitorul e terenul-părinte pentru T1–T9, așa că o rezervare pe bază ocupă și subterenurile. Restul sunt marcate externe.
+- **Conturile** s-au creat fără parolă și fără e-mail:
+  - părinții cu adresă și cu cel puțin un copil activ (533);
+  - jucătorii care aveau cont propriu în TFB (98), fără cei care foloseau adresa părintelui;
+  - staff-ul din TFB › Gestiune utilizatori (24), cu rolurile confirmate de club și cu grupele din coloana „Antrenor” a echipelor.
+- **Un cont poate avea mai multe roluri** (de exemplu proprietar și părinte). Rolurile se schimbă din meniu.
+- **Invitațiile pleacă din Administrare › Conturi › Invitații**, pe categorii (staff, părinți, jucători), în loturi de câte 20, cu o pauză între e-mailuri pentru limita Resend. Intră doar conturile fără parolă și fără un link valabil, deci o nouă apăsare nu dublează invitațiile.
+
 ## Exportul datelor
 
 - Exportul produce un ZIP cu câte un CSV pe tabel (separator `;`, UTF-8 cu BOM, protecție contra formulelor Excel) și un `CITESTE.txt`.

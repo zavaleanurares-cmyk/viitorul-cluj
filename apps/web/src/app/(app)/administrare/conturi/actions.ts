@@ -1,12 +1,13 @@
 "use server";
 import { z } from "zod";
 import { AuthError, createUser, deleteUser, getUser, setUserEmail } from "@club/db";
-import type { AppRole } from "@club/shared";
+import { unwrap, type AppRole } from "@club/shared";
 import { fail, run } from "@/lib/actions";
 import type { Session } from "@/lib/auth";
 import { issueAccessLink, otherActivePhysios, setAccountState, targetProfile, type AccessLink } from "@/components/admin/server";
 import { getT } from "@/messages";
-import { demoEmailAllowed, demoEmailDomain } from "@/lib/demo";
+import { demoEmailAllowed, demoEmailDomain, isDemoClub } from "@/lib/demo";
+import { emailConfigured } from "@/lib/email";
 
 const t = getT().admin;
 const PATHS = ["/administrare", "/administrare/conturi"];
@@ -180,6 +181,52 @@ export async function sendAccessLink(input: z.infer<typeof Target>) {
     if (user.disabled || !p.is_active) fail(t.errors.accountDisabled);
     const { data: player } = await session.db.from("players").select("id").eq("user_id", p.id).maybeSingle();
     return issueAccessLink(session, { id: p.id, email: user.email, name: p.full_name, playerId: player?.id }, user.hasPassword ? "recovery" : "invite");
+  });
+}
+
+const InviteScope = z.object({ scope: z.enum(["staff", "guardian", "player", "all"]) });
+export type InviteScope = z.infer<typeof InviteScope>["scope"];
+export type InviteBatch = { sent: number; failed: Array<{ name: string; email: string }>; remaining: number };
+
+/** Câte invitații trimite o singură cerere: rămâne mult sub limita de timp a funcției, iar ritmul respectă limita Resend. */
+const INVITE_BATCH = 20;
+const INVITE_GAP_MS = 550;
+
+/**
+ * Invitațiile în masă pentru conturile care nu au ales încă o parolă și nu au un link valabil
+ * (de exemplu conturile aduse din TFB). Browserul cheamă acțiunea până când `remaining` ajunge la 0.
+ * Un e-mail care nu pleacă nu oprește lotul; contul apare la „netrimise” și se poate retrimite din fereastra lui.
+ */
+export async function sendInvites(input: z.infer<typeof InviteScope>) {
+  return run<InviteBatch>({ roles: ["physio", "admin"], revalidate: PATHS }, async (session) => {
+    const { db, ctx } = session;
+    const { scope } = InviteScope.parse(input);
+    if (isDemoClub(ctx.club)) fail(t.invites.demo);
+    if (!emailConfigured()) fail(t.invites.notConfigured);
+
+    const [profiles, auth] = await Promise.all([
+      db.from("profiles").select("id, full_name, email, role, is_active").eq("is_active", true),
+      db.rpc("admin_accounts"),
+    ]);
+    const authById = new Map(unwrap(auth).map((a) => [a.user_id, a]));
+    const inScope = (role: AppRole) =>
+      scope === "all" || (scope === "guardian" ? role === "guardian" : scope === "player" ? role === "player" : role !== "guardian" && role !== "player");
+    const pending = unwrap(profiles).filter((p) => {
+      const a = authById.get(p.id);
+      return a && !a.has_password && !a.disabled && !a.anonymized && !a.invite_expires_at && p.email && inScope(p.role);
+    });
+
+    const failed: InviteBatch["failed"] = [];
+    let sent = 0;
+    const batch = pending.slice(0, INVITE_BATCH);
+    for (const [i, p] of batch.entries()) {
+      if (i) await new Promise((r) => setTimeout(r, INVITE_GAP_MS));
+      const { data: player } = p.role === "player" ? await db.from("players").select("id").eq("user_id", p.id).maybeSingle() : { data: null };
+      const res = await issueAccessLink(session, { id: p.id, email: p.email!, name: p.full_name, playerId: player?.id }, "invite");
+      if (res.emailed) sent++;
+      else failed.push({ name: p.full_name, email: p.email! });
+    }
+    return { sent, failed, remaining: pending.length - batch.length };
   });
 }
 

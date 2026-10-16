@@ -2,7 +2,10 @@ import { requireRole } from "@/lib/auth";
 import { PageHeader } from "@/components/ui/card";
 import { AccountsList } from "@/components/admin/accounts-list";
 import { loadAccounts } from "@/components/admin/queries";
+import { BulkInvites } from "@/components/admin/bulk-invites";
 import { getT } from "@/messages";
+import { emailConfigured } from "@/lib/email";
+import { isDemoClub } from "@/lib/demo";
 
 export const metadata = { title: "Conturi" };
 
@@ -18,9 +21,18 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ q
   const linked = playerId ? accounts.find((a) => a.player?.id === playerId) : undefined;
   const free = playerId ? withoutAccount.find((p) => p.id === playerId) : undefined;
 
+  const invite = accounts.filter((a) => a.needsInvite);
+  const pending = {
+    staff: invite.filter((a) => a.role !== "guardian" && a.role !== "player").length,
+    guardian: invite.filter((a) => a.role === "guardian").length,
+    player: invite.filter((a) => a.role === "player").length,
+    all: invite.length,
+  };
+
   return (
     <>
       <PageHeader title={t.title} description={t.description} />
+      <BulkInvites pending={pending} blocked={isDemoClub(ctx.club) ? "demo" : emailConfigured() ? null : "config"} />
       <AccountsList
         accounts={accounts}
         groups={ctx.groups}
