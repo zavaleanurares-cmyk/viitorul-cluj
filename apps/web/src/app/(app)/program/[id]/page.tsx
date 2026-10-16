@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ChevronLeft, ClipboardCheck, ClipboardList, Trophy } from "lucide-react";
+import { ChevronLeft, ClipboardCheck, ClipboardList, Star, Trophy } from "lucide-react";
 import {
   ABSENCE_REASON_LABELS, ATTENDANCE_LABELS, EVENT_KIND_LABELS, WEEKDAYS_RO, can, formatDateShort, formatEventWhen, localDate,
   type AbsenceReason, type AttendanceStatus, type EventKind,
@@ -44,6 +44,9 @@ export default async function EventPage({ params }: { params: Promise<{ id: stri
   const tp = getT().drills.plan;
   const plan = e.kind === "training" ? await getPlan(db, id) : null;
   const planMinutes = (plan?.items ?? []).reduce((sum, i) => sum + (i.duration_min ?? 0), 0);
+  const ta = getT().activity.ratings;
+  const ratings = e.kind === "training" ? ((await db.from("training_ratings").select("rating").eq("event_id", id)).data ?? []) : [];
+  const avg = ratings.length ? (ratings.reduce((sum, r) => sum + r.rating, 0) / ratings.length).toFixed(1).replace(".", ",") : null;
   let seriesText: string | null = null;
   if (e.series_id) {
     const { data: s } = await db.from("event_series").select("weekdays, until").eq("id", e.series_id).maybeSingle();
@@ -101,6 +104,11 @@ export default async function EventPage({ params }: { params: Promise<{ id: stri
               {e.attendance_saved_at ? t.event.editAttendance : t.event.takeAttendance}
             </LinkButton>
           ) : null}
+          {e.kind === "training" && started ? (
+            <LinkButton href={`/program/${id}/note`} variant="secondary" size="lg" icon={<Star className="size-5" aria-hidden />}>
+              {ratings.length ? ta.edit : ta.open}
+            </LinkButton>
+          ) : null}
           {e.kind === "match" && (!e.match || e.match.status === "scheduled") ? (
             <LinkButton href={`/program/${id}/meci`} variant="primary" size="lg" icon={<Trophy className="size-5" aria-hidden />}>{t.event.openMatch}</LinkButton>
           ) : null}
@@ -124,7 +132,7 @@ export default async function EventPage({ params }: { params: Promise<{ id: stri
 
       {e.kind === "training" && recorded.length ? (
         <Card>
-          <CardHeader title={t.event.attendance} description={t.event.attendanceSummary(present, roster.length)} />
+          <CardHeader title={t.event.attendance} description={[t.event.attendanceSummary(present, roster.length), avg ? ta.summary(ratings.length, avg) : null].filter(Boolean).join(" · ")} />
           <CardBody>
             {absent.length === 0 ? <p className="text-ink-3">{t.attendance.noAbsentees}</p> : (
               <ul className="divide-y divide-line">

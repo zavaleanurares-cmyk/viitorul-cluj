@@ -4765,6 +4765,34 @@ export type Database = {
           { foreignKeyName: "training_plans_updated_by_fkey"; columns: ["updated_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
         ];
       };
+      training_ratings: {
+        Row: {
+          event_id: string;
+          player_id: string;
+          rating: number;
+          rated_by: string | null;
+          created_at: string;
+        };
+        Insert: {
+          event_id: string;
+          player_id: string;
+          rating: number;
+          rated_by?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          event_id?: string;
+          player_id?: string;
+          rating?: number;
+          rated_by?: string | null;
+          created_at?: string;
+        };
+        Relationships: [
+          { foreignKeyName: "training_ratings_event_id_fkey"; columns: ["event_id"]; isOneToOne: false; referencedRelation: "events"; referencedColumns: ["id"] },
+          { foreignKeyName: "training_ratings_player_id_fkey"; columns: ["player_id"]; isOneToOne: false; referencedRelation: "players"; referencedColumns: ["id"] },
+          { foreignKeyName: "training_ratings_rated_by_fkey"; columns: ["rated_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
+        ];
+      };
       venues: {
         Row: {
           id: string;
@@ -5235,6 +5263,7 @@ export type Database = {
       save_sponsor: { Args: { p: Json | null }; Returns: string };
       save_test_grid: { Args: { p_date: string | null; p_rows: Json | null }; Returns: number };
       save_training_plan: { Args: { p_event: string | null; p: Json | null }; Returns: undefined };
+      save_training_ratings: { Args: { p_event: string | null; p_ratings: Json | null }; Returns: number };
       search_club: { Args: { p_query: string | null; p_limit?: number | null }; Returns: Json };
       send_contracts: { Args: { p_template: string | null; p_players: string[] | null; p_due_on?: string | null }; Returns: Json };
       send_fee_reminders: { Args: Record<PropertyKey, never>; Returns: number };

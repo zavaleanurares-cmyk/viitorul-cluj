@@ -45,3 +45,26 @@ Cod:
 ## Ce nu s-a adus din TFB
 
 - Cele 12 secțiuni existente în TFB au doar imagini găzduite de TFB, pe care exporturile nu le includ. Se refac din aplicație, cu schema desenată sau cu imaginile încărcate din nou.
+
+## Notele de la antrenament
+
+- După antrenament, cine îl conduce dă jucătorilor note de la 1 la 5 (Program › antrenament › „Notează jucătorii”). Ca în TFB, unde nota stă lângă prezență.
+- Dacă prezența e făcută, apar doar cei prezenți. Altfel apare tot lotul.
+- Notele stau separat de prezență, în `training_ratings`, ca notele de meci: le văd doar staff-ul care conduce antrenamentul și conducerea sportivă. Jucătorii și părinții nu le văd, deși își văd prezența.
+
+## Raportul de activitate al antrenorilor
+
+- Este echivalentul „Raport activitate” din TFB. Se găsește în Program › Activitate, pe săptămână, pe echipe și cu filtru de echipă. Se poate tipări.
+- **Ce se urmărește:**
+  - la antrenamente: prezența, planul și notele;
+  - la meciuri: notele și raportul de meci.
+- **Termenele:**
+  - planul trebuie să existe înainte de începerea antrenamentului;
+  - restul trebuie făcut după terminarea evenimentului.
+
+  Până la termen, lucrul apare gri („încă nu e momentul”), ca să nu fie numărat ca lipsă.
+- Fiecare verificare duce direct la ecranul unde se face lucrul care lipsește.
+- **Cine îl vede:**
+  - antrenorul își vede doar echipele lui;
+  - biroul și conducerea sportivă văd tot clubul;
+  - contabilul nu are acces, pentru că nu vede notele și raportul l-ar arăta greșit.

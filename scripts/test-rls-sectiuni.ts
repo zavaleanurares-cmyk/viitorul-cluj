@@ -105,6 +105,20 @@ try {
   const empty = await coach1.rpc("save_training_plan", { p_event: ev, p: { items: [] } });
   check("un plan gol se șterge", !empty.error && (await rows(admin.from("training_plans").select("event_id").eq("event_id", ev))) === 0);
 
+  console.log("\nNotele de la antrenament");
+  const p2 = must(await admin.from("players").insert({ club_id: clubA, group_id: G2, full_name: "DOI", display_name: "DOI", birth_date: "2012-03-03" }).select("id").single(), "jucător G2").id;
+  const r1 = await coach1.rpc("save_training_ratings", { p_event: ev, p_ratings: { [p1]: 4, [p2]: 5 } });
+  check("antrenorul echipei dă note (doar jucătorilor echipei)", r1.data === 1, r1);
+  check("antrenorul altei echipe NU dă note", await errored(coach2.rpc("save_training_ratings", { p_event: ev, p_ratings: { [p1]: 1 } })));
+  check("biroul vede notele", (await rows(secretary.from("training_ratings").select("player_id").eq("event_id", ev))) === 1);
+  check("jucătorul NU vede notele", (await rows(player.from("training_ratings").select("player_id"))) === 0);
+  check("antrenorul altei echipe NU vede notele", (await rows(coach2.from("training_ratings").select("player_id"))) === 0);
+  check("notele nu se dau la meci", await errored(coach1.rpc("save_training_ratings", { p_event: match, p_ratings: { [p1]: 3 } })));
+  check("o notă în afara 1–5 e ignorată", (await coach1.rpc("save_training_ratings", { p_event: ev, p_ratings: { [p1]: 9 } })).data === 0
+    && (await coach1.from("training_ratings").select("rating").eq("event_id", ev).single()).data?.rating === 4);
+  await coach1.rpc("save_training_ratings", { p_event: ev, p_ratings: { [p1]: null } });
+  check("null șterge nota", (await rows(coach1.from("training_ratings").select("player_id").eq("event_id", ev))) === 0);
+
   console.log("\nFișiere");
   const path = `${clubA}/${crypto.randomUUID()}.jpg`;
   check("antrenorul poate încărca o imagine", (await coach1.rpc("file_access", { p_bucket: "drills", p_path: path, p_action: "write" })).data === true);
