@@ -142,6 +142,17 @@ try {
   await coach1.rpc("share_video_with_groups", { p_video: vid, p_groups: [] });
   check("după retragere, cealaltă echipă nu o mai vede", (await rows(coach2.from("videos").select("id").eq("id", vid))) === 0);
 
+  console.log("\nDocumente justificative");
+  await acc("contabil", "accountant", clubA);
+  const contabil = await userClient(mail("contabil"));
+  const exp = must(await admin.from("expenses").insert({ club_id: clubA, description: "Transport", amount: 10000, spent_on: "2026-10-10", method: "bank" }).select("id").single(), "cheltuială").id;
+  const dpath = `${clubA}/cheltuieli/${crypto.randomUUID()}-contract.pdf`;
+  check("contabilul adaugă un document justificativ", !(await contabil.from("expense_documents").insert({ club_id: clubA, expense_id: exp, kind: "contract", path: dpath, file_name: "contract.pdf" })).error);
+  check("antrenorul NU vede documentele", (await rows(coach1.from("expense_documents").select("id"))) === 0);
+  check("antrenorul NU adaugă documente", await errored(coach1.from("expense_documents").insert({ club_id: clubA, expense_id: exp, kind: "other", path: `${clubA}/cheltuieli/x.pdf`, file_name: "x.pdf" })));
+  check("un document cu cale din alt club e refuzat", await errored(contabil.from("expense_documents").insert({ club_id: clubA, expense_id: exp, kind: "other", path: `${clubB}/cheltuieli/y.pdf`, file_name: "y.pdf" })));
+  check("alt club NU vede documentele", (await rows(otherClub.from("expense_documents").select("id"))) === 0);
+
   console.log("\nFișiere");
   const path = `${clubA}/${crypto.randomUUID()}.jpg`;
   check("antrenorul poate încărca o imagine", (await coach1.rpc("file_access", { p_bucket: "drills", p_path: path, p_action: "write" })).data === true);
