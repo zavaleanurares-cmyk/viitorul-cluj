@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { FileText, FolderTree, Pencil, Plus, Trash2, Upload } from "lucide-react";
+import { FileText, FolderTree, Pencil, Plus, Trash2, Upload, X } from "lucide-react";
 import { PAYMENT_METHOD_LABELS } from "@club/shared";
 import { Button, IconButton } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/overlay";
@@ -17,7 +17,10 @@ export type { Dept, Opt } from "./departments";
 export type ExpenseValue = {
   id: string; description: string; department_id: string | null; supplier: string | null; invoice_no: string | null; amount: number;
   spent_on: string; method: "cash" | "bank" | "card"; group_id: string | null; player_id: string | null; document_path: string | null;
+  documents?: ExpenseDoc[];
 };
+export type ExpenseDoc = { kind: "contract" | "receipt" | "payment_order" | "handover" | "nir" | "other"; path: string; file_name: string };
+const fileHref = (path: string) => `/api/files/finance/${path.split("/").map(encodeURIComponent).join("/")}`;
 
 const safeName = (n: string) => n.normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^A-Za-z0-9._-]+/g, "-").replace(/^[-.]+/, "").slice(-80) || "document";
 
@@ -30,12 +33,14 @@ export function ExpenseButton({ clubId, today, depts, teams, players, expense }:
   const [amount, setAmount] = useState<number | null>(expense?.amount ?? null);
   const [tag, setTag] = useState<"none" | "team" | "player">(expense?.player_id ? "player" : expense?.group_id ? "team" : "none");
   const [uploading, setUploading] = useState(false);
+  const [docs, setDocs] = useState<ExpenseDoc[]>(expense?.documents ?? []);
+  const [docKind, setDocKind] = useState<ExpenseDoc["kind"]>("receipt");
   const save = useAction(saveExpense, { onSuccess: () => setOpen(false) });
   const del = useAction(deleteExpense, { onSuccess: () => setOpen(false) });
   const set = <K extends keyof typeof v>(k: K, val: (typeof v)[K]) => setV({ ...v, [k]: val });
   return (
     <>
-      {expense ? <IconButton label={t.edit} onClick={() => setOpen(true)}><Pencil className="size-5" aria-hidden /></IconButton>
+      {expense ? <IconButton label={t.edit} onClick={() => { setDocs(expense.documents ?? []); setOpen(true); }}><Pencil className="size-5" aria-hidden /></IconButton>
         : <Button icon={<Plus className="size-5" aria-hidden />} onClick={() => setOpen(true)}>{t.add}</Button>}
       <Dialog open={open} onClose={() => setOpen(false)} title={expense ? t.edit : t.add} wide
         footer={<>
@@ -43,7 +48,7 @@ export function ExpenseButton({ clubId, today, depts, teams, players, expense }:
           <Button variant="ghost" onClick={() => setOpen(false)}>{m.common.cancel}</Button>
           <Button pending={save.pending} disabled={!v.description.trim() || !amount || uploading} onClick={() => amount && save.run({
             id: expense?.id ?? null, description: v.description, department_id: v.department_id, supplier: v.supplier ?? undefined, invoice_no: v.invoice_no ?? undefined,
-            amount, spent_on: v.spent_on, method: v.method, group_id: tag === "team" ? v.group_id : null, player_id: tag === "player" ? v.player_id : null, document_path: v.document_path,
+            amount, spent_on: v.spent_on, method: v.method, group_id: tag === "team" ? v.group_id : null, player_id: tag === "player" ? v.player_id : null, document_path: v.document_path, documents: docs,
           })}>{m.common.save}</Button>
         </>}>
         <div className="space-y-4">
@@ -96,6 +101,43 @@ export function ExpenseButton({ clubId, today, depts, teams, players, expense }:
               }} />
             </label>
             <p className="mt-1 text-sm text-ink-3">{t.fields.documentHint}</p>
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-ink-2">{t.docs.title}</p>
+            <p className="mb-2 text-sm text-ink-3">{t.docs.hint}</p>
+            {docs.length ? (
+              <ul className="mb-2 divide-y divide-line rounded-[var(--radius-control)] border border-line">
+                {docs.map((d) => (
+                  <li key={d.path} className="flex items-center gap-2 py-1 pl-3 pr-1">
+                    <FileText className="size-5 shrink-0 text-ink-3" aria-hidden />
+                    <span className="min-w-0 flex-1">
+                      <a className="block truncate font-semibold underline" href={fileHref(d.path)} target="_blank" rel="noreferrer">{d.file_name}</a>
+                      <span className="block text-sm text-ink-3">{t.docs.kinds[d.kind]}</span>
+                    </span>
+                    <IconButton label={t.docs.remove(d.file_name)} onClick={() => setDocs(docs.filter((x) => x.path !== d.path))}><X className="size-4" aria-hidden /></IconButton>
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+            <div className="flex flex-wrap items-center gap-2">
+              <Select aria-label={t.docs.kind} value={docKind} onChange={(e) => setDocKind(e.target.value as ExpenseDoc["kind"])} className="w-auto">
+                {(["contract", "receipt", "payment_order", "handover", "nir", "other"] as const).map((k) => <option key={k} value={k}>{t.docs.kinds[k]}</option>)}
+              </Select>
+              <label className="inline-flex h-11 cursor-pointer items-center gap-2 rounded-full bg-sunken px-4 font-medium transition-colors hover:bg-line">
+                <Plus className="size-5" aria-hidden /> {t.docs.add}
+                <input type="file" accept="application/pdf,image/*" className="sr-only" disabled={uploading || docs.length >= 20} onChange={async (e) => {
+                  const f = e.target.files?.[0];
+                  e.target.value = "";
+                  if (!f) return;
+                  setUploading(true);
+                  const path = `${clubId}/cheltuieli/${crypto.randomUUID()}-${safeName(f.name)}`;
+                  const res = await uploadFile("finance", path, f);
+                  setUploading(false);
+                  if (!res.ok) { toast(res.error, "error"); return; }
+                  setDocs((x) => [...x, { kind: docKind, path, file_name: f.name.slice(0, 200) }]);
+                }} />
+              </label>
+            </div>
           </div>
           <FormError>{save.error ?? del.error}</FormError>
         </div>

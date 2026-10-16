@@ -2,6 +2,7 @@
 import { z } from "zod";
 import { fail, run } from "@/lib/actions";
 import { getT } from "@/messages";
+import { deleteFiles } from "@/lib/storage";
 
 const FINANCE = ["admin", "secretary", "accountant"] as const;
 const paths = ["/bani", "/bani/cheltuieli", "/bani/buget", "/bani/banca"];
@@ -18,19 +19,45 @@ const Expense = z.object({
   group_id: z.uuid().nullable(),
   player_id: z.uuid().nullable(),
   document_path: z.string().max(300).nullable().optional(),
+  documents: z.array(z.object({
+    kind: z.enum(["contract", "receipt", "payment_order", "handover", "nir", "other"]),
+    path: z.string().max(300),
+    file_name: z.string().trim().min(1).max(200),
+  })).max(20).optional(),
 });
 
 export async function saveExpense(input: z.input<typeof Expense>) {
   return run({ roles: [...FINANCE], revalidate: paths, message: getT().money.expenses.saved }, async ({ db, ctx }) => {
     const e = Expense.parse(input);
     if (e.document_path && !e.document_path.startsWith(`${ctx.club.id}/`)) fail("Document invalid.");
-    const row = { ...e, supplier: e.supplier?.trim() || null, invoice_no: e.invoice_no?.trim() || null };
+    const { documents, ...fields } = e;
+    if (documents?.some((d) => !d.path.startsWith(`${ctx.club.id}/cheltuieli/`))) fail("Document invalid.");
+    const row = { ...fields, supplier: fields.supplier?.trim() || null, invoice_no: fields.invoice_no?.trim() || null };
     const { id, ...rest } = row;
     const res = id
       ? await db.from("expenses").update(rest).eq("id", id).select("id")
       : await db.from("expenses").insert({ ...rest, club_id: ctx.club.id, created_by: ctx.userId }).select("id");
     if (res.error) fail(res.error.message);
     if (!res.data?.length) fail("Cheltuială necunoscută.");
+    const expenseId = res.data[0].id as string;
+
+    // documentele justificative: lista trimisă e lista completă
+    if (documents) {
+      const { data: before } = await db.from("expense_documents").select("id, path").eq("expense_id", expenseId);
+      const keep = new Set(documents.map((d) => d.path));
+      const removed = (before ?? []).filter((d) => !keep.has(d.path));
+      if (removed.length) {
+        const { error } = await db.from("expense_documents").delete().in("id", removed.map((d) => d.id));
+        if (error) fail(error.message);
+        await deleteFiles(db, "finance", removed.map((d) => d.path));
+      }
+      const known = new Set((before ?? []).map((d) => d.path));
+      const added = documents.filter((d) => !known.has(d.path));
+      if (added.length) {
+        const { error } = await db.from("expense_documents").insert(added.map((d) => ({ ...d, club_id: ctx.club.id, expense_id: expenseId, uploaded_by: ctx.userId })));
+        if (error) fail(error.message);
+      }
+    }
     return null;
   });
 }

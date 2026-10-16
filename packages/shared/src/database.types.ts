@@ -1890,6 +1890,43 @@ export type Database = {
           { foreignKeyName: "exercises_created_by_fkey"; columns: ["created_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
         ];
       };
+      expense_documents: {
+        Row: {
+          id: string;
+          club_id: string;
+          expense_id: string;
+          kind: string;
+          path: string;
+          file_name: string;
+          uploaded_by: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          club_id: string;
+          expense_id: string;
+          kind: string;
+          path: string;
+          file_name: string;
+          uploaded_by?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          club_id?: string;
+          expense_id?: string;
+          kind?: string;
+          path?: string;
+          file_name?: string;
+          uploaded_by?: string | null;
+          created_at?: string;
+        };
+        Relationships: [
+          { foreignKeyName: "expense_documents_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
+          { foreignKeyName: "expense_documents_expense_id_fkey"; columns: ["expense_id"]; isOneToOne: false; referencedRelation: "expenses"; referencedColumns: ["id"] },
+          { foreignKeyName: "expense_documents_uploaded_by_fkey"; columns: ["uploaded_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
+        ];
+      };
       expenses: {
         Row: {
           id: string;

@@ -24,7 +24,7 @@ export function Dialog({ open, onClose, title, children, footer, wide }: {
       onClose={onClose}
       onClick={(e) => { if (e.target === ref.current) onClose(); }}
       className={cn(
-        "m-0 mt-auto max-h-[92dvh] w-full max-w-none rounded-t-[var(--radius-sheet)] bg-surface p-0 text-ink shadow-[var(--shadow-float)] backdrop:bg-black/30 backdrop:backdrop-blur-[2px]",
+        "m-0 mt-auto max-h-[92dvh] w-full max-w-none whitespace-normal rounded-t-[var(--radius-sheet)] bg-surface p-0 text-left font-normal text-ink shadow-[var(--shadow-float)] backdrop:bg-black/30 backdrop:backdrop-blur-[2px]",
         "md:m-auto md:rounded-[var(--radius-sheet)]", wide ? "md:max-w-3xl" : "md:max-w-lg",
       )}
     >
