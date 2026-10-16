@@ -66,7 +66,9 @@ export function Segmented<T extends string>({ value, onChange, options, label, c
           aria-checked={value === o.value}
           onClick={() => onChange(o.value)}
           className={cn(
-            "h-10 min-w-12 flex-1 rounded-[0.5rem] px-3 font-medium transition-colors",
+            // lățimea după text (fără suprapuneri): opțiunile trec pe rândul următor dacă nu încap,
+            // iar o etichetă mai lungă decât rândul se rupe pe două rânduri, cu înălțimea crescută
+            "min-h-10 flex-[1_1_auto] rounded-[0.5rem] px-3 py-1.5 font-medium leading-tight transition-colors",
             value === o.value ? "bg-surface text-ink shadow-[0_1px_3px_rgb(0_0_0/0.12)]" : "text-ink-2 hover:text-ink",
           )}
         >

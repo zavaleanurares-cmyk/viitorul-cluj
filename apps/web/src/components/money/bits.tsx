@@ -64,7 +64,7 @@ export function CollectedMeter({ collected, expected, lowLabel }: { collected: n
       </span>
       <span className="tabular-nums">{pct}%</span>
       {low && lowLabel ? (
-        <span className="inline-flex h-6 items-center gap-1 rounded-full bg-st-red px-2.5 text-xs font-semibold text-white">
+        <span className="inline-flex h-6 items-center gap-1 whitespace-nowrap rounded-full bg-st-red px-2.5 text-xs font-semibold text-white">
           <CircleAlert className="size-3.5" aria-hidden />{lowLabel}
         </span>
       ) : null}

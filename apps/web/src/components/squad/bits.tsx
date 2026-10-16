@@ -16,8 +16,8 @@ export function VisaChip({ state, days, expires, size = "sm" }: { state: VisaSta
   }[state];
   return (
     <span title={expires ? t.ok(formatDateShort(expires)) : undefined}
-      className={cn("inline-flex items-center gap-1 whitespace-nowrap rounded-full font-semibold", size === "sm" ? "h-6 px-2.5 text-xs" : "h-7 px-3 text-[0.8125rem]", cfg.cls)}>
-      <cfg.Icon className={size === "sm" ? "size-3.5" : "size-4"} aria-hidden />
+      className={cn("inline-flex max-w-full items-center gap-1 rounded-full py-0.5 font-semibold leading-tight", size === "sm" ? "min-h-6 px-2.5 text-xs" : "min-h-7 px-3 text-[0.8125rem]", cfg.cls)}>
+      <cfg.Icon className={cn("shrink-0", size === "sm" ? "size-3.5" : "size-4")} aria-hidden />
       {cfg.text}
     </span>
   );

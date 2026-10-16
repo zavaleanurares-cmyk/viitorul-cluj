@@ -37,7 +37,8 @@ export function Dialog({ open, onClose, title, children, footer, wide }: {
             </button>
           </header>
           <div className="overflow-y-auto px-5 pb-5 pt-1">{children}</div>
-          {footer ? <footer className="flex flex-wrap justify-end gap-2 border-t border-line px-5 py-4 pb-safe">{footer}</footer> : null}
+          {/* ștergerea stă separat: în stânga pe ecran lat, pe un rând al ei, jos, pe telefon */}
+          {footer ? <footer className="flex flex-wrap items-center justify-end gap-2 border-t border-line px-5 py-4 pb-[calc(1rem+env(safe-area-inset-bottom,0px))] [&>*:has(.lucide-trash-2)]:text-st-red max-sm:[&>*:has(.lucide-trash-2)]:order-last max-sm:[&>*:has(.lucide-trash-2)]:basis-full sm:[&>*:has(.lucide-trash-2)]:mr-auto">{footer}</footer> : null}
         </div>
       ) : null}
     </dialog>
