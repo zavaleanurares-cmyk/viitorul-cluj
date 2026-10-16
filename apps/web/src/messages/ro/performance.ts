@@ -264,6 +264,18 @@ export const performance = {
     },
   },
   video: {
+    share: {
+      open: "Partajează cu alte echipe",
+      title: "Partajează înregistrarea",
+      hint: "Antrenorii echipelor alese o văd, cu marcajele și clipurile ei, dar nu o pot modifica sau șterge. Primesc o notificare.",
+      none: "Nicio altă echipă activă.",
+      save: "Salvează",
+      saved: (n: number) => (n ? `Partajarea a fost salvată; ${n === 1 ? "un antrenor a fost anunțat" : `${n} antrenori au fost anunțați`}.` : "Partajarea a fost salvată."),
+      sharedWith: (teams: string) => `Partajată cu ${teams}`,
+      sharedFrom: (team: string) => `Partajată de ${team}`,
+      viewOnly: "Înregistrarea ți-a fost partajată: o poți privi, cu marcajele și clipurile ei, dar n-o poți modifica.",
+      badge: "partajată",
+    },
     title: "Video",
     description: "Înregistrările meciurilor și antrenamentelor, cu marcaje pe cronologie și clipuri pentru jucători.",
     add: "Adaugă video",

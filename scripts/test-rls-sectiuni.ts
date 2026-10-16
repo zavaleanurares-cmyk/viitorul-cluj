@@ -119,6 +119,29 @@ try {
   await coach1.rpc("save_training_ratings", { p_event: ev, p_ratings: { [p1]: null } });
   check("null șterge nota", (await rows(coach1.from("training_ratings").select("player_id").eq("event_id", ev))) === 0);
 
+  console.log("\nVideo partajat cu altă echipă");
+  const vpath = `${clubA}/${crypto.randomUUID()}-meci.mp4`;
+  const vid = must(await coach1.from("videos").insert({ club_id: clubA, group_id: G1, title: "Meci U13", source: "upload", storage_path: vpath, recorded_on: "2026-10-10", created_by: uCoach1 }).select("id").single(), "video").id;
+  must(await coach1.from("video_markers").insert({ video_id: vid, t_sec: 10, end_sec: 30, tag: "goal" }).select("id"), "marcaj");
+  check("antrenorul altei echipe NU vede înregistrarea", (await rows(coach2.from("videos").select("id").eq("id", vid))) === 0);
+  check("antrenorul altei echipe NU o poate partaja", await errored(coach2.rpc("share_video_with_groups", { p_video: vid, p_groups: [G2] })));
+  const sh = await coach1.rpc("share_video_with_groups", { p_video: vid, p_groups: [G2] });
+  check("antrenorul echipei o partajează; antrenorul celeilalte echipe e anunțat", sh.data === 1, sh);
+  check("echipa cu care s-a partajat vede înregistrarea și marcajele", (await rows(coach2.from("videos").select("id").eq("id", vid))) === 1
+    && (await rows(coach2.from("video_markers").select("id").eq("video_id", vid))) === 1);
+  check("notificarea a ajuns", (await rows(coach2.from("notifications").select("id").eq("kind", "video_shared"))) === 1);
+  check("echipa cu care s-a partajat NU o poate modifica", (await rows(coach2.from("videos").update({ title: "X" }).eq("id", vid).select("id"))) === 0);
+  check("echipa cu care s-a partajat NU o poate șterge", (await rows(coach2.from("videos").delete().eq("id", vid).select("id"))) === 0);
+  check("echipa cu care s-a partajat NU adaugă marcaje", await errored(coach2.from("video_markers").insert({ video_id: vid, t_sec: 50 })));
+  check("echipa cu care s-a partajat NU o poate partaja mai departe", await errored(coach2.rpc("share_video_with_groups", { p_video: vid, p_groups: [] })));
+  check("fișierul: îl citește, nu-l șterge", (await coach2.rpc("file_access", { p_bucket: "videos", p_path: vpath, p_action: "read" })).data === true
+    && (await coach2.rpc("file_access", { p_bucket: "videos", p_path: vpath, p_action: "delete" })).data !== true
+    && (await coach1.rpc("file_access", { p_bucket: "videos", p_path: vpath, p_action: "delete" })).data === true);
+  check("jucătorul NU vede înregistrarea", (await rows(player.from("videos").select("id"))) === 0);
+  check("partajarea cu altă echipă din alt club e refuzată", await errored(coach1.rpc("share_video_with_groups", { p_video: vid, p_groups: [crypto.randomUUID()] })));
+  await coach1.rpc("share_video_with_groups", { p_video: vid, p_groups: [] });
+  check("după retragere, cealaltă echipă nu o mai vede", (await rows(coach2.from("videos").select("id").eq("id", vid))) === 0);
+
   console.log("\nFișiere");
   const path = `${clubA}/${crypto.randomUUID()}.jpg`;
   check("antrenorul poate încărca o imagine", (await coach1.rpc("file_access", { p_bucket: "drills", p_path: path, p_action: "write" })).data === true);

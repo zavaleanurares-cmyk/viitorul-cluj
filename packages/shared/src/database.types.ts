@@ -4912,6 +4912,7 @@ export type Database = {
           duration_sec: number | null;
           created_by: string | null;
           created_at: string;
+          shared_group_ids: string[];
         };
         Insert: {
           id?: string;
@@ -4926,6 +4927,7 @@ export type Database = {
           duration_sec?: number | null;
           created_by?: string | null;
           created_at?: string;
+          shared_group_ids?: string[];
         };
         Update: {
           id?: string;
@@ -4940,6 +4942,7 @@ export type Database = {
           duration_sec?: number | null;
           created_by?: string | null;
           created_at?: string;
+          shared_group_ids?: string[];
         };
         Relationships: [
           { foreignKeyName: "videos_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
@@ -5282,6 +5285,7 @@ export type Database = {
       set_pledges_status: { Args: { p_ids: string[] | null; p_status: string | null }; Returns: number };
       setup_club: { Args: { p_slug: string | null; p_name: string | null; p_short_name: string | null; p_groups: string[] | null; p_settings?: Json | null }; Returns: string };
       share_video_marker: { Args: { p_marker: string | null; p_share: boolean | null }; Returns: number };
+      share_video_with_groups: { Args: { p_video: string | null; p_groups: string[] | null }; Returns: number };
       sign_contract: { Args: { p_id: string | null; p_name: string | null; p_signature_path: string | null; p_ip?: string | null; p_user_agent?: string | null }; Returns: string };
       site_public_file: { Args: { p_slug: string | null; p_path: string | null }; Returns: boolean };
       start_evaluation_round: { Args: { p: Json | null }; Returns: string };

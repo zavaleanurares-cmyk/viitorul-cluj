@@ -109,3 +109,15 @@ export async function shareMarker(input: { id: string; videoId: string; share: b
     return { notified: (data as number) ?? 0 };
   });
 }
+
+const Share = z.object({ id: z.uuid(), groupIds: z.array(z.uuid()).max(60) });
+
+/** Echipele cu care e partajată înregistrarea (lista completă). Întoarce câți antrenori au fost anunțați. */
+export async function shareVideo(input: z.infer<typeof Share>) {
+  return run<number>({ roles: [...STAFF], revalidate: PATHS }, async ({ db }) => {
+    const v = Share.parse(input);
+    const { data, error } = await db.rpc("share_video_with_groups", { p_video: v.id, p_groups: v.groupIds });
+    if (error) fail(error.message);
+    return (data as number) ?? 0;
+  });
+}

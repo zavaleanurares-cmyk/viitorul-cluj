@@ -68,3 +68,9 @@ Cod:
   - antrenorul își vede doar echipele lui;
   - biroul și conducerea sportivă văd tot clubul;
   - contabilul nu are acces, pentru că nu vede notele și raportul l-ar arăta greșit.
+
+## Video partajat cu alte echipe
+
+- O înregistrare poate fi partajată cu alte echipe ale clubului, ca „Partajează cu altă echipă” din TFB. O partajează cine o are în grijă: antrenorul echipei ei, directorul sportiv sau preparatorul fizic.
+- Antrenorii echipelor alese o văd, cu marcajele și clipurile ei, și primesc o notificare. Nu o pot modifica, partaja mai departe sau șterge, nu pot adăuga marcaje și nu pot șterge fișierul.
+- Partajarea se poate retrage oricând, iar lista echipelor se salvează întreagă.

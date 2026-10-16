@@ -16,8 +16,8 @@ export default async function VideosPage({ searchParams }: { searchParams: Promi
   const t = getT().performance.video;
   const teams = visibleGroups(ctx);
   const team = teams.find((g) => g.id === sp.echipa) ?? null;
-  let q = db.from("videos").select("id, title, source, recorded_on, group_id, video_markers(id, shared)").order("recorded_on", { ascending: false }).limit(200);
-  if (team) q = q.eq("group_id", team.id);
+  let q = db.from("videos").select("id, title, source, recorded_on, group_id, shared_group_ids, video_markers(id, shared)").order("recorded_on", { ascending: false }).limit(200);
+  if (team) q = q.or(`group_id.eq.${team.id},shared_group_ids.cs.{${team.id}}`);
   const [{ data: videos }, { data: evs }] = await Promise.all([
     q,
     teams.length
@@ -62,7 +62,7 @@ export default async function VideosPage({ searchParams }: { searchParams: Promi
                   <span className="min-w-0 flex-1">
                     <span className="block font-semibold">{v.title}</span>
                     <span className="block text-sm text-ink-3">
-                      {formatDate(v.recorded_on)} · {teamName(v.group_id)} · {t.sources[v.source as keyof typeof t.sources]} · {t.markers(ms.length)}{shared ? ` · ${t.clipsShared(shared)}` : ""}
+                      {formatDate(v.recorded_on)} · {teamName(v.group_id)}{ctx.role === "coach" && v.group_id && !ctx.staffGroupIds.includes(v.group_id) ? ` (${t.share.badge})` : ""} · {t.sources[v.source as keyof typeof t.sources]} · {t.markers(ms.length)}{shared ? ` · ${t.clipsShared(shared)}` : ""}
                     </span>
                   </span>
                   <ChevronRight className="size-5 text-ink-3" aria-hidden />
