@@ -7,9 +7,10 @@ import { useT } from "@/messages";
 export function ScheduleTabs() {
   const t = useT().schedule.tabs;
   const pathname = usePathname();
-  const inside = /^\/program\/(?!terenuri|competitii)[^/]+/.test(pathname);
+  const inside = /^\/program\/(?!terenuri|competitii|sectiuni)[^/]+/.test(pathname);
   if (inside) return null;
-  const current = pathname.startsWith("/program/terenuri") ? "venues" : pathname.startsWith("/program/competitii") ? "competitions" : "calendar";
+  const current = pathname.startsWith("/program/terenuri") ? "venues" : pathname.startsWith("/program/competitii") ? "competitions"
+    : pathname.startsWith("/program/sectiuni") ? "drills" : "calendar";
   return (
     <TabLinks
       className="mb-6"
@@ -18,6 +19,7 @@ export function ScheduleTabs() {
         { key: "calendar", href: "/program", label: t.calendar },
         { key: "venues", href: "/program/terenuri", label: t.venues },
         { key: "competitions", href: "/program/competitii", label: t.competitions },
+        { key: "drills", href: "/program/sectiuni", label: t.drills },
       ]}
     />
   );

@@ -21,5 +21,6 @@ import { performance } from "./performance";
 import { club } from "./club";
 import { site } from "./site";
 import { tfb } from "./tfb";
+import { drills } from "./drills";
 
-export const ro = { common, auth, player, players, library, planning, wellness, physical, imports, dashboard, admin, reports, partner, notifications, squad, schedule, today, match, money, performance, club, site, tfb } as const;
+export const ro = { common, auth, player, players, library, planning, wellness, physical, imports, dashboard, admin, reports, partner, notifications, squad, schedule, today, match, money, performance, club, site, tfb, drills } as const;

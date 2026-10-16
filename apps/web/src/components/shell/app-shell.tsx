@@ -116,7 +116,7 @@ export function AppShell({ items, sectionGroups, clubName, logoUrl, userName, ro
   ) : null;
 
   return (
-    <div className="min-h-dvh md:grid md:grid-cols-[16rem_1fr]">
+    <div className="min-h-dvh md:grid md:grid-cols-[16rem_1fr] print:block">
       {/* Ecrane mari: meniu lateral luminos, ca bara laterală din aplicațiile Apple */}
       <aside className="no-print sticky top-0 hidden h-dvh flex-col border-r border-line/70 bg-surface/80 backdrop-blur-xl md:flex">
         <div className="flex h-16 items-center justify-between gap-2 pl-5 pr-3">

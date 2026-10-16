@@ -3,7 +3,7 @@ import { plural } from "@club/shared";
 /** Spațiul Program: calendar, evenimente, prezență, meci, terenuri, competiții. */
 export const schedule = {
   title: "Program",
-  tabs: { calendar: "Calendar", venues: "Terenuri", competitions: "Competiții" },
+  tabs: { calendar: "Calendar", venues: "Terenuri", competitions: "Competiții", drills: "Secțiuni" },
   views: { week: "Săptămână", month: "Lună", agenda: "Listă" },
   prev: "Înapoi",
   next: "Înainte",

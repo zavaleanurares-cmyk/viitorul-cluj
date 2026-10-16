@@ -31,6 +31,8 @@ export const BUCKETS = {
   contracts: { maxBytes: 1024 * 1024, types: ["image/png"] },
   /** imaginile știrilor și fotografiile din galerii: <club>/post|foto/<uuid>.<ext> */
   site: { maxBytes: 8 * 1024 * 1024, types: ["image/jpeg", "image/png", "image/webp"] },
+  /** imaginile secțiunilor de antrenament (scheme, fotografii): <club>/<uuid>.<ext> */
+  drills: { maxBytes: 8 * 1024 * 1024, types: ["image/jpeg", "image/png", "image/webp"] },
   /** fotografiile produselor din magazin: <club>/<uuid>.<ext> */
   shop: { maxBytes: 5 * 1024 * 1024, types: ["image/jpeg", "image/png", "image/webp"] },
   /** exporturile complete ale clubului (ZIP), scrise de server și șterse după o zi: <club>/<fișier>.zip */

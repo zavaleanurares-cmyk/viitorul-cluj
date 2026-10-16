@@ -14,7 +14,7 @@
     "test": "npm run test -w @club/shared",
     "stack:start": "node tools/local-stack/start.mjs",
     "db:seed-demo": "tsx scripts/seed-demo.ts",
-    "test:rls": "tsx scripts/test-rls.ts && tsx scripts/test-rls-lot.ts && tsx scripts/test-rls-bani.ts && tsx scripts/test-rls-perf.ts",
+    "test:rls": "tsx scripts/test-rls.ts && tsx scripts/test-rls-lot.ts && tsx scripts/test-rls-bani.ts && tsx scripts/test-rls-perf.ts && tsx scripts/test-rls-sectiuni.ts",
     "db:migrate": "node scripts/migrate.mjs",
     "db:types": "node scripts/gen-types.mjs",
     "db:seed-club": "tsx scripts/seed-club.ts",

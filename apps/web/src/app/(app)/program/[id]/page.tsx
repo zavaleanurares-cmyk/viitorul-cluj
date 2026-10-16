@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ChevronLeft, ClipboardCheck, Trophy } from "lucide-react";
+import { ChevronLeft, ClipboardCheck, ClipboardList, Trophy } from "lucide-react";
 import {
   ABSENCE_REASON_LABELS, ATTENDANCE_LABELS, EVENT_KIND_LABELS, WEEKDAYS_RO, can, formatDateShort, formatEventWhen, localDate,
   type AbsenceReason, type AttendanceStatus, type EventKind,
@@ -14,6 +14,7 @@ import { KIND_ICONS } from "@/components/schedule/calendar";
 import { EventActions } from "@/components/schedule/event-actions";
 import { RecordTrialButton } from "@/components/club/enrolment-admin";
 import { eventRoster, getEvent, coachManages } from "@/components/schedule/queries";
+import { getPlan } from "@/components/drills/queries";
 import { getT } from "@/messages";
 
 export const metadata = { title: "Eveniment" };
@@ -40,6 +41,9 @@ export default async function EventPage({ params }: { params: Promise<{ id: stri
     ? ((await db.rpc("my_trials", { p_event: id })).data ?? []) as Array<{ id: string; child_name: string; birth_year: number; pos: string | null; previous_club: string | null; trial_rating: number | null; trial_note: string | null }>
     : [];
   const te = getT().club.enrolment;
+  const tp = getT().drills.plan;
+  const plan = e.kind === "training" ? await getPlan(db, id) : null;
+  const planMinutes = (plan?.items ?? []).reduce((sum, i) => sum + (i.duration_min ?? 0), 0);
   let seriesText: string | null = null;
   if (e.series_id) {
     const { data: s } = await db.from("event_series").select("weekdays, until").eq("id", e.series_id).maybeSingle();
@@ -101,6 +105,21 @@ export default async function EventPage({ params }: { params: Promise<{ id: stri
             <LinkButton href={`/program/${id}/meci`} variant="primary" size="lg" icon={<Trophy className="size-5" aria-hidden />}>{t.event.openMatch}</LinkButton>
           ) : null}
         </div>
+      ) : null}
+
+      {e.kind === "training" && (plan || (runs && !cancelled)) ? (
+        <Card>
+          <CardHeader title={tp.title}
+            description={plan ? [plan.theme, plan.items.length ? tp.summary(plan.items.length, planMinutes, Math.round((Date.parse(e.ends_at) - Date.parse(e.starts_at)) / 60000)) : null].filter(Boolean).join(" · ") || undefined : tp.none}
+            action={<LinkButton href={`/program/${id}/plan`} variant={plan ? "secondary" : "primary"} icon={<ClipboardList className="size-5" aria-hidden />}>{plan ? tp.open : tp.make}</LinkButton>} />
+          {plan?.items.length ? (
+            <CardBody>
+              <ol className="list-decimal space-y-1 pl-5 marker:text-ink-3">
+                {plan.items.map((i) => <li key={i.id}>{i.title}{i.duration_min ? <span className="text-ink-3"> · {i.duration_min} min</span> : null}</li>)}
+              </ol>
+            </CardBody>
+          ) : null}
+        </Card>
       ) : null}
 
       {e.kind === "training" && recorded.length ? (

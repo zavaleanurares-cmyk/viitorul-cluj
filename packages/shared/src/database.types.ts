@@ -1247,6 +1247,90 @@ export type Database = {
           { foreignKeyName: "departments_parent_id_fkey"; columns: ["parent_id"]; isOneToOne: false; referencedRelation: "departments"; referencedColumns: ["id"] },
         ];
       };
+      drills: {
+        Row: {
+          id: string;
+          club_id: string;
+          created_by: string | null;
+          name: string;
+          age_group: string | null;
+          kind: string | null;
+          category: string | null;
+          visibility: string;
+          players: number | null;
+          goalkeepers: number | null;
+          intensity: number | null;
+          work_min: number | null;
+          rest_sec: number | null;
+          reps: number | null;
+          area: string | null;
+          equipment: string | null;
+          organization: string | null;
+          criteria: string | null;
+          video_url: string | null;
+          diagram: Json | null;
+          image_paths: string[];
+          is_active: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          club_id: string;
+          created_by?: string | null;
+          name: string;
+          age_group?: string | null;
+          kind?: string | null;
+          category?: string | null;
+          visibility?: string;
+          players?: number | null;
+          goalkeepers?: number | null;
+          intensity?: number | null;
+          work_min?: number | null;
+          rest_sec?: number | null;
+          reps?: number | null;
+          area?: string | null;
+          equipment?: string | null;
+          organization?: string | null;
+          criteria?: string | null;
+          video_url?: string | null;
+          diagram?: Json | null;
+          image_paths?: string[];
+          is_active?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          club_id?: string;
+          created_by?: string | null;
+          name?: string;
+          age_group?: string | null;
+          kind?: string | null;
+          category?: string | null;
+          visibility?: string;
+          players?: number | null;
+          goalkeepers?: number | null;
+          intensity?: number | null;
+          work_min?: number | null;
+          rest_sec?: number | null;
+          reps?: number | null;
+          area?: string | null;
+          equipment?: string | null;
+          organization?: string | null;
+          criteria?: string | null;
+          video_url?: string | null;
+          diagram?: Json | null;
+          image_paths?: string[];
+          is_active?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          { foreignKeyName: "drills_club_id_fkey"; columns: ["club_id"]; isOneToOne: false; referencedRelation: "clubs"; referencedColumns: ["id"] },
+          { foreignKeyName: "drills_created_by_fkey"; columns: ["created_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
+        ];
+      };
       enrolment_events: {
         Row: {
           id: number;
@@ -4618,6 +4702,69 @@ export type Database = {
           { foreignKeyName: "suspensions_source_event_id_fkey"; columns: ["source_event_id"]; isOneToOne: false; referencedRelation: "events"; referencedColumns: ["id"] },
         ];
       };
+      training_plan_items: {
+        Row: {
+          id: string;
+          event_id: string;
+          drill_id: string | null;
+          position: number;
+          title: string;
+          duration_min: number | null;
+          notes: string | null;
+        };
+        Insert: {
+          id?: string;
+          event_id: string;
+          drill_id?: string | null;
+          position: number;
+          title: string;
+          duration_min?: number | null;
+          notes?: string | null;
+        };
+        Update: {
+          id?: string;
+          event_id?: string;
+          drill_id?: string | null;
+          position?: number;
+          title?: string;
+          duration_min?: number | null;
+          notes?: string | null;
+        };
+        Relationships: [
+          { foreignKeyName: "training_plan_items_drill_id_fkey"; columns: ["drill_id"]; isOneToOne: false; referencedRelation: "drills"; referencedColumns: ["id"] },
+          { foreignKeyName: "training_plan_items_event_id_fkey"; columns: ["event_id"]; isOneToOne: false; referencedRelation: "training_plans"; referencedColumns: ["event_id"] },
+        ];
+      };
+      training_plans: {
+        Row: {
+          event_id: string;
+          theme: string | null;
+          objectives: string | null;
+          description: string | null;
+          updated_by: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          event_id: string;
+          theme?: string | null;
+          objectives?: string | null;
+          description?: string | null;
+          updated_by?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          event_id?: string;
+          theme?: string | null;
+          objectives?: string | null;
+          description?: string | null;
+          updated_by?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [
+          { foreignKeyName: "training_plans_event_id_fkey"; columns: ["event_id"]; isOneToOne: true; referencedRelation: "events"; referencedColumns: ["id"] },
+          { foreignKeyName: "training_plans_updated_by_fkey"; columns: ["updated_by"]; isOneToOne: false; referencedRelation: "profiles"; referencedColumns: ["id"] },
+        ];
+      };
       venues: {
         Row: {
           id: string;
@@ -5087,6 +5234,7 @@ export type Database = {
       save_site_settings: { Args: { p: Json | null }; Returns: number };
       save_sponsor: { Args: { p: Json | null }; Returns: string };
       save_test_grid: { Args: { p_date: string | null; p_rows: Json | null }; Returns: number };
+      save_training_plan: { Args: { p_event: string | null; p: Json | null }; Returns: undefined };
       search_club: { Args: { p_query: string | null; p_limit?: number | null }; Returns: Json };
       send_contracts: { Args: { p_template: string | null; p_players: string[] | null; p_due_on?: string | null }; Returns: Json };
       send_fee_reminders: { Args: Record<PropertyKey, never>; Returns: number };
